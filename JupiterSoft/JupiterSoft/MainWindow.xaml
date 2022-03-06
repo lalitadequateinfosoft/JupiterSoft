@@ -3,10 +3,40 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:ui="http://schemas.modernwpf.com/2019"
+        ui:WindowHelper.UseModernWindowStyle="True"
         xmlns:local="clr-namespace:JupiterSoft"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        
+        Title="JUPITER SOFTWARE"
+        Icon="icon.ico"
+        Height="450" Width="800"
+        ui:TitleBar.Background="#e4e4e4"
+        ui:TitleBar.IsIconVisible="True"
+        >
+    
+    <Grid >
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.Background>
+            <ImageBrush ImageSource="/assets/welcome.jpg"/>
+        </Grid.Background>
+
+        <Grid Grid.Row="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button x:Name="StartNew" BorderBrush="#fff" Foreground="#FFF" BorderThickness="2" Padding="5" Margin="0,10">START CREATING</Button>
+                <Button x:Name="Saved" BorderBrush="#0082ca" Foreground="#0082ca" Padding="5" Margin="0,10"  BorderThickness="2">RUN THE SAVED PROJECTS</Button>
+            </StackPanel>
+        </Grid>
+
     </Grid>
 </Window>
