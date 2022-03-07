@@ -8,9 +8,9 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="CreateTemplate">
 
-    <Border Padding="20" Background="#eeeeee">
+    <Border Padding="30" Background="#eeeeee">
         <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="#eeeeee">
-            <TextBlock Text="Create New Template"/>
+           
             <TabControl Background="Transparent">
                 <TabItem>
                     <TabItem.Header>
