@@ -24,5 +24,19 @@ namespace JupiterSoft
         {
             InitializeComponent();
         }
+
+        private void StartNew_Click(object sender, RoutedEventArgs e)
+        {
+            var dashForm = new Dashboard();
+            dashForm.Show();
+            this.Close();
+        }
+
+        private void StartSaved_Click(object sender, RoutedEventArgs e)
+        {
+            var dashForm = new Dashboard();
+            dashForm.Show();
+            this.Close();
+        }
     }
 }

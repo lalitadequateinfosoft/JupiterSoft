@@ -11,7 +11,9 @@
         Icon="icon.ico"
         Height="650" Width="1000"
         ui:TitleBar.Background="#e4e4e4"
-        ui:TitleBar.IsIconVisible="True" ResizeMode="CanMinimize"
+        ui:TitleBar.IsIconVisible="True"
+        WindowState="Maximized"
+        ResizeMode="CanMinimize"
         >
 
     <Grid >
@@ -36,8 +38,10 @@
             </Grid.ColumnDefinitions>
 
             <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="0,317,0,0" HorizontalAlignment="Center" Grid.RowSpan="2" Width="500">
-                <Button x:Name="StartNew" BorderBrush="#fff" Foreground="#FFF" BorderThickness="2" Padding="16" Background="Transparent">START CREATING</Button>
-                <Button x:Name="Saved" BorderBrush="#0082ca" Foreground="#0082ca" Padding="16" Margin="20,0,0,0" Background="Transparent"  BorderThickness="2" Content="RUN THE SAVED PROJECTS"/>
+                <Button x:Name="StartNew" Foreground="#FFF" Background="Transparent" Content="START CREATING" Cursor="Hand" VerticalAlignment="Center" HorizontalAlignment="Center"  Margin="0,12,0,0" Style="{StaticResource StartButton}" ToolTip="Start Creating New Template" Click="StartNew_Click" />
+
+
+                <Button x:Name="StartSaved" Foreground="#0082ca" Background="Transparent"    Content="RUN THE SAVED PROJECTS" Cursor="Hand" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="15,12,0,0" Style="{StaticResource SavedButton}" ToolTip="Run Saved Template" Click="StartSaved_Click"/>
             </StackPanel>
         </Grid>
 
