@@ -110,7 +110,7 @@
             <!--Help Menu End-->
         </Menu>
 
-        <Frame Grid.Row="1" Name="frame" NavigationUIVisibility="Hidden" Panel.ZIndex="1"></Frame>
+        <Frame Grid.Row="1" Name="frame" NavigationUIVisibility="Hidden" Panel.ZIndex="1" Background="#eeeeee"></Frame>
         <!--Menu Area End-->
     </Grid>
 </Window>

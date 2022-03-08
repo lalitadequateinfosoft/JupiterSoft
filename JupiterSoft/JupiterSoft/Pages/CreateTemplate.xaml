@@ -8,37 +8,572 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="CreateTemplate">
 
-    <Border Padding="30" Background="#eeeeee">
-        <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="#eeeeee">
-           
-            <TabControl Background="Transparent">
-                <TabItem>
+    <Page.Resources>
+        <ResourceDictionary>
+            <Style TargetType="Button" x:Key="RunButton" >
+                <Setter Property="Background" Value="#0082ca" />
+                <Setter Property="TextBlock.TextAlignment" Value="Center" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border CornerRadius="2,2,2,2" Background="#0082ca" BorderBrush="#0082ca" BorderThickness="2" Width="90" Height="45" Padding="12,3,12,3" Margin="0,0,0,3">
+                                <ContentPresenter x:Name="contentPresenter" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!--Tab Style-->
+            <Style x:Key="TabItemStyle" TargetType="TabItem">
+                <Setter Property="Background" Value="#9c9c9c"/>
+                <Setter Property="Padding" Value="15,5,15,5"/>
+                <Setter Property="Cursor" Value="Hand"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type TabItem}">
+                            <Border>
+                                <Grid>
+                                    <Grid>
+                                        <Border x:Name="border" 
+                                            CornerRadius="0,3,0,0"
+                                            Background="#9c9c9c" Height="45" Width="90"/>
+                                    </Grid>
+                                    <ContentPresenter ContentSource="Header"
+                                                      HorizontalAlignment="Center"
+                                                      VerticalAlignment="Center" />
+                                </Grid>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver"
+                                     Value="True">
+                                    <Setter TargetName="border"
+                                        Property="Background"
+                                        Value="#0082ca" />
+                                    <Setter Property="Background" Value="#0082ca"/>
+                                </Trigger>
+                                <Trigger Property="IsSelected"
+                                     Value="True">
+                                    <Setter TargetName="border"
+                                        Property="Background"
+                                        Value="#0082ca" />
+                                    <Setter Property="Background" Value="#0082ca"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style x:Key="TextButton" TargetType="Button">
+                <Setter Property="Background" Value="#041124"/>
+                <Setter Property="Foreground" Value="#fff"/>
+               
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding Background}" BorderThickness="1" CornerRadius="5" Padding="4">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" Value="#041124"/>
+                        
+                        <Setter Property="BorderBrush" Value="#041124"/>
+                    </Trigger>
+                   
+
+                    <Trigger Property="IsPressed" Value="True">
+                        <Setter Property="Background" Value="#041124"/>
+                       
+                        <Setter Property="BorderBrush" Value="#041124"/>
+                    </Trigger>
+                    
+                </Style.Triggers>
+            </Style>
+
+            <Style x:Key="StackPanelLink" TargetType="{x:Type Border}">
+                <Setter Property="BorderBrush" Value="#c9c9c9" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="5"/>
+                <Setter Property="Cursor" Value="Hand"/>
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="true">
+
+                        <Setter Property="Border.BorderBrush" Value="#041124" />
+                        
+                    </Trigger>
+
+                    <Trigger Property="IsFocused" Value="true">
+
+                        <Setter Property="Border.BorderBrush" Value="#041124" />
+
+                    </Trigger>
+                    <Trigger Property="IsMouseCaptured" Value="true">
+
+                        <Setter Property="Border.BorderBrush" Value="#041124" />
+
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+        </ResourceDictionary>
+    </Page.Resources>
+
+    <Border Margin="40" CornerRadius="10" Padding="10,10,10,10">
+        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <TabControl Grid.Row="0"  Grid.Column="0" Background="Transparent" >
+                <TabItem Style="{StaticResource TabItemStyle}">
                     <TabItem.Header>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="Blue" Foreground="Blue" />
+                        <StackPanel Orientation="Horizontal" >
+                            <TextBlock Text="Code" Foreground="#fff" />
                         </StackPanel>
                     </TabItem.Header>
-                    <Label Content="Content goes here..." />
+                    <Border Background="#fff" BorderBrush="#fff" BorderThickness="1" Margin="7.5,2,0,2.5" Padding="2" CornerRadius="0,0,0,10">
+                        <Grid Background="#fefefe" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Border BorderBrush="#fff" BorderThickness="1" Grid.Row="0" Grid.Column="0" >
+                                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Stretch">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="*"/>
+
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions >
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid Grid.Row="0" Grid.Column="0" Background="#fff" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="Auto" Cursor="Hand">
+                                            <Border BorderBrush="#eee" BorderThickness="1" Margin="5,5,5,5" Padding="3,3,3,3" CornerRadius="5" Background="#fff">
+                                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                    <Ellipse
+    Width="28"
+    Height="28"
+    Stroke="#bae8fe"
+    StrokeThickness="4"
+    Canvas.Left="135"
+    Canvas.Top="100"
+      Fill="#0082ca"                                              />
+                                                    <Label Content="Motion" FontSize="10" FontWeight="Bold" Foreground="#6c717c"/>
+                                                </StackPanel>
+                                            </Border>
+
+                                        </Grid>
+
+                                        <Grid Grid.Row="1" Grid.Column="0" Background="#fff" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="Auto" Cursor="Hand">
+                                            <Border BorderBrush="#eee" BorderThickness="1" Margin="5,5,5,5" Padding="3,3,3,3" CornerRadius="5" Background="#fff">
+                                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                    <Ellipse
+    Width="28"
+    Height="28"
+    Stroke="#f7d5ff"
+    StrokeThickness="4"
+    Canvas.Left="135"
+    Canvas.Top="100"
+      Fill="#df88f9"                                              />
+                                                    <Label Content="Motion" FontSize="10" FontWeight="Bold" Foreground="#6c717c"/>
+                                                </StackPanel>
+                                            </Border>
+
+                                        </Grid>
+                                        <Grid Grid.Row="2" Grid.Column="0" Background="#fff" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="Auto" Cursor="Hand">
+                                            <Border BorderBrush="#eee" BorderThickness="1" Margin="5,5,5,5" Padding="3,3,3,3" CornerRadius="5" Background="#fff">
+                                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                    <Ellipse
+    Width="28"
+    Height="28"
+    Stroke="#ffdab2"
+    StrokeThickness="4"
+    Canvas.Left="135"
+    Canvas.Top="100"
+      Fill="#ffa94c"                                              />
+                                                    <Label Content="Motion" FontSize="10" FontWeight="Bold" Foreground="#6c717c"/>
+                                                </StackPanel>
+                                            </Border>
+                                        </Grid>
+                                        <Grid Grid.Row="3" Grid.Column="0" Background="#fff" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="Auto" Cursor="Hand">
+                                            <Border BorderBrush="#eee" BorderThickness="1" Margin="5,5,5,5" Padding="3,3,3,3" CornerRadius="5" Background="#fff">
+                                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                    <Ellipse
+    Width="28"
+    Height="28"
+    Stroke="#ffc3c8"
+    StrokeThickness="2"
+    Canvas.Left="135"
+    Canvas.Top="100"
+      Fill="#f97279"                                              />
+                                                    <Label Content="Motion" FontSize="10" FontWeight="Bold" Foreground="#6c717c"/>
+                                                </StackPanel>
+                                            </Border>
+                                        </Grid>
+                                        <Grid Grid.Row="4" Grid.Column="0" Background="#fff" HorizontalAlignment="Stretch"
+                                              VerticalAlignment="Stretch" Width="Auto" Cursor="Hand">
+                                            <Border BorderBrush="#eee" BorderThickness="1" Margin="5,5,5,5" Padding="3,3,3,3" CornerRadius="5" Background="#fff">
+                                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                    <Ellipse
+    Width="28"
+    Height="28"
+    Stroke="#fecbec"
+    StrokeThickness="2"
+    Canvas.Left="135"
+    Canvas.Top="100"
+      Fill="#ed53b5"                                              />
+                                                    <Label Content="Motion" FontSize="10" FontWeight="Bold" Foreground="#6c717c"/>
+                                                </StackPanel>
+                                            </Border>
+                                        </Grid>
+                                        <Grid Grid.Row="5" Grid.Column="0" Background="#fff" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="Auto" Cursor="Hand">
+                                            <Border BorderBrush="#eee" BorderThickness="1" Margin="5,5,5,5" Padding="3,3,3,3" CornerRadius="5" Background="#fff">
+                                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                    <Ellipse
+    Width="28"
+    Height="28"
+    Stroke="#cbfef5"
+    StrokeThickness="2"
+    Canvas.Left="135"
+    Canvas.Top="100"
+      Fill="#4cc2aa"                                              />
+                                                    <Label Content="Motion" FontSize="10" FontWeight="Bold" Foreground="#6c717c"/>
+                                                </StackPanel>
+                                            </Border>
+                                        </Grid>
+                                        <Grid Grid.Row="6" Grid.Column="0" Background="#fff" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="Auto" Cursor="Hand">
+                                            <Border BorderBrush="#eee" BorderThickness="1" Margin="5,5,5,5" Padding="3,3,3,3" CornerRadius="5" Background="#fff">
+                                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                    <Ellipse
+    Width="28"
+    Height="28"
+    Stroke="#c5dafe"
+    StrokeThickness="2"
+    Canvas.Left="135"
+    Canvas.Top="100"
+      Fill="#60718d"                                              />
+                                                    <Label Content="Motion" FontSize="10" FontWeight="Bold" Foreground="#6c717c"/>
+                                                </StackPanel>
+                                            </Border>
+                                        </Grid>
+
+                                    </Grid>
+                                </StackPanel>
+                            </Border>
+                            <Border BorderBrush="#fff" BorderThickness="1" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch">
+                                <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                    <Label Content="Buttons Goes Here."/>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+                    </Border>
                 </TabItem>
-                <TabItem>
+                <TabItem Style="{StaticResource TabItemStyle}">
                     <TabItem.Header>
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="Red" Foreground="Red" />
+                            <TextBlock Text="Devices" Foreground="#fff" />
                         </StackPanel>
                     </TabItem.Header>
+                    <Border Background="#fff" BorderBrush="#fff" BorderThickness="1" Margin="7.5,2,0,2.5" Padding="2" CornerRadius="0,0,0,10">
+                        <Grid Background="#fefefe" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                
+                            </Grid.ColumnDefinitions>
+                            <Border BorderBrush="#fff" BorderThickness="1" Grid.Row="0" Grid.Column="0" >
+                                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Stretch">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="*"/>
+                                            
+
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions >
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid Grid.Row="0" Grid.Column="0" Background="#fff" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10" Width="Auto">
+
+                                            <Border Style="{StaticResource StackPanelLink}">                                               <StackPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+
+                                                    
+                                            <StackPanel Margin="20">
+                                                        <Image Source="/assets/1.png" HorizontalAlignment="Center" VerticalAlignment="Center" Width="40"  />
+                                                    </StackPanel>
+
+                                                <Button Foreground="#fff" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Style="{StaticResource TextButton}" Width="120">
+                                                        <Label HorizontalAlignment="Center" Foreground="#fff"  FontSize="8" FontWeight="Bold">
+                                                            <TextBlock>MOTOR <LineBreak/>DRIVES</TextBlock>
+                                                        </Label>
+
+                                                    </Button>                                                     
+                                                </StackPanel>
+                                            </Border>
+                                          
+
+                                        </Grid>
+
+                                        <Grid Grid.Row="1" Grid.Column="0" Background="#fff" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10" Width="Auto">
+
+                                            <Border Style="{StaticResource StackPanelLink}">
+                                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+
+
+                                                    <StackPanel Margin="20">
+                                                        <Image Source="/assets/2.png" HorizontalAlignment="Center" VerticalAlignment="Center" Width="40"  />
+                                                    </StackPanel>
+
+                                                    <Button Foreground="#fff" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Style="{StaticResource TextButton}" Width="120">
+                                                        <Label HorizontalAlignment="Center" Foreground="#fff"  FontSize="8" FontWeight="Bold">
+                                                            <TextBlock><Run Text="  WEIGHT"/> <LineBreak/>MODULES</TextBlock>
+                                                        </Label>
+
+                                                    </Button>
+                                                </StackPanel>
+                                            </Border>
+
+
+                                        </Grid>
+                                        <Grid Grid.Row="2" Grid.Column="0" Background="#fff" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10" Width="Auto">
+
+                                            <Border Style="{StaticResource StackPanelLink}">
+                                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+
+
+                                                    <StackPanel Margin="20">
+                                                        <Image Source="/assets/3.png" HorizontalAlignment="Center" VerticalAlignment="Center" Width="40"  />
+                                                    </StackPanel>
+
+                                                    <Button Foreground="#fff" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Style="{StaticResource TextButton}" Width="120">
+                                                        <Label HorizontalAlignment="Center" Foreground="#fff"  FontSize="8" FontWeight="Bold">
+                                                            <TextBlock>NETWORK <LineBreak/>CAMERAS</TextBlock>
+                                                        </Label>
+
+                                                    </Button>
+                                                </StackPanel>
+                                            </Border>
+
+
+                                        </Grid>
+
+                                    </Grid>
+                                </StackPanel>
+                            </Border>
+                            
+                        </Grid>
+                    </Border>
                 </TabItem>
-                <TabItem>
+                <TabItem Style="{StaticResource TabItemStyle}">
                     <TabItem.Header>
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="Green" Foreground="Green" />
+                            <TextBlock Text="Sounds" Foreground="#fff" />
                         </StackPanel>
                     </TabItem.Header>
+                    <Border Background="#fff" BorderBrush="#fff" BorderThickness="1" Margin="7.5,2,0,2.5" Padding="2" CornerRadius="0,0,0,10">
+                        <Grid Background="#fefefe" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Border BorderBrush="#fff" BorderThickness="1" Grid.Row="0" Grid.Column="0" >
+                                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Stretch">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="*"/>
+
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions >
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid Grid.Row="0" Grid.Column="0" Background="#fff" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="Auto" Cursor="Hand">
+                                            <Border BorderBrush="#eee" BorderThickness="1" Margin="5,5,5,5" Padding="3,3,3,3" CornerRadius="5" Background="#fff">
+                                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                    <Ellipse
+    Width="28"
+    Height="28"
+    Stroke="#bae8fe"
+    StrokeThickness="4"
+    Canvas.Left="135"
+    Canvas.Top="100"
+      Fill="#0082ca"                                              />
+                                                    <Label Content="Motion" FontSize="10" FontWeight="Bold" Foreground="#6c717c"/>
+                                                </StackPanel>
+                                            </Border>
+
+                                        </Grid>
+
+                                        <Grid Grid.Row="1" Grid.Column="0" Background="#fff" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="Auto" Cursor="Hand">
+                                            <Border BorderBrush="#eee" BorderThickness="1" Margin="5,5,5,5" Padding="3,3,3,3" CornerRadius="5" Background="#fff">
+                                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                    <Ellipse
+    Width="28"
+    Height="28"
+    Stroke="#f7d5ff"
+    StrokeThickness="4"
+    Canvas.Left="135"
+    Canvas.Top="100"
+      Fill="#df88f9"                                              />
+                                                    <Label Content="Motion" FontSize="10" FontWeight="Bold" Foreground="#6c717c"/>
+                                                </StackPanel>
+                                            </Border>
+
+                                        </Grid>
+                                        <Grid Grid.Row="2" Grid.Column="0" Background="#fff" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="Auto" Cursor="Hand">
+                                            <Border BorderBrush="#eee" BorderThickness="1" Margin="5,5,5,5" Padding="3,3,3,3" CornerRadius="5" Background="#fff">
+                                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                    <Ellipse
+    Width="28"
+    Height="28"
+    Stroke="#ffdab2"
+    StrokeThickness="4"
+    Canvas.Left="135"
+    Canvas.Top="100"
+      Fill="#ffa94c"                                              />
+                                                    <Label Content="Motion" FontSize="10" FontWeight="Bold" Foreground="#6c717c"/>
+                                                </StackPanel>
+                                            </Border>
+                                        </Grid>
+                                        <Grid Grid.Row="3" Grid.Column="0" Background="#fff" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="Auto" Cursor="Hand">
+                                            <Border BorderBrush="#eee" BorderThickness="1" Margin="5,5,5,5" Padding="3,3,3,3" CornerRadius="5" Background="#fff">
+                                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                    <Ellipse
+    Width="28"
+    Height="28"
+    Stroke="#ffc3c8"
+    StrokeThickness="2"
+    Canvas.Left="135"
+    Canvas.Top="100"
+      Fill="#f97279"                                              />
+                                                    <Label Content="Motion" FontSize="10" FontWeight="Bold" Foreground="#6c717c"/>
+                                                </StackPanel>
+                                            </Border>
+                                        </Grid>
+                                        <Grid Grid.Row="4" Grid.Column="0" Background="#fff" HorizontalAlignment="Stretch"
+                                              VerticalAlignment="Stretch" Width="Auto" Cursor="Hand">
+                                            <Border BorderBrush="#eee" BorderThickness="1" Margin="5,5,5,5" Padding="3,3,3,3" CornerRadius="5" Background="#fff">
+                                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                    <Ellipse
+    Width="28"
+    Height="28"
+    Stroke="#fecbec"
+    StrokeThickness="2"
+    Canvas.Left="135"
+    Canvas.Top="100"
+      Fill="#ed53b5"                                              />
+                                                    <Label Content="Motion" FontSize="10" FontWeight="Bold" Foreground="#6c717c"/>
+                                                </StackPanel>
+                                            </Border>
+                                        </Grid>
+                                        <Grid Grid.Row="5" Grid.Column="0" Background="#fff" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="Auto" Cursor="Hand">
+                                            <Border BorderBrush="#eee" BorderThickness="1" Margin="5,5,5,5" Padding="3,3,3,3" CornerRadius="5" Background="#fff">
+                                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                    <Ellipse
+    Width="28"
+    Height="28"
+    Stroke="#cbfef5"
+    StrokeThickness="2"
+    Canvas.Left="135"
+    Canvas.Top="100"
+      Fill="#4cc2aa"                                              />
+                                                    <Label Content="Motion" FontSize="10" FontWeight="Bold" Foreground="#6c717c"/>
+                                                </StackPanel>
+                                            </Border>
+                                        </Grid>
+                                        <Grid Grid.Row="6" Grid.Column="0" Background="#fff" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="Auto" Cursor="Hand">
+                                            <Border BorderBrush="#eee" BorderThickness="1" Margin="5,5,5,5" Padding="3,3,3,3" CornerRadius="5" Background="#fff">
+                                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                    <Ellipse
+    Width="28"
+    Height="28"
+    Stroke="#c5dafe"
+    StrokeThickness="2"
+    Canvas.Left="135"
+    Canvas.Top="100"
+      Fill="#60718d"                                              />
+                                                    <Label Content="Motion" FontSize="10" FontWeight="Bold" Foreground="#6c717c"/>
+                                                </StackPanel>
+                                            </Border>
+                                        </Grid>
+
+                                    </Grid>
+                                </StackPanel>
+                            </Border>
+                            <Border BorderBrush="#fff" BorderThickness="1" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" >
+                                <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                    <Label Content="Sound Goes Here."/>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+                    </Border>
                 </TabItem>
-                
+
 
             </TabControl>
+            <Border Grid.Row="0" Grid.Column="1" Background="Transparent" Margin="3">
+                <Grid  Background="Transparent">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <StackPanel Grid.Row="0" Background="Transparent">
+                        <Button HorizontalAlignment="Right" x:Name="Run" Content="Run" Margin="0,2,0,2" ToolTip="Run" Style="{StaticResource RunButton}" Foreground="#fff" />
+                    </StackPanel>
 
-        </StackPanel>
+                    <Border Grid.Row="1" Background="#fff" CornerRadius="0,10,10,0">
+                        <Grid >
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Row="0" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                <TextBlock Text="Button Area"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
+                                <TextBlock Text="Device Area"/>
+                            </StackPanel>
+
+                        </Grid>
+                    </Border>
+
+                </Grid>
+            </Border>
+
+        </Grid>
     </Border>
 
 </Page>
