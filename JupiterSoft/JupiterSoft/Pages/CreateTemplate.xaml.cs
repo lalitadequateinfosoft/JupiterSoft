@@ -114,9 +114,10 @@ namespace JupiterSoft.Pages
 
         private void Button_MouseMove(object sender, MouseEventArgs e)
         {
+            UIElement element = sender as UIElement;
             if(e.LeftButton==MouseButtonState.Pressed)
             {
-                DragDrop.DoDragDrop(MoveButton, MoveButton, DragDropEffects.Copy);
+                DragDrop.DoDragDrop(element, new DataObject(DataFormats.Serializable, element), DragDropEffects.Copy);
             }
         }
 

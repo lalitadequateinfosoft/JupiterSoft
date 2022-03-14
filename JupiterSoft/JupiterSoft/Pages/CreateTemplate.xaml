@@ -68,7 +68,7 @@
             <Style x:Key="TextButton" TargetType="Button">
                 <Setter Property="Background" Value="#041124"/>
                 <Setter Property="Foreground" Value="#fff"/>
-               
+
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="Button">
@@ -81,17 +81,17 @@
                 <Style.Triggers>
                     <Trigger Property="IsMouseOver" Value="True">
                         <Setter Property="Background" Value="#041124"/>
-                        
+
                         <Setter Property="BorderBrush" Value="#041124"/>
                     </Trigger>
-                   
+
 
                     <Trigger Property="IsPressed" Value="True">
                         <Setter Property="Background" Value="#041124"/>
-                       
+
                         <Setter Property="BorderBrush" Value="#041124"/>
                     </Trigger>
-                    
+
                 </Style.Triggers>
             </Style>
 
@@ -104,7 +104,7 @@
                     <Trigger Property="IsMouseOver" Value="true">
 
                         <Setter Property="Border.BorderBrush" Value="#041124" />
-                        
+
                     </Trigger>
 
                     <Trigger Property="IsFocused" Value="true">
@@ -120,7 +120,141 @@
                 </Style.Triggers>
             </Style>
 
-            
+            <!--Move Button Style Start-->
+            <Style x:Key="BlueMove10" TargetType="Button">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Grid>
+                                <Path Stroke="{TemplateBinding BorderBrush}" StrokeThickness="1.5" StrokeStartLineCap="Square" StrokeEndLineCap="Square" StrokeLineJoin="Round" Fill="{TemplateBinding Background}" Data="M 0,0 H10,10 L15,10 H15,15 L16,10 h14,0 L35,0 h0,85 h0,0 V32,32 H35,35 L30,41 H15 L10,32 H0,0 V0,0 Z" />
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <Label Grid.Column="0" Content="move" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,-5,0,0" FontSize="{TemplateBinding FontSize}" FontWeight="{TemplateBinding FontWeight}" Foreground="{TemplateBinding Foreground}"/>
+                                    <Border Grid.Column="1" CornerRadius="10" BorderThickness="{TemplateBinding BorderThickness}" Background="#fff" Margin="0,-10,0,0" BorderBrush="#3774cd" Padding="10,5,10,5"  HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <TextBlock Text="{TemplateBinding Content}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" Foreground="Black" FontFamily="{TemplateBinding FontFamily}" />
+                                    </Border>
+                                    <Label Grid.Column="2" Content="steps" VerticalAlignment="Center" Margin="0,-8,0,0" HorizontalAlignment="Center" FontSize="{TemplateBinding FontSize}" FontWeight="{TemplateBinding FontWeight}" Foreground="{TemplateBinding Foreground}"/>
+                                </Grid>
+                            </Grid>
+
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style x:Key="BlueMoveRight" TargetType="Button">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Grid>
+                                <Path Stroke="{TemplateBinding BorderBrush}" StrokeThickness="1.5" StrokeStartLineCap="Square" StrokeEndLineCap="Square" StrokeLineJoin="Round" Fill="{TemplateBinding Background}" Data="M 0,0 H10,10 L15,10 H15,15 L16,10 h14,0 L35,0 h0,114 h0,0 V32,32 H35,35 L30,41 H15 L10,32 H0,0 V0,0 Z" />
+
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <Label Grid.Column="0" Content="move" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,-5,0,0" FontSize="{TemplateBinding FontSize}" FontWeight="{TemplateBinding FontWeight}" Foreground="{TemplateBinding Foreground}"/>
+                                    <Image Source="/assets/rotate-right-32.png" Grid.Column="1" Width="20" Height="20" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-8,0,0"/>
+                                    <Border Grid.Column="2" CornerRadius="10" BorderThickness="{TemplateBinding BorderThickness}" Background="#fff" Margin="0,-10,0,0" BorderBrush="#3774cd" Padding="10,5,10,5"  HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <TextBlock Text="{TemplateBinding Content}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" Foreground="Black" FontFamily="{TemplateBinding FontFamily}" />
+                                    </Border>
+                                    <Label Grid.Column="3" Content="steps" VerticalAlignment="Center" Margin="0,-8,0,0" HorizontalAlignment="Center" FontSize="{TemplateBinding FontSize}" FontWeight="{TemplateBinding FontWeight}" Foreground="{TemplateBinding Foreground}"/>
+                                </Grid>
+
+
+                            </Grid>
+
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style x:Key="BlueMoveLeft" TargetType="Button">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Grid>
+                                <Path Stroke="{TemplateBinding BorderBrush}" StrokeThickness="1.5" StrokeStartLineCap="Square" StrokeEndLineCap="Square" StrokeLineJoin="Round" Fill="{TemplateBinding Background}" Data="M 0,0 H10,10 L15,10 H15,15 L16,10 h14,0 L35,0 h0,114 h0,0 V32,32 H35,35 L30,41 H15 L10,32 H0,0 V0,0 Z" />
+
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <Label Grid.Column="0" Content="move" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,-5,0,0" FontSize="{TemplateBinding FontSize}" FontWeight="{TemplateBinding FontWeight}" Foreground="{TemplateBinding Foreground}"/>
+                                    <Image Source="/assets/rotate-left-32.png" Grid.Column="1" Width="20" Height="20" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-8,0,0"/>
+                                    <Border Grid.Column="2" CornerRadius="10" BorderThickness="{TemplateBinding BorderThickness}" Background="#fff" Margin="0,-10,0,0" BorderBrush="#3774cd" Padding="10,5,10,5"  HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <TextBlock Text="{TemplateBinding Content}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" Foreground="Black" FontFamily="{TemplateBinding FontFamily}" />
+                                    </Border>
+                                    <Label Grid.Column="3" Content="steps" VerticalAlignment="Center" Margin="0,-8,0,0" HorizontalAlignment="Center" FontSize="{TemplateBinding FontSize}" FontWeight="{TemplateBinding FontWeight}" Foreground="{TemplateBinding Foreground}"/>
+                                </Grid>
+
+
+                            </Grid>
+
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style x:Key="BlueMovePointer" TargetType="Button">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Grid>
+                                <Path Stroke="{TemplateBinding BorderBrush}" StrokeThickness="1.5" StrokeStartLineCap="Square" StrokeEndLineCap="Square" StrokeLineJoin="Round" Fill="{TemplateBinding Background}" Data="M 0,0 H10,10 L15,10 H15,15 L16,10 h14,0 L35,0 h0,164.5 h0,0 V32,32 H35,35 L30,41 H15 L10,32 H0,0 V0,0 Z" />
+
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <Label Grid.Column="0" Content="pointer-towards" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,-5,0,0" FontSize="{TemplateBinding FontSize}" FontWeight="{TemplateBinding FontWeight}" Foreground="{TemplateBinding Foreground}"/>
+
+
+                                    <ComboBox Grid.Column="1"  HorizontalAlignment="Center" VerticalAlignment="Center" Width="90" Height="25" Margin="0,-10,0,0" Background="Transparent" Foreground="#fff" Template="{DynamicResource BlueButtonCombo}">
+                                        <ComboBox.Resources>
+                                            <ControlTemplate x:Key="BlueButtonCombo" TargetType="{x:Type ComboBox}">
+                                                <Border CornerRadius="12" BorderBrush="#005c8f" BorderThickness="1" />
+
+
+
+                                            </ControlTemplate>
+                                        </ComboBox.Resources>
+                                            <ComboBoxItem Content="Coffie"></ComboBoxItem>
+                                            <ComboBoxItem Content="Tea"></ComboBoxItem>
+                                            <ComboBoxItem Content="Orange Juice"></ComboBoxItem>
+                                            <ComboBoxItem Content="Milk"></ComboBoxItem>
+                                            <ComboBoxItem Content="Iced Tea"></ComboBoxItem>
+                                            <ComboBoxItem Content="Mango Shake"></ComboBoxItem>
+                                        </ComboBox>
+                                    
+                                    
+                                </Grid>
+
+
+                            </Grid>
+
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!--Move Button Style End-->
+
         </ResourceDictionary>
     </Page.Resources>
 
@@ -286,38 +420,42 @@
                                 <ScrollViewer VerticalScrollBarVisibility="Hidden" x:Name="ButtonAreaScroll">
                                     <Grid x:Name="MyGrid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" Margin="5">
                                         <Grid.RowDefinitions>
-                                            <RowDefinition Height="200"/>
-                                            <RowDefinition Height="200"/>
-                                            <RowDefinition Height="200"/>
-                                            <RowDefinition Height="200"/>
-                                            <RowDefinition Height="200"/>
-                                            <RowDefinition Height="200"/>
-                                            <RowDefinition Height="200"/>
+                                            <RowDefinition Height="400"/>
+                                            <RowDefinition Height="400"/>
+                                            <RowDefinition Height="400"/>
+                                            <RowDefinition Height="400"/>
+                                            <RowDefinition Height="400"/>
+                                            <RowDefinition Height="400"/>
+                                            <RowDefinition Height="400"/>
                                         </Grid.RowDefinitions>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="*"/>
                                         </Grid.ColumnDefinitions>
 
-                                        <StackPanel  x:Name="ButtonGridArea1" Grid.Row="0" Orientation="Vertical" HorizontalAlignment="Center" Margin="10" MouseEnter="ButtonGrid_MouseEnter" MouseLeave="ButtonGrid_MouseLeave" Width="250" AllowDrop="True">
-                                              
-                                                <Button Content="0" Margin="0,5,0,0" Background="#0082ca" Foreground="#FFF" MouseMove="Button_MouseMove" HorizontalAlignment="Center" Cursor="Hand" AllowDrop="True" GiveFeedback="Button_GiveFeedback" x:Name="MoveButton" QueryContinueDrag="MoveButton_QueryContinueDrag"></Button>
-                                            <Button Content="0" Margin="0,5,0,0" Background="#0082ca" Foreground="#FFF" HorizontalAlignment="Center"></Button>
-                                            <Button Content="0" Margin="0,5,0,0" Background="#0082ca" Foreground="#FFF" HorizontalAlignment="Center"></Button>
-                                            <Button Content="0" Margin="0,5,0,0" Background="#0082ca" Foreground="#FFF" HorizontalAlignment="Center"></Button>
-                                            <Button Content="0" Margin="0,5,0,0" Background="#0082ca" Foreground="#FFF" HorizontalAlignment="Center"></Button>
-                                            <Button Content="0" Margin="0,5,0,0" Background="#0082ca" Foreground="#FFF" HorizontalAlignment="Center"></Button>
-                                         
+                                        <StackPanel x:Name="ButtonGridArea1" Grid.Row="0" HorizontalAlignment="Center" Margin="10"  Width="250" AllowDrop="True">
+
+
+                                            <Button Margin="12,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="#2a6a8e" Background="#0082ca" BorderThickness="2" FontSize="10" Foreground="#fff" FontWeight="Bold" FontFamily="Georgia, serif;" Content="10"  Style="{StaticResource BlueMove10}"  Width="121" Height="42" />
+
+
+                                            <Button Margin="12,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="#2a6a8e" Background="#0082ca" BorderThickness="2" FontSize="10" Foreground="#fff" FontWeight="Bold" FontFamily="Georgia, serif;" Content="15" Width="150" Height="42" Style="{StaticResource BlueMoveRight}"/>
+
+                                            <Button Margin="12,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="#2a6a8e" Background="#0082ca" BorderThickness="2" FontSize="10" Foreground="#fff" FontWeight="Bold" FontFamily="Georgia, serif;" Content="15" Width="150" Height="42" Style="{StaticResource BlueMoveLeft}"/>
+
+
+                                            <Button Margin="12,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="#2a6a8e" Background="#0082ca" BorderThickness="2" FontSize="10" Foreground="#fff" FontWeight="Bold" FontFamily="Georgia, serif;" Content="15" Width="200" Height="42" Style="{StaticResource BlueMovePointer}"/>
+
 
                                         </StackPanel>
 
                                         <StackPanel x:Name="ButtonGridArea2" Grid.Row="1" HorizontalAlignment="Center" Margin="10" MouseEnter="ButtonGrid_MouseEnter" Width="250" MouseLeave="ButtonGrid_MouseLeave">
-                                           
-                                                <Button Content="0" Margin="0,5,0,0" Background="#d256f6" Foreground="#FFF" HorizontalAlignment="Center"></Button>
+
                                             <Button Content="0" Margin="0,5,0,0" Background="#d256f6" Foreground="#FFF" HorizontalAlignment="Center"></Button>
                                             <Button Content="0" Margin="0,5,0,0" Background="#d256f6" Foreground="#FFF" HorizontalAlignment="Center"></Button>
                                             <Button Content="0" Margin="0,5,0,0" Background="#d256f6" Foreground="#FFF" HorizontalAlignment="Center"></Button>
                                             <Button Content="0" Margin="0,5,0,0" Background="#d256f6" Foreground="#FFF" HorizontalAlignment="Center"></Button>
-                                            </StackPanel>
+                                            <Button Content="0" Margin="0,5,0,0" Background="#d256f6" Foreground="#FFF" HorizontalAlignment="Center"></Button>
+                                        </StackPanel>
 
 
                                         <StackPanel x:Name="ButtonGridArea3" Grid.Row="2" HorizontalAlignment="Center" Margin="10" MouseEnter="ButtonGrid_MouseEnter" Width="250" MouseLeave="ButtonGrid_MouseLeave">
@@ -327,7 +465,7 @@
                                             <Button Content="0" Margin="0,5,0,0" Background="#ff8500" Foreground="#FFF" HorizontalAlignment="Center"></Button>
                                             <Button Content="0" Margin="0,5,0,0" Background="#ff8500" Foreground="#FFF" HorizontalAlignment="Center"></Button>
                                             <Button Content="0" Margin="0,5,0,0" Background="#ff8500" Foreground="#FFF" HorizontalAlignment="Center"></Button>
-                                          
+
                                         </StackPanel>
 
                                         <StackPanel x:Name="ButtonGridArea4" Grid.Row="3" HorizontalAlignment="Center" Margin="10" MouseEnter="ButtonGrid_MouseEnter" Width="250" MouseLeave="ButtonGrid_MouseLeave">
@@ -348,7 +486,7 @@
                                             <Button Content="0" Margin="0,5,0,0" HorizontalAlignment="Center" Background="#e70895" Foreground="#FFF"/>
                                             <Button Content="0" Margin="0,5,0,0" HorizontalAlignment="Center" Background="#e70895" Foreground="#FFF"/>
                                             <Button Content="0" Margin="0,5,0,0" HorizontalAlignment="Center" Background="#e70895" Foreground="#FFF"/>
-                                         
+
 
                                         </StackPanel>
 
@@ -359,7 +497,7 @@
                                             <Button Content="0" Margin="0,5,0,0" HorizontalAlignment="Center" Background="#00a887" Foreground="#FFF"/>
                                             <Button Content="0" Margin="0,5,0,0" HorizontalAlignment="Center" Background="#00a887" Foreground="#FFF"/>
                                             <Button Content="0" Margin="0,5,0,0" HorizontalAlignment="Center" Background="#00a887" Foreground="#FFF"/>
-                                          
+
                                         </StackPanel>
 
                                         <StackPanel x:Name="ButtonGridArea7"  Grid.Row="6" HorizontalAlignment="Center" Margin="10" MouseEnter="ButtonGrid_MouseEnter" Width="250" MouseLeave="ButtonGrid_MouseLeave">
@@ -374,10 +512,10 @@
 
                                             <Button Content="0" Margin="0,5,0,0" HorizontalAlignment="Center" Background="#1c355d" Foreground="#FFF"/>
                                             <Button Content="0" Margin="0,5,0,0" HorizontalAlignment="Center" Background="#1c355d" Foreground="#FFF"/>
-                                         
+
 
                                         </StackPanel>
-                                        
+
                                     </Grid>
                                 </ScrollViewer>
 
@@ -391,7 +529,7 @@
                                     </ScrollViewer>
                                 </Border>
                             </StackPanel>
-                            
+
                         </Grid>
                     </Border>
                 </TabItem>
@@ -409,7 +547,7 @@
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="470"/>
-                                
+
                             </Grid.ColumnDefinitions>
                             <Border BorderBrush="#fff" BorderThickness="1" Grid.Row="0" Grid.Column="0" >
                                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Stretch">
@@ -418,7 +556,7 @@
                                             <RowDefinition Height="*"/>
                                             <RowDefinition Height="*"/>
                                             <RowDefinition Height="*"/>
-                                            
+
 
                                         </Grid.RowDefinitions>
                                         <Grid.ColumnDefinitions >
@@ -426,22 +564,23 @@
                                         </Grid.ColumnDefinitions>
                                         <Grid Grid.Row="0" Grid.Column="0" Background="#fff" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10" Width="Auto">
 
-                                            <Border Style="{StaticResource StackPanelLink}">                                               <StackPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                                            <Border Style="{StaticResource StackPanelLink}">
+                                                <StackPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
 
-                                                    
-                                            <StackPanel Margin="20">
+
+                                                    <StackPanel Margin="20">
                                                         <Image Source="/assets/1.png" HorizontalAlignment="Center" VerticalAlignment="Center" Width="40"  />
                                                     </StackPanel>
 
-                                                <Button Foreground="#fff" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Style="{StaticResource TextButton}" Width="120">
+                                                    <Button Foreground="#fff" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Style="{StaticResource TextButton}" Width="120">
                                                         <Label HorizontalAlignment="Center" Foreground="#fff"  FontSize="8" FontWeight="Bold">
                                                             <TextBlock>MOTOR <LineBreak/>DRIVES</TextBlock>
                                                         </Label>
 
-                                                    </Button>                                                     
+                                                    </Button>
                                                 </StackPanel>
                                             </Border>
-                                          
+
 
                                         </Grid>
 
@@ -494,7 +633,7 @@
                             <StackPanel Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                 <Label Content="Drop Device Here.."/>
                             </StackPanel>
-                            
+
                         </Grid>
                     </Border>
                 </TabItem>
@@ -553,7 +692,7 @@
 
                                         </Grid>
 
-                                        
+
 
                                     </Grid>
                                 </StackPanel>
@@ -585,7 +724,7 @@
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                           
+
 
                             <StackPanel Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
                                 <TextBlock Text="Device Area"/>
