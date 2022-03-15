@@ -4,12 +4,14 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:JupiterSoft.Pages"
+      xmlns:ui="http://schemas.modernwpf.com/2019"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="CreateTemplate">
 
     <Page.Resources>
         <ResourceDictionary>
+
             <Style TargetType="Button" x:Key="RunButton" >
                 <Setter Property="Background" Value="#0082ca" />
                 <Setter Property="TextBlock.TextAlignment" Value="Center" />
@@ -209,40 +211,31 @@
                 </Setter>
             </Style>
 
+
+
             <Style x:Key="BlueMovePointer" TargetType="Button">
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type Button}">
                             <Grid>
-                                <Path Stroke="{TemplateBinding BorderBrush}" StrokeThickness="1.5" StrokeStartLineCap="Square" StrokeEndLineCap="Square" StrokeLineJoin="Round" Fill="{TemplateBinding Background}" Data="M 0,0 H10,10 L15,10 H15,15 L16,10 h14,0 L35,0 h0,164.5 h0,0 V32,32 H35,35 L30,41 H15 L10,32 H0,0 V0,0 Z" />
+                                <Path Stroke="{TemplateBinding BorderBrush}" StrokeThickness="2" StrokeStartLineCap="Square" StrokeEndLineCap="Square" StrokeLineJoin="Round" Fill="{TemplateBinding Background}" Data="M 0,0 H10,10 L15,10 H15,15 L16,10 h14,0 L35,0 h0,164.5 h0,0 V32,32 H35,35 L30,41 H15 L10,32 H0,0 V0,0 Z" />
 
                                 <Grid>
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="92"/>
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
 
                                     <Label Grid.Column="0" Content="pointer-towards" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,-5,0,0" FontSize="{TemplateBinding FontSize}" FontWeight="{TemplateBinding FontWeight}" Foreground="{TemplateBinding Foreground}"/>
 
 
-                                    <ComboBox Grid.Column="1"  HorizontalAlignment="Center" VerticalAlignment="Center" Width="90" Height="25" Margin="0,-10,0,0" Background="Transparent" Foreground="#fff" Template="{DynamicResource BlueButtonCombo}">
-                                        <ComboBox.Resources>
-                                            <ControlTemplate x:Key="BlueButtonCombo" TargetType="{x:Type ComboBox}">
-                                                <Border CornerRadius="12" BorderBrush="#005c8f" BorderThickness="1" />
+                                    <ComboBox Grid.Column="1"  HorizontalAlignment="Center" VerticalAlignment="Center" Width="102" Height="25" Margin="0,-10,0,0" Background="#0082ca" Foreground="#fff" BorderBrush="#01598a" BorderThickness="1" Style="{DynamicResource BlueMoveComboBoxStyle}" FontSize="9" FontWeight="Normal">
+                                        <ComboBoxItem Content="mouse-pointer" IsSelected="True"></ComboBoxItem>
+                                        <ComboBoxItem Content="Right"></ComboBoxItem>
+
+                                    </ComboBox>
 
 
-
-                                            </ControlTemplate>
-                                        </ComboBox.Resources>
-                                            <ComboBoxItem Content="Coffie"></ComboBoxItem>
-                                            <ComboBoxItem Content="Tea"></ComboBoxItem>
-                                            <ComboBoxItem Content="Orange Juice"></ComboBoxItem>
-                                            <ComboBoxItem Content="Milk"></ComboBoxItem>
-                                            <ComboBoxItem Content="Iced Tea"></ComboBoxItem>
-                                            <ComboBoxItem Content="Mango Shake"></ComboBoxItem>
-                                        </ComboBox>
-                                    
-                                    
                                 </Grid>
 
 
@@ -252,6 +245,482 @@
                     </Setter.Value>
                 </Setter>
             </Style>
+            <Style x:Key="BlueMoveComboBoxStyle" TargetType="{x:Type ComboBox}">
+                <Setter Property="OverridesDefaultStyle" Value="True"/>
+                <Setter Property="Padding" Value="{DynamicResource ComboBoxPadding}"/>
+                <Setter Property="MaxDropDownHeight" Value="504"/>
+                <Setter Property="Foreground" Value="#fff"/>
+                <Setter Property="Background" Value="{DynamicResource ComboBoxBackground}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource ComboBoxBorderBrush}"/>
+                <Setter Property="BorderThickness" Value="{DynamicResource ComboBoxBorderThemeThickness}"/>
+                <Setter Property="KeyboardNavigation.TabNavigation" Value="Once"/>
+                <Setter Property="ui:ComboBoxHelper.TextBoxStyle">
+                    <Setter.Value>
+                        <Style TargetType="{x:Type TextBox}">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type TextBox}">
+                                        <Grid SnapsToDevicePixels="True">
+                                            <Border x:Name="BorderElement" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" CornerRadius="10"/>
+                                            <ScrollViewer x:Name="PART_ContentHost" HorizontalScrollBarVisibility="{TemplateBinding HorizontalScrollBarVisibility}" IsTabStop="False" IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}" Margin="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}" Style="{DynamicResource TextControlContentHostStyle}" VerticalScrollBarVisibility="{TemplateBinding VerticalScrollBarVisibility}"/>
+                                            <TextBlock x:Name="PlaceholderTextContentPresenter" Foreground="#fff" IsHitTestVisible="False" Margin="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}" TextAlignment="{TemplateBinding TextAlignment}" TextWrapping="{TemplateBinding TextWrapping}" Text="{TemplateBinding ui:ControlHelper.PlaceholderText}" Visibility="Collapsed"/>
+                                        </Grid>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsEnabled" Value="False">
+                                                <Setter Property="Background" TargetName="BorderElement" Value="{DynamicResource TextControlBackgroundDisabled}"/>
+                                                <Setter Property="BorderBrush" TargetName="BorderElement" Value="{DynamicResource TextControlBorderBrushDisabled}"/>
+                                                <Setter Property="Foreground" TargetName="PART_ContentHost" Value="#fff"/>
+                                                <Setter Property="Foreground" TargetName="PlaceholderTextContentPresenter" Value="#fff"/>
+                                            </Trigger>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Background" TargetName="BorderElement" Value="{DynamicResource TextControlBackgroundPointerOver}"/>
+                                                <Setter Property="BorderBrush" TargetName="BorderElement" Value="{DynamicResource TextControlBorderBrushPointerOver}"/>
+                                                <Setter Property="Foreground" TargetName="PART_ContentHost" Value="{DynamicResource TextControlForegroundPointerOver}"/>
+                                                <Setter Property="Foreground" TargetName="PlaceholderTextContentPresenter" Value="{DynamicResource TextControlPlaceholderForegroundPointerOver}"/>
+                                            </Trigger>
+                                            <Trigger Property="IsSelectionActive" Value="True">
+                                                <Setter Property="Background" TargetName="BorderElement" Value="{DynamicResource TextControlBackgroundFocused}"/>
+                                                <Setter Property="BorderBrush" TargetName="BorderElement" Value="{DynamicResource TextControlBorderBrushFocused}"/>
+                                                <Setter Property="BorderThickness" TargetName="BorderElement" Value="{DynamicResource TextControlBorderThemeThicknessFocused}"/>
+                                                <Setter Property="Foreground" Value="{DynamicResource TextControlForegroundFocused}"/>
+                                                <Setter Property="CaretBrush" Value="{DynamicResource TextControlForegroundFocused}"/>
+                                                <Setter Property="Foreground" TargetName="PlaceholderTextContentPresenter" Value="{DynamicResource TextControlPlaceholderForegroundFocused}"/>
+                                            </Trigger>
+                                            <Trigger Property="Text" Value="">
+                                                <Setter Property="Visibility" TargetName="PlaceholderTextContentPresenter" Value="Visible"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.BasedOn>
+                                <Style TargetType="{x:Type TextBox}">
+                                    <Setter Property="OverridesDefaultStyle" Value="True"/>
+                                    <Setter Property="Foreground" Value="#fff"/>
+                                    <Setter Property="Background" Value="{DynamicResource TextControlBackground}"/>
+                                    <Setter Property="BorderBrush" Value="{DynamicResource TextControlBorderBrush}"/>
+                                    <Setter Property="SelectionBrush" Value="{DynamicResource TextControlSelectionHighlightColor}"/>
+                                    <Setter Property="BorderThickness" Value="{DynamicResource TextControlBorderThemeThickness}"/>
+                                    <Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}"/>
+                                    <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}"/>
+                                    <Setter Property="HorizontalScrollBarVisibility" Value="Hidden"/>
+                                    <Setter Property="VerticalScrollBarVisibility" Value="Hidden"/>
+                                    <Setter Property="ScrollViewer.IsDeferredScrollingEnabled" Value="False"/>
+                                    <Setter Property="ScrollViewer.PanningMode" Value="VerticalFirst"/>
+                                    <Setter Property="VerticalContentAlignment" Value="Top"/>
+                                    <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                                    <Setter Property="MinHeight" Value="{DynamicResource TextControlThemeMinHeight}"/>
+                                    <Setter Property="MinWidth" Value="{DynamicResource TextControlThemeMinWidth}"/>
+                                    <Setter Property="Padding" Value="{DynamicResource TextControlThemePadding}"/>
+                                    <Setter Property="ui:ControlHelper.CornerRadius" Value="10"/>
+                                    <Setter Property="KeyboardNavigation.TabNavigation" Value="None"/>
+                                    <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                                    <Setter Property="AllowDrop" Value="True"/>
+                                    <Setter Property="Stylus.IsFlicksEnabled" Value="False"/>
+                                    <Setter Property="ContextMenu" Value="{DynamicResource TextControlContextMenu}"/>
+                                    <Setter Property="ui:TextContextMenu.UsingTextContextMenu" Value="True"/>
+                                    <Setter Property="ui:TextBoxHelper.IsEnabled" Value="True"/>
+                                    <Setter Property="Validation.ErrorTemplate" Value="{DynamicResource TextControlValidationErrorTemplate}"/>
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="{x:Type TextBox}">
+                                                <ControlTemplate.Resources>
+                                                    <Style x:Key="DeleteButtonStyle" TargetType="{x:Type Button}">
+                                                        <Setter Property="Template">
+                                                            <Setter.Value>
+                                                                <ControlTemplate TargetType="{x:Type Button}">
+                                                                    <ControlTemplate.Resources>
+                                                                        <StreamGeometry x:Key="Cancel">M10.888672,10L17.626953,16.748047 16.748047,17.626953 10,10.888672 3.251953,17.626953 2.373047,16.748047 9.111328,10 2.373047,3.251953 3.251953,2.373047 10,9.111328 16.748047,2.373047 17.626953,3.251953z</StreamGeometry>
+                                                                    </ControlTemplate.Resources>
+                                                                    <Border x:Name="ButtonLayoutGrid" BorderBrush="{DynamicResource TextControlButtonBorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{DynamicResource TextControlButtonBackground}" CornerRadius="10">
+                                                                        <ui:FontIconFallback x:Name="GlyphElement" Data="M10.888672,10L17.626953,16.748047 16.748047,17.626953 10,10.888672 3.251953,17.626953 2.373047,16.748047 9.111328,10 2.373047,3.251953 3.251953,2.373047 10,9.111328 16.748047,2.373047 17.626953,3.251953z" Foreground="{DynamicResource TextControlButtonForeground}" FontStyle="Normal" FontSize="12" FontFamily="{DynamicResource SymbolThemeFontFamily}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                    </Border>
+                                                                    <ControlTemplate.Triggers>
+                                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                                            <Setter Property="Background" TargetName="ButtonLayoutGrid" Value="{DynamicResource TextControlButtonBackgroundPointerOver}"/>
+                                                                            <Setter Property="BorderBrush" TargetName="ButtonLayoutGrid" Value="{DynamicResource TextControlButtonBorderBrushPointerOver}"/>
+                                                                            <Setter Property="Foreground" TargetName="GlyphElement" Value="{DynamicResource TextControlButtonForegroundPointerOver}"/>
+                                                                        </Trigger>
+                                                                        <Trigger Property="IsPressed" Value="True">
+                                                                            <Setter Property="Background" TargetName="ButtonLayoutGrid" Value="{DynamicResource TextControlButtonBackgroundPressed}"/>
+                                                                            <Setter Property="BorderBrush" TargetName="ButtonLayoutGrid" Value="{DynamicResource TextControlButtonBorderBrushPressed}"/>
+                                                                            <Setter Property="Foreground" TargetName="GlyphElement" Value="{DynamicResource TextControlButtonForegroundPressed}"/>
+                                                                        </Trigger>
+                                                                        <Trigger Property="IsEnabled" Value="False">
+                                                                            <Setter Property="Opacity" TargetName="ButtonLayoutGrid" Value="0"/>
+                                                                        </Trigger>
+                                                                    </ControlTemplate.Triggers>
+                                                                </ControlTemplate>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </Style>
+                                                </ControlTemplate.Resources>
+                                                <Grid SnapsToDevicePixels="True">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="*"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                    </Grid.RowDefinitions>
+                                                    <VisualStateManager.VisualStateGroups>
+                                                        <VisualStateGroup x:Name="ButtonStates">
+                                                            <VisualState x:Name="ButtonVisible">
+                                                                <Storyboard>
+                                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility" Storyboard.TargetName="DeleteButton">
+                                                                        <DiscreteObjectKeyFrame KeyTime="0">
+                                                                            <DiscreteObjectKeyFrame.Value>
+                                                                                <Visibility>Visible</Visibility>
+                                                                            </DiscreteObjectKeyFrame.Value>
+                                                                        </DiscreteObjectKeyFrame>
+                                                                    </ObjectAnimationUsingKeyFrames>
+                                                                </Storyboard>
+                                                            </VisualState>
+                                                            <VisualState x:Name="ButtonCollapsed"/>
+                                                        </VisualStateGroup>
+                                                    </VisualStateManager.VisualStateGroups>
+                                                    <ui:ContentPresenterEx x:Name="HeaderContentPresenter" Grid.ColumnSpan="2" ContentTemplate="{TemplateBinding ui:ControlHelper.HeaderTemplate}" Content="{TemplateBinding ui:ControlHelper.Header}" Grid.Column="0" Foreground="{DynamicResource TextControlHeaderForeground}" FontWeight="Normal" Margin="{DynamicResource TextBoxTopHeaderMargin}" Grid.Row="0" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" TextWrapping="Wrap" Visibility="{TemplateBinding ui:ControlHelper.HeaderVisibility}" VerticalAlignment="Top"/>
+                                                    <Border x:Name="BorderElement" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Grid.ColumnSpan="2" Grid.Column="0" CornerRadius="10" Validation.ErrorTemplate="{x:Null}" ui:ValidationHelper.IsTemplateValidationAdornerSite="True" MinWidth="{TemplateBinding MinWidth}" MinHeight="{TemplateBinding MinHeight}" Grid.Row="1" Grid.RowSpan="1" Validation.ValidationAdornerSiteFor="{x:Null}"/>
+                                                    <ScrollViewer x:Name="PART_ContentHost" Grid.Column="0" Focusable="False" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" HorizontalScrollBarVisibility="{TemplateBinding HorizontalScrollBarVisibility}" IsTabStop="False" IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}" Margin="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}" Grid.Row="1" Style="{DynamicResource TextControlContentHostStyle}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalScrollBarVisibility="{TemplateBinding VerticalScrollBarVisibility}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                                    <TextBlock x:Name="PlaceholderTextContentPresenter" Grid.ColumnSpan="2" Grid.Column="0" Foreground="{TemplateBinding ui:ControlHelper.PlaceholderForeground}" IsHitTestVisible="False" Margin="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}" Grid.Row="1" TextAlignment="{TemplateBinding TextAlignment}" TextWrapping="{TemplateBinding TextWrapping}" Text="{TemplateBinding ui:ControlHelper.PlaceholderText}"/>
+                                                    <Button x:Name="DeleteButton" BorderThickness="{TemplateBinding BorderThickness}" Grid.Column="1" Focusable="False" FontSize="{TemplateBinding FontSize}" IsTabStop="False" ui:TextBoxHelper.IsDeleteButton="True" MinWidth="34" Padding="{DynamicResource HelperButtonThemePadding}" Grid.Row="1" Visibility="Collapsed" VerticalAlignment="Stretch">
+                                                        <ui:ControlHelper.CornerRadius>
+                                                            <TemplateBinding Property="ui:ControlHelper.CornerRadius">
+                                                                <TemplateBinding.Converter>
+                                                                    <ui:CornerRadiusFilterConverter Filter="Right" Scale="1"/>
+                                                                </TemplateBinding.Converter>
+                                                            </TemplateBinding>
+                                                        </ui:ControlHelper.CornerRadius>
+                                                        <Button.Style>
+                                                            <Style TargetType="{x:Type Button}">
+                                                                <Setter Property="Template">
+                                                                    <Setter.Value>
+                                                                        <ControlTemplate TargetType="{x:Type Button}">
+                                                                            <ControlTemplate.Resources>
+                                                                                <StreamGeometry x:Key="Cancel">M10.888672,10L17.626953,16.748047 16.748047,17.626953 10,10.888672 3.251953,17.626953 2.373047,16.748047 9.111328,10 2.373047,3.251953 3.251953,2.373047 10,9.111328 16.748047,2.373047 17.626953,3.251953z</StreamGeometry>
+                                                                            </ControlTemplate.Resources>
+                                                                            <Border x:Name="ButtonLayoutGrid" BorderBrush="{DynamicResource TextControlButtonBorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{DynamicResource TextControlButtonBackground}" CornerRadius="10">
+                                                                                <ui:FontIconFallback x:Name="GlyphElement" Data="M10.888672,10L17.626953,16.748047 16.748047,17.626953 10,10.888672 3.251953,17.626953 2.373047,16.748047 9.111328,10 2.373047,3.251953 3.251953,2.373047 10,9.111328 16.748047,2.373047 17.626953,3.251953z" Foreground="{DynamicResource TextControlButtonForeground}" FontStyle="Normal" FontSize="12" FontFamily="{DynamicResource SymbolThemeFontFamily}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                            </Border>
+                                                                            <ControlTemplate.Triggers>
+                                                                                <Trigger Property="IsMouseOver" Value="True">
+                                                                                    <Setter Property="Background" TargetName="ButtonLayoutGrid" Value="{DynamicResource TextControlButtonBackgroundPointerOver}"/>
+                                                                                    <Setter Property="BorderBrush" TargetName="ButtonLayoutGrid" Value="{DynamicResource TextControlButtonBorderBrushPointerOver}"/>
+                                                                                    <Setter Property="Foreground" TargetName="GlyphElement" Value="{DynamicResource TextControlButtonForegroundPointerOver}"/>
+                                                                                </Trigger>
+                                                                                <Trigger Property="IsPressed" Value="True">
+                                                                                    <Setter Property="Background" TargetName="ButtonLayoutGrid" Value="{DynamicResource TextControlButtonBackgroundPressed}"/>
+                                                                                    <Setter Property="BorderBrush" TargetName="ButtonLayoutGrid" Value="{DynamicResource TextControlButtonBorderBrushPressed}"/>
+                                                                                    <Setter Property="Foreground" TargetName="GlyphElement" Value="{DynamicResource TextControlButtonForegroundPressed}"/>
+                                                                                </Trigger>
+                                                                                <Trigger Property="IsEnabled" Value="False">
+                                                                                    <Setter Property="Opacity" TargetName="ButtonLayoutGrid" Value="0"/>
+                                                                                </Trigger>
+                                                                            </ControlTemplate.Triggers>
+                                                                        </ControlTemplate>
+                                                                    </Setter.Value>
+                                                                </Setter>
+                                                            </Style>
+                                                        </Button.Style>
+                                                    </Button>
+                                                    <ContentPresenter x:Name="DescriptionPresenter" Grid.ColumnSpan="2" Content="{TemplateBinding ui:ControlHelper.Description}" Grid.Column="0" TextElement.Foreground="{DynamicResource SystemControlDescriptionTextForegroundBrush}" Grid.Row="2" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Visibility="{TemplateBinding ui:ControlHelper.DescriptionVisibility}"/>
+                                                </Grid>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="ui:ControlHelper.PlaceholderForeground" Value="{x:Null}">
+                                                        <Setter Property="Foreground" TargetName="PlaceholderTextContentPresenter" Value="{DynamicResource TextControlPlaceholderForeground}"/>
+                                                    </Trigger>
+                                                    <Trigger Property="ui:TextBoxHelper.HasText" Value="True">
+                                                        <Setter Property="Visibility" TargetName="PlaceholderTextContentPresenter" Value="Collapsed"/>
+                                                    </Trigger>
+                                                    <Trigger Property="IsEnabled" Value="False">
+                                                        <Setter Property="Foreground" TargetName="HeaderContentPresenter" Value="{DynamicResource TextControlHeaderForegroundDisabled}"/>
+                                                        <Setter Property="Background" Value="{DynamicResource TextControlBackgroundDisabled}"/>
+                                                        <Setter Property="BorderBrush" TargetName="BorderElement" Value="{DynamicResource TextControlBorderBrushDisabled}"/>
+                                                        <Setter Property="Foreground" Value="{DynamicResource TextControlForegroundDisabled}"/>
+                                                        <Setter Property="Foreground" TargetName="PlaceholderTextContentPresenter" Value="{DynamicResource TextControlPlaceholderForegroundDisabled}"/>
+                                                    </Trigger>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="BorderBrush" TargetName="BorderElement" Value="{DynamicResource TextControlBorderBrushPointerOver}"/>
+                                                        <Setter Property="Background" Value="{DynamicResource TextControlBackgroundPointerOver}"/>
+                                                        <Setter Property="Foreground" TargetName="PlaceholderTextContentPresenter" Value="{DynamicResource TextControlPlaceholderForegroundPointerOver}"/>
+                                                        <Setter Property="Foreground" Value="{DynamicResource TextControlForegroundPointerOver}"/>
+                                                    </Trigger>
+                                                    <Trigger Property="IsSelectionActive" Value="True">
+                                                        <Setter Property="Foreground" TargetName="PlaceholderTextContentPresenter" Value="{DynamicResource TextControlPlaceholderForegroundFocused}"/>
+                                                        <Setter Property="Background" Value="{DynamicResource TextControlBackgroundFocused}"/>
+                                                        <Setter Property="BorderBrush" TargetName="BorderElement" Value="{DynamicResource TextControlBorderBrushFocused}"/>
+                                                        <Setter Property="BorderThickness" TargetName="BorderElement" Value="{DynamicResource TextControlBorderThemeThicknessFocused}"/>
+                                                        <Setter Property="Foreground" Value="{DynamicResource TextControlForegroundFocused}"/>
+                                                    </Trigger>
+                                                    <MultiTrigger>
+                                                        <MultiTrigger.Conditions>
+                                                            <Condition Property="IsKeyboardFocused" Value="True"/>
+                                                            <Condition Property="ui:TextBoxHelper.HasText" Value="True"/>
+                                                            <Condition Property="IsReadOnly" Value="False"/>
+                                                            <Condition Property="AcceptsReturn" Value="False"/>
+                                                            <Condition Property="TextWrapping" Value="NoWrap"/>
+                                                        </MultiTrigger.Conditions>
+                                                        <Setter Property="ui:TextBoxHelper.IsDeleteButtonVisible" Value="True"/>
+                                                    </MultiTrigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </Style.BasedOn>
+                        </Style>
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>
+                <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
+                <Setter Property="ScrollViewer.IsDeferredScrollingEnabled" Value="False"/>
+                <Setter Property="ScrollViewer.CanContentScroll" Value="True"/>
+                <Setter Property="ScrollViewer.PanningMode" Value="Both"/>
+                <Setter Property="Stylus.IsFlicksEnabled" Value="False"/>
+                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                <Setter Property="HorizontalAlignment" Value="Left"/>
+                <Setter Property="VerticalAlignment" Value="Top"/>
+                <Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}"/>
+                <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}"/>
+                <Setter Property="ui:ControlHelper.PlaceholderForeground" Value="{DynamicResource ComboBoxPlaceHolderForeground}"/>
+                <Setter Property="ui:FocusVisualHelper.UseSystemFocusVisuals" Value="{DynamicResource IsApplicationFocusVisualKindReveal}"/>
+                <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}"/>
+                <Setter Property="ui:ComboBoxHelper.KeepInteriorCornersSquare" Value="True"/>
+                <Setter Property="ui:ControlHelper.CornerRadius" Value="10"/>
+                <Setter Property="Validation.ErrorTemplate" Value="{DynamicResource TextControlValidationErrorTemplate}"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type ComboBox}">
+                            <ControlTemplate.Resources>
+                                <StreamGeometry x:Key="ChevronDown">M18.935547,4.560547L19.814453,5.439453 10,15.253906 0.185547,5.439453 1.064453,4.560547 10,13.496094z</StreamGeometry>
+                            </ControlTemplate.Resources>
+                            <Grid x:Name="LayoutRoot" SnapsToDevicePixels="True">
+                                
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="25"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <ui:ContentPresenterEx x:Name="HeaderContentPresenter" Grid.ColumnSpan="2" ContentTemplate="{TemplateBinding ui:ControlHelper.HeaderTemplate}" Content="{TemplateBinding ui:ControlHelper.Header}" Grid.Column="0" Foreground="{DynamicResource ComboBoxHeaderForeground}" FontWeight="{DynamicResource ComboBoxHeaderThemeFontWeight}" FlowDirection="{TemplateBinding FlowDirection}" Margin="{DynamicResource ComboBoxTopHeaderMargin}" Grid.Row="0" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" TextWrapping="Wrap" Visibility="{TemplateBinding ui:ControlHelper.HeaderVisibility}" VerticalAlignment="Top"/>
+                                <Border x:Name="Background" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Grid.ColumnSpan="2" Grid.Column="0" CornerRadius="10" Validation.ErrorTemplate="{x:Null}" ui:ValidationHelper.IsTemplateValidationAdornerSite="True" MinWidth="{DynamicResource ComboBoxThemeMinWidth}" Grid.Row="1" Validation.ValidationAdornerSiteFor="{x:Null}"/>
+                                <Border x:Name="HighlightBackground" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Grid.ColumnSpan="2" Grid.Column="0" CornerRadius="10" Opacity="0" Grid.Row="1"/>
+                                <ContentPresenter x:Name="ContentPresenter" ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}" Content="{TemplateBinding SelectionBoxItem}" Grid.Column="0" ContentStringFormat="{TemplateBinding SelectionBoxItemStringFormat}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" Grid.Row="1" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                <TextBlock x:Name="PlaceholderTextBlock" Grid.Column="0" Foreground="{TemplateBinding ui:ControlHelper.PlaceholderForeground}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" IsHitTestVisible="False" Margin="{TemplateBinding Padding}" Padding="0,0,32,0" Grid.Row="1" Text="{TemplateBinding ui:ControlHelper.PlaceholderText}" Visibility="Collapsed" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                <ToggleButton x:Name="ToggleButton" Background="Transparent" Grid.ColumnSpan="2" Grid.Column="0" IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}" Grid.Row="1">
+                                    <ToggleButton.Style>
+                                        <Style TargetType="{x:Type ToggleButton}">
+                                            <Setter Property="OverridesDefaultStyle" Value="True"/>
+                                            <Setter Property="IsTabStop" Value="False"/>
+                                            <Setter Property="Focusable" Value="False"/>
+                                            <Setter Property="ClickMode" Value="Release"/>
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="{x:Type ToggleButton}">
+                                                        <Grid Background="{TemplateBinding Background}" SnapsToDevicePixels="True"/>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </ToggleButton.Style>
+                                </ToggleButton>
+                                <TextBox x:Name="PART_EditableTextBox" BorderBrush="Transparent" Grid.ColumnSpan="2" Grid.Column="0" ui:ControlHelper.CornerRadius="10" HorizontalAlignment="Stretch" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" IsReadOnly="{TemplateBinding IsReadOnly}" Margin="0" AutomationProperties.Name="{TemplateBinding AutomationProperties.Name}" ui:ControlHelper.PlaceholderForeground="{TemplateBinding ui:ControlHelper.PlaceholderForeground}" Padding="{DynamicResource ComboBoxEditableTextPadding}" ui:ControlHelper.PlaceholderText="{TemplateBinding ui:ControlHelper.PlaceholderText}" Grid.Row="1" Style="{TemplateBinding ui:ComboBoxHelper.TextBoxStyle}" Visibility="Collapsed" VerticalAlignment="Stretch" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                <ToggleButton x:Name="DropDownOverlay" Background="Transparent" Grid.Column="1" HorizontalAlignment="Right" IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}" Margin="0,1,1,1" Grid.Row="1" Visibility="Collapsed" Width="30">
+                                    <ToggleButton.Style>
+                                        <Style TargetType="{x:Type ToggleButton}">
+                                            <Setter Property="OverridesDefaultStyle" Value="True"/>
+                                            <Setter Property="IsTabStop" Value="False"/>
+                                            <Setter Property="Focusable" Value="False"/>
+                                            <Setter Property="ClickMode" Value="Release"/>
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="{x:Type ToggleButton}">
+                                                        <Grid Background="{TemplateBinding Background}" SnapsToDevicePixels="True"/>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </ToggleButton.Style>
+                                </ToggleButton>
+                                <ui:FontIconFallback x:Name="DropDownGlyph" Grid.Column="1" Data="M18.935547,4.560547L19.814453,5.439453 10,15.253906 0.185547,5.439453 1.064453,4.560547 10,13.496094z" Foreground="#fff" FontSize="12" FontFamily="{DynamicResource SymbolThemeFontFamily}" HorizontalAlignment="Right" IsHitTestVisible="False" Margin="0,0,10,0" MinHeight="{DynamicResource ComboBoxMinHeight}" Grid.Row="1" VerticalAlignment="Center"/>
+                                <ContentPresenter x:Name="DescriptionPresenter" Grid.ColumnSpan="2" Content="{TemplateBinding ui:ControlHelper.Description}" Grid.Column="0" TextElement.Foreground="{DynamicResource SystemControlDescriptionTextForegroundBrush}" Grid.Row="2" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Visibility="{TemplateBinding ui:ControlHelper.DescriptionVisibility}"/>
+                                <Popup x:Name="PART_Popup" AllowsTransparency="True" IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}" PopupAnimation="None" Placement="Bottom">
+                                    <Popup.PlacementRectangle>
+                                        <MultiBinding UpdateSourceTrigger="Default">
+                                            <MultiBinding.Converter>
+                                                <ui:PlacementRectangleConverter Margin="0,-5"/>
+                                            </MultiBinding.Converter>
+                                            <Binding ElementName="Background" Path="ActualWidth"/>
+                                            <Binding ElementName="Background" Path="ActualHeight"/>
+                                        </MultiBinding>
+                                    </Popup.PlacementRectangle>
+                                    <ui:ThemeShadowChrome x:Name="Show" CornerRadius="10" IsShadowEnabled="{DynamicResource {x:Static SystemParameters.DropShadowKey}}" MaxHeight="{TemplateBinding MaxDropDownHeight}" Margin="28.8,28.8,28.8,41.6" MinWidth="{Binding ActualWidth, ElementName=LayoutRoot}">
+                                        
+                                        <Border x:Name="PopupBorder" Background="{DynamicResource ComboBoxDropDownBackground}" CornerRadius="0" HorizontalAlignment="Stretch">
+                                            <Border BorderBrush="{DynamicResource ComboBoxDropDownBorderBrush}" BorderThickness="{DynamicResource ComboBoxDropdownBorderThickness}" CornerRadius="0" Padding="{DynamicResource ComboBoxDropdownBorderPadding}" >
+                                                <ScrollViewer x:Name="ScrollViewer" Foreground="{DynamicResource ComboBoxDropDownForeground}" HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}" IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}" VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}">
+                                                    <ItemsPresenter KeyboardNavigation.DirectionalNavigation="Contained" Margin="{DynamicResource ComboBoxDropdownContentMargin}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                                                </ScrollViewer>
+                                            </Border>
+                                        </Border>
+                                    </ui:ThemeShadowChrome>
+                                </Popup>
+                            </Grid>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" TargetName="Background" Value="#0082ca"/>
+                                    <Setter Property="BorderBrush" TargetName="Background" Value="#01598a"/>
+                                    <Setter Property="TextElement.Foreground" TargetName="ContentPresenter" Value="#fff"/>
+                                    <Setter Property="Foreground" TargetName="PlaceholderTextBlock" Value="#fff"/>
+                                </Trigger>
+                                <Trigger Property="IsPressed" SourceName="ToggleButton" Value="True">
+                                    <Setter Property="Background" TargetName="Background" Value="#0082ca"/>
+                                    <Setter Property="BorderBrush" TargetName="Background" Value="#01598a"/>
+                                    <Setter Property="TextElement.Foreground" TargetName="ContentPresenter" Value="#fff"/>
+                                    <Setter Property="Foreground" TargetName="PlaceholderTextBlock" Value="#fff"/>
+                                </Trigger>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="Background" TargetName="Background" Value="#0082ca"/>
+                                    <Setter Property="BorderBrush" TargetName="Background" Value="#01598a"/>
+                                    <Setter Property="Foreground" TargetName="HeaderContentPresenter" Value="#0082ca"/>
+                                    <Setter Property="TextElement.Foreground" TargetName="ContentPresenter" Value="#fff"/>
+                                    <Setter Property="Foreground" TargetName="PlaceholderTextBlock" Value="#fff"/>
+                                    <Setter Property="Foreground" TargetName="DropDownGlyph" Value="{DynamicResource ComboBoxDropDownGlyphForegroundDisabled}"/>
+                                </Trigger>
+                                <Trigger Property="ui:FocusVisualHelper.ShowFocusVisual" Value="True">
+                                    <Setter Property="Opacity" TargetName="HighlightBackground" Value="1"/>
+                                    <Setter Property="Background" TargetName="HighlightBackground" Value="{DynamicResource ComboBoxBackgroundFocused}"/>
+                                    <Setter Property="BorderBrush" TargetName="HighlightBackground" Value="{DynamicResource ComboBoxBackgroundBorderBrushFocused}"/>
+                                    <Setter Property="TextElement.Foreground" TargetName="ContentPresenter" Value="{DynamicResource ComboBoxForegroundFocused}"/>
+                                    <Setter Property="Foreground" TargetName="PlaceholderTextBlock" Value="{DynamicResource ComboBoxPlaceHolderForegroundFocused}"/>
+                                    <Setter Property="Foreground" TargetName="DropDownGlyph" Value="{DynamicResource ComboBoxDropDownGlyphForegroundFocused}"/>
+                                </Trigger>
+                                <MultiTrigger>
+                                    <MultiTrigger.Conditions>
+                                        <Condition Property="ui:FocusVisualHelper.ShowFocusVisual" Value="True"/>
+                                        <Condition Property="IsPressed" SourceName="ToggleButton" Value="True"/>
+                                    </MultiTrigger.Conditions>
+                                    <Setter Property="Opacity" TargetName="HighlightBackground" Value="1"/>
+                                    <Setter Property="TextElement.Foreground" TargetName="ContentPresenter" Value="{DynamicResource ComboBoxForegroundFocusedPressed}"/>
+                                    <Setter Property="Foreground" TargetName="PlaceholderTextBlock" Value="{DynamicResource ComboBoxPlaceHolderForegroundFocusedPressed}"/>
+                                    <Setter Property="Foreground" TargetName="DropDownGlyph" Value="{DynamicResource ComboBoxDropDownGlyphForegroundFocusedPressed}"/>
+                                </MultiTrigger>
+                                <MultiTrigger>
+                                    <MultiTrigger.Conditions>
+                                        <Condition Property="ui:FocusVisualHelper.ShowFocusVisual" Value="True"/>
+                                        <Condition Property="IsDropDownOpen" Value="True"/>
+                                    </MultiTrigger.Conditions>
+                                    <Setter Property="Visibility" TargetName="PopupBorder" Value="Visible"/>
+                                </MultiTrigger>
+                                <Trigger Property="IsEditable" Value="True">
+                                    <Setter Property="Visibility" TargetName="ContentPresenter" Value="Collapsed"/>
+                                    <Setter Property="Visibility" TargetName="ToggleButton" Value="Collapsed"/>
+                                    <Setter Property="Visibility" TargetName="PART_EditableTextBox" Value="Visible"/>
+                                    <Setter Property="Visibility" TargetName="DropDownOverlay" Value="Visible"/>
+                                </Trigger>
+                                <MultiTrigger>
+                                    <MultiTrigger.Conditions>
+                                        <Condition Property="IsEditable" Value="False"/>
+                                        <Condition Property="SelectedIndex" Value="-1"/>
+                                    </MultiTrigger.Conditions>
+                                    <Setter Property="Visibility" TargetName="PlaceholderTextBlock" Value="Visible"/>
+                                </MultiTrigger>
+                                <MultiTrigger>
+                                    <MultiTrigger.Conditions>
+                                        <Condition Property="IsSelectionActive" SourceName="PART_EditableTextBox" Value="True"/>
+                                        <Condition Property="IsMouseOver" SourceName="DropDownOverlay" Value="False"/>
+                                        <Condition Property="IsPressed" SourceName="DropDownOverlay" Value="False"/>
+                                    </MultiTrigger.Conditions>
+                                    <Setter Property="Foreground" TargetName="DropDownGlyph" Value="{DynamicResource ComboBoxEditableDropDownGlyphForeground}"/>
+                                    <Setter Property="Margin" TargetName="DropDownOverlay" Value="0,2,2,2"/>
+                                </MultiTrigger>
+                                <MultiTrigger>
+                                    <MultiTrigger.Conditions>
+                                        <Condition Property="IsSelectionActive" SourceName="PART_EditableTextBox" Value="True"/>
+                                        <Condition Property="IsMouseOver" SourceName="DropDownOverlay" Value="True"/>
+                                    </MultiTrigger.Conditions>
+                                    <Setter Property="Foreground" TargetName="DropDownGlyph" Value="{DynamicResource ComboBoxEditableDropDownGlyphForeground}"/>
+                                    <Setter Property="Background" TargetName="DropDownOverlay" Value="{DynamicResource ComboBoxFocusedDropDownBackgroundPointerOver}"/>
+                                    <Setter Property="Margin" TargetName="DropDownOverlay" Value="0,2,2,2"/>
+                                </MultiTrigger>
+                                <MultiTrigger>
+                                    <MultiTrigger.Conditions>
+                                        <Condition Property="IsSelectionActive" SourceName="PART_EditableTextBox" Value="True"/>
+                                        <Condition Property="IsPressed" SourceName="DropDownOverlay" Value="True"/>
+                                    </MultiTrigger.Conditions>
+                                    <Setter Property="Foreground" TargetName="DropDownGlyph" Value="{DynamicResource ComboBoxEditableDropDownGlyphForeground}"/>
+                                    <Setter Property="Background" TargetName="DropDownOverlay" Value="{DynamicResource ComboBoxFocusedDropDownBackgroundPointerPressed}"/>
+                                    <Setter Property="Margin" TargetName="DropDownOverlay" Value="0,2,2,2"/>
+                                </MultiTrigger>
+                                <MultiTrigger>
+                                    <MultiTrigger.Conditions>
+                                        <Condition Property="IsSelectionActive" SourceName="PART_EditableTextBox" Value="False"/>
+                                        <Condition Property="IsMouseOver" SourceName="DropDownOverlay" Value="True"/>
+                                    </MultiTrigger.Conditions>
+                                    <Setter Property="Background" TargetName="DropDownOverlay" Value="{DynamicResource ComboBoxDropDownBackgroundPointerOver}"/>
+                                </MultiTrigger>
+                                <MultiTrigger>
+                                    <MultiTrigger.Conditions>
+                                        <Condition Property="IsSelectionActive" SourceName="PART_EditableTextBox" Value="False"/>
+                                        <Condition Property="IsPressed" SourceName="DropDownOverlay" Value="True"/>
+                                    </MultiTrigger.Conditions>
+                                    <Setter Property="Background" TargetName="DropDownOverlay" Value="{DynamicResource ComboBoxDropDownBackgroundPointerPressed}"/>
+                                </MultiTrigger>
+                                <MultiTrigger>
+                                    <MultiTrigger.Conditions>
+                                        <Condition Property="IsGrouping" Value="True"/>
+                                        <Condition Property="VirtualizingPanel.IsVirtualizingWhenGrouping" Value="False"/>
+                                    </MultiTrigger.Conditions>
+                                    <Setter Property="ScrollViewer.CanContentScroll" Value="False"/>
+                                </MultiTrigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style x:Key="BlueMoveRotation" TargetType="Button">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Grid>
+                                <Path Stroke="{TemplateBinding BorderBrush}" StrokeThickness="2" StrokeStartLineCap="Square" StrokeEndLineCap="Square" StrokeLineJoin="Round" Fill="{TemplateBinding Background}" Data="M 0,0 H10,10 L15,10 H15,15 L16,10 h14,0 L35,0 h0,139 h0,0 V32,32 H35,35 L30,41 H15 L10,32 H0,0 V0,0 Z" />
+
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="92"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <Label Grid.Column="0" Content="pointer-towards" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,-5,0,0" FontSize="{TemplateBinding FontSize}" FontWeight="{TemplateBinding FontWeight}" Foreground="{TemplateBinding Foreground}"/>
+
+
+                                    <ComboBox Grid.Column="1"  HorizontalAlignment="Center" VerticalAlignment="Center" Width="75" Height="25" Margin="0,-10,0,0" Background="#0082ca" Foreground="#fff" BorderBrush="#01598a" BorderThickness="1" Style="{DynamicResource BlueMoveComboBoxStyle}" FontSize="9" FontWeight="Normal">
+                                        <ComboBoxItem Content="left-right" IsSelected="True"></ComboBoxItem>
+                                        <ComboBoxItem Content="right-left"></ComboBoxItem>
+                                        <ComboBoxItem Content="top-bottom"></ComboBoxItem>
+                                        <ComboBoxItem Content="bottom-top"></ComboBoxItem>
+
+                                    </ComboBox>
+
+
+                                </Grid>
+
+
+                            </Grid>
+
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+
 
             <!--Move Button Style End-->
 
@@ -435,15 +904,22 @@
                                         <StackPanel x:Name="ButtonGridArea1" Grid.Row="0" HorizontalAlignment="Center" Margin="10"  Width="250" AllowDrop="True">
 
 
-                                            <Button Margin="12,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="#2a6a8e" Background="#0082ca" BorderThickness="2" FontSize="10" Foreground="#fff" FontWeight="Bold" FontFamily="Georgia, serif;" Content="10"  Style="{StaticResource BlueMove10}"  Width="121" Height="42" />
+                                            <Button Margin="12,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="#2a6a8e" Background="#0082ca" BorderThickness="2" FontSize="10" Foreground="#fff" FontWeight="Bold" FontFamily="Georgia, serif;" Content="10"  Style="{StaticResource BlueMove10}"  Width="121" Height="42" PreviewMouseMove="Button_PreviewMouseMove" IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}" Tag=""/>
 
 
-                                            <Button Margin="12,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="#2a6a8e" Background="#0082ca" BorderThickness="2" FontSize="10" Foreground="#fff" FontWeight="Bold" FontFamily="Georgia, serif;" Content="15" Width="150" Height="42" Style="{StaticResource BlueMoveRight}"/>
+                                            <Button Margin="12,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="#2a6a8e" Background="#0082ca" BorderThickness="2" FontSize="10" Foreground="#fff" FontWeight="Bold" FontFamily="Georgia, serif;" Content="15" Width="150" Height="42" Style="{StaticResource BlueMoveRight}" PreviewMouseMove="Button_PreviewMouseMove" IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}"/>
 
-                                            <Button Margin="12,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="#2a6a8e" Background="#0082ca" BorderThickness="2" FontSize="10" Foreground="#fff" FontWeight="Bold" FontFamily="Georgia, serif;" Content="15" Width="150" Height="42" Style="{StaticResource BlueMoveLeft}"/>
+                                            <Button Margin="12,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="#2a6a8e" Background="#0082ca" BorderThickness="2" FontSize="10" Foreground="#fff" FontWeight="Bold" FontFamily="Georgia, serif;" Content="15" Width="150" Height="42" Style="{StaticResource BlueMoveLeft}" PreviewMouseMove="Button_PreviewMouseMove" IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}"/>
 
 
-                                            <Button Margin="12,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="#2a6a8e" Background="#0082ca" BorderThickness="2" FontSize="10" Foreground="#fff" FontWeight="Bold" FontFamily="Georgia, serif;" Content="15" Width="200" Height="42" Style="{StaticResource BlueMovePointer}"/>
+                                            <Button Margin="12,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="#2a6a8e" Background="#0082ca" BorderThickness="2" FontSize="10" Foreground="#fff" FontWeight="Bold" FontFamily="Georgia, serif;" Width="200" Height="42" Style="{StaticResource BlueMovePointer}" PreviewMouseMove="Button_PreviewMouseMove" IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}"/>
+
+                                            <Button Margin="12,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="#2a6a8e" Background="#0082ca" BorderThickness="2" FontSize="10" Foreground="#fff" FontWeight="Bold" FontFamily="Georgia, serif;"  Width="175" Height="42" Style="{StaticResource BlueMoveRotation}" PreviewMouseMove="Button_PreviewMouseMove" IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}"/>
+
+
+
+
+
 
 
                                         </StackPanel>
@@ -520,10 +996,11 @@
                                 </ScrollViewer>
 
                             </Border>
-                            <StackPanel Grid.Row="0" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Orientation="Vertical" Margin="10" Cursor="Arrow">
+                            <StackPanel Grid.Row="0" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Orientation="Vertical" Margin="2" Cursor="Arrow">
+                                <Button BorderBrush="#f7353f" BorderThickness="1" Background="Red" Foreground="#fff" Content="Reset" Click="Reset_Click" HorizontalAlignment="Right" Margin="0,5,5,5" Cursor="Hand"/>
                                 <Border HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" BorderBrush="#eee" CornerRadius="5" BorderThickness="2" Cursor="Arrow">
                                     <ScrollViewer VerticalScrollBarVisibility="Auto" Height="500" Cursor="Hand">
-                                        <Canvas HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="800" Cursor="Hand" AllowDrop="True" Background="Transparent" Drop="Canvas_Drop" x:Name="AcceptDrop" DragEnter="AcceptDrop_DragEnter" DragOver="AcceptDrop_DragOver" DragLeave="AcceptDrop_DragLeave" IsHitTestVisible="False" PreviewDrop="AcceptDrop_PreviewDrop" GiveFeedback="AcceptDrop_GiveFeedback">
+                                        <Canvas x:Name="ReceiveDrop" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="700" Cursor="Hand" AllowDrop="True" Background="Transparent" Drop="Canvas_Drop" DragOver="Canvas_DragOver" DragLeave="Canvas_DragLeave" DragEnter="ReceiveDrop_DragEnter">
 
                                         </Canvas>
                                     </ScrollViewer>

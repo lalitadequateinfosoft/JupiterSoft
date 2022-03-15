@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
@@ -21,6 +22,17 @@ namespace JupiterSoft.Pages
     public partial class CreateTemplate : Page
     {
         BrushConverter bc;
+        public static readonly DependencyProperty IsChildHitTestVisibleProperty =
+            DependencyProperty.Register("IsChildHitTestVisible", typeof(bool), typeof(MainWindow),
+                new PropertyMetadata(true));
+
+        UIElement dragObject = null;
+        Point Offset;
+        public bool IsChildHitTestVisible
+        {
+            get { return (bool)GetValue(IsChildHitTestVisibleProperty); }
+            set { SetValue(IsChildHitTestVisibleProperty, value); }
+        }
         public CreateTemplate()
         {
             bc = new BrushConverter();
@@ -112,15 +124,7 @@ namespace JupiterSoft.Pages
             }
         }
 
-        private void Button_MouseMove(object sender, MouseEventArgs e)
-        {
-            UIElement element = sender as UIElement;
-            if(e.LeftButton==MouseButtonState.Pressed)
-            {
-                DragDrop.DoDragDrop(element, new DataObject(DataFormats.Serializable, element), DragDropEffects.Copy);
-            }
-        }
-
+        
         private void ButtonGrid_MouseLeave(object sender, MouseEventArgs e)
         {
             buttonGrid1.ClearValue(UIElement.OpacityProperty);
@@ -216,55 +220,74 @@ namespace JupiterSoft.Pages
             }
         }
 
-        private void Canvas_Drop(object sender, DragEventArgs e)
+        private void Button_PreviewMouseMove(object sender, MouseEventArgs e)
         {
-            
-            object data=e.Data.GetData(DataFormats.Serializable);
-            if(data is UIElement element)
+            //UIElement copy = XamlReader.Parse(XamlWriter.Save(sender)) as UIElement;
+            //UIElement copy = new UIElement();
+            // copy = XamlReader.Parse(XamlWriter.Save(sender)) as UIElement;
+            if (e.LeftButton == MouseButtonState.Pressed)
             {
-                Point DropPosition = e.GetPosition(AcceptDrop);
-                Canvas.SetLeft(element, DropPosition.X);
-                Canvas.SetTop(element, DropPosition.Y);
-                Canvas.SetRight(element, DropPosition.X);
-                Canvas.SetBottom(element, DropPosition.Y);
-                AcceptDrop.Children.Add(element);
+                IsChildHitTestVisible = false;
+                DataObject dragData = new DataObject();
+                dragData.SetData(DataFormats.StringFormat, sender as UIElement);
+                DragDrop.DoDragDrop(this, dragData, DragDropEffects.Copy);
+                IsChildHitTestVisible = true;
+
+
+                //IsChildHitTestVisible = false;
+                //DragDrop.DoDragDrop(copy, new DataObject(DataFormats.Serializable, copy), DragDropEffects.Copy);
+                //IsChildHitTestVisible = true;
+
             }
         }
 
-        private void Button_GiveFeedback(object sender, GiveFeedbackEventArgs e)
-        {
-
-        }
-
-        private void AcceptDrop_DragEnter(object sender, DragEventArgs e)
+        private void Canvas_Drop(object sender, DragEventArgs e)
         {
             object data = e.Data.GetData(DataFormats.Serializable);
+            if (data is UIElement element)
+            {
+                //var btn = element as Button;
+                //btn.PreviewMouseDown += Ch_PreviewMouseDown;
+                Point dropPosition = e.GetPosition(ReceiveDrop);
+                Canvas.SetLeft(element, dropPosition.X);
+                Canvas.SetTop(element, dropPosition.Y);
+
+                try
+                {
+                    ReceiveDrop.Children.Add(element);
+                }
+                catch
+                {
+
+                }
+            }
+            e.Handled = true;
         }
 
-        private void AcceptDrop_DragOver(object sender, DragEventArgs e)
+        private void Canvas_DragOver(object sender, DragEventArgs e)
         {
-            e.Effects = DragDropEffects.Copy;
-            object data = e.Data.GetData(DataFormats.Serializable);
+            e.Handled = true;
         }
 
-        private void AcceptDrop_DragLeave(object sender, DragEventArgs e)
+        private void Canvas_DragLeave(object sender, DragEventArgs e)
         {
-
+            e.Effects = DragDropEffects.None;
+            e.Handled = true;
         }
 
-        private void AcceptDrop_PreviewDrop(object sender, DragEventArgs e)
+        private void Reset_Click(object sender, RoutedEventArgs e)
         {
-
+            ReceiveDrop.Children.Clear();
         }
 
-        private void MoveButton_QueryContinueDrag(object sender, QueryContinueDragEventArgs e)
+        private void ReceiveDrop_DragEnter(object sender, DragEventArgs e)
         {
+            if (e.Data.GetDataPresent(DataFormats.Text))
 
-        }
-
-        private void AcceptDrop_GiveFeedback(object sender, GiveFeedbackEventArgs e)
-        {
-
+                e.Effects = DragDropEffects.Copy;
+            else
+                e.Effects = DragDropEffects.None;
+            e.Handled = true;
         }
     }
 }
