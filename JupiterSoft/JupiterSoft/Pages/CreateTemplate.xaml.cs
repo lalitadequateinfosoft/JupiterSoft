@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JupiterSoft.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,28 +22,39 @@ namespace JupiterSoft.Pages
     /// </summary>
     public partial class CreateTemplate : Page
     {
-        BrushConverter bc;
+        //Custom Property Declaration.
         public static readonly DependencyProperty IsChildHitTestVisibleProperty =
-            DependencyProperty.Register("IsChildHitTestVisible", typeof(bool), typeof(MainWindow),
+            DependencyProperty.Register("IsChildHitTestVisible", typeof(bool), typeof(CreateTemplate),
                 new PropertyMetadata(true));
 
-        UIElement dragObject = null;
-        Point Offset;
         public bool IsChildHitTestVisible
         {
             get { return (bool)GetValue(IsChildHitTestVisibleProperty); }
             set { SetValue(IsChildHitTestVisibleProperty, value); }
         }
+
+
+        //Custom Properties Declaration End.
+
+
+        //Custom Variables
+        UIElement dragObject = null;
+        Point Offset;
+        BrushConverter bc;
+        ElementModel UElement;
+
         public CreateTemplate()
         {
             bc = new BrushConverter();
+            this.UElement = ElementOp.GetElementModel();
             InitializeComponent();
+            this.DataContext = this.UElement;
         }
 
         private void ButtonGrid_MouseEnter(object sender, MouseEventArgs e)
         {
             var sArea = sender as StackPanel;
-            if(sArea.Name== "ButtonGridArea1")
+            if (sArea.Name == "ButtonGridArea1")
             {
                 buttonGrid1.Opacity = 0.5;
                 buttonGrid2.ClearValue(UIElement.OpacityProperty);
@@ -52,7 +64,7 @@ namespace JupiterSoft.Pages
                 buttonGrid6.ClearValue(UIElement.OpacityProperty);
                 buttonGrid7.ClearValue(UIElement.OpacityProperty);
             }
-            else if(sArea.Name== "ButtonGridArea2")
+            else if (sArea.Name == "ButtonGridArea2")
             {
                 buttonGrid1.ClearValue(UIElement.OpacityProperty);
                 buttonGrid2.Opacity = 0.5;
@@ -124,7 +136,7 @@ namespace JupiterSoft.Pages
             }
         }
 
-        
+
         private void ButtonGrid_MouseLeave(object sender, MouseEventArgs e)
         {
             buttonGrid1.ClearValue(UIElement.OpacityProperty);
@@ -134,16 +146,16 @@ namespace JupiterSoft.Pages
             buttonGrid5.ClearValue(UIElement.OpacityProperty);
             buttonGrid6.ClearValue(UIElement.OpacityProperty);
             buttonGrid7.ClearValue(UIElement.OpacityProperty);
-            
+
         }
 
         private void Border_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            var cSender=sender as Border;
+            var cSender = sender as Border;
             UIElement element = VisualTreeHelper.GetParent(cSender) as UIElement;
             string pName = (element as Grid).Name;
             element.Opacity = 0.5;
-            if (pName== "buttonGrid1")
+            if (pName == "buttonGrid1")
             {
                 ButtonGridArea1.BringIntoView();
                 buttonGrid2.ClearValue(UIElement.OpacityProperty);
@@ -153,7 +165,7 @@ namespace JupiterSoft.Pages
                 buttonGrid6.ClearValue(UIElement.OpacityProperty);
                 buttonGrid7.ClearValue(UIElement.OpacityProperty);
             }
-            else if(pName== "buttonGrid2")
+            else if (pName == "buttonGrid2")
             {
                 ButtonGridArea2.BringIntoView();
                 buttonGrid1.ClearValue(UIElement.OpacityProperty);
@@ -224,43 +236,127 @@ namespace JupiterSoft.Pages
         {
             //UIElement copy = XamlReader.Parse(XamlWriter.Save(sender)) as UIElement;
             //UIElement copy = new UIElement();
-            // copy = XamlReader.Parse(XamlWriter.Save(sender)) as UIElement;
+            // copy = XamlReader.Parse(XamlWriter.S2ave(sender)) as UIElement;
             if (e.LeftButton == MouseButtonState.Pressed)
             {
-                IsChildHitTestVisible = false;
-                DataObject dragData = new DataObject();
-                dragData.SetData(DataFormats.StringFormat, sender as UIElement);
-                DragDrop.DoDragDrop(this, dragData, DragDropEffects.Copy);
-                IsChildHitTestVisible = true;
+                UIElement copy = sender as UIElement;
+                var propdata = copy.GetValue(FrameworkElement.TagProperty);
+                if (propdata != null)
+                {
+                    IsChildHitTestVisible = false;
+                    DataObject dragData = new DataObject();
+                    dragData.SetData(DataFormats.StringFormat, propdata.ToString());
+                    DragDrop.DoDragDrop(this, dragData, DragDropEffects.Copy);
+                    IsChildHitTestVisible = true;
 
-
+                }
                 //IsChildHitTestVisible = false;
                 //DragDrop.DoDragDrop(copy, new DataObject(DataFormats.Serializable, copy), DragDropEffects.Copy);
                 //IsChildHitTestVisible = true;
 
             }
+
+            e.Handled = true;
         }
 
         private void Canvas_Drop(object sender, DragEventArgs e)
         {
-            object data = e.Data.GetData(DataFormats.Serializable);
-            if (data is UIElement element)
+            var data = e.Data.GetData(typeof(string));
+            if (data != null)
             {
-                //var btn = element as Button;
-                //btn.PreviewMouseDown += Ch_PreviewMouseDown;
-                Point dropPosition = e.GetPosition(ReceiveDrop);
-                Canvas.SetLeft(element, dropPosition.X);
-                Canvas.SetTop(element, dropPosition.Y);
-
-                try
+                if (Convert.ToInt32(data) == (int)ElementConstant.Ten_Steps_Move)
                 {
-                    ReceiveDrop.Children.Add(element);
+                    var btn = Get_Ten_Steps_Move();
+                    Point dropPosition = e.GetPosition(ReceiveDrop);
+                    Canvas.SetLeft(btn, dropPosition.X);
+                    Canvas.SetTop(btn, dropPosition.Y);
+                    Canvas.SetRight(btn, dropPosition.X - btn.ActualWidth/2);
+                    Canvas.SetBottom(btn, dropPosition.Y - btn.ActualWidth / 2);
+
+                    try
+                    {
+                        ReceiveDrop.Children.Add(btn);
+                    }
+                    catch
+                    {
+
+                    }
                 }
-                catch
+                else if (Convert.ToInt32(data) == (int)ElementConstant.Turn_Fiften_Degree_Right_Move)
                 {
+                    var btn = Get_Turn_Fiften_Degree_Right_Move();
+                    Point dropPosition = e.GetPosition(ReceiveDrop);
+                    Canvas.SetLeft(btn, dropPosition.X);
+                    Canvas.SetTop(btn, dropPosition.Y);
+                    Canvas.SetRight(btn, dropPosition.X - btn.ActualWidth / 2);
+                    Canvas.SetBottom(btn, dropPosition.Y - btn.ActualWidth / 2);
 
+                    try
+                    {
+                        ReceiveDrop.Children.Add(btn);
+                    }
+                    catch
+                    {
+
+                    }
+                }
+                else if (Convert.ToInt32(data) == (int)ElementConstant.Turn_Fiften_Degree_Left_Move)
+                {
+                    var btn = Get_Turn_Fiften_Degree_Left_Move();
+                    Point dropPosition = e.GetPosition(ReceiveDrop);
+                    Canvas.SetLeft(btn, dropPosition.X);
+                    Canvas.SetTop(btn, dropPosition.Y);
+                    Canvas.SetRight(btn, dropPosition.X - btn.ActualWidth / 2);
+                    Canvas.SetBottom(btn, dropPosition.Y - btn.ActualWidth / 2);
+
+                    try
+                    {
+                        ReceiveDrop.Children.Add(btn);
+                    }
+                    catch
+                    {
+
+                    }
+                }
+                else if (Convert.ToInt32(data) == (int)ElementConstant.Pointer_State_Move)
+                {
+                    var btn = Get_Pointer_State_Move();
+                    Point dropPosition = e.GetPosition(ReceiveDrop);
+                    Canvas.SetLeft(btn, dropPosition.X);
+                    Canvas.SetTop(btn, dropPosition.Y);
+                    Canvas.SetRight(btn, dropPosition.X - btn.ActualWidth / 2);
+                    Canvas.SetBottom(btn, dropPosition.Y - btn.ActualWidth / 2);
+
+                    try
+                    {
+                        ReceiveDrop.Children.Add(btn);
+                    }
+                    catch
+                    {
+
+                    }
+                }
+                else if (Convert.ToInt32(data) == (int)ElementConstant.Rotation_Style_Move)
+                {
+                    var btn = Get_Rotation_Style_Move();
+                    Point dropPosition = e.GetPosition(ReceiveDrop);
+                    Canvas.SetLeft(btn, dropPosition.X);
+                    Canvas.SetTop(btn, dropPosition.Y);
+                    Canvas.SetRight(btn, dropPosition.X - btn.ActualWidth / 2);
+                    Canvas.SetBottom(btn, dropPosition.Y - btn.ActualWidth / 2);
+
+                    try
+                    {
+                        ReceiveDrop.Children.Add(btn);
+                    }
+                    catch
+                    {
+
+                    }
                 }
             }
+
+
             e.Handled = true;
         }
 
@@ -288,6 +384,123 @@ namespace JupiterSoft.Pages
             else
                 e.Effects = DragDropEffects.None;
             e.Handled = true;
+        }
+
+
+        // Copy Element of Defined Type.
+        private Button Get_Ten_Steps_Move()
+        {
+            Button btn = new Button();
+            btn.Margin = new Thickness(12, 5, 0, 0);
+            btn.HorizontalAlignment = HorizontalAlignment.Left;
+            btn.VerticalAlignment = VerticalAlignment.Center;
+            btn.BorderBrush = (Brush)bc.ConvertFrom("#2a6a8e");
+            btn.Background = (Brush)bc.ConvertFrom("#0082ca");
+            btn.BorderThickness = new Thickness(2);
+            btn.FontSize = 10;
+            btn.Foreground = (Brush)bc.ConvertFrom("#fff");
+            btn.FontWeight = FontWeights.Bold;
+            btn.FontFamily = new FontFamily("Georgia, serif;");
+            btn.Content = "10";
+            btn.Style = this.FindResource("BlueMove10") as Style;
+            btn.Width = 121;
+            btn.Height = 42;
+            btn.IsHitTestVisible = IsChildHitTestVisible;
+            btn.Tag = (int)ElementConstant.Ten_Steps_Move;
+
+            return btn;
+        }
+
+        private Button Get_Turn_Fiften_Degree_Right_Move()
+        {
+            Button btn = new Button();
+            btn.Margin = new Thickness(12, 5, 0, 0);
+            btn.HorizontalAlignment = HorizontalAlignment.Left;
+            btn.VerticalAlignment = VerticalAlignment.Center;
+            btn.BorderBrush = (Brush)bc.ConvertFrom("#2a6a8e");
+            btn.Background = (Brush)bc.ConvertFrom("#0082ca");
+            btn.BorderThickness = new Thickness(2);
+            btn.FontSize = 10;
+            btn.Foreground = (Brush)bc.ConvertFrom("#fff");
+            btn.FontWeight = FontWeights.Bold;
+            btn.FontFamily = new FontFamily("Georgia, serif;");
+            btn.Content = "10";
+            btn.Style = this.FindResource("BlueMoveRight") as Style;
+            btn.Width = 150;
+            btn.Height = 42;
+            btn.IsHitTestVisible = IsChildHitTestVisible;
+            btn.Tag = (int)ElementConstant.Turn_Fiften_Degree_Right_Move;
+
+            return btn;
+        }
+
+        private Button Get_Turn_Fiften_Degree_Left_Move()
+        {
+            Button btn = new Button();
+            btn.Margin = new Thickness(12, 5, 0, 0);
+            btn.HorizontalAlignment = HorizontalAlignment.Left;
+            btn.VerticalAlignment = VerticalAlignment.Center;
+            btn.BorderBrush = (Brush)bc.ConvertFrom("#2a6a8e");
+            btn.Background = (Brush)bc.ConvertFrom("#0082ca");
+            btn.BorderThickness = new Thickness(2);
+            btn.FontSize = 10;
+            btn.Foreground = (Brush)bc.ConvertFrom("#fff");
+            btn.FontWeight = FontWeights.Bold;
+            btn.FontFamily = new FontFamily("Georgia, serif;");
+            btn.Content = "10";
+            btn.Style = this.FindResource("BlueMoveLeft") as Style;
+            btn.Width = 150;
+            btn.Height = 42;
+            btn.IsHitTestVisible = IsChildHitTestVisible;
+            btn.Tag = (int)ElementConstant.Turn_Fiften_Degree_Left_Move;
+
+            return btn;
+        }
+
+        private Button Get_Pointer_State_Move()
+        {
+            Button btn = new Button();
+            btn.Margin = new Thickness(12, 5, 0, 0);
+            btn.HorizontalAlignment = HorizontalAlignment.Left;
+            btn.VerticalAlignment = VerticalAlignment.Center;
+            btn.BorderBrush = (Brush)bc.ConvertFrom("#2a6a8e");
+            btn.Background = (Brush)bc.ConvertFrom("#0082ca");
+            btn.BorderThickness = new Thickness(2);
+            btn.FontSize = 10;
+            btn.Foreground = (Brush)bc.ConvertFrom("#fff");
+            btn.FontWeight = FontWeights.Bold;
+            btn.FontFamily = new FontFamily("Georgia, serif;");
+            btn.Content = "10";
+            btn.Style = this.FindResource("BlueMovePointer") as Style;
+            btn.Width = 200;
+            btn.Height = 42;
+            btn.IsHitTestVisible = IsChildHitTestVisible;
+            btn.Tag = (int)ElementConstant.Pointer_State_Move;
+
+            return btn;
+        }
+
+        private Button Get_Rotation_Style_Move()
+        {
+            Button btn = new Button();
+            btn.Margin = new Thickness(12, 5, 0, 0);
+            btn.HorizontalAlignment = HorizontalAlignment.Left;
+            btn.VerticalAlignment = VerticalAlignment.Center;
+            btn.BorderBrush = (Brush)bc.ConvertFrom("#2a6a8e");
+            btn.Background = (Brush)bc.ConvertFrom("#0082ca");
+            btn.BorderThickness = new Thickness(2);
+            btn.FontSize = 10;
+            btn.Foreground = (Brush)bc.ConvertFrom("#fff");
+            btn.FontWeight = FontWeights.Bold;
+            btn.FontFamily = new FontFamily("Georgia, serif;");
+            btn.Content = "10";
+            btn.Style = this.FindResource("BlueMoveRotation") as Style;
+            btn.Width = 175;
+            btn.Height = 42;
+            btn.IsHitTestVisible = IsChildHitTestVisible;
+            btn.Tag = (int)ElementConstant.Rotation_Style_Move;
+
+            return btn;
         }
     }
 }

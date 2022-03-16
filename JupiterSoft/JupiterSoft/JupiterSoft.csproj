@@ -84,6 +84,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\ElementModel.cs" />
     <Compile Include="Pages\CreateTemplate.xaml.cs">
       <DependentUpon>CreateTemplate.xaml</DependentUpon>
     </Compile>

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace JupiterSoft
 {
-   public enum ApplicationConstant
+   public enum ElementConstant
     {
         // Move Enum
         Ten_Steps_Move,

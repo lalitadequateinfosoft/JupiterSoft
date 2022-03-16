@@ -904,17 +904,17 @@
                                         <StackPanel x:Name="ButtonGridArea1" Grid.Row="0" HorizontalAlignment="Center" Margin="10"  Width="250" AllowDrop="True">
 
 
-                                            <Button Margin="12,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="#2a6a8e" Background="#0082ca" BorderThickness="2" FontSize="10" Foreground="#fff" FontWeight="Bold" FontFamily="Georgia, serif;" Content="10"  Style="{StaticResource BlueMove10}"  Width="121" Height="42" PreviewMouseMove="Button_PreviewMouseMove" IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}" Tag=""/>
+                                            <Button Margin="12,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="#2a6a8e" Background="#0082ca" BorderThickness="2" FontSize="10" Foreground="#fff" FontWeight="Bold" FontFamily="Georgia, serif;" Content="10"  Style="{StaticResource BlueMove10}"  Width="121" Height="42" PreviewMouseMove="Button_PreviewMouseMove" IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}" Tag="{Binding Ten_Steps_Move,Mode=OneWay}" />
 
 
-                                            <Button Margin="12,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="#2a6a8e" Background="#0082ca" BorderThickness="2" FontSize="10" Foreground="#fff" FontWeight="Bold" FontFamily="Georgia, serif;" Content="15" Width="150" Height="42" Style="{StaticResource BlueMoveRight}" PreviewMouseMove="Button_PreviewMouseMove" IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}"/>
+                                            <Button Margin="12,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="#2a6a8e" Background="#0082ca" BorderThickness="2" FontSize="10" Foreground="#fff" FontWeight="Bold" FontFamily="Georgia, serif;" Content="15" Width="150" Height="42" Style="{StaticResource BlueMoveRight}" PreviewMouseMove="Button_PreviewMouseMove" IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}" Tag="{Binding Turn_Fiften_Degree_Right_Move,Mode=OneWay}" />
 
-                                            <Button Margin="12,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="#2a6a8e" Background="#0082ca" BorderThickness="2" FontSize="10" Foreground="#fff" FontWeight="Bold" FontFamily="Georgia, serif;" Content="15" Width="150" Height="42" Style="{StaticResource BlueMoveLeft}" PreviewMouseMove="Button_PreviewMouseMove" IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}"/>
+                                            <Button Margin="12,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="#2a6a8e" Background="#0082ca" BorderThickness="2" FontSize="10" Foreground="#fff" FontWeight="Bold" FontFamily="Georgia, serif;" Content="15" Width="150" Height="42" Style="{StaticResource BlueMoveLeft}" PreviewMouseMove="Button_PreviewMouseMove" IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}" Tag="{Binding Turn_Fiften_Degree_Left_Move,Mode=OneWay}"/>
 
 
-                                            <Button Margin="12,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="#2a6a8e" Background="#0082ca" BorderThickness="2" FontSize="10" Foreground="#fff" FontWeight="Bold" FontFamily="Georgia, serif;" Width="200" Height="42" Style="{StaticResource BlueMovePointer}" PreviewMouseMove="Button_PreviewMouseMove" IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}"/>
+                                            <Button Margin="12,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="#2a6a8e" Background="#0082ca" BorderThickness="2" FontSize="10" Foreground="#fff" FontWeight="Bold" FontFamily="Georgia, serif;" Width="200" Height="42" Style="{StaticResource BlueMovePointer}" PreviewMouseMove="Button_PreviewMouseMove" IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}" Tag="{Binding Pointer_State_Move,Mode=OneWay}"/>
 
-                                            <Button Margin="12,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="#2a6a8e" Background="#0082ca" BorderThickness="2" FontSize="10" Foreground="#fff" FontWeight="Bold" FontFamily="Georgia, serif;"  Width="175" Height="42" Style="{StaticResource BlueMoveRotation}" PreviewMouseMove="Button_PreviewMouseMove" IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}"/>
+                                            <Button Margin="12,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="#2a6a8e" Background="#0082ca" BorderThickness="2" FontSize="10" Foreground="#fff" FontWeight="Bold" FontFamily="Georgia, serif;"  Width="175" Height="42" Style="{StaticResource BlueMoveRotation}" PreviewMouseMove="Button_PreviewMouseMove" IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}" Tag="{Binding Rotation_Style_Move,Mode=OneWay}"/>
 
 
 
@@ -926,68 +926,38 @@
 
                                         <StackPanel x:Name="ButtonGridArea2" Grid.Row="1" HorizontalAlignment="Center" Margin="10" MouseEnter="ButtonGrid_MouseEnter" Width="250" MouseLeave="ButtonGrid_MouseLeave">
 
-                                            <Button Content="0" Margin="0,5,0,0" Background="#d256f6" Foreground="#FFF" HorizontalAlignment="Center"></Button>
-                                            <Button Content="0" Margin="0,5,0,0" Background="#d256f6" Foreground="#FFF" HorizontalAlignment="Center"></Button>
-                                            <Button Content="0" Margin="0,5,0,0" Background="#d256f6" Foreground="#FFF" HorizontalAlignment="Center"></Button>
-                                            <Button Content="0" Margin="0,5,0,0" Background="#d256f6" Foreground="#FFF" HorizontalAlignment="Center"></Button>
-                                            <Button Content="0" Margin="0,5,0,0" Background="#d256f6" Foreground="#FFF" HorizontalAlignment="Center"></Button>
+                                            
                                         </StackPanel>
 
 
                                         <StackPanel x:Name="ButtonGridArea3" Grid.Row="2" HorizontalAlignment="Center" Margin="10" MouseEnter="ButtonGrid_MouseEnter" Width="250" MouseLeave="ButtonGrid_MouseLeave">
 
-                                            <Button Content="0" Margin="0,5,0,0" Background="#ff8500" Foreground="#FFF" HorizontalAlignment="Center"></Button>
-                                            <Button Content="0" Margin="0,5,0,0" Background="#ff8500" Foreground="#FFF" HorizontalAlignment="Center"></Button>
-                                            <Button Content="0" Margin="0,5,0,0" Background="#ff8500" Foreground="#FFF" HorizontalAlignment="Center"></Button>
-                                            <Button Content="0" Margin="0,5,0,0" Background="#ff8500" Foreground="#FFF" HorizontalAlignment="Center"></Button>
-                                            <Button Content="0" Margin="0,5,0,0" Background="#ff8500" Foreground="#FFF" HorizontalAlignment="Center"></Button>
+                                            
 
                                         </StackPanel>
 
                                         <StackPanel x:Name="ButtonGridArea4" Grid.Row="3" HorizontalAlignment="Center" Margin="10" MouseEnter="ButtonGrid_MouseEnter" Width="250" MouseLeave="ButtonGrid_MouseLeave">
 
-                                            <Button Content="0" Margin="0,5,0,0" Background="#f63340" Foreground="#FFF" HorizontalAlignment="Center"/>
-                                            <Button Content="0" Margin="0,5,0,0" Background="#f63340" Foreground="#FFF" HorizontalAlignment="Center"/>
-                                            <Button Content="0" Margin="0,5,0,0" Background="#f63340" Foreground="#FFF" HorizontalAlignment="Center"/>
-                                            <Button Content="0" Margin="0,5,0,0" Background="#f63340" Foreground="#FFF" HorizontalAlignment="Center"/>
-                                            <Button Content="0" Margin="0,5,0,0" Background="#f63340" Foreground="#FFF" HorizontalAlignment="Center"/>
-                                            <Button Content="0" Margin="0,5,0,0" Background="#f63340" Foreground="#FFF" HorizontalAlignment="Center"/>
+                                            
 
                                         </StackPanel>
 
                                         <StackPanel x:Name="ButtonGridArea5" Grid.Row="4" HorizontalAlignment="Center" Margin="10" MouseEnter="ButtonGrid_MouseEnter" Width="250" MouseLeave="ButtonGrid_MouseLeave">
 
-                                            <Button  Content="0" Margin="0,5,0,0" HorizontalAlignment="Center" Background="#e70895" Foreground="#FFF"/>
-                                            <Button Content="0" Margin="0,5,0,0" HorizontalAlignment="Center" Background="#e70895" Foreground="#FFF"/>
-                                            <Button Content="0" Margin="0,5,0,0" HorizontalAlignment="Center" Background="#e70895" Foreground="#FFF"/>
-                                            <Button Content="0" Margin="0,5,0,0" HorizontalAlignment="Center" Background="#e70895" Foreground="#FFF"/>
-                                            <Button Content="0" Margin="0,5,0,0" HorizontalAlignment="Center" Background="#e70895" Foreground="#FFF"/>
+                                            
 
 
                                         </StackPanel>
 
                                         <StackPanel x:Name="ButtonGridArea6" Grid.Row="5" HorizontalAlignment="Center" Margin="10" MouseEnter="ButtonGrid_MouseEnter" Width="250" MouseLeave="ButtonGrid_MouseLeave">
 
-                                            <Button Content="0" Margin="0,5,0,0" HorizontalAlignment="Center" Background="#00a887" Foreground="#FFF"/>
-                                            <Button Content="0" Margin="0,5,0,0" HorizontalAlignment="Center" Background="#00a887" Foreground="#FFF"/>
-                                            <Button Content="0" Margin="0,5,0,0" HorizontalAlignment="Center" Background="#00a887" Foreground="#FFF"/>
-                                            <Button Content="0" Margin="0,5,0,0" HorizontalAlignment="Center" Background="#00a887" Foreground="#FFF"/>
-                                            <Button Content="0" Margin="0,5,0,0" HorizontalAlignment="Center" Background="#00a887" Foreground="#FFF"/>
+                                            
 
                                         </StackPanel>
 
                                         <StackPanel x:Name="ButtonGridArea7"  Grid.Row="6" HorizontalAlignment="Center" Margin="10" MouseEnter="ButtonGrid_MouseEnter" Width="250" MouseLeave="ButtonGrid_MouseLeave">
 
-                                            <Button Content="0" Margin="0,5,0,0" HorizontalAlignment="Center" Background="#1c355d" Foreground="#FFF"/>
-
-                                            <Button Content="0" Margin="0,5,0,0" HorizontalAlignment="Center" Background="#1c355d" Foreground="#FFF"/>
-
-                                            <Button Content="0" Margin="0,5,0,0" HorizontalAlignment="Center" Background="#1c355d" Foreground="#FFF"/>
-
-                                            <Button Content="0" Margin="0,5,0,0" HorizontalAlignment="Center"  Background="#1c355d" Foreground="#FFF"/>
-
-                                            <Button Content="0" Margin="0,5,0,0" HorizontalAlignment="Center" Background="#1c355d" Foreground="#FFF"/>
-                                            <Button Content="0" Margin="0,5,0,0" HorizontalAlignment="Center" Background="#1c355d" Foreground="#FFF"/>
+                                            
 
 
                                         </StackPanel>
@@ -997,8 +967,8 @@
 
                             </Border>
                             <StackPanel Grid.Row="0" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Orientation="Vertical" Margin="2" Cursor="Arrow">
-                                <Button BorderBrush="#f7353f" BorderThickness="1" Background="Red" Foreground="#fff" Content="Reset" Click="Reset_Click" HorizontalAlignment="Right" Margin="0,5,5,5" Cursor="Hand"/>
-                                <Border HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" BorderBrush="#eee" CornerRadius="5" BorderThickness="2" Cursor="Arrow">
+                                <Button BorderBrush="#f7353f" BorderThickness="1" Background="Red" Foreground="#fff" Content="Reset" Click="Reset_Click" HorizontalAlignment="Right" Margin="0,5,5,5" Cursor="Hand" FontSize="10" Padding="2" ToolTip="Reset" />
+                                <Border HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" BorderBrush="#eee" CornerRadius="5" BorderThickness="2" Cursor="Arrow" AllowDrop="False">
                                     <ScrollViewer VerticalScrollBarVisibility="Auto" Height="500" Cursor="Hand">
                                         <Canvas x:Name="ReceiveDrop" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="700" Cursor="Hand" AllowDrop="True" Background="Transparent" Drop="Canvas_Drop" DragOver="Canvas_DragOver" DragLeave="Canvas_DragLeave" DragEnter="ReceiveDrop_DragEnter">
 
