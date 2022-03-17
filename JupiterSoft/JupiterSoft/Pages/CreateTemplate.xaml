@@ -966,15 +966,15 @@
                                 </ScrollViewer>
 
                             </Border>
-                            <StackPanel Grid.Row="0" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Orientation="Vertical" Margin="2" Cursor="Arrow">
+                            <StackPanel Grid.Row="0" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Orientation="Vertical" Margin="2" Cursor="Arrow" Background="#eee">
                                 <Button BorderBrush="#f7353f" BorderThickness="1" Background="Red" Foreground="#fff" Content="Reset" Click="Reset_Click" HorizontalAlignment="Right" Margin="0,5,5,5" Cursor="Hand" FontSize="10" Padding="2" ToolTip="Reset" />
-                                <Border HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" BorderBrush="#eee" CornerRadius="5" BorderThickness="2" Cursor="Arrow" AllowDrop="False">
+                                
                                     <ScrollViewer VerticalScrollBarVisibility="Auto" Height="500" Cursor="Hand">
-                                        <Canvas x:Name="ReceiveDrop" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="700" Cursor="Hand" AllowDrop="True" Background="Transparent" Drop="Canvas_Drop" DragOver="Canvas_DragOver" DragLeave="Canvas_DragLeave" DragEnter="ReceiveDrop_DragEnter">
+                                    <Canvas x:Name="ReceiveDrop" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="700" Width="290" Cursor="Hand" AllowDrop="True" Background="Transparent" Drop="Canvas_Drop" DragOver="Canvas_DragOver" DragLeave="Canvas_DragLeave" DragEnter="ReceiveDrop_DragEnter" PreviewMouseMove="ReceiveDrop_PreviewMouseMove" PreviewMouseUp="ReceiveDrop_PreviewMouseUp">
 
                                         </Canvas>
                                     </ScrollViewer>
-                                </Border>
+                              
                             </StackPanel>
 
                         </Grid>

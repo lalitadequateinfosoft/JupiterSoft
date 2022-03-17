@@ -270,9 +270,6 @@ namespace JupiterSoft.Pages
                     Point dropPosition = e.GetPosition(ReceiveDrop);
                     Canvas.SetLeft(btn, dropPosition.X);
                     Canvas.SetTop(btn, dropPosition.Y);
-                    Canvas.SetRight(btn, dropPosition.X - btn.ActualWidth/2);
-                    Canvas.SetBottom(btn, dropPosition.Y - btn.ActualWidth / 2);
-
                     try
                     {
                         ReceiveDrop.Children.Add(btn);
@@ -288,8 +285,6 @@ namespace JupiterSoft.Pages
                     Point dropPosition = e.GetPosition(ReceiveDrop);
                     Canvas.SetLeft(btn, dropPosition.X);
                     Canvas.SetTop(btn, dropPosition.Y);
-                    Canvas.SetRight(btn, dropPosition.X - btn.ActualWidth / 2);
-                    Canvas.SetBottom(btn, dropPosition.Y - btn.ActualWidth / 2);
 
                     try
                     {
@@ -306,8 +301,6 @@ namespace JupiterSoft.Pages
                     Point dropPosition = e.GetPosition(ReceiveDrop);
                     Canvas.SetLeft(btn, dropPosition.X);
                     Canvas.SetTop(btn, dropPosition.Y);
-                    Canvas.SetRight(btn, dropPosition.X - btn.ActualWidth / 2);
-                    Canvas.SetBottom(btn, dropPosition.Y - btn.ActualWidth / 2);
 
                     try
                     {
@@ -324,8 +317,6 @@ namespace JupiterSoft.Pages
                     Point dropPosition = e.GetPosition(ReceiveDrop);
                     Canvas.SetLeft(btn, dropPosition.X);
                     Canvas.SetTop(btn, dropPosition.Y);
-                    Canvas.SetRight(btn, dropPosition.X - btn.ActualWidth / 2);
-                    Canvas.SetBottom(btn, dropPosition.Y - btn.ActualWidth / 2);
 
                     try
                     {
@@ -342,8 +333,6 @@ namespace JupiterSoft.Pages
                     Point dropPosition = e.GetPosition(ReceiveDrop);
                     Canvas.SetLeft(btn, dropPosition.X);
                     Canvas.SetTop(btn, dropPosition.Y);
-                    Canvas.SetRight(btn, dropPosition.X - btn.ActualWidth / 2);
-                    Canvas.SetBottom(btn, dropPosition.Y - btn.ActualWidth / 2);
 
                     try
                     {
@@ -384,6 +373,63 @@ namespace JupiterSoft.Pages
             else
                 e.Effects = DragDropEffects.None;
             e.Handled = true;
+        }
+
+        private void Ch_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            this.dragObject = sender as UIElement;
+            this.Offset = e.GetPosition(this.ReceiveDrop);
+            this.Offset.Y -= Canvas.GetTop(this.dragObject);
+            this.Offset.X -= Canvas.GetLeft(this.dragObject);
+            this.ReceiveDrop.CaptureMouse();
+        }
+
+        private void ReceiveDrop_PreviewMouseMove(object sender, MouseEventArgs e)
+        {
+            if (this.dragObject == null)
+                return;
+            var position = e.GetPosition(sender as IInputElement);
+            Canvas.SetTop(this.dragObject, position.Y - this.Offset.Y);
+            Canvas.SetLeft(this.dragObject, position.X - this.Offset.X);
+        }
+
+        private void ReceiveDrop_PreviewMouseUp(object sender, MouseButtonEventArgs e)
+        {
+            this.dragObject = null;
+            this.ReceiveDrop.ReleaseMouseCapture();
+        }
+
+        public void VerifyCloseElement()
+        {
+            var child = ReceiveDrop.Children.OfType<Button>();
+            foreach (var ch in child)
+            {
+                if (ch.Content == null)
+                {
+                    TextBlock closeButton = new TextBlock();
+                    closeButton.Background = new SolidColorBrush(Colors.Transparent);
+                    closeButton.FontSize = 14;
+                    closeButton.FontWeight = FontWeights.Bold;
+                    closeButton.Width = 15;
+                    closeButton.Height = 15;
+                    closeButton.Margin = new Thickness(35, -55, -20, 0);
+                    closeButton.Foreground = new SolidColorBrush(Colors.Black);
+                    closeButton.Visibility = Visibility.Visible;
+                    closeButton.Text = "X";
+                    ch.Content = closeButton;
+                    //ch.PreviewMouseMove += Ch_PreviewMouseMove;
+                    //ch.PreviewMouseUp += Ch_PreviewMouseUp;
+                    ch.PreviewMouseDown += Ch_PreviewMouseDown;
+
+                }
+                else
+                {
+
+                    TextBlock txtbk = (TextBlock)ch.Content;
+                    ch.Content = null;
+                    ch.PreviewMouseDown += Ch_PreviewMouseDown;
+                }
+            }
         }
 
 
