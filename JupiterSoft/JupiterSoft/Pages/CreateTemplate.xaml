@@ -971,8 +971,10 @@
                                 
                                     <ScrollViewer VerticalScrollBarVisibility="Auto" Height="500" Cursor="Hand">
                                     <Canvas x:Name="ReceiveDrop" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="700" Width="290" Cursor="Hand" AllowDrop="True" Background="Transparent" Drop="Canvas_Drop" DragOver="Canvas_DragOver" DragLeave="Canvas_DragLeave" DragEnter="ReceiveDrop_DragEnter" PreviewMouseMove="ReceiveDrop_PreviewMouseMove" PreviewMouseUp="ReceiveDrop_PreviewMouseUp">
+                                        
 
-                                        </Canvas>
+
+                                    </Canvas>
                                     </ScrollViewer>
                               
                             </StackPanel>
