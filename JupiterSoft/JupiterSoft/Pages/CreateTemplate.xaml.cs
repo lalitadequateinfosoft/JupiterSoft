@@ -40,7 +40,8 @@ namespace JupiterSoft.Pages
         //Custom Variables
         //UIElement dragObject = null;
         Point Offset;
-        WrapPanel dragObject = null;
+        WrapPanel dragObject;
+        bool isDragged = false;
         //private bool _isMoving;
         //private Point? _buttonPosition;
         //private double deltaX;
@@ -48,6 +49,8 @@ namespace JupiterSoft.Pages
         //private TranslateTransform _currentTT;
         BrushConverter bc;
         ElementModel UElement;
+        double CanvasWidth;
+        double CanvasHeight;
 
         public CreateTemplate()
         {
@@ -55,6 +58,8 @@ namespace JupiterSoft.Pages
             this.UElement = ElementOp.GetElementModel();
             InitializeComponent();
             this.DataContext = this.UElement;
+            this.CanvasWidth = ReceiveDrop.Width;
+            this.CanvasHeight = ReceiveDrop.Height;
         }
 
         private void ButtonGrid_MouseEnter(object sender, MouseEventArgs e)
@@ -240,9 +245,6 @@ namespace JupiterSoft.Pages
 
         private void Button_PreviewMouseMove(object sender, MouseEventArgs e)
         {
-            //UIElement copy = XamlReader.Parse(XamlWriter.Save(sender)) as UIElement;
-            //UIElement copy = new UIElement();
-            // copy = XamlReader.Parse(XamlWriter.S2ave(sender)) as UIElement;
             if (e.LeftButton == MouseButtonState.Pressed)
             {
                 UIElement copy = sender as UIElement;
@@ -254,11 +256,9 @@ namespace JupiterSoft.Pages
                     dragData.SetData(DataFormats.StringFormat, propdata.ToString());
                     DragDrop.DoDragDrop(this, dragData, DragDropEffects.Copy);
                     IsChildHitTestVisible = true;
+                    isDragged = true;
 
                 }
-                //IsChildHitTestVisible = false;
-                //DragDrop.DoDragDrop(copy, new DataObject(DataFormats.Serializable, copy), DragDropEffects.Copy);
-                //IsChildHitTestVisible = true;
 
             }
 
@@ -267,121 +267,94 @@ namespace JupiterSoft.Pages
 
         private void Canvas_Drop(object sender, DragEventArgs e)
         {
+            if (!isDragged) return;
             var data = e.Data.GetData(typeof(string));
             if (data != null)
             {
+                Point dropPosition = e.GetPosition(ReceiveDrop);
+                double NewTop = dropPosition.Y;
+                double NewLeft = dropPosition.X;
+                WrapPanel ele = new WrapPanel();
                 if (Convert.ToInt32(data) == (int)ElementConstant.Ten_Steps_Move)
                 {
+                    //Set Drop Position.
+                    getNewPosition(Ten_Steps_Move.Width, Ten_Steps_Move.Height, ref NewLeft, ref NewTop);
 
-                    var btn = Get_Ten_Steps_Move();
-                    btn.PreviewMouseLeftButtonDown += new MouseButtonEventHandler(Ch_PreviewMouseDown);
-                    var closeBtn = new Button();
-                    closeBtn.Foreground = new SolidColorBrush(Colors.White);
-                    closeBtn.Background = new SolidColorBrush(Colors.Red);
-                    closeBtn.Content = "X";
-                    closeBtn.FontSize = 10;
-                    closeBtn.VerticalAlignment = VerticalAlignment.Top;
-                    closeBtn.Margin = new Thickness(-5, 0, 0, 0);
-                    closeBtn.Padding = new Thickness(1);
-                    closeBtn.Click += CloseBtn_Click;
-                    Random random = new Random();
-                    WrapPanel wrap = new WrapPanel();
-                    wrap.Width = Double.NaN;
-                    wrap.Height = Double.NaN;
-                    wrap.Background = new SolidColorBrush(Colors.Blue);
-                    //wrap.IsHitTestVisible = IsChildHitTestVisible;
-                    wrap.Children.Add(btn);
-                    wrap.Children.Add(closeBtn);
-                    Point dropPosition = e.GetPosition(ReceiveDrop);
-                    Canvas.SetLeft(wrap, dropPosition.X);
-                    Canvas.SetTop(wrap, dropPosition.Y);
-
-
-                    try
-                    {
-
-                        ReceiveDrop.Children.Add(wrap);
-
-                    }
-                    catch
-                    {
-
-                    }
+                    ele = Get_Ten_Steps_Move();
+                    Canvas.SetLeft(ele, NewLeft);
+                    Canvas.SetTop(ele, NewTop);
                 }
                 else if (Convert.ToInt32(data) == (int)ElementConstant.Turn_Fiften_Degree_Right_Move)
                 {
-                    var btn = Get_Turn_Fiften_Degree_Right_Move();
-                    Point dropPosition = e.GetPosition(ReceiveDrop);
-                    Canvas.SetLeft(btn, dropPosition.X);
-                    Canvas.SetTop(btn, dropPosition.Y);
-
-                    try
-                    {
-                        ReceiveDrop.Children.Add(btn);
-                    }
-                    catch
-                    {
-
-                    }
+                    //Set Drop Position.
+                    getNewPosition(Turn_Fiften_Degree_Right_Move.Width, Turn_Fiften_Degree_Right_Move.Height, ref NewLeft, ref NewTop);
+                    ele = Get_Turn_Fiften_Degree_Right_Move();
+                    Canvas.SetLeft(ele, NewLeft);
+                    Canvas.SetTop(ele, NewTop);
                 }
                 else if (Convert.ToInt32(data) == (int)ElementConstant.Turn_Fiften_Degree_Left_Move)
                 {
-                    var btn = Get_Turn_Fiften_Degree_Left_Move();
-                    Point dropPosition = e.GetPosition(ReceiveDrop);
-                    Canvas.SetLeft(btn, dropPosition.X);
-                    Canvas.SetTop(btn, dropPosition.Y);
-
-                    try
-                    {
-                        ReceiveDrop.Children.Add(btn);
-                    }
-                    catch
-                    {
-
-                    }
+                    getNewPosition(Turn_Fiften_Degree_Left_Move.Width, Turn_Fiften_Degree_Left_Move.Height, ref NewLeft, ref NewTop);
+                    ele = Get_Turn_Fiften_Degree_Left_Move();
+                    Canvas.SetLeft(ele, NewLeft);
+                    Canvas.SetTop(ele, NewTop);
                 }
                 else if (Convert.ToInt32(data) == (int)ElementConstant.Pointer_State_Move)
                 {
-                    var btn = Get_Pointer_State_Move();
-                    Point dropPosition = e.GetPosition(ReceiveDrop);
-                    Canvas.SetLeft(btn, dropPosition.X);
-                    Canvas.SetTop(btn, dropPosition.Y);
-
-                    try
-                    {
-                        ReceiveDrop.Children.Add(btn);
-                    }
-                    catch
-                    {
-
-                    }
+                    getNewPosition(Pointer_State_Move.Width, Pointer_State_Move.Height, ref NewLeft, ref NewTop);
+                    ele = Get_Pointer_State_Move();
+                    Canvas.SetLeft(ele, NewLeft);
+                    Canvas.SetTop(ele, NewTop);
                 }
                 else if (Convert.ToInt32(data) == (int)ElementConstant.Rotation_Style_Move)
                 {
-                    var btn = Get_Rotation_Style_Move();
-                    Point dropPosition = e.GetPosition(ReceiveDrop);
-                    Canvas.SetLeft(btn, dropPosition.X);
-                    Canvas.SetTop(btn, dropPosition.Y);
-
-                    try
-                    {
-                        ReceiveDrop.Children.Add(btn);
-                    }
-                    catch
-                    {
-
-                    }
+                    getNewPosition(Rotation_Style_Move.Width, Rotation_Style_Move.Height, ref NewLeft, ref NewTop);
+                    ele = Get_Rotation_Style_Move();
+                    Canvas.SetLeft(ele, NewLeft);
+                    Canvas.SetTop(ele, NewTop);
                 }
+
+                try
+                {
+                    if (ele != null) ReceiveDrop.Children.Add(ele);
+                }
+                catch { MessageBox.Show("Element can not be copied due to an error!"); }
+                isDragged = false;
+                e.Handled = true;
+                //checkElement();
             }
 
 
-            e.Handled = true;
-            //checkElement();
+            
+            
+
+        }
+
+        private void getNewPosition(double width, double height, ref double Newleft, ref double NewTop)
+        {
+            if (NewTop < 0)
+            {
+                NewTop = height;
+            }
+            else if (NewTop > (this.CanvasHeight - height))
+            {
+                NewTop = this.CanvasHeight - height;
+            }
+
+            if (Newleft < 0)
+            {
+                Newleft = width;
+            }
+            else if (Newleft > (this.CanvasWidth - width + 20))
+            {
+                Newleft = this.CanvasWidth - (width + 20);
+            }
         }
 
         private void checkElement()
         {
-            var child = ReceiveDrop.Children.OfType<WrapPanel>();
+            var child = ReceiveDrop.Children.OfType<WrapPanel>().Count();
+            MessageBox.Show("Element Count : " + child.ToString());
         }
 
         private void CloseBtn_Click(object sender, RoutedEventArgs e)
@@ -394,12 +367,14 @@ namespace JupiterSoft.Pages
         private void Canvas_DragOver(object sender, DragEventArgs e)
         {
             e.Handled = true;
+            isDragged = false;
         }
 
         private void Canvas_DragLeave(object sender, DragEventArgs e)
         {
             e.Effects = DragDropEffects.None;
             e.Handled = true;
+            isDragged = false;
         }
 
         private void Reset_Click(object sender, RoutedEventArgs e)
@@ -420,36 +395,34 @@ namespace JupiterSoft.Pages
         private void Ch_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
 
-            this.dragObject = VisualTreeHelper.GetParent(sender as UIElement) as WrapPanel; 
-            this.Offset = e.GetPosition(this.ReceiveDrop);
-            this.Offset.Y = Canvas.GetTop(this.dragObject);
-            this.Offset.X = Canvas.GetLeft(this.dragObject);
+            dragObject = VisualTreeHelper.GetParent(sender as UIElement) as WrapPanel;
+            Offset = e.GetPosition(VisualTreeHelper.GetParent(sender as UIElement) as WrapPanel);
+            //this.Offset.Y = Canvas.GetTop(this.dragObject);
+            //this.Offset.X = Canvas.GetLeft(this.dragObject);
             this.ReceiveDrop.CaptureMouse();
 
         }
 
         private void ReceiveDrop_PreviewMouseMove(object sender, MouseEventArgs e)
         {
-            if (this.dragObject == null)
+            if (dragObject == null)
                 return;
-            var position = e.GetPosition(sender as IInputElement);
-            Canvas.SetTop(this.dragObject, position.Y - this.Offset.Y);
-            Canvas.SetLeft(this.dragObject, position.X - this.Offset.X);
-            //this.dragObject = null;
-            //this.ReceiveDrop.ReleaseMouseCapture();
+            var position = e.GetPosition(ReceiveDrop);
+            Canvas.SetTop(dragObject, position.Y - Offset.Y);
+            Canvas.SetLeft(dragObject, position.X - Offset.X);
         }
 
         private void ReceiveDrop_PreviewMouseUp(object sender, MouseButtonEventArgs e)
         {
-            this.dragObject = null;
-            this.ReceiveDrop.ReleaseMouseCapture();
+            dragObject = null;
+            ReceiveDrop.ReleaseMouseCapture();
         }
 
 
 
 
         // Copy Element of Defined Type.
-        private Button Get_Ten_Steps_Move()
+        private WrapPanel Get_Ten_Steps_Move()
         {
             Button btn = new Button();
             btn.Margin = new Thickness(12, 5, 0, 0);
@@ -466,13 +439,31 @@ namespace JupiterSoft.Pages
             btn.Style = this.FindResource("BlueMove10") as Style;
             btn.Width = 121;
             btn.Height = 42;
-            //btn.IsHitTestVisible = IsChildHitTestVisible;
-            btn.Tag = (int)ElementConstant.Ten_Steps_Move;
 
-            return btn;
+            btn.Tag = (int)ElementConstant.Ten_Steps_Move;
+            btn.PreviewMouseLeftButtonDown += new MouseButtonEventHandler(Ch_PreviewMouseDown);
+            var closeBtn = new Button();
+            closeBtn.Foreground = new SolidColorBrush(Colors.White);
+            closeBtn.Background = new SolidColorBrush(Colors.Red);
+            closeBtn.Content = "X";
+            closeBtn.FontSize = 10;
+            closeBtn.VerticalAlignment = VerticalAlignment.Top;
+            closeBtn.Margin = new Thickness(-5, 0, 0, 0);
+            closeBtn.Padding = new Thickness(1);
+            closeBtn.Click += CloseBtn_Click;
+            Random random = new Random();
+            WrapPanel wrap = new WrapPanel();
+            wrap.Width = Double.NaN;
+            wrap.Height = Double.NaN;
+            //wrap.Background = new SolidColorBrush(Colors.Blue);
+            wrap.Children.Add(btn);
+            wrap.Children.Add(closeBtn);
+
+            return wrap;
         }
 
-        private Button Get_Turn_Fiften_Degree_Right_Move()
+
+        private WrapPanel Get_Turn_Fiften_Degree_Right_Move()
         {
             Button btn = new Button();
             btn.Margin = new Thickness(12, 5, 0, 0);
@@ -491,11 +482,28 @@ namespace JupiterSoft.Pages
             btn.Height = 42;
             btn.IsHitTestVisible = IsChildHitTestVisible;
             btn.Tag = (int)ElementConstant.Turn_Fiften_Degree_Right_Move;
+            btn.PreviewMouseLeftButtonDown += new MouseButtonEventHandler(Ch_PreviewMouseDown);
+            var closeBtn = new Button();
+            closeBtn.Foreground = new SolidColorBrush(Colors.White);
+            closeBtn.Background = new SolidColorBrush(Colors.Red);
+            closeBtn.Content = "X";
+            closeBtn.FontSize = 10;
+            closeBtn.VerticalAlignment = VerticalAlignment.Top;
+            closeBtn.Margin = new Thickness(-5, 0, 0, 0);
+            closeBtn.Padding = new Thickness(1);
+            closeBtn.Click += CloseBtn_Click;
+            Random random = new Random();
+            WrapPanel wrap = new WrapPanel();
+            wrap.Width = Double.NaN;
+            wrap.Height = Double.NaN;
+            //wrap.Background = new SolidColorBrush(Colors.Blue);
+            wrap.Children.Add(btn);
+            wrap.Children.Add(closeBtn);
 
-            return btn;
+            return wrap;
         }
 
-        private Button Get_Turn_Fiften_Degree_Left_Move()
+        private WrapPanel Get_Turn_Fiften_Degree_Left_Move()
         {
             Button btn = new Button();
             btn.Margin = new Thickness(12, 5, 0, 0);
@@ -515,10 +523,28 @@ namespace JupiterSoft.Pages
             btn.IsHitTestVisible = IsChildHitTestVisible;
             btn.Tag = (int)ElementConstant.Turn_Fiften_Degree_Left_Move;
 
-            return btn;
+            btn.PreviewMouseLeftButtonDown += new MouseButtonEventHandler(Ch_PreviewMouseDown);
+            var closeBtn = new Button();
+            closeBtn.Foreground = new SolidColorBrush(Colors.White);
+            closeBtn.Background = new SolidColorBrush(Colors.Red);
+            closeBtn.Content = "X";
+            closeBtn.FontSize = 10;
+            closeBtn.VerticalAlignment = VerticalAlignment.Top;
+            closeBtn.Margin = new Thickness(-5, 0, 0, 0);
+            closeBtn.Padding = new Thickness(1);
+            closeBtn.Click += CloseBtn_Click;
+            Random random = new Random();
+            WrapPanel wrap = new WrapPanel();
+            wrap.Width = Double.NaN;
+            wrap.Height = Double.NaN;
+            //wrap.Background = new SolidColorBrush(Colors.Blue);
+            wrap.Children.Add(btn);
+            wrap.Children.Add(closeBtn);
+
+            return wrap;
         }
 
-        private Button Get_Pointer_State_Move()
+        private WrapPanel Get_Pointer_State_Move()
         {
             Button btn = new Button();
             btn.Margin = new Thickness(12, 5, 0, 0);
@@ -538,10 +564,28 @@ namespace JupiterSoft.Pages
             btn.IsHitTestVisible = IsChildHitTestVisible;
             btn.Tag = (int)ElementConstant.Pointer_State_Move;
 
-            return btn;
+            btn.PreviewMouseLeftButtonDown += new MouseButtonEventHandler(Ch_PreviewMouseDown);
+            var closeBtn = new Button();
+            closeBtn.Foreground = new SolidColorBrush(Colors.White);
+            closeBtn.Background = new SolidColorBrush(Colors.Red);
+            closeBtn.Content = "X";
+            closeBtn.FontSize = 10;
+            closeBtn.VerticalAlignment = VerticalAlignment.Top;
+            closeBtn.Margin = new Thickness(-5, 0, 0, 0);
+            closeBtn.Padding = new Thickness(1);
+            closeBtn.Click += CloseBtn_Click;
+            Random random = new Random();
+            WrapPanel wrap = new WrapPanel();
+            wrap.Width = Double.NaN;
+            wrap.Height = Double.NaN;
+            //wrap.Background = new SolidColorBrush(Colors.Blue);
+            wrap.Children.Add(btn);
+            wrap.Children.Add(closeBtn);
+
+            return wrap;
         }
 
-        private Button Get_Rotation_Style_Move()
+        private WrapPanel Get_Rotation_Style_Move()
         {
             Button btn = new Button();
             btn.Margin = new Thickness(12, 5, 0, 0);
@@ -561,48 +605,26 @@ namespace JupiterSoft.Pages
             btn.IsHitTestVisible = IsChildHitTestVisible;
             btn.Tag = (int)ElementConstant.Rotation_Style_Move;
 
-            return btn;
+            btn.PreviewMouseLeftButtonDown += new MouseButtonEventHandler(Ch_PreviewMouseDown);
+            var closeBtn = new Button();
+            closeBtn.Foreground = new SolidColorBrush(Colors.White);
+            closeBtn.Background = new SolidColorBrush(Colors.Red);
+            closeBtn.Content = "X";
+            closeBtn.FontSize = 10;
+            closeBtn.VerticalAlignment = VerticalAlignment.Top;
+            closeBtn.Margin = new Thickness(-5, 0, 0, 0);
+            closeBtn.Padding = new Thickness(1);
+            closeBtn.Click += CloseBtn_Click;
+            Random random = new Random();
+            WrapPanel wrap = new WrapPanel();
+            wrap.Width = Double.NaN;
+            wrap.Height = Double.NaN;
+            //wrap.Background = new SolidColorBrush(Colors.Blue);
+            wrap.Children.Add(btn);
+            wrap.Children.Add(closeBtn);
+
+            return wrap;
         }
 
-        //private void WrapPanel_PreviewMouseDown(object sender, MouseButtonEventArgs e)
-        //{
-        //    this.dragObject = VisualTreeHelper.GetParent(sender as UIElement) as WrapPanel;
-
-        //    if (_buttonPosition == null)
-        //        _buttonPosition = (VisualTreeHelper.GetParent(sender as UIElement) as WrapPanel).TransformToAncestor(ReceiveDrop).Transform(new Point(0, 0));
-        //    var mousePosition = e.GetPosition(ReceiveDrop);
-        //    deltaX = mousePosition.X - _buttonPosition.Value.X;
-        //    deltaY = mousePosition.Y - _buttonPosition.Value.Y;
-        //    this.ReceiveDrop.CaptureMouse();
-        //    _isMoving = true;
-
-        //}
-
-        //private void ReceiveDrop_PreviewMouseMove(object sender, MouseEventArgs e)
-        //{
-        //    if (this.dragObject == null)
-        //        return;
-        //    if (!_isMoving) return;
-
-        //    var mousePoint = e.GetPosition(ReceiveDrop);
-
-        //    var offsetX = (_currentTT == null ? _buttonPosition.Value.X : _buttonPosition.Value.X - _currentTT.X) + deltaX - mousePoint.X;
-        //    var offsetY = (_currentTT == null ? _buttonPosition.Value.Y : _buttonPosition.Value.Y - _currentTT.Y) + deltaY - mousePoint.Y;
-
-        //    this.dragObject.RenderTransform = new TranslateTransform(-offsetX, -offsetY);
-        //}
-
-        //private void ReceiveDrop_PreviewMouseUp(object sender, MouseButtonEventArgs e)
-        //{
-        //    if (this.dragObject == null) return;
-        //    _currentTT = this.dragObject.RenderTransform as TranslateTransform;
-        //    this.ReceiveDrop.ReleaseMouseCapture();
-        //    this.dragObject = null;
-        //    _isMoving = false;
-        //    _currentTT = null;
-        //    _buttonPosition = null;
-        //    deltaX=0;
-        //    deltaY=0;
-        //}
     }
 }
