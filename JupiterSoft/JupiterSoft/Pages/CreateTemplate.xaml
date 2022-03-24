@@ -18,7 +18,20 @@
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="Button">
-                            <Border CornerRadius="2,2,2,2" Background="#0082ca" BorderBrush="#0082ca" BorderThickness="2" Width="90" Height="45" Padding="12,3,12,3" Margin="0,0,0,3">
+                            <Border CornerRadius="2,2,2,2" Background="#0082ca" BorderBrush="#0082ca" BorderThickness="2" Width="90" Height="45" Padding="12,3,12,3" Margin="0,0,0,1">
+                                <ContentPresenter x:Name="contentPresenter" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <Style TargetType="Button" x:Key="SaveButton" >
+                <Setter Property="Background" Value="#041124" />
+                <Setter Property="TextBlock.TextAlignment" Value="Center" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border CornerRadius="2,2,2,2" Background="#fff" BorderBrush="#041124" BorderThickness="1" Width="90" Height="45" Padding="12,3,12,3" Margin="0,0,0,1">
                                 <ContentPresenter x:Name="contentPresenter" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
                             </Border>
                         </ControlTemplate>
@@ -1158,14 +1171,27 @@
             <Border Grid.Row="0" Grid.Column="1" Background="Transparent" Margin="3">
                 <Grid  Background="Transparent">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="50"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-                    <StackPanel Grid.Row="0" Background="Transparent">
-                        <Button HorizontalAlignment="Right" x:Name="Run" Content="Run" Margin="0,2,0,2" ToolTip="Run" Style="{StaticResource RunButton}" Foreground="#fff" />
-                    </StackPanel>
+                    <Grid Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid Grid.Row="0" Grid.Column="0" Background="Transparent">
+                            <Button HorizontalAlignment="Right" Cursor="Hand"  x:Name="Run" Content="Run" Margin="0,2,2,2" ToolTip="Run" Style="{StaticResource RunButton}" Foreground="#fff" />
+                        </Grid>
+                        <Grid Grid.Column="1" Grid.Row="0" Background="Transparent">
+                            <Button x:Name="SaveBtn"  Content="Save" ToolTip="Save" Cursor="Hand" Foreground="#041124" Margin="2,2,0,2" Style="{StaticResource SaveButton}" Click="Save_Click"/>
+                        </Grid>
 
-                    <Border Grid.Row="1" Background="#fff" CornerRadius="0,10,10,0">
+                    </Grid>
+
+                    <Border Grid.Row="1" Background="#fff" CornerRadius="0,12,10,0">
                         <Grid >
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="*"/>

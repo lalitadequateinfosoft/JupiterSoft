@@ -85,6 +85,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\ElementModel.cs" />
+    <Compile Include="Models\FileSystemModel.cs" />
     <Compile Include="Pages\CreateTemplate.xaml.cs">
       <DependentUpon>CreateTemplate.xaml</DependentUpon>
     </Compile>
@@ -130,6 +131,9 @@
     </PackageReference>
     <PackageReference Include="ModernWpfUI.MahApps">
       <Version>0.9.4</Version>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>13.0.1</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>

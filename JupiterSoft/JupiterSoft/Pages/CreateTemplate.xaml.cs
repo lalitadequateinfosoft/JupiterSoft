@@ -1,4 +1,5 @@
 ﻿using JupiterSoft.Models;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,6 +43,7 @@ namespace JupiterSoft.Pages
         Point Offset;
         WrapPanel dragObject;
         bool isDragged = false;
+        private string _FileDirectory = @"C:\JupiterFiles";
         //private bool _isMoving;
         //private Point? _buttonPosition;
         //private double deltaX;
@@ -325,8 +327,8 @@ namespace JupiterSoft.Pages
             }
 
 
-            
-            
+
+
 
         }
 
@@ -351,10 +353,9 @@ namespace JupiterSoft.Pages
             }
         }
 
-        private void checkElement()
+        private int getElementCount()
         {
-            var child = ReceiveDrop.Children.OfType<WrapPanel>().Count();
-            MessageBox.Show("Element Count : " + child.ToString());
+            return ReceiveDrop.Children.OfType<WrapPanel>().Count();
         }
 
         private void CloseBtn_Click(object sender, RoutedEventArgs e)
@@ -598,7 +599,7 @@ namespace JupiterSoft.Pages
             btn.Foreground = (Brush)bc.ConvertFrom("#fff");
             btn.FontWeight = FontWeights.Bold;
             btn.FontFamily = new FontFamily("Georgia, serif;");
-            btn.Content = "10";
+            btn.Content = "15";
             btn.Style = this.FindResource("BlueMoveRotation") as Style;
             btn.Width = 175;
             btn.Height = 42;
@@ -626,5 +627,73 @@ namespace JupiterSoft.Pages
             return wrap;
         }
 
+        private void Save_Click(object sender, RoutedEventArgs e)
+        {
+            SaveBtn.IsEnabled = false;
+            SaveBtn.Content = "Processing";
+            SaveInitiated();
+            SaveBtn.IsEnabled = true;
+            SaveBtn.Content = "Save";
+        }
+        public void SaveInitiated()
+        {
+            if (getElementCount() > 0)
+            {
+                if (!System.IO.Directory.Exists(_FileDirectory))
+                {
+                    System.IO.Directory.CreateDirectory(_FileDirectory);
+                }
+
+                SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+                saveFileDialog1.InitialDirectory = _FileDirectory + @"\";
+                saveFileDialog1.Title = "Save Your File";
+                saveFileDialog1.CheckPathExists = true;
+                saveFileDialog1.DefaultExt = "json";
+                saveFileDialog1.Filter = "Jupiter Files (*.json)|*.json";
+                saveFileDialog1.FilterIndex = 1;
+                if (saveFileDialog1.ShowDialog() == true)
+                {
+                    if (saveFileDialog1.FileName.ToString().Contains(" "))
+                    {
+                        MessageBox.Show("File name should not contain white space."); SaveInitiated(); return;
+                    }
+                        
+                    string filepath = saveFileDialog1.FileName.Contains(".json") ? saveFileDialog1.FileName : saveFileDialog1.FileName + ".json";
+
+                    FileSystemModel fileSystem = new FileSystemModel();
+                    fileSystem.FileId = System.IO.Path.GetFileName(filepath);
+
+                    var contentElement= ReceiveDrop.Children.OfType<WrapPanel>().ToList();
+                    List<FileContentModel> fileContent = new List<FileContentModel>();
+                    int Order = 1;
+                    foreach(var item in contentElement)
+                    {
+                        var child = item.Children.OfType<Button>().FirstOrDefault();
+                        Point margin = item.TransformToAncestor(ReceiveDrop)
+                          .Transform(new Point(0, 0));
+                        fileContent.Add(new FileContentModel
+                        {
+                            ContentId = Guid.NewGuid().ToString("N"),
+                            ContentType = Convert.ToInt32(child.Tag),
+                            ContentText = child.Content.ToString(),
+                            ContentOrder = Order,
+                            ContentLeftPosition= margin.X,
+                            ContentRightPosition=margin.Y
+                        });
+                        Order++;
+                    }
+
+                    fileSystem.fileContents = fileContent;
+                    fileSystem.CreatedDate = DateTime.Now;
+
+                    var JsonContent = Newtonsoft.Json.JsonConvert.SerializeObject(fileSystem);
+                    System.IO.File.WriteAllText(filepath, JsonContent);
+                    MessageBox.Show("Saved..");
+
+                }
+
+            }
+            else { MessageBox.Show("Could not initiate the process to save"); }
+        }
     }
 }
