@@ -13,8 +13,7 @@
         ui:TitleBar.Background="#e4e4e4"
         ui:TitleBar.IsIconVisible="True"
         WindowState="Maximized"
-        ResizeMode="CanMinimize"
-        >
+        ResizeMode="CanMinimize">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -25,6 +24,10 @@
             <!-- Other app resources here -->
         </ResourceDictionary>
     </Window.Resources>
+    <Window.CommandBindings>
+        <CommandBinding Command="{x:Static local:Dashboard.MyCommand}" Executed="MyCommandExecuted"/>
+    </Window.CommandBindings>
+   
 
     <Grid x:Name="MainLayout">
         <Grid.RowDefinitions>

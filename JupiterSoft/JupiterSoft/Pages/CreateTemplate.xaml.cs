@@ -34,26 +34,25 @@ namespace JupiterSoft.Pages
             set { SetValue(IsChildHitTestVisibleProperty, value); }
         }
 
-
         //Custom Properties Declaration End.
-
-
-        //Custom Variables
-        //UIElement dragObject = null;
+        
         Point Offset;
         WrapPanel dragObject;
         bool isDragged = false;
         private string _FileDirectory = @"C:\JupiterFiles";
-        //private bool _isMoving;
-        //private Point? _buttonPosition;
-        //private double deltaX;
-        //private double deltaY;
-        //private TranslateTransform _currentTT;
+        
         BrushConverter bc;
         ElementModel UElement;
         double CanvasWidth;
         double CanvasHeight;
 
+
+        Dashboard parentWindow;
+        public Dashboard ParentWindow
+        {
+            get { return parentWindow; }
+            set { parentWindow = value; }
+        }
         public CreateTemplate()
         {
             bc = new BrushConverter();
@@ -449,8 +448,9 @@ namespace JupiterSoft.Pages
             closeBtn.Content = "X";
             closeBtn.FontSize = 10;
             closeBtn.VerticalAlignment = VerticalAlignment.Top;
-            closeBtn.Margin = new Thickness(-5, 0, 0, 0);
-            closeBtn.Padding = new Thickness(1);
+            //closeBtn.Margin = new Thickness(-5, 0, 0, 0);
+            //closeBtn.Padding = new Thickness(1);
+            closeBtn.Style = this.FindResource("Closebtn") as Style;
             closeBtn.Click += CloseBtn_Click;
             Random random = new Random();
             WrapPanel wrap = new WrapPanel();
@@ -477,21 +477,23 @@ namespace JupiterSoft.Pages
             btn.Foreground = (Brush)bc.ConvertFrom("#fff");
             btn.FontWeight = FontWeights.Bold;
             btn.FontFamily = new FontFamily("Georgia, serif;");
-            btn.Content = "10";
+            btn.Content = "15";
             btn.Style = this.FindResource("BlueMoveRight") as Style;
             btn.Width = 150;
             btn.Height = 42;
             btn.IsHitTestVisible = IsChildHitTestVisible;
             btn.Tag = (int)ElementConstant.Turn_Fiften_Degree_Right_Move;
             btn.PreviewMouseLeftButtonDown += new MouseButtonEventHandler(Ch_PreviewMouseDown);
+
             var closeBtn = new Button();
             closeBtn.Foreground = new SolidColorBrush(Colors.White);
             closeBtn.Background = new SolidColorBrush(Colors.Red);
             closeBtn.Content = "X";
             closeBtn.FontSize = 10;
             closeBtn.VerticalAlignment = VerticalAlignment.Top;
-            closeBtn.Margin = new Thickness(-5, 0, 0, 0);
-            closeBtn.Padding = new Thickness(1);
+            closeBtn.Style = this.FindResource("Closebtn") as Style;
+            //closeBtn.Margin = new Thickness(-5, 0, 0, 0);
+            //closeBtn.Padding = new Thickness(1);
             closeBtn.Click += CloseBtn_Click;
             Random random = new Random();
             WrapPanel wrap = new WrapPanel();
@@ -517,7 +519,7 @@ namespace JupiterSoft.Pages
             btn.Foreground = (Brush)bc.ConvertFrom("#fff");
             btn.FontWeight = FontWeights.Bold;
             btn.FontFamily = new FontFamily("Georgia, serif;");
-            btn.Content = "10";
+            btn.Content = "15";
             btn.Style = this.FindResource("BlueMoveLeft") as Style;
             btn.Width = 150;
             btn.Height = 42;
@@ -531,8 +533,9 @@ namespace JupiterSoft.Pages
             closeBtn.Content = "X";
             closeBtn.FontSize = 10;
             closeBtn.VerticalAlignment = VerticalAlignment.Top;
-            closeBtn.Margin = new Thickness(-5, 0, 0, 0);
-            closeBtn.Padding = new Thickness(1);
+            closeBtn.Style = this.FindResource("Closebtn") as Style;
+            //closeBtn.Margin = new Thickness(-5, 0, 0, 0);
+            //closeBtn.Padding = new Thickness(1);
             closeBtn.Click += CloseBtn_Click;
             Random random = new Random();
             WrapPanel wrap = new WrapPanel();
@@ -558,7 +561,7 @@ namespace JupiterSoft.Pages
             btn.Foreground = (Brush)bc.ConvertFrom("#fff");
             btn.FontWeight = FontWeights.Bold;
             btn.FontFamily = new FontFamily("Georgia, serif;");
-            btn.Content = "10";
+            //btn.Content = "10";
             btn.Style = this.FindResource("BlueMovePointer") as Style;
             btn.Width = 200;
             btn.Height = 42;
@@ -572,8 +575,9 @@ namespace JupiterSoft.Pages
             closeBtn.Content = "X";
             closeBtn.FontSize = 10;
             closeBtn.VerticalAlignment = VerticalAlignment.Top;
-            closeBtn.Margin = new Thickness(-5, 0, 0, 0);
-            closeBtn.Padding = new Thickness(1);
+            closeBtn.Style = this.FindResource("Closebtn") as Style;
+            //closeBtn.Margin = new Thickness(-5, 0, 0, 0);
+            //closeBtn.Padding = new Thickness(1);
             closeBtn.Click += CloseBtn_Click;
             Random random = new Random();
             WrapPanel wrap = new WrapPanel();
@@ -599,7 +603,7 @@ namespace JupiterSoft.Pages
             btn.Foreground = (Brush)bc.ConvertFrom("#fff");
             btn.FontWeight = FontWeights.Bold;
             btn.FontFamily = new FontFamily("Georgia, serif;");
-            btn.Content = "15";
+            //btn.Content = "15";
             btn.Style = this.FindResource("BlueMoveRotation") as Style;
             btn.Width = 175;
             btn.Height = 42;
@@ -613,14 +617,14 @@ namespace JupiterSoft.Pages
             closeBtn.Content = "X";
             closeBtn.FontSize = 10;
             closeBtn.VerticalAlignment = VerticalAlignment.Top;
-            closeBtn.Margin = new Thickness(-5, 0, 0, 0);
-            closeBtn.Padding = new Thickness(1);
+            closeBtn.Style = this.FindResource("Closebtn") as Style;
+            //closeBtn.Margin = new Thickness(-5, 0, 0, 0);
+            //closeBtn.Padding = new Thickness(1);
             closeBtn.Click += CloseBtn_Click;
             Random random = new Random();
             WrapPanel wrap = new WrapPanel();
             wrap.Width = Double.NaN;
             wrap.Height = Double.NaN;
-            //wrap.Background = new SolidColorBrush(Colors.Blue);
             wrap.Children.Add(btn);
             wrap.Children.Add(closeBtn);
 
@@ -628,17 +632,15 @@ namespace JupiterSoft.Pages
         }
 
         private void Save_Click(object sender, RoutedEventArgs e)
-        {
-            SaveBtn.IsEnabled = false;
-            SaveBtn.Content = "Processing";
+        { 
             SaveInitiated();
-            SaveBtn.IsEnabled = true;
-            SaveBtn.Content = "Save";
         }
         public void SaveInitiated()
         {
+            SaveBtn.IsEnabled = false;
+            SaveBtn.Content = "Processing";
             if (getElementCount() > 0)
-            {
+            {  
                 if (!System.IO.Directory.Exists(_FileDirectory))
                 {
                     System.IO.Directory.CreateDirectory(_FileDirectory);
@@ -694,6 +696,55 @@ namespace JupiterSoft.Pages
 
             }
             else { MessageBox.Show("Could not initiate the process to save"); }
+            SaveBtn.IsEnabled = true;
+            SaveBtn.Content = "Save";
+        }
+
+        private void Device_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            var ele = sender as StackPanel;
+            if(ele.Name== "MotorDrive")
+            {
+               Border MotorParent= VisualTreeHelper.GetParent(ele) as Border;
+                MotorParent.ClearValue(UIElement.OpacityProperty);
+                MotorDriveArea.Visibility = Visibility.Visible;
+
+                Border WeightParent=  VisualTreeHelper.GetParent(WeightModule) as Border;
+                WeightParent.Opacity = 0.8;
+                WeightModuleArea.Visibility = Visibility.Hidden;
+
+                Border CamParent = VisualTreeHelper.GetParent(NetCamera) as Border;
+                CamParent.Opacity = 0.8;
+                NetCameraArea.Visibility = Visibility.Hidden;
+            }
+            else if(ele.Name== "WeightModule")
+            {
+                Border WeightParent = VisualTreeHelper.GetParent(ele) as Border;
+                WeightParent.ClearValue(UIElement.OpacityProperty);
+                WeightModuleArea.Visibility = Visibility.Visible;
+
+                Border MotorParent = VisualTreeHelper.GetParent(MotorDrive) as Border;
+                MotorParent.Opacity = 0.8;
+                MotorDriveArea.Visibility = Visibility.Hidden;                
+
+                Border CamParent = VisualTreeHelper.GetParent(NetCamera) as Border;
+                CamParent.Opacity = 0.8;
+                NetCameraArea.Visibility = Visibility.Hidden;
+            }
+            else if (ele.Name == "NetCamera")
+            {
+                Border CamParent = VisualTreeHelper.GetParent(ele) as Border;
+                CamParent.ClearValue(UIElement.OpacityProperty);
+                NetCameraArea.Visibility = Visibility.Visible;
+
+                Border MotorParent = VisualTreeHelper.GetParent(MotorDrive) as Border;
+                MotorParent.Opacity = 0.8;
+                MotorDriveArea.Visibility = Visibility.Hidden;
+
+                Border WeightParent = VisualTreeHelper.GetParent(WeightModule) as Border;
+                WeightParent.Opacity = 0.8;
+                WeightModuleArea.Visibility = Visibility.Hidden;
+            }
         }
     }
 }

@@ -39,6 +39,31 @@
                 </Setter>
             </Style>
 
+            <Style TargetType="Button" x:Key="ResetButton" >
+                <Setter Property="Background" Value="Red" />
+                <Setter Property="TextBlock.TextAlignment" Value="Center" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border CornerRadius="2,2,2,2" Background="Red" BorderBrush="#f7353f" BorderThickness="1" Width="90" Height="45" Padding="12,3,12,3" Margin="0,0,0,1">
+                                <ContentPresenter x:Name="contentPresenter" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <Style x:Key="Closebtn" TargetType="Button">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="{TemplateBinding Background}" Padding="4" Margin="-12,-4,0,0" Width="20" Height="20" CornerRadius="15">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
             <!--Tab Style-->
             <Style x:Key="TabItemStyle" TargetType="TabItem">
                 <Setter Property="Background" Value="#9c9c9c"/>
@@ -51,8 +76,8 @@
                                 <Grid>
                                     <Grid>
                                         <Border x:Name="border" 
-                                            CornerRadius="0,3,0,0"
-                                            Background="#9c9c9c" Height="45" Width="90"/>
+                                            CornerRadius="0,5,0,0"
+                                            Background="#9c9c9c" Height="45" Width="120" Margin="0,0,1,0"/>
                                     </Grid>
                                     <ContentPresenter ContentSource="Header"
                                                       HorizontalAlignment="Center"
@@ -765,8 +790,8 @@
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="260"/>
-                                <ColumnDefinition Width="300"/>
+                                <ColumnDefinition Width="290"/>
+                                <ColumnDefinition Width="380"/>
                             </Grid.ColumnDefinitions>
                             <Border BorderBrush="#fff" BorderThickness="1" Grid.Row="0" Grid.Column="0" >
                                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Stretch">
@@ -900,7 +925,7 @@
                             <Border BorderBrush="#fff" BorderThickness="1" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" Cursor="Arrow">
 
                                 <ScrollViewer VerticalScrollBarVisibility="Hidden" x:Name="ButtonAreaScroll">
-                                    <Grid x:Name="MyGrid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" Margin="5">
+                                    <Grid x:Name="MyGrid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent">
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="400"/>
                                             <RowDefinition Height="400"/>
@@ -979,11 +1004,11 @@
                                 </ScrollViewer>
 
                             </Border>
-                            <StackPanel Grid.Row="0" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Orientation="Vertical" Margin="2" Cursor="Arrow" Background="#eee" AllowDrop="False">
-                                <Button BorderBrush="#f7353f" BorderThickness="1" Background="Red" Foreground="#fff" Content="Reset" Click="Reset_Click" HorizontalAlignment="Right" Margin="0,5,5,5" Cursor="Hand" FontSize="10" Padding="2" ToolTip="Reset" />
+                            <StackPanel Grid.Row="0" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Orientation="Vertical" Cursor="Arrow" Background="#eee" AllowDrop="False">
                                 
-                                    <ScrollViewer VerticalScrollBarVisibility="Auto" Height="500" Cursor="Hand">
-                                    <Canvas x:Name="ReceiveDrop" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="700" Width="290" Cursor="Hand" AllowDrop="True" Background="Transparent" Drop="Canvas_Drop" DragOver="Canvas_DragOver" DragLeave="Canvas_DragLeave" DragEnter="ReceiveDrop_DragEnter" PreviewMouseMove="ReceiveDrop_PreviewMouseMove" PreviewMouseUp="ReceiveDrop_PreviewMouseUp">
+                                
+                                    <ScrollViewer VerticalScrollBarVisibility="Hidden" Height="500" Cursor="Hand">
+                                    <Canvas x:Name="ReceiveDrop" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="700" Cursor="Hand" Width="370" AllowDrop="True" Background="Transparent" Drop="Canvas_Drop" DragOver="Canvas_DragOver" DragLeave="Canvas_DragLeave" DragEnter="ReceiveDrop_DragEnter" PreviewMouseMove="ReceiveDrop_PreviewMouseMove" PreviewMouseUp="ReceiveDrop_PreviewMouseUp">
                                         
 
 
@@ -1007,11 +1032,11 @@
                                 <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="470"/>
+                                <ColumnDefinition Width="210"/>
+                                <ColumnDefinition Width="526"/>
 
                             </Grid.ColumnDefinitions>
-                            <Border BorderBrush="#fff" BorderThickness="1" Grid.Row="0" Grid.Column="0" >
+                            <Border BorderThickness="1" Grid.Row="0" Grid.Column="0" >
                                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Stretch">
                                     <Grid>
                                         <Grid.RowDefinitions>
@@ -1027,7 +1052,7 @@
                                         <Grid Grid.Row="0" Grid.Column="0" Background="#fff" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10" Width="Auto">
 
                                             <Border Style="{StaticResource StackPanelLink}">
-                                                <StackPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                                                <StackPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch" x:Name="MotorDrive" PreviewMouseLeftButtonDown="Device_MouseLeftButtonDown">
 
 
                                                     <StackPanel Margin="20">
@@ -1048,8 +1073,8 @@
 
                                         <Grid Grid.Row="1" Grid.Column="0" Background="#fff" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10" Width="Auto">
 
-                                            <Border Style="{StaticResource StackPanelLink}">
-                                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                            <Border Style="{StaticResource StackPanelLink}" Opacity="0.8">
+                                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" x:Name="WeightModule" PreviewMouseLeftButtonDown="Device_MouseLeftButtonDown">
 
 
                                                     <StackPanel Margin="20">
@@ -1069,8 +1094,8 @@
                                         </Grid>
                                         <Grid Grid.Row="2" Grid.Column="0" Background="#fff" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10" Width="Auto">
 
-                                            <Border Style="{StaticResource StackPanelLink}">
-                                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                            <Border Style="{StaticResource StackPanelLink}" Opacity="0.8">
+                                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" x:Name="NetCamera" PreviewMouseLeftButtonDown="Device_MouseLeftButtonDown">
 
 
                                                     <StackPanel Margin="20">
@@ -1092,9 +1117,18 @@
                                     </Grid>
                                 </StackPanel>
                             </Border>
-                            <StackPanel Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                                <Label Content="Drop Device Here.."/>
-                            </StackPanel>
+                            <Grid Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="#f4f4f4">
+                                <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" x:Name="MotorDriveArea" Background="Transparent">
+                                    <Label Content="Motor Derive Area" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Black"/>
+                                </StackPanel>
+                                <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" x:Name="WeightModuleArea" Background="Transparent" Visibility="Hidden">
+                                    <Label Content="Weight Module Area" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Black"/>
+                                </StackPanel>
+                                <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" x:Name="NetCameraArea" Background="Transparent" Visibility="Hidden">
+                                    <Label Content="Network Camera Area" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Black"/>
+                                </StackPanel>
+                                
+                            </Grid>
 
                         </Grid>
                     </Border>
@@ -1111,8 +1145,8 @@
                                 <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="470"/>
+                                <ColumnDefinition Width="210"/>
+                                <ColumnDefinition Width="526"/>
 
                             </Grid.ColumnDefinitions>
                             <Border BorderBrush="#fff" BorderThickness="1" Grid.Row="0" Grid.Column="0" >
@@ -1159,7 +1193,7 @@
                                     </Grid>
                                 </StackPanel>
                             </Border>
-                            <StackPanel Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <StackPanel Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="#eee">
                                 <Label Content="Drop or Select Sound Here.."/>
                             </StackPanel>
                         </Grid>
@@ -1181,11 +1215,15 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <Grid Grid.Row="0" Grid.Column="0" Background="Transparent">
+                            <Button Foreground="#fff" Content="Reset" Click="Reset_Click" HorizontalAlignment="Right" Margin="2,0,3,0" Style="{StaticResource ResetButton}" Cursor="Hand" ToolTip="Reset" />
+                        </Grid>
+                        <Grid Grid.Row="0" Grid.Column="1" Background="Transparent">
                             <Button HorizontalAlignment="Right" Cursor="Hand"  x:Name="Run" Content="Run" Margin="0,2,2,2" ToolTip="Run" Style="{StaticResource RunButton}" Foreground="#fff" />
                         </Grid>
-                        <Grid Grid.Column="1" Grid.Row="0" Background="Transparent">
+                        <Grid Grid.Column="2" Grid.Row="0" Background="Transparent">
                             <Button x:Name="SaveBtn"  Content="Save" ToolTip="Save" Cursor="Hand" Foreground="#041124" Margin="2,2,0,2" Style="{StaticResource SaveButton}" Click="Save_Click"/>
                         </Grid>
 

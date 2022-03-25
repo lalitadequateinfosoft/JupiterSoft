@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using JupiterSoft.Pages;
 
 namespace JupiterSoft
 {
@@ -19,11 +20,23 @@ namespace JupiterSoft
     /// </summary>
     public partial class Dashboard : Window
     {
+        public static RoutedCommand MyCommand = new RoutedCommand();
+        CreateTemplate ChildPage; 
         public Dashboard()
-        {
+        {  
             InitializeComponent();
-            frame.Navigate(new System.Uri("Pages/CreateTemplate.xaml",
-             UriKind.RelativeOrAbsolute));
+            this.DataContext = MyCommand;
+            MyCommand.InputGestures.Add(new KeyGesture(Key.S, ModifierKeys.Control));
+            //frame.NavigationService.Navigate(new CreateTemplate());
+            ChildPage = new CreateTemplate();
+            this.frame.Content = null;
+            ChildPage.ParentWindow = this;
+            this.frame.Content = ChildPage;
+        }
+
+        public void MyCommandExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+            ChildPage.SaveInitiated();
         }
     }
 }
