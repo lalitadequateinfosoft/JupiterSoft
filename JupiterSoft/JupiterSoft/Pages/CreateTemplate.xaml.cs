@@ -3,6 +3,7 @@ using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -15,6 +16,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Ozeki.Media;
+using Ozeki.Camera;
+
 
 namespace JupiterSoft.Pages
 {
@@ -35,12 +39,13 @@ namespace JupiterSoft.Pages
         }
 
         //Custom Properties Declaration End.
-        
+
         Point Offset;
         WrapPanel dragObject;
         bool isDragged = false;
-        private string _FileDirectory = @"C:\JupiterFiles";
-        
+        bool isloaded = false;
+        private string _FileDirectory = ApplicationConstant._FileDirectory;
+
         BrushConverter bc;
         ElementModel UElement;
         double CanvasWidth;
@@ -53,6 +58,12 @@ namespace JupiterSoft.Pages
             get { return parentWindow; }
             set { parentWindow = value; }
         }
+
+        // Camera variables.
+        private IIPCamera _camera;
+        private DrawingImageProvider _drawingImageProvider;
+        private MediaConnector _connector;
+        private IWebCamera _webCamera;
         public CreateTemplate()
         {
             bc = new BrushConverter();
@@ -61,6 +72,7 @@ namespace JupiterSoft.Pages
             this.DataContext = this.UElement;
             this.CanvasWidth = ReceiveDrop.Width;
             this.CanvasHeight = ReceiveDrop.Height;
+            this.isloaded = true;
         }
 
         private void ButtonGrid_MouseEnter(object sender, MouseEventArgs e)
@@ -632,7 +644,7 @@ namespace JupiterSoft.Pages
         }
 
         private void Save_Click(object sender, RoutedEventArgs e)
-        { 
+        {
             SaveInitiated();
         }
         public void SaveInitiated()
@@ -640,7 +652,7 @@ namespace JupiterSoft.Pages
             SaveBtn.IsEnabled = false;
             SaveBtn.Content = "Processing";
             if (getElementCount() > 0)
-            {  
+            {
                 if (!System.IO.Directory.Exists(_FileDirectory))
                 {
                     System.IO.Directory.CreateDirectory(_FileDirectory);
@@ -659,16 +671,16 @@ namespace JupiterSoft.Pages
                     {
                         MessageBox.Show("File name should not contain white space."); SaveInitiated(); return;
                     }
-                        
+
                     string filepath = saveFileDialog1.FileName.Contains(".json") ? saveFileDialog1.FileName : saveFileDialog1.FileName + ".json";
 
                     FileSystemModel fileSystem = new FileSystemModel();
                     fileSystem.FileId = System.IO.Path.GetFileName(filepath);
 
-                    var contentElement= ReceiveDrop.Children.OfType<WrapPanel>().ToList();
+                    var contentElement = ReceiveDrop.Children.OfType<WrapPanel>().ToList();
                     List<FileContentModel> fileContent = new List<FileContentModel>();
                     int Order = 1;
-                    foreach(var item in contentElement)
+                    foreach (var item in contentElement)
                     {
                         var child = item.Children.OfType<Button>().FirstOrDefault();
                         Point margin = item.TransformToAncestor(ReceiveDrop)
@@ -679,8 +691,8 @@ namespace JupiterSoft.Pages
                             ContentType = Convert.ToInt32(child.Tag),
                             ContentText = child.Content.ToString(),
                             ContentOrder = Order,
-                            ContentLeftPosition= margin.X,
-                            ContentRightPosition=margin.Y
+                            ContentLeftPosition = margin.X,
+                            ContentRightPosition = margin.Y
                         });
                         Order++;
                     }
@@ -703,13 +715,13 @@ namespace JupiterSoft.Pages
         private void Device_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             var ele = sender as StackPanel;
-            if(ele.Name== "MotorDrive")
+            if (ele.Name == "MotorDrive")
             {
-               Border MotorParent= VisualTreeHelper.GetParent(ele) as Border;
+                Border MotorParent = VisualTreeHelper.GetParent(ele) as Border;
                 MotorParent.ClearValue(UIElement.OpacityProperty);
                 MotorDriveArea.Visibility = Visibility.Visible;
 
-                Border WeightParent=  VisualTreeHelper.GetParent(WeightModule) as Border;
+                Border WeightParent = VisualTreeHelper.GetParent(WeightModule) as Border;
                 WeightParent.Opacity = 0.8;
                 WeightModuleArea.Visibility = Visibility.Hidden;
 
@@ -717,7 +729,7 @@ namespace JupiterSoft.Pages
                 CamParent.Opacity = 0.8;
                 NetCameraArea.Visibility = Visibility.Hidden;
             }
-            else if(ele.Name== "WeightModule")
+            else if (ele.Name == "WeightModule")
             {
                 Border WeightParent = VisualTreeHelper.GetParent(ele) as Border;
                 WeightParent.ClearValue(UIElement.OpacityProperty);
@@ -725,17 +737,19 @@ namespace JupiterSoft.Pages
 
                 Border MotorParent = VisualTreeHelper.GetParent(MotorDrive) as Border;
                 MotorParent.Opacity = 0.8;
-                MotorDriveArea.Visibility = Visibility.Hidden;                
+                MotorDriveArea.Visibility = Visibility.Hidden;
 
                 Border CamParent = VisualTreeHelper.GetParent(NetCamera) as Border;
                 CamParent.Opacity = 0.8;
                 NetCameraArea.Visibility = Visibility.Hidden;
+                NetworkCameraOuputArea.Visibility = Visibility.Hidden;
             }
             else if (ele.Name == "NetCamera")
             {
                 Border CamParent = VisualTreeHelper.GetParent(ele) as Border;
                 CamParent.ClearValue(UIElement.OpacityProperty);
                 NetCameraArea.Visibility = Visibility.Visible;
+                NetworkCameraOuputArea.Visibility = Visibility.Visible;
 
                 Border MotorParent = VisualTreeHelper.GetParent(MotorDrive) as Border;
                 MotorParent.Opacity = 0.8;
@@ -745,6 +759,171 @@ namespace JupiterSoft.Pages
                 WeightParent.Opacity = 0.8;
                 WeightModuleArea.Visibility = Visibility.Hidden;
             }
+        }
+
+
+        private void CameraDetail_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            validateCameraDetails();
+        }
+
+        private void validateCameraDetails()
+        {
+            if (!isloaded) return;
+            bool IsCameraIPValid = false;
+            bool IsPortValid = false;
+            bool IsUserNameValid = false;
+            bool IsPassword = false;
+
+            if (!string.IsNullOrEmpty(CameraIPText.Text) && CameraIPText.Text != "Enter Camera IP" && ApplicationConstant.CheckIPValid(CameraIPText.Text) != null)
+            {
+                IsCameraIPValid = true;
+            }
+
+            if (!string.IsNullOrEmpty(PortNumber.Text) && PortNumber.Text != "Enter Port Number" && ApplicationConstant.IsNumeric(PortNumber.Text))
+            {
+                IsPortValid = true;
+            }
+            if (!string.IsNullOrEmpty(Username.Text) && Username.Text != "Enter Username") IsUserNameValid = true;
+            if (!string.IsNullOrEmpty(Password.Text) && Password.Text != "Enter Password") IsPassword = true;
+
+            if (IsCameraIPValid && IsPortValid && IsUserNameValid && IsPassword)
+            {
+                ConnectCam.IsEnabled = true;
+                Networkexception.Content = "";
+            }
+            else
+            {
+                ConnectCam.IsEnabled = false;
+                if (!IsCameraIPValid) { Networkexception.Content = "Invalid/Empty Camera IP"; return; }
+                if (!IsPortValid) { Networkexception.Content = "Invalid/Empty Port Number"; return; }
+                if (!IsUserNameValid) { Networkexception.Content = "Invalid/Empty Userame"; return; }
+                if (!IsPassword) { Networkexception.Content = "Invalid/Empty Password"; return; }
+            }
+        }
+
+
+
+
+        private void ConnectCam_Click(object sender, RoutedEventArgs e)
+        {
+            ConnectCam.IsEnabled = false;
+            try
+            {
+                _drawingImageProvider = new DrawingImageProvider();
+                _connector = new MediaConnector();
+                videoViewer.SetImageProvider(_drawingImageProvider);
+
+                string Camip = CameraIPText.Text + ":" + PortNumber.Text;
+                _camera = new IPCamera(Camip, Username.Text, Password.Text);
+                _connector.Connect(_camera.VideoChannel, _drawingImageProvider);
+                _camera.Start();
+                videoViewer.Start();
+                ConnectCam.IsEnabled = false;
+                ConnectCam.Content = "Connected";
+                DisconnectCam.IsEnabled = true;
+            }
+            catch (Exception ex) { ConnectCam.IsEnabled = true; Networkexception.Content = ex.ToString(); }
+
+        }
+
+        private void RemoveText(object sender, RoutedEventArgs e)
+        {
+            var ele = sender as TextBox;
+            if (ele.Name == "CameraIPText")
+            {
+                if (ele.Text == "Enter Camera IP")
+                {
+                    ele.Text = "";
+                }
+            }
+            else if (ele.Name == "PortNumber")
+            {
+                if (ele.Text == "Enter Port Number") ele.Text = "";
+            }
+            else if (ele.Name == "Username")
+            {
+                if (ele.Text == "Enter Username") ele.Text = "";
+            }
+            else if (ele.Name == "Password")
+            {
+                if (ele.Text == "Enter Password") ele.Text = "";
+            }
+
+            if (ele.Foreground == Brushes.Gray)
+            {
+                ele.Foreground = Brushes.Black;
+            }
+        }
+
+        private void AddText(object sender, RoutedEventArgs e)
+        {
+            var ele = sender as TextBox;
+            if (ele.Name == "CameraIPText")
+            {
+                if (string.IsNullOrWhiteSpace(ele.Text)) { ele.Text = "Enter Camera IP"; ele.Foreground = Brushes.Gray; }
+            }
+            else if (ele.Name == "PortNumber")
+            {
+                if (string.IsNullOrWhiteSpace(ele.Text)) { ele.Text = "Enter Port Number"; ele.Foreground = Brushes.Gray; }
+            }
+            else if (ele.Name == "Username")
+            {
+                if (string.IsNullOrWhiteSpace(ele.Text)) { ele.Text = "Enter Username"; ele.Foreground = Brushes.Gray; }
+            }
+            else if (ele.Name == "Password")
+            {
+                if (string.IsNullOrWhiteSpace(ele.Text)) { ele.Text = "Enter Password"; ele.Foreground = Brushes.Gray; }
+            }
+
+
+        }
+
+        private void DisconnectCam_Click(object sender, RoutedEventArgs e)
+        {
+            _camera.Stop();
+            videoViewer.Stop();
+            ConnectCam.Content = "Connect";
+            DisconnectCam.IsEnabled = false;
+            validateCameraDetails();
+        }
+
+        private void ConnectUSBCamera_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                _webCamera = new WebCamera();
+                _drawingImageProvider = new DrawingImageProvider();
+                _connector = new MediaConnector();
+
+                _connector.Connect(_webCamera.VideoChannel, _drawingImageProvider);
+                videoViewer.SetImageProvider(_drawingImageProvider);
+                _webCamera.Start();
+                videoViewer.Start();
+                ConnectUSBCamera.IsEnabled = false;
+                ConnectUSBCamera.Content = "Connected";
+                DisconnectUSBCam.IsEnabled = true;
+            }
+            catch (Exception ex)
+            {
+                USBCam_error.Content = ex.ToString();
+            }
+        }
+
+        private void DisconnectUSBCam_Click(object sender, RoutedEventArgs e)
+        {
+            
+            _webCamera.Stop();
+            _webCamera.Dispose();
+            _drawingImageProvider.Dispose();
+            _connector.Disconnect(_webCamera.VideoChannel, _drawingImageProvider);
+            _connector.Dispose();
+            videoViewer.Stop();
+            videoViewer.Background = Brushes.Black;
+            ConnectUSBCamera.IsEnabled = true;
+            ConnectUSBCamera.Content = "Connect";
+            DisconnectUSBCam.IsEnabled = false;
+
         }
     }
 }

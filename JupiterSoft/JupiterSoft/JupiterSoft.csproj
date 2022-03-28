@@ -38,8 +38,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="netstandard" />
+    <Reference Include="OzekiSDK">
+      <HintPath>C:\Program Files\Ozeki\Ozeki SDK\SDK\NET4\OzekiSDK.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Drawing.Design" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -84,6 +89,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\ApplicationConstant.cs" />
     <Compile Include="Models\ElementModel.cs" />
     <Compile Include="Models\FileSystemModel.cs" />
     <Compile Include="Pages\CreateTemplate.xaml.cs">

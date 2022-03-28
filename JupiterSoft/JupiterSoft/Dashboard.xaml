@@ -51,15 +51,15 @@
    FontSize="14" Margin="0,8" Height="20" VerticalAlignment="Bottom" BorderThickness="0" BorderBrush="#e4e4e4" Cursor="Hand">
                 <MenuItem Header="New" Background="#e4e4e4" Foreground="#8d8d8d" Width="150" FontSize="12" Cursor="Hand" />
 
-                <MenuItem Header="Open File" Background="#e4e4e4" Foreground="#8d8d8d" Width="150" FontSize="12" Cursor="Hand"/>
+                <MenuItem Header="Open" Background="#e4e4e4" Foreground="#8d8d8d" Width="150" FontSize="12" Cursor="Hand"/>
 
                 <MenuItem Header="Close" Background="#e4e4e4" Foreground="#8d8d8d" Width="150" FontSize="12" Cursor="Hand" />
 
-                <MenuItem Header="Close All" Background="#e4e4e4" Foreground="#8d8d8d" Width="150" FontSize="12" Cursor="Hand"/>
+                <!--<MenuItem Header="Close All" Background="#e4e4e4" Foreground="#8d8d8d" Width="150" FontSize="12" Cursor="Hand"/>-->
 
                 <MenuItem Header="Save As" Background="#e4e4e4" Foreground="#8d8d8d" Width="150" FontSize="12" Cursor="Hand" />
 
-                <MenuItem Header="Open Project" Background="#e4e4e4" Foreground="#8d8d8d" Width="150" FontSize="12" Cursor="Hand"/>
+                <!--<MenuItem Header="Open Project" Background="#e4e4e4" Foreground="#8d8d8d" Width="150" FontSize="12" Cursor="Hand"/>-->
 
                 <MenuItem Header="Exit" Background="#e4e4e4" Foreground="#8d8d8d" Width="150" FontSize="12" Cursor="Hand"/>
               
