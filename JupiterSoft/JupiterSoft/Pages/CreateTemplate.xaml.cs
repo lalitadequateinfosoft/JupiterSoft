@@ -64,6 +64,7 @@ namespace JupiterSoft.Pages
         private DrawingImageProvider _drawingImageProvider;
         private MediaConnector _connector;
         private IWebCamera _webCamera;
+        private static string _runningCamera = null;
         public CreateTemplate()
         {
             bc = new BrushConverter();
@@ -810,6 +811,7 @@ namespace JupiterSoft.Pages
             ConnectCam.IsEnabled = false;
             try
             {
+                DisconnectRunningCamera();
                 _drawingImageProvider = new DrawingImageProvider();
                 _connector = new MediaConnector();
                 videoViewer.SetImageProvider(_drawingImageProvider);
@@ -882,7 +884,13 @@ namespace JupiterSoft.Pages
         private void DisconnectCam_Click(object sender, RoutedEventArgs e)
         {
             _camera.Stop();
+            _camera.Disconnect();
+            _camera.Dispose();
+            _drawingImageProvider.Dispose();
+            _connector.Disconnect(_camera.VideoChannel, _drawingImageProvider);
+            _connector.Dispose();
             videoViewer.Stop();
+            videoViewer.Background = Brushes.Black;
             ConnectCam.Content = "Connect";
             DisconnectCam.IsEnabled = false;
             validateCameraDetails();
@@ -892,6 +900,7 @@ namespace JupiterSoft.Pages
         {
             try
             {
+                DisconnectRunningCamera();
                 _webCamera = new WebCamera();
                 _drawingImageProvider = new DrawingImageProvider();
                 _connector = new MediaConnector();
@@ -912,7 +921,7 @@ namespace JupiterSoft.Pages
 
         private void DisconnectUSBCam_Click(object sender, RoutedEventArgs e)
         {
-            
+
             _webCamera.Stop();
             _webCamera.Dispose();
             _drawingImageProvider.Dispose();
@@ -924,6 +933,91 @@ namespace JupiterSoft.Pages
             ConnectUSBCamera.Content = "Connect";
             DisconnectUSBCam.IsEnabled = false;
 
+        }
+
+        private void RTSP_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+        }
+
+        private void RTSP_GotFocus(object sender, RoutedEventArgs e)
+        {
+            var ele = sender as TextBox;
+            if (ele.Name == "RTSPUrl")
+            {
+                if (ele.Text == "Enter Camera RTSP URL")
+                {
+                    ele.Text = "";
+                }
+            }
+            else if (ele.Name == "RTSPUsername")
+            {
+                if (ele.Text == "Enter Username") ele.Text = "";
+            }
+            else if (ele.Name == "RTSPPassword")
+            {
+                if (ele.Text == "Enter Password") ele.Text = "";
+            }
+
+            if (ele.Foreground == Brushes.Gray)
+            {
+                ele.Foreground = Brushes.Black;
+            }
+        }
+
+        private void RTSP_LostFocus(object sender, RoutedEventArgs e)
+        {
+            var ele = sender as TextBox;
+            if (ele.Name == "RTSPUrl")
+            {
+                if (string.IsNullOrWhiteSpace(ele.Text)) { ele.Text = "Enter Camera RTSP URL"; ele.Foreground = Brushes.Gray; }
+            }
+            else if (ele.Name == "RTSPUsername")
+            {
+                if (string.IsNullOrWhiteSpace(ele.Text)) { ele.Text = "Enter Username"; ele.Foreground = Brushes.Gray; }
+            }
+            else if (ele.Name == "RTSPPassword")
+            {
+                if (string.IsNullOrWhiteSpace(ele.Text)) { ele.Text = "Enter Password"; ele.Foreground = Brushes.Gray; }
+            }
+        }
+
+        private void DisconnectRunningCamera()
+        {
+            if (!string.IsNullOrEmpty(_runningCamera))
+            {
+                if (_runningCamera == "ONVIF")
+                {
+                    _camera.Stop();
+                    _camera.Disconnect();
+                    _camera.Dispose();
+                    _drawingImageProvider.Dispose();
+                    _connector.Disconnect(_camera.VideoChannel, _drawingImageProvider);
+                    _connector.Dispose();
+                    videoViewer.Stop();
+                    videoViewer.Background = Brushes.Black;
+                    ConnectCam.Content = "Connect";
+                    DisconnectCam.IsEnabled = false;
+                    validateCameraDetails();
+                }
+                else if (_runningCamera == "USB")
+                {
+                    _webCamera.Stop();
+                    _webCamera.Dispose();
+                    _drawingImageProvider.Dispose();
+                    _connector.Disconnect(_webCamera.VideoChannel, _drawingImageProvider);
+                    _connector.Dispose();
+                    videoViewer.Stop();
+                    videoViewer.Background = Brushes.Black;
+                    ConnectUSBCamera.IsEnabled = true;
+                    ConnectUSBCamera.Content = "Connect";
+                    DisconnectUSBCam.IsEnabled = false;
+                }
+                else if (_runningCamera=="RTSP")
+                {
+
+                }
+            }
         }
     }
 }
