@@ -9,6 +9,7 @@ namespace JupiterSoft.Models
     public class FileSystemModel
     {
         public string FileId { get; set; }
+        public string FileName { get; set; }
         public DateTime CreatedDate { get; set; }
         public List<FileContentModel> fileContents { get; set; }
 

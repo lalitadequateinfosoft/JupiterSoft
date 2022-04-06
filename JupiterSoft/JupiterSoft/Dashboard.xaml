@@ -21,133 +21,189 @@
                 <ui:XamlControlsResources />
                 <!-- Other merged dictionaries here -->
             </ResourceDictionary.MergedDictionaries>
+            
+            
             <!-- Other app resources here -->
+            <Style x:Key="CloseBtn" TargetType="{x:Type Button}">
+                <Setter Property="Background" Value="red"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Border Background="{TemplateBinding Background}" BorderBrush="Red" BorderThickness="1">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" Value="Red"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
         </ResourceDictionary>
     </Window.Resources>
     <Window.CommandBindings>
         <CommandBinding Command="{x:Static local:Dashboard.MyCommand}" Executed="MyCommandExecuted"/>
     </Window.CommandBindings>
-
     <Grid>
-    <Grid x:Name="MainLayout">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-        
-        <!--Menu Area Start-->
-        <Menu Grid.Row="0" VerticalAlignment="Top" HorizontalAlignment="Stretch" 
+        <Grid x:Name="MainLayout">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!--Menu Area Start-->
+            <Menu Grid.Row="0" VerticalAlignment="Top" HorizontalAlignment="Stretch" 
           Background="#041124"
         BorderBrush="#041124" 
         BorderThickness="1">
-            <TextBlock VerticalAlignment="Center">
+                <TextBlock VerticalAlignment="Center">
             <Run Text="JUPI" FontSize="18" FontWeight="Bold" Foreground="#0182c9"/><Run Text="TER" FontSize="18" FontWeight="Bold" Foreground="#FFF"/>
             
             <Run Text="SOFTWARE" FontSize="18" FontWeight="Normal" Foreground="#FFF"/>
-            </TextBlock>
-            <TextBlock Text="|" Foreground="#9c9c9c" FontSize="22" Height="36" Width="7"/>
-<!--File Menu Start-->
-            <MenuItem Header="File" Foreground="#fff" Background="Transparent" FontWeight="Bold"
+                </TextBlock>
+                <TextBlock Text="|" Foreground="#9c9c9c" FontSize="22" Height="36" Width="7"/>
+                <!--File Menu Start-->
+                <MenuItem Header="File" Foreground="#fff" Background="Transparent" FontWeight="Bold"
    FontSize="14" Margin="0,8" Height="20" VerticalAlignment="Bottom" BorderThickness="0" BorderBrush="#e4e4e4" Cursor="Hand">
-                <MenuItem Header="New" Background="#e4e4e4" Foreground="#8d8d8d" Width="150" FontSize="12" Cursor="Hand" Tag="New" Click="MenuItem_Click" />
+                    <MenuItem Header="New" Background="#e4e4e4" Foreground="#8d8d8d" Width="150" FontSize="12" Cursor="Hand" Tag="New" Click="MenuItem_Click" />
 
-                <MenuItem Header="Open" Background="#e4e4e4" Foreground="#8d8d8d" Width="150" FontSize="12" Cursor="Hand" Tag="Open" Click="MenuItem_Click"/>
+                    <MenuItem Header="Open" Background="#e4e4e4" Foreground="#8d8d8d" Width="150" FontSize="12" Cursor="Hand" Tag="Open" Click="MenuItem_Click"/>
 
-                <MenuItem Header="Close" Background="#e4e4e4" Foreground="#8d8d8d" Width="150" FontSize="12" Cursor="Hand" Tag="Close" Click="MenuItem_Click" />
+                    <MenuItem Header="Close" Background="#e4e4e4" Foreground="#8d8d8d" Width="150" FontSize="12" Cursor="Hand" Tag="Close" Click="MenuItem_Click" />
 
-                <!--<MenuItem Header="Close All" Background="#e4e4e4" Foreground="#8d8d8d" Width="150" FontSize="12" Cursor="Hand"/>-->
+                    <!--<MenuItem Header="Close All" Background="#e4e4e4" Foreground="#8d8d8d" Width="150" FontSize="12" Cursor="Hand"/>-->
 
-                <MenuItem Header="Save As" Background="#e4e4e4" Foreground="#8d8d8d" Width="150" FontSize="12" Cursor="Hand" Tag="Save" Click="MenuItem_Click" />
+                    <MenuItem Header="Save As" Background="#e4e4e4" Foreground="#8d8d8d" Width="150" FontSize="12" Cursor="Hand" Tag="Save" Click="MenuItem_Click" />
 
-                <!--<MenuItem Header="Open Project" Background="#e4e4e4" Foreground="#8d8d8d" Width="150" FontSize="12" Cursor="Hand"/>-->
+                    <!--<MenuItem Header="Open Project" Background="#e4e4e4" Foreground="#8d8d8d" Width="150" FontSize="12" Cursor="Hand"/>-->
 
-                <MenuItem Header="Exit" Background="#e4e4e4" Foreground="#8d8d8d" Width="150" FontSize="12" Cursor="Hand" Tag="Exit" Click="MenuItem_Click"/>
-              
-            </MenuItem>
-            
-            <!--File Menu End-->
+                    <MenuItem Header="Exit" Background="#e4e4e4" Foreground="#8d8d8d" Width="150" FontSize="12" Cursor="Hand" Tag="Exit" Click="MenuItem_Click"/>
 
-            <!--Edit Menu Start-->
-            <MenuItem Header="Edit" Foreground="#fff" Background="Transparent" FontWeight="Bold"
+                </MenuItem>
+
+                <!--File Menu End-->
+
+                <!--Edit Menu Start-->
+                <MenuItem Header="Edit" Foreground="#fff" Background="Transparent" FontWeight="Bold"
    FontSize="14" Margin="0,8" Height="20" VerticalAlignment="Bottom" BorderThickness="0" BorderBrush="#e4e4e4" Cursor="Hand">
-                <MenuItem Header="Undo" Background="#e4e4e4" Foreground="#8d8d8d" Width="150" FontSize="12" Cursor="Hand" />
+                    <MenuItem Header="Undo" Background="#e4e4e4" Foreground="#8d8d8d" Width="150" FontSize="12" Cursor="Hand" />
 
-                <MenuItem Header="Redo" Background="#e4e4e4" Foreground="#8d8d8d" Width="150" FontSize="12" Cursor="Hand"/>
+                    <MenuItem Header="Redo" Background="#e4e4e4" Foreground="#8d8d8d" Width="150" FontSize="12" Cursor="Hand"/>
 
-                <MenuItem Header="Cut" Background="#e4e4e4" Foreground="#8d8d8d" Width="150" FontSize="12" />
+                    <MenuItem Header="Cut" Background="#e4e4e4" Foreground="#8d8d8d" Width="150" FontSize="12" />
 
-                <MenuItem Header="Paste" Background="#e4e4e4" Foreground="#8d8d8d" Width="150" FontSize="12" Cursor="Hand"/>
+                    <MenuItem Header="Paste" Background="#e4e4e4" Foreground="#8d8d8d" Width="150" FontSize="12" Cursor="Hand"/>
 
-                <MenuItem Header="Copy" Background="#e4e4e4" Foreground="#8d8d8d" Width="150" FontSize="12" Cursor="Hand" />
+                    <MenuItem Header="Copy" Background="#e4e4e4" Foreground="#8d8d8d" Width="150" FontSize="12" Cursor="Hand" />
 
-                <MenuItem Header="Delete" Background="#e4e4e4" Foreground="#8d8d8d" Width="150" FontSize="12" Cursor="Hand"/>
+                    <MenuItem Header="Delete" Background="#e4e4e4" Foreground="#8d8d8d" Width="150" FontSize="12" Cursor="Hand"/>
 
-                <MenuItem Header="Select All" Background="#e4e4e4" Foreground="#8d8d8d" Width="150" FontSize="12" Cursor="Hand"/>
+                    <MenuItem Header="Select All" Background="#e4e4e4" Foreground="#8d8d8d" Width="150" FontSize="12" Cursor="Hand"/>
 
-                <MenuItem Header="Find &amp; Replace" Background="#e4e4e4" Foreground="#8d8d8d" Width="150" FontSize="12" Cursor="Hand"/>
+                    <MenuItem Header="Find &amp; Replace" Background="#e4e4e4" Foreground="#8d8d8d" Width="150" FontSize="12" Cursor="Hand"/>
 
-            </MenuItem>
+                </MenuItem>
 
-            <!--Edit Menu End-->
+                <!--Edit Menu End-->
 
-            <!--Search Menu Start-->
-            <MenuItem Header="Search" Foreground="#fff" Background="Transparent" FontWeight="Bold"
+                <!--Search Menu Start-->
+                <MenuItem Header="Search" Foreground="#fff" Background="Transparent" FontWeight="Bold"
    FontSize="14" Margin="0,8" Height="20" VerticalAlignment="Bottom" BorderThickness="0" BorderBrush="#e4e4e4" Cursor="Hand">
-                <MenuItem Header="File" Background="#e4e4e4" Foreground="#8d8d8d" Width="150" FontSize="12" Cursor="Hand" />
+                    <MenuItem Header="File" Background="#e4e4e4" Foreground="#8d8d8d" Width="150" FontSize="12" Cursor="Hand" />
 
-                <MenuItem Header="Text" Background="#e4e4e4" Foreground="#8d8d8d" Width="150" FontSize="12" Cursor="Hand"/>
-                
-            </MenuItem>
+                    <MenuItem Header="Text" Background="#e4e4e4" Foreground="#8d8d8d" Width="150" FontSize="12" Cursor="Hand"/>
 
-            <!--Search Menu End-->
+                </MenuItem>
 
-            <!--Help Menu Start-->
-            <MenuItem Header="Help" Foreground="#fff" Background="Transparent" FontWeight="Bold"
+                <!--Search Menu End-->
+
+                <!--Help Menu Start-->
+                <MenuItem Header="Help" Foreground="#fff" Background="Transparent" FontWeight="Bold"
    FontSize="14" Margin="0,8" Height="20" VerticalAlignment="Bottom" BorderThickness="0" BorderBrush="#e4e4e4" Cursor="Hand">
-                <MenuItem Header="Help Content" Background="#e4e4e4" Foreground="#8d8d8d" Width="150" FontSize="12" Cursor="Hand"  />
+                    <MenuItem Header="Help Content" Background="#e4e4e4" Foreground="#8d8d8d" Width="150" FontSize="12" Cursor="Hand"  />
 
-                <MenuItem Header="Tips &amp; Tricks" Background="#e4e4e4" Foreground="#8d8d8d" Width="150" FontSize="12" Cursor="Hand"/>
+                    <MenuItem Header="Tips &amp; Tricks" Background="#e4e4e4" Foreground="#8d8d8d" Width="150" FontSize="12" Cursor="Hand"/>
 
-            </MenuItem>
+                </MenuItem>
 
-            <!--Help Menu End-->
-        </Menu>
+                <!--Help Menu End-->
+            </Menu>
 
-        <Frame Grid.Row="1" Name="frame" NavigationUIVisibility="Hidden" Panel.ZIndex="1" Background="#eeeeee"/>
+            <Frame Grid.Row="1" Name="frame" NavigationUIVisibility="Hidden" Panel.ZIndex="1" Background="#eeeeee"/>
 
-       
-        <!--Menu Area End-->
-    </Grid>
-        <Popup x:Name="Filepopup" IsOpen="False" HorizontalAlignment="Center" VerticalAlignment="Center" Placement="Center" Height="Auto" Width="Auto" AllowsTransparency="True" PopupAnimation="Slide" MinHeight="100" MinWidth="200">
-            <Border BorderThickness="1" BorderBrush="#041124" CornerRadius="5" HorizontalAlignment="Stretch" >
+
+            <!--Menu Area End-->
+        </Grid>
+        <Popup x:Name="Filepopup" IsOpen="False" Placement="Center" Height="Auto" Width="Auto" AllowsTransparency="True" PopupAnimation="Slide" MinHeight="100" MinWidth="600">
+            <Border BorderThickness="1" BorderBrush="#041124" Background="#fff" CornerRadius="5" HorizontalAlignment="Stretch" Margin="4">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="10" Color="#041124" Opacity="0.8"/>
+                </Border.Effect>
                 <Grid>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="25"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
                     <Border Grid.Row="0" Background="#041124" CornerRadius="5,5,0,0" Padding="2">
                         <Grid>
-                            <TextBlock Text="Select Saved File" Foreground="#fff" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="10"/>
+                            <TextBlock Text="Select Project To Open" Foreground="#fff" Margin="5,0" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="12"/>
                             <StackPanel HorizontalAlignment="Right" VerticalAlignment="Center">
-                                <Button Content="X" Background="Red" BorderThickness="1" BorderBrush="Red" Foreground="#fff" FontSize="10"/>
+                                <Button Content="X" Style="{StaticResource CloseBtn}" Background="Red" BorderThickness="1" BorderBrush="Red" Foreground="#fff" FontSize="10" Click="PopupClose_Click" Width="30" Height="30">
+                                    
+                                </Button>
                             </StackPanel>
                         </Grid>
                     </Border>
-                    <Grid Grid.Row="1">
-                        <ScrollViewer VerticalScrollBarVisibility="Auto" Height="100">
-                            <DataGrid Background="WhiteSmoke" HeadersVisibility="Row" Width="Auto" RowBackground="AliceBlue" HorizontalAlignment="Stretch" Margin="0,5" x:Name="FiledataGrid" VerticalAlignment="Stretch" AutoGenerateColumns="False" IsReadOnly="False" GridLinesVisibility="None" CanUserAddRows="False">
+                    <Border Grid.Row="1" BorderThickness="0,0,0,1" BorderBrush="#041124" Background="#fff">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <Label Content="Project" FontWeight="Bold" Foreground="#041124"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <Label Content="Last Updated" FontWeight="Bold" Foreground="#041124"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <Label Content="Action" FontWeight="Bold" Foreground="#041124"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                    <Grid Grid.Row="2">
+                        <Label x:Name="FileMessage" Content="No saved project found.." Foreground="Red" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Hidden"/>
+                        <DataGrid Background="Transparent" HeadersVisibility="None" Width="600" RowBackground="#fff" HorizontalAlignment="Stretch" x:Name="FiledataGrid" VerticalAlignment="Stretch" AutoGenerateColumns="False" IsReadOnly="False" GridLinesVisibility="None" CanUserAddRows="False" Visibility="Hidden" Margin="2">
                                 <DataGrid.Columns>
-                                    <DataGridTextColumn Header="Projects" Binding="{Binding FileId}" Width="*" IsReadOnly="True"/>
+                                    <DataGridTextColumn Header="Projects" Binding="{Binding FileId}" Width="*" IsReadOnly="True">
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="HorizontalAlignment" Value="Center" />
+                                                <Setter Property="VerticalAlignment" Value="Center" />
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
+                                    </DataGridTextColumn>
+
+                                    <DataGridTextColumn Header="Last Updated" Binding="{Binding CreatedDate}" Width="*" IsReadOnly="True">
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="HorizontalAlignment" Value="Center" />
+                                                <Setter Property="VerticalAlignment" Value="Center" />
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
+                                    </DataGridTextColumn>
                                     <DataGridTemplateColumn Width="*" Header="Action">
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate>
-                                                <Button Width="25" HorizontalAlignment="Right" BorderBrush="ForestGreen" BorderThickness="1" Content="Open" Tag="{Binding FileId}"
-                           FontSize="10" Margin="0,0,5,0">
+                                                <Button HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#fff" Background="#041124" BorderBrush="#041124" BorderThickness="1" Content="Open" Tag="{Binding FileName}"
+                           FontSize="12" Margin="0,0,-25,0" Click="Open_Click">
                                                     <Button.Resources>
                                                         <Style TargetType="{x:Type Border}">
                                                             <Setter Property="CornerRadius" Value="5"/>
-                                                            <Setter Property="BorderBrush" Value="ForestGreen"/>
-
                                                         </Style>
                                                     </Button.Resources>
                                                 </Button>
@@ -156,11 +212,12 @@
                                     </DataGridTemplateColumn>
                                 </DataGrid.Columns>
                             </DataGrid>
-                        </ScrollViewer>
+                       
                     </Grid>
                 </Grid>
             </Border>
-            
+
         </Popup>
+
     </Grid>
 </Window>
