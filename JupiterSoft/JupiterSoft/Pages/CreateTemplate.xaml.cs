@@ -18,7 +18,8 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Ozeki.Media;
 using Ozeki.Camera;
-
+using System.IO;
+using Newtonsoft.Json;
 
 namespace JupiterSoft.Pages
 {
@@ -65,6 +66,7 @@ namespace JupiterSoft.Pages
         private MediaConnector _connector;
         private IWebCamera _webCamera;
         private static string _runningCamera = null;
+        private string _CurrentFile = null;
         public CreateTemplate()
         {
             bc = new BrushConverter();
@@ -74,6 +76,19 @@ namespace JupiterSoft.Pages
             this.CanvasWidth = ReceiveDrop.Width;
             this.CanvasHeight = ReceiveDrop.Height;
             this.isloaded = true;
+        }
+
+        public CreateTemplate(string _filename)
+        {
+            bc = new BrushConverter();
+            this.UElement = ElementOp.GetElementModel();
+            InitializeComponent();
+            this.DataContext = this.UElement;
+            this.CanvasWidth = ReceiveDrop.Width;
+            this.CanvasHeight = ReceiveDrop.Height;
+            this.isloaded = true;
+            _CurrentFile = _filename;
+            LoadFile();
         }
 
         private void ButtonGrid_MouseEnter(object sender, MouseEventArgs e)
@@ -435,7 +450,7 @@ namespace JupiterSoft.Pages
 
 
         // Copy Element of Defined Type.
-        private WrapPanel Get_Ten_Steps_Move()
+        private WrapPanel Get_Ten_Steps_Move(string content = "")
         {
             Button btn = new Button();
             btn.Margin = new Thickness(12, 5, 0, 0);
@@ -448,7 +463,7 @@ namespace JupiterSoft.Pages
             btn.Foreground = (Brush)bc.ConvertFrom("#fff");
             btn.FontWeight = FontWeights.Bold;
             btn.FontFamily = new FontFamily("Georgia, serif;");
-            btn.Content = "10";
+            btn.Content = string.IsNullOrEmpty(content) ? "10" : content;
             btn.Style = this.FindResource("BlueMove10") as Style;
             btn.Width = 121;
             btn.Height = 42;
@@ -477,7 +492,7 @@ namespace JupiterSoft.Pages
         }
 
 
-        private WrapPanel Get_Turn_Fiften_Degree_Right_Move()
+        private WrapPanel Get_Turn_Fiften_Degree_Right_Move(string content = "")
         {
             Button btn = new Button();
             btn.Margin = new Thickness(12, 5, 0, 0);
@@ -490,7 +505,7 @@ namespace JupiterSoft.Pages
             btn.Foreground = (Brush)bc.ConvertFrom("#fff");
             btn.FontWeight = FontWeights.Bold;
             btn.FontFamily = new FontFamily("Georgia, serif;");
-            btn.Content = "15";
+            btn.Content = string.IsNullOrEmpty(content) ? "15" : content;
             btn.Style = this.FindResource("BlueMoveRight") as Style;
             btn.Width = 150;
             btn.Height = 42;
@@ -519,7 +534,7 @@ namespace JupiterSoft.Pages
             return wrap;
         }
 
-        private WrapPanel Get_Turn_Fiften_Degree_Left_Move()
+        private WrapPanel Get_Turn_Fiften_Degree_Left_Move(string content = "")
         {
             Button btn = new Button();
             btn.Margin = new Thickness(12, 5, 0, 0);
@@ -532,7 +547,7 @@ namespace JupiterSoft.Pages
             btn.Foreground = (Brush)bc.ConvertFrom("#fff");
             btn.FontWeight = FontWeights.Bold;
             btn.FontFamily = new FontFamily("Georgia, serif;");
-            btn.Content = "15";
+            btn.Content = string.IsNullOrEmpty(content) ? "15" : content;
             btn.Style = this.FindResource("BlueMoveLeft") as Style;
             btn.Width = 150;
             btn.Height = 42;
@@ -654,63 +669,80 @@ namespace JupiterSoft.Pages
             SaveBtn.Content = "Processing";
             if (getElementCount() > 0)
             {
-                if (!System.IO.Directory.Exists(_FileDirectory))
+                if (string.IsNullOrEmpty(_CurrentFile))
                 {
-                    System.IO.Directory.CreateDirectory(_FileDirectory);
-                }
-
-                SaveFileDialog saveFileDialog1 = new SaveFileDialog();
-                saveFileDialog1.InitialDirectory = _FileDirectory + @"\";
-                saveFileDialog1.Title = "Save Your File";
-                saveFileDialog1.CheckPathExists = true;
-                saveFileDialog1.DefaultExt = "json";
-                saveFileDialog1.Filter = "Jupiter Files (*.json)|*.json";
-                saveFileDialog1.FilterIndex = 1;
-                if (saveFileDialog1.ShowDialog() == true)
-                {
-                    if (saveFileDialog1.FileName.ToString().Contains(" "))
+                    if (!System.IO.Directory.Exists(_FileDirectory))
                     {
-                        MessageBox.Show("File name should not contain white space."); SaveInitiated(); return;
+                        System.IO.Directory.CreateDirectory(_FileDirectory);
                     }
 
-                    string filepath = saveFileDialog1.FileName.Contains(".json") ? saveFileDialog1.FileName : saveFileDialog1.FileName + ".json";
-
-                    FileSystemModel fileSystem = new FileSystemModel();
-                    fileSystem.FileId = System.IO.Path.GetFileName(filepath);
-
-                    var contentElement = ReceiveDrop.Children.OfType<WrapPanel>().ToList();
-                    List<FileContentModel> fileContent = new List<FileContentModel>();
-                    int Order = 1;
-                    foreach (var item in contentElement)
+                    SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+                    saveFileDialog1.InitialDirectory = _FileDirectory + @"\";
+                    saveFileDialog1.Title = "Save Your File";
+                    saveFileDialog1.CheckPathExists = true;
+                    saveFileDialog1.DefaultExt = "json";
+                    saveFileDialog1.Filter = "Jupiter Files (*.json)|*.json";
+                    saveFileDialog1.FilterIndex = 1;
+                    if (saveFileDialog1.ShowDialog() == true)
                     {
-                        var child = item.Children.OfType<Button>().FirstOrDefault();
-                        Point margin = item.TransformToAncestor(ReceiveDrop)
-                          .Transform(new Point(0, 0));
-                        fileContent.Add(new FileContentModel
+                        if (saveFileDialog1.FileName.ToString().Contains(" "))
                         {
-                            ContentId = Guid.NewGuid().ToString("N"),
-                            ContentType = Convert.ToInt32(child.Tag),
-                            ContentText = child.Content.ToString(),
-                            ContentOrder = Order,
-                            ContentLeftPosition = margin.X,
-                            ContentRightPosition = margin.Y
-                        });
-                        Order++;
+                            MessageBox.Show("File name should not contain white space."); SaveInitiated(); return;
+                        }
+
+                        SaveFile(saveFileDialog1.FileName);
                     }
-
-                    fileSystem.fileContents = fileContent;
-                    fileSystem.CreatedDate = DateTime.Now;
-
-                    var JsonContent = Newtonsoft.Json.JsonConvert.SerializeObject(fileSystem);
-                    System.IO.File.WriteAllText(filepath, JsonContent);
-                    MessageBox.Show("Saved..");
-
                 }
+                else
+                {
+                    SaveFile(_CurrentFile);
+                }
+
 
             }
             else { MessageBox.Show("Could not initiate the process to save"); }
             SaveBtn.IsEnabled = true;
             SaveBtn.Content = "Save";
+        }
+
+        private void SaveFile(string _Filepath)
+        {
+            string filepath = _Filepath;
+
+            FileSystemModel fileSystem = new FileSystemModel();
+            fileSystem.FileId = System.IO.Path.GetFileName(filepath);
+
+            var contentElement = ReceiveDrop.Children.OfType<WrapPanel>().ToList();
+            List<FileContentModel> fileContent = new List<FileContentModel>();
+            int Order = 1;
+            foreach (var item in contentElement)
+            {
+                var child = item.Children.OfType<Button>().FirstOrDefault();
+                Point margin = item.TransformToAncestor(ReceiveDrop)
+                  .Transform(new Point(0, 0));
+                fileContent.Add(new FileContentModel
+                {
+                    ContentId = Guid.NewGuid().ToString("N"),
+                    ContentType = Convert.ToInt32(child.Tag),
+                    ContentText = child.Content!=null?child.Content.ToString():null,
+                    ContentOrder = Order,
+                    ContentLeftPosition = margin.X,
+                    ContentTopPosition = margin.Y
+                });
+                Order++;
+            }
+
+            fileSystem.fileContents = fileContent;
+            fileSystem.CreatedDate = DateTime.Now;
+
+            var JsonContent = Newtonsoft.Json.JsonConvert.SerializeObject(fileSystem);
+            if (System.IO.File.Exists(filepath))
+            {
+                System.IO.File.Delete(filepath);
+            }
+            System.IO.File.WriteAllText(filepath, JsonContent);
+            _CurrentFile = filepath;
+            MessageBox.Show("Saved..");
         }
 
         private void Device_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -763,12 +795,13 @@ namespace JupiterSoft.Pages
         }
 
 
+        #region ONVIF Camera
         private void CameraDetail_TextChanged(object sender, TextChangedEventArgs e)
         {
-            validateCameraDetails();
+            validateIPCameraDetails();
         }
 
-        private void validateCameraDetails()
+        private void validateIPCameraDetails()
         {
             if (!isloaded) return;
             bool IsCameraIPValid = false;
@@ -803,12 +836,10 @@ namespace JupiterSoft.Pages
             }
         }
 
-
-
-
         private void ConnectCam_Click(object sender, RoutedEventArgs e)
         {
-            ConnectCam.IsEnabled = false;
+            var checkIPCams = ApplicationConstant.GetSoapResponsesFromCamerasAsync();
+
             try
             {
                 DisconnectRunningCamera();
@@ -817,13 +848,18 @@ namespace JupiterSoft.Pages
                 videoViewer.SetImageProvider(_drawingImageProvider);
 
                 string Camip = CameraIPText.Text + ":" + PortNumber.Text;
-                _camera = new IPCamera(Camip, Username.Text, Password.Text);
-                _connector.Connect(_camera.VideoChannel, _drawingImageProvider);
-                _camera.Start();
-                videoViewer.Start();
-                ConnectCam.IsEnabled = false;
-                ConnectCam.Content = "Connected";
-                DisconnectCam.IsEnabled = true;
+                _camera = new IPCamera(CameraIPText.Text, Username.Text, Password.Text);
+                if (_camera != null && _camera.AvailableStreams.Count() > 0)
+                {
+                    _connector.Connect(_camera.VideoChannel, _drawingImageProvider);
+                    _camera.Start();
+                    videoViewer.Start();
+                    ConnectCam.IsEnabled = false;
+                    ConnectCam.Content = "Connected";
+                    DisconnectCam.IsEnabled = true;
+                    _runningCamera = "ONVIF";
+                }
+                else { MessageBox.Show("No Camera Found on " + Camip); }
             }
             catch (Exception ex) { ConnectCam.IsEnabled = true; Networkexception.Content = ex.ToString(); }
 
@@ -893,8 +929,12 @@ namespace JupiterSoft.Pages
             videoViewer.Background = Brushes.Black;
             ConnectCam.Content = "Connect";
             DisconnectCam.IsEnabled = false;
-            validateCameraDetails();
+            _runningCamera = string.Empty;
+            validateIPCameraDetails();
         }
+        #endregion
+
+        #region USB Camera
 
         private void ConnectUSBCamera_Click(object sender, RoutedEventArgs e)
         {
@@ -905,13 +945,21 @@ namespace JupiterSoft.Pages
                 _drawingImageProvider = new DrawingImageProvider();
                 _connector = new MediaConnector();
 
-                _connector.Connect(_webCamera.VideoChannel, _drawingImageProvider);
-                videoViewer.SetImageProvider(_drawingImageProvider);
-                _webCamera.Start();
-                videoViewer.Start();
-                ConnectUSBCamera.IsEnabled = false;
-                ConnectUSBCamera.Content = "Connected";
-                DisconnectUSBCam.IsEnabled = true;
+                _webCamera = WebCameraFactory.GetDefaultDevice();
+
+                if (_webCamera != null)
+                {
+                    _webCamera = new WebCamera();
+                    _connector.Connect(_webCamera.VideoChannel, _drawingImageProvider);
+                    videoViewer.SetImageProvider(_drawingImageProvider);
+                    _webCamera.Start();
+                    videoViewer.Start();
+                    ConnectUSBCamera.IsEnabled = false;
+                    ConnectUSBCamera.Content = "Connected";
+                    DisconnectUSBCam.IsEnabled = true;
+                    _runningCamera = "USB";
+                }
+                else { MessageBox.Show("No USB Camera found."); }
             }
             catch (Exception ex)
             {
@@ -932,12 +980,17 @@ namespace JupiterSoft.Pages
             ConnectUSBCamera.IsEnabled = true;
             ConnectUSBCamera.Content = "Connect";
             DisconnectUSBCam.IsEnabled = false;
+            _runningCamera = string.Empty;
 
         }
 
+        #endregion
+
+        #region RTSP Camera
+
         private void RTSP_TextChanged(object sender, TextChangedEventArgs e)
         {
-
+            validateRTSPCameraDetails();
         }
 
         private void RTSP_GotFocus(object sender, RoutedEventArgs e)
@@ -982,6 +1035,85 @@ namespace JupiterSoft.Pages
             }
         }
 
+        private void validateRTSPCameraDetails()
+        {
+            if (!isloaded) return;
+            bool IsRTSPValid = false;
+            bool IsUserNameValid = false;
+            bool IsPassword = false;
+
+            if (!string.IsNullOrEmpty(RTSPUrl.Text) && RTSPUrl.Text != "Enter Camera RTSP URL" && ApplicationConstant.CheckRTSPFormat(RTSPUrl.Text))
+            {
+                IsRTSPValid = true;
+            }
+
+
+            if (!string.IsNullOrEmpty(RTSPUsername.Text) && RTSPUsername.Text != "Enter Username")
+            {
+                IsUserNameValid = true;
+            }
+            if (!string.IsNullOrEmpty(RTSPPassword.Text) && RTSPPassword.Text != "Enter Password")
+            {
+                IsPassword = true;
+            }
+
+            if (IsRTSPValid && IsUserNameValid && IsPassword)
+            {
+                ConnectRTSP.IsEnabled = true;
+                RTSPErrorMessage.Content = "";
+            }
+            else
+            {
+                ConnectRTSP.IsEnabled = false;
+                if (!IsRTSPValid) { RTSPErrorMessage.Content = "Invalid/Empty Camera RTSP URL"; return; }
+                if (!IsUserNameValid) { RTSPErrorMessage.Content = "Invalid/Empty Userame"; return; }
+                if (!IsPassword) { RTSPErrorMessage.Content = "Invalid/Empty Password"; return; }
+            }
+        }
+
+        private void ConnectRTSP_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                DisconnectRunningCamera();
+                _drawingImageProvider = new DrawingImageProvider();
+                _connector = new MediaConnector();
+                _camera = IPCameraFactory.GetCamera(RTSPUrl.Text, RTSPUsername.Text, RTSPPassword.Text);
+                if (_camera != null)
+                {
+                    _connector.Connect(_camera.VideoChannel, _drawingImageProvider);
+                    _camera.Start();
+                    videoViewer.Start();
+                    ConnectRTSP.Content = "Connected";
+                    ConnectRTSP.IsEnabled = false;
+                    DisconnectRTSP.IsEnabled = true;
+                    _runningCamera = "RTSP";
+                }
+                else { MessageBox.Show("Can not Connect to " + RTSPUrl.Text + ". Enter valid RTSP URl."); }
+            }
+            catch (Exception ex)
+            {
+                RTSPErrorMessage.Content = ex.Message.ToString();
+            }
+        }
+
+        private void DisconnectRTSP_Click(object sender, RoutedEventArgs e)
+        {
+            _camera.Stop();
+            _camera.Dispose();
+            _drawingImageProvider.Dispose();
+            _connector.Disconnect(_camera.VideoChannel, _drawingImageProvider);
+            _connector.Dispose();
+            videoViewer.Stop();
+            videoViewer.Background = Brushes.Black;
+            ConnectRTSP.IsEnabled = false;
+            ConnectRTSP.Content = "Connect";
+            DisconnectRTSP.IsEnabled = false;
+            validateRTSPCameraDetails();
+        }
+
+        #endregion
+
         private void DisconnectRunningCamera()
         {
             if (!string.IsNullOrEmpty(_runningCamera))
@@ -998,7 +1130,7 @@ namespace JupiterSoft.Pages
                     videoViewer.Background = Brushes.Black;
                     ConnectCam.Content = "Connect";
                     DisconnectCam.IsEnabled = false;
-                    validateCameraDetails();
+                    validateIPCameraDetails();
                 }
                 else if (_runningCamera == "USB")
                 {
@@ -1013,10 +1145,70 @@ namespace JupiterSoft.Pages
                     ConnectUSBCamera.Content = "Connect";
                     DisconnectUSBCam.IsEnabled = false;
                 }
-                else if (_runningCamera=="RTSP")
+                else if (_runningCamera == "RTSP")
                 {
-
+                    _camera.Stop();
+                    _camera.Dispose();
+                    _drawingImageProvider.Dispose();
+                    _connector.Disconnect(_camera.VideoChannel, _drawingImageProvider);
+                    _connector.Dispose();
+                    videoViewer.Stop();
+                    videoViewer.Background = Brushes.Black;
+                    ConnectRTSP.IsEnabled = false;
+                    ConnectRTSP.Content = "Connect";
+                    DisconnectRTSP.IsEnabled = false;
+                    validateRTSPCameraDetails();
                 }
+            }
+        }
+
+        private void LoadFile()
+        {
+            using (StreamReader r = new StreamReader(_CurrentFile))
+            {
+                string json = r.ReadToEnd();
+                FileSystemModel items = JsonConvert.DeserializeObject<FileSystemModel>(json);
+
+                foreach (var item in items.fileContents.OrderBy(x => x.ContentOrder))
+                {
+                    WrapPanel ele = new WrapPanel();
+                    if(Convert.ToInt32(item.ContentType) == (int)ElementConstant.Ten_Steps_Move)
+                    {
+                        ele = Get_Ten_Steps_Move(item.ContentText);
+                        Canvas.SetLeft(ele, item.ContentLeftPosition);
+                        Canvas.SetTop(ele, item.ContentTopPosition);
+                        ReceiveDrop.Children.Add(ele);
+                    }
+                    else if (Convert.ToInt32(item.ContentType) == (int)ElementConstant.Turn_Fiften_Degree_Right_Move)
+                    {
+                        ele = Get_Turn_Fiften_Degree_Right_Move(item.ContentText);
+                        Canvas.SetLeft(ele, item.ContentLeftPosition);
+                        Canvas.SetTop(ele, item.ContentTopPosition);
+                        ReceiveDrop.Children.Add(ele);
+                    }
+                    else if (Convert.ToInt32(item.ContentType) == (int)ElementConstant.Turn_Fiften_Degree_Left_Move)
+                    {
+                        ele = Get_Turn_Fiften_Degree_Left_Move(item.ContentText);
+                        Canvas.SetLeft(ele, item.ContentLeftPosition);
+                        Canvas.SetTop(ele, item.ContentTopPosition);
+                        ReceiveDrop.Children.Add(ele);
+                    }
+                    else if (Convert.ToInt32(item.ContentType) == (int)ElementConstant.Pointer_State_Move)
+                    {
+                        ele = Get_Pointer_State_Move();
+                        Canvas.SetLeft(ele, item.ContentLeftPosition);
+                        Canvas.SetTop(ele, item.ContentTopPosition);
+                        ReceiveDrop.Children.Add(ele);
+                    }
+                    else if (Convert.ToInt32(item.ContentType) == (int)ElementConstant.Rotation_Style_Move)
+                    {
+                        ele = Get_Rotation_Style_Move();
+                        Canvas.SetLeft(ele, item.ContentLeftPosition);
+                        Canvas.SetTop(ele, item.ContentTopPosition);
+                        ReceiveDrop.Children.Add(ele);
+                    }
+                }
+
             }
         }
     }

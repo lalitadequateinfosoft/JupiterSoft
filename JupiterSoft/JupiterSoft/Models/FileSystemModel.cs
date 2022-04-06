@@ -22,6 +22,6 @@ namespace JupiterSoft.Models
         public string ContentValue { get; set; }
         public int ContentOrder { get; set; }
         public double ContentLeftPosition { get; set; }
-        public double ContentRightPosition { get; set; }
+        public double ContentTopPosition { get; set; }
     }
 }

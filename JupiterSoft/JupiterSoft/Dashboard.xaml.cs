@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,18 +24,24 @@ namespace JupiterSoft
     {
         public static RoutedCommand MyCommand = new RoutedCommand();
         CreateTemplate ChildPage;
-        private string _SavedDirectory = ApplicationConstant._FileDirectory;
+        private string _FileDirectory = ApplicationConstant._FileDirectory;
         public Dashboard()
         {  
             InitializeComponent();
             this.DataContext = MyCommand;
-            MyCommand.InputGestures.Add(new KeyGesture(Key.S, ModifierKeys.Control)); //Save
-            //MyCommand.InputGestures.Add(new KeyGesture(Key.N, ModifierKeys.Control)); //New
-            //MyCommand.InputGestures.Add(new KeyGesture(Key.O, ModifierKeys.Control)); //Open
-            //MyCommand.InputGestures.Add(new KeyGesture(Key.D, ModifierKeys.Control)); //Close
-            //MyCommand.InputGestures.Add(new KeyGesture(Key.E, ModifierKeys.Control)); //Exit
-            //frame.NavigationService.Navigate(new CreateTemplate());
+            MyCommand.InputGestures.Add(new KeyGesture(Key.S, ModifierKeys.Control)); 
             ChildPage = new CreateTemplate();
+            this.frame.Content = null;
+            ChildPage.ParentWindow = this;
+            this.frame.Content = ChildPage;
+        }
+
+        public Dashboard(string _defaultFile)
+        {
+            InitializeComponent();
+            this.DataContext = MyCommand;
+            MyCommand.InputGestures.Add(new KeyGesture(Key.S, ModifierKeys.Control));
+            ChildPage = new CreateTemplate(_defaultFile);
             this.frame.Content = null;
             ChildPage.ParentWindow = this;
             this.frame.Content = ChildPage;
@@ -44,5 +51,66 @@ namespace JupiterSoft
         {
             ChildPage.SaveInitiated();
         }
+
+        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            var item = sender as MenuItem;
+            if(item.Tag.ToString().ToLower()=="new")
+            {
+                ChildPage = new CreateTemplate();
+                this.frame.Content = null;
+                ChildPage.ParentWindow = this;
+                this.frame.Content = ChildPage;
+            }
+            else if (item.Tag.ToString().ToLower() == "open")
+            {
+
+            }
+            else if (item.Tag.ToString().ToLower() == "close")
+            {
+                var dashForm = new MainWindow();
+                dashForm.Show();
+                this.Close();
+            }
+            else if (item.Tag.ToString().ToLower() == "save")
+            {
+                ChildPage.SaveInitiated();
+            }
+            else if (item.Tag.ToString().ToLower() == "exit")
+            {
+                this.Close();
+            }
+        }
+
+        //private List<FileSystemModel> GetFileSystems()
+        //{
+        //    List<FileSystemModel> files = new List<FileSystemModel>();
+        //    if (System.IO.Directory.Exists(_FileDirectory))
+        //    {
+        //        DirectoryInfo d = new DirectoryInfo(_FileDirectory);
+
+        //        FileInfo[] Files = d.GetFiles("*.json");
+        //        if (Files != null && Files.Length > 0)
+        //        {
+        //            foreach (FileInfo file in Files)
+        //            {
+        //                if (file.Name.Contains('_'))
+        //                {
+        //                    string[] FileSpl = file.Name.Split('_');
+        //                    if (FileSpl.Last().ToString().ToLower() == "default.json")
+        //                    {
+        //                        var dashForm = new Dashboard(file.FullName.ToString());
+        //                        dashForm.Show();
+        //                        this.Close();
+        //                        break;
+        //                    }
+        //                }
+
+        //            }
+        //        }
+
+
+        //    }
+        //}
     }
 }

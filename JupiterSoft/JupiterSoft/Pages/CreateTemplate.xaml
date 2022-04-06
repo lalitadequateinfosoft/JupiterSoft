@@ -1095,7 +1095,7 @@
                                         </Grid>
                                         <Grid Grid.Row="2" Grid.Column="0" Background="#fff" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10" Width="Auto">
 
-                                            <Border Style="{StaticResource StackPanelLink}" Opacity="0.8">
+                                            <Border Style="{StaticResource StackPanelLink}" Opacity="0.8" Height="113" VerticalAlignment="Bottom">
                                                 <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" x:Name="NetCamera" PreviewMouseLeftButtonDown="Device_MouseLeftButtonDown">
 
 
@@ -1256,10 +1256,10 @@
                                                             <ColumnDefinition Width="*"/>
                                                         </Grid.ColumnDefinitions>
                                                         <Grid Grid.Row="0" Grid.Column="0">
-                                                                <Button Margin="5" x:Name="ConnectRTSP" Content="Connect" BorderBrush="#0082ca" Foreground="#0082ca" HorizontalAlignment="Right" Background="#fff" Cursor="Hand"/>
+                                                                <Button Margin="5" x:Name="ConnectRTSP" Content="Connect" BorderBrush="#0082ca" Foreground="#0082ca" HorizontalAlignment="Right" Background="#fff" Cursor="Hand" IsEnabled="False" Click="ConnectRTSP_Click"/>
                                                         </Grid>
                                                         <Grid Grid.Row="0" Grid.Column="1">
-                                                            <Button x:Name="DisconnectRTSP" Margin="5" Background="#fff" Content="Disconnect" BorderBrush="Red" Foreground="Red" HorizontalAlignment="Left" Cursor="Hand"/>
+                                                            <Button x:Name="DisconnectRTSP" Margin="5" Background="#fff" Content="Disconnect" BorderBrush="Red" Foreground="Red" HorizontalAlignment="Left" Cursor="Hand" IsEnabled="False" Click="DisconnectRTSP_Click"/>
                                                         </Grid>
                                                     </Grid>
                                                     <Grid Grid.Row="2">

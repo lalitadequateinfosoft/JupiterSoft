@@ -132,6 +132,9 @@
     </Resource>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="FontAwesome.WPF">
+      <Version>4.7.0.9</Version>
+    </PackageReference>
     <PackageReference Include="ModernWpfUI">
       <Version>0.9.4</Version>
     </PackageReference>
