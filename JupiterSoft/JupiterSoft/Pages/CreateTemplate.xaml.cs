@@ -67,6 +67,8 @@ namespace JupiterSoft.Pages
         private IWebCamera _webCamera;
         private static string _runningCamera = null;
         private string _CurrentFile = null;
+        private List<DiscoveredDeviceInfo> devices;
+        private List<DeviceModel> DeviceModels;
         public CreateTemplate()
         {
             bc = new BrushConverter();
@@ -76,6 +78,9 @@ namespace JupiterSoft.Pages
             this.CanvasWidth = ReceiveDrop.Width;
             this.CanvasHeight = ReceiveDrop.Height;
             this.isloaded = true;
+
+            devices = new List<DiscoveredDeviceInfo>();
+            DeviceModels = new List<DeviceModel>();
         }
 
         public CreateTemplate(string _filename)
@@ -795,145 +800,6 @@ namespace JupiterSoft.Pages
         }
 
 
-        #region ONVIF Camera
-        private void CameraDetail_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            validateIPCameraDetails();
-        }
-
-        private void validateIPCameraDetails()
-        {
-            if (!isloaded) return;
-            bool IsCameraIPValid = false;
-            bool IsPortValid = false;
-            bool IsUserNameValid = false;
-            bool IsPassword = false;
-
-            if (!string.IsNullOrEmpty(CameraIPText.Text) && CameraIPText.Text != "Enter Camera IP" && ApplicationConstant.CheckIPValid(CameraIPText.Text) != null)
-            {
-                IsCameraIPValid = true;
-            }
-
-            if (!string.IsNullOrEmpty(PortNumber.Text) && PortNumber.Text != "Enter Port Number" && ApplicationConstant.IsNumeric(PortNumber.Text))
-            {
-                IsPortValid = true;
-            }
-            if (!string.IsNullOrEmpty(Username.Text) && Username.Text != "Enter Username") IsUserNameValid = true;
-            if (!string.IsNullOrEmpty(Password.Text) && Password.Text != "Enter Password") IsPassword = true;
-
-            if (IsCameraIPValid && IsPortValid && IsUserNameValid && IsPassword)
-            {
-                ConnectCam.IsEnabled = true;
-                Networkexception.Content = "";
-            }
-            else
-            {
-                ConnectCam.IsEnabled = false;
-                if (!IsCameraIPValid) { Networkexception.Content = "Invalid/Empty Camera IP"; return; }
-                if (!IsPortValid) { Networkexception.Content = "Invalid/Empty Port Number"; return; }
-                if (!IsUserNameValid) { Networkexception.Content = "Invalid/Empty Userame"; return; }
-                if (!IsPassword) { Networkexception.Content = "Invalid/Empty Password"; return; }
-            }
-        }
-
-        private void ConnectCam_Click(object sender, RoutedEventArgs e)
-        {
-            var checkIPCams = ApplicationConstant.GetSoapResponsesFromCamerasAsync();
-
-            try
-            {
-                DisconnectRunningCamera();
-                _drawingImageProvider = new DrawingImageProvider();
-                _connector = new MediaConnector();
-                videoViewer.SetImageProvider(_drawingImageProvider);
-
-                string Camip = CameraIPText.Text + ":" + PortNumber.Text;
-                _camera = new IPCamera(CameraIPText.Text, Username.Text, Password.Text);
-                if (_camera != null && _camera.AvailableStreams.Count() > 0)
-                {
-                    _connector.Connect(_camera.VideoChannel, _drawingImageProvider);
-                    _camera.Start();
-                    videoViewer.Start();
-                    ConnectCam.IsEnabled = false;
-                    ConnectCam.Content = "Connected";
-                    DisconnectCam.IsEnabled = true;
-                    _runningCamera = "ONVIF";
-                }
-                else { MessageBox.Show("No Camera Found on " + Camip); }
-            }
-            catch (Exception ex) { ConnectCam.IsEnabled = true; Networkexception.Content = ex.ToString(); }
-
-        }
-
-        private void RemoveText(object sender, RoutedEventArgs e)
-        {
-            var ele = sender as TextBox;
-            if (ele.Name == "CameraIPText")
-            {
-                if (ele.Text == "Enter Camera IP")
-                {
-                    ele.Text = "";
-                }
-            }
-            else if (ele.Name == "PortNumber")
-            {
-                if (ele.Text == "Enter Port Number") ele.Text = "";
-            }
-            else if (ele.Name == "Username")
-            {
-                if (ele.Text == "Enter Username") ele.Text = "";
-            }
-            else if (ele.Name == "Password")
-            {
-                if (ele.Text == "Enter Password") ele.Text = "";
-            }
-
-            if (ele.Foreground == Brushes.Gray)
-            {
-                ele.Foreground = Brushes.Black;
-            }
-        }
-
-        private void AddText(object sender, RoutedEventArgs e)
-        {
-            var ele = sender as TextBox;
-            if (ele.Name == "CameraIPText")
-            {
-                if (string.IsNullOrWhiteSpace(ele.Text)) { ele.Text = "Enter Camera IP"; ele.Foreground = Brushes.Gray; }
-            }
-            else if (ele.Name == "PortNumber")
-            {
-                if (string.IsNullOrWhiteSpace(ele.Text)) { ele.Text = "Enter Port Number"; ele.Foreground = Brushes.Gray; }
-            }
-            else if (ele.Name == "Username")
-            {
-                if (string.IsNullOrWhiteSpace(ele.Text)) { ele.Text = "Enter Username"; ele.Foreground = Brushes.Gray; }
-            }
-            else if (ele.Name == "Password")
-            {
-                if (string.IsNullOrWhiteSpace(ele.Text)) { ele.Text = "Enter Password"; ele.Foreground = Brushes.Gray; }
-            }
-
-
-        }
-
-        private void DisconnectCam_Click(object sender, RoutedEventArgs e)
-        {
-            _camera.Stop();
-            _camera.Disconnect();
-            _camera.Dispose();
-            _drawingImageProvider.Dispose();
-            _connector.Disconnect(_camera.VideoChannel, _drawingImageProvider);
-            _connector.Dispose();
-            videoViewer.Stop();
-            videoViewer.Background = Brushes.Black;
-            ConnectCam.Content = "Connect";
-            DisconnectCam.IsEnabled = false;
-            _runningCamera = string.Empty;
-            validateIPCameraDetails();
-        }
-        #endregion
-
         #region USB Camera
 
         private void ConnectUSBCamera_Click(object sender, RoutedEventArgs e)
@@ -986,130 +852,82 @@ namespace JupiterSoft.Pages
 
         #endregion
 
-        #region RTSP Camera
-
-        private void RTSP_TextChanged(object sender, TextChangedEventArgs e)
+        #region Discover and Connect Device or Camera
+        void GetIpCameras()
         {
-            validateRTSPCameraDetails();
+            IPCameraFactory.DeviceDiscovered += IPCameraFactory_DeviceDiscovered;
+            IPCameraFactory.DiscoverDevices();
         }
 
-        private void RTSP_GotFocus(object sender, RoutedEventArgs e)
+        private void IPCameraFactory_DeviceDiscovered(object sender, DiscoveryEventArgs e)
         {
-            var ele = sender as TextBox;
-            if (ele.Name == "RTSPUrl")
+            GuiThread(() => AddDevices(e.Device));
+        }
+
+        private void GuiThread(Action action)
+        {
+            Dispatcher.BeginInvoke(action);
+        }
+
+        private void DiscoverDevice_Click(object sender, RoutedEventArgs e)
+        {
+            var btn = sender as Button;
+            btn.Content = "Working..";
+            btn.IsEnabled = false;
+            StopDiscovery.IsEnabled = true;
+            devices.Clear();
+            DeviceModels.Clear();
+            IPCameraFactory.DeviceDiscovered -= IPCameraFactory_DeviceDiscovered;
+            GetIpCameras();
+        }
+
+        private void AddDevices(DiscoveredDeviceInfo discovered)
+        {
+            devices.Add(discovered);
+            DeviceModels.Add(new DeviceModel { DeviceId = Guid.NewGuid().ToString("N"), Name = discovered.Name, DeviceIP = discovered.Host, DevicePort = discovered.Port,ConnectMessage="Connect",DisconnectMessage="Disconnect",Disconnected=true,Connected=false });
+            DiscoveredDeviceList.ItemsSource = null;
+            DiscoveredDeviceList.ItemsSource = DeviceModels;
+        }
+
+        private void Connect_Click(object sender, RoutedEventArgs e)
+        {
+            var deviceId = (sender as Button).Tag.ToString();
+            foreach (var item in DeviceModels)
             {
-                if (ele.Text == "Enter Camera RTSP URL")
+                if (item.DeviceId == deviceId)
                 {
-                    ele.Text = "";
+                    item.Connected = true;
+                    item.Disconnected = false;
+                }
+                else
+                {
+                    item.Connected = false;
+                    item.Disconnected = false;
                 }
             }
-            else if (ele.Name == "RTSPUsername")
-            {
-                if (ele.Text == "Enter Username") ele.Text = "";
-            }
-            else if (ele.Name == "RTSPPassword")
-            {
-                if (ele.Text == "Enter Password") ele.Text = "";
-            }
-
-            if (ele.Foreground == Brushes.Gray)
-            {
-                ele.Foreground = Brushes.Black;
-            }
+            DiscoveredDeviceList.ItemsSource = null;
+            DiscoveredDeviceList.ItemsSource = DeviceModels;
         }
 
-        private void RTSP_LostFocus(object sender, RoutedEventArgs e)
+        private void Disconnect_Click(object sender, RoutedEventArgs e)
         {
-            var ele = sender as TextBox;
-            if (ele.Name == "RTSPUrl")
+            foreach (var item in DeviceModels)
             {
-                if (string.IsNullOrWhiteSpace(ele.Text)) { ele.Text = "Enter Camera RTSP URL"; ele.Foreground = Brushes.Gray; }
+                item.Connected = false;
+                item.ConnectMessage = "Connect";
+                item.Disconnected = true;
+                item.DisconnectMessage = "Disconnect";
             }
-            else if (ele.Name == "RTSPUsername")
-            {
-                if (string.IsNullOrWhiteSpace(ele.Text)) { ele.Text = "Enter Username"; ele.Foreground = Brushes.Gray; }
-            }
-            else if (ele.Name == "RTSPPassword")
-            {
-                if (string.IsNullOrWhiteSpace(ele.Text)) { ele.Text = "Enter Password"; ele.Foreground = Brushes.Gray; }
-            }
+            DiscoveredDeviceList.ItemsSource = null;
+            DiscoveredDeviceList.ItemsSource = DeviceModels;
         }
 
-        private void validateRTSPCameraDetails()
+        private void StopDiscovery_Click(object sender, RoutedEventArgs e)
         {
-            if (!isloaded) return;
-            bool IsRTSPValid = false;
-            bool IsUserNameValid = false;
-            bool IsPassword = false;
-
-            if (!string.IsNullOrEmpty(RTSPUrl.Text) && RTSPUrl.Text != "Enter Camera RTSP URL" && ApplicationConstant.CheckRTSPFormat(RTSPUrl.Text))
-            {
-                IsRTSPValid = true;
-            }
-
-
-            if (!string.IsNullOrEmpty(RTSPUsername.Text) && RTSPUsername.Text != "Enter Username")
-            {
-                IsUserNameValid = true;
-            }
-            if (!string.IsNullOrEmpty(RTSPPassword.Text) && RTSPPassword.Text != "Enter Password")
-            {
-                IsPassword = true;
-            }
-
-            if (IsRTSPValid && IsUserNameValid && IsPassword)
-            {
-                ConnectRTSP.IsEnabled = true;
-                RTSPErrorMessage.Content = "";
-            }
-            else
-            {
-                ConnectRTSP.IsEnabled = false;
-                if (!IsRTSPValid) { RTSPErrorMessage.Content = "Invalid/Empty Camera RTSP URL"; return; }
-                if (!IsUserNameValid) { RTSPErrorMessage.Content = "Invalid/Empty Userame"; return; }
-                if (!IsPassword) { RTSPErrorMessage.Content = "Invalid/Empty Password"; return; }
-            }
-        }
-
-        private void ConnectRTSP_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                DisconnectRunningCamera();
-                _drawingImageProvider = new DrawingImageProvider();
-                _connector = new MediaConnector();
-                _camera = IPCameraFactory.GetCamera(RTSPUrl.Text, RTSPUsername.Text, RTSPPassword.Text);
-                if (_camera != null)
-                {
-                    _connector.Connect(_camera.VideoChannel, _drawingImageProvider);
-                    _camera.Start();
-                    videoViewer.Start();
-                    ConnectRTSP.Content = "Connected";
-                    ConnectRTSP.IsEnabled = false;
-                    DisconnectRTSP.IsEnabled = true;
-                    _runningCamera = "RTSP";
-                }
-                else { MessageBox.Show("Can not Connect to " + RTSPUrl.Text + ". Enter valid RTSP URl."); }
-            }
-            catch (Exception ex)
-            {
-                RTSPErrorMessage.Content = ex.Message.ToString();
-            }
-        }
-
-        private void DisconnectRTSP_Click(object sender, RoutedEventArgs e)
-        {
-            _camera.Stop();
-            _camera.Dispose();
-            _drawingImageProvider.Dispose();
-            _connector.Disconnect(_camera.VideoChannel, _drawingImageProvider);
-            _connector.Dispose();
-            videoViewer.Stop();
-            videoViewer.Background = Brushes.Black;
-            ConnectRTSP.IsEnabled = false;
-            ConnectRTSP.Content = "Connect";
-            DisconnectRTSP.IsEnabled = false;
-            validateRTSPCameraDetails();
+            IPCameraFactory.DeviceDiscovered -= IPCameraFactory_DeviceDiscovered;
+            StopDiscovery.IsEnabled = false;
+            DiscoverDevice.Content = "Discover";
+            DiscoverDevice.IsEnabled = true;
         }
 
         #endregion
@@ -1118,21 +936,7 @@ namespace JupiterSoft.Pages
         {
             if (!string.IsNullOrEmpty(_runningCamera))
             {
-                if (_runningCamera == "ONVIF")
-                {
-                    _camera.Stop();
-                    _camera.Disconnect();
-                    _camera.Dispose();
-                    _drawingImageProvider.Dispose();
-                    _connector.Disconnect(_camera.VideoChannel, _drawingImageProvider);
-                    _connector.Dispose();
-                    videoViewer.Stop();
-                    videoViewer.Background = Brushes.Black;
-                    ConnectCam.Content = "Connect";
-                    DisconnectCam.IsEnabled = false;
-                    validateIPCameraDetails();
-                }
-                else if (_runningCamera == "USB")
+                if (_runningCamera == "USB")
                 {
                     _webCamera.Stop();
                     _webCamera.Dispose();
@@ -1145,20 +949,7 @@ namespace JupiterSoft.Pages
                     ConnectUSBCamera.Content = "Connect";
                     DisconnectUSBCam.IsEnabled = false;
                 }
-                else if (_runningCamera == "RTSP")
-                {
-                    _camera.Stop();
-                    _camera.Dispose();
-                    _drawingImageProvider.Dispose();
-                    _connector.Disconnect(_camera.VideoChannel, _drawingImageProvider);
-                    _connector.Dispose();
-                    videoViewer.Stop();
-                    videoViewer.Background = Brushes.Black;
-                    ConnectRTSP.IsEnabled = false;
-                    ConnectRTSP.Content = "Connect";
-                    DisconnectRTSP.IsEnabled = false;
-                    validateRTSPCameraDetails();
-                }
+               
             }
         }
 
@@ -1211,5 +1002,7 @@ namespace JupiterSoft.Pages
 
             }
         }
+
+        
     }
 }

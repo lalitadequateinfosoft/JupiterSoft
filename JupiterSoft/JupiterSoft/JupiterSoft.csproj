@@ -90,6 +90,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\ApplicationConstant.cs" />
+    <Compile Include="Models\DeviceModel.cs" />
     <Compile Include="Models\ElementModel.cs" />
     <Compile Include="Models\FileSystemModel.cs" />
     <Compile Include="Pages\CreateTemplate.xaml.cs">

@@ -63,7 +63,7 @@ namespace JupiterSoft.Models
 
             using (var client = new UdpClient())
             {
-                var ipEndpoint = new IPEndPoint(IPAddress.Parse("192.168.1.255"), 3702);
+                var ipEndpoint = new IPEndPoint(IPAddress.Parse("192.168.1.67"), 8899);
                 client.EnableBroadcast = true;
                 try
                 {
