@@ -15,6 +15,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using FontAwesome;
 using System.IO;
+using System.Threading;
 
 namespace JupiterSoft
 {
@@ -23,6 +24,7 @@ namespace JupiterSoft
     /// </summary>
     public partial class MainWindow : Window
     {
+        BrushConverter bc;
         private string _FileDirectory = ApplicationConstant._FileDirectory;
         public MainWindow()
         {
@@ -32,33 +34,50 @@ namespace JupiterSoft
 
         private void StartNew_Click(object sender, RoutedEventArgs e)
         {
-            var dashForm = new Dashboard();
-            dashForm.Show();
-            this.Close();
+            try
+            {
+                StartNew.IsEnabled = false;
+                var dashForm = new Dashboard();
+                dashForm.Show();
+                this.Close();
+            }
+            catch
+            {
+                StartNew.IsEnabled = true;
+            }
         }
 
         private void StartSaved_Click(object sender, RoutedEventArgs e)
         {
-            var dashForm = new Dashboard();
-            dashForm.Show();
-            this.Close();
+            try
+            {
+                StartSaved.IsEnabled = false;
+
+                var dashForm = new Dashboard();
+                dashForm.Show();
+                this.Close();
+            }
+            catch
+            {
+                StartSaved.IsEnabled = true;
+            }
         }
 
         private void CheckDefaultConfiguration()
         {
             if (System.IO.Directory.Exists(_FileDirectory))
             {
-                DirectoryInfo d = new DirectoryInfo(_FileDirectory); 
+                DirectoryInfo d = new DirectoryInfo(_FileDirectory);
 
-                FileInfo[] Files = d.GetFiles("*.json"); 
-                if(Files!=null && Files.Length>0)
+                FileInfo[] Files = d.GetFiles("*.json");
+                if (Files != null && Files.Length > 0)
                 {
                     foreach (FileInfo file in Files)
                     {
-                        if(file.Name.Contains('_'))
+                        if (file.Name.Contains('_'))
                         {
                             string[] FileSpl = file.Name.Split('_');
-                            if(FileSpl.Last().ToString().ToLower()== "default.json")
+                            if (FileSpl.Last().ToString().ToLower() == "default.json")
                             {
                                 var dashForm = new Dashboard(file.FullName.ToString());
                                 dashForm.Show();
@@ -66,11 +85,11 @@ namespace JupiterSoft
                                 break;
                             }
                         }
-                        
+
                     }
                 }
 
-                
+
             }
         }
     }

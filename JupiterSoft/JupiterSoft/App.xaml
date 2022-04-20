@@ -14,28 +14,26 @@
             </ResourceDictionary.MergedDictionaries>
             <!-- Other app resources here -->
 
-            <Style TargetType="Button" x:Key="StartButton" >
-                <Setter Property="Background" Value="Transparent" />
+            <Style TargetType="Button" x:Key="StartButton">
                 <Setter Property="TextBlock.TextAlignment" Value="Center" />
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="Button">
-                            <Border CornerRadius="2,2,2,2" Background="Transparent" BorderBrush="#fff" BorderThickness="2" Padding="15">
-                                <ContentPresenter x:Name="contentPresenter" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                            <Border CornerRadius="2,2,2,2" Background="{TemplateBinding Background}" BorderBrush="#fff" BorderThickness="2" Padding="15">
+                                <ContentPresenter x:Name="contentPresenter" ContentTemplate="{TemplateBinding ContentTemplate}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
                             </Border>
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>
             </Style>
 
-            <Style TargetType="Button" x:Key="SavedButton" >
-                <Setter Property="Background" Value="Transparent" />
+            <Style TargetType="Button" x:Key="SavedButton">
                 <Setter Property="TextBlock.TextAlignment" Value="Center" />
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="Button">
-                            <Border CornerRadius="2,2,2,2" Background="Transparent" BorderBrush="#0082ca" BorderThickness="2" Padding="15">
-                                <ContentPresenter x:Name="contentPresenter" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                            <Border CornerRadius="2,2,2,2" Background="{TemplateBinding Background}" BorderBrush="#0082ca" BorderThickness="2" Padding="15">
+                                <ContentPresenter x:Name="contentPresenter" ContentTemplate="{TemplateBinding ContentTemplate}"  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
                             </Border>
                         </ControlTemplate>
                     </Setter.Value>
