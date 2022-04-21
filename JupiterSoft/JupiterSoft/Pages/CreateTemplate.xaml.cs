@@ -757,45 +757,95 @@ namespace JupiterSoft.Pages
             {
                 Border MotorParent = VisualTreeHelper.GetParent(ele) as Border;
                 MotorParent.ClearValue(UIElement.OpacityProperty);
+                MotorParent.Background = (Brush)bc.ConvertFrom("#4eaee5");
                 MotorDriveArea.Visibility = Visibility.Visible;
+                
 
                 Border WeightParent = VisualTreeHelper.GetParent(WeightModule) as Border;
                 WeightParent.Opacity = 0.8;
+                WeightParent.Background = Brushes.White;
                 WeightModuleArea.Visibility = Visibility.Hidden;
 
                 Border CamParent = VisualTreeHelper.GetParent(NetCamera) as Border;
                 CamParent.Opacity = 0.8;
+                CamParent.Background = Brushes.White;
                 NetCameraArea.Visibility = Visibility.Hidden;
+                NetworkCameraOuputArea.Visibility = Visibility.Hidden;
+
+                Border ControlParent = VisualTreeHelper.GetParent(ControlBoard) as Border;
+                ControlParent.Opacity = 0.8;
+                ControlParent.Background = Brushes.White;
+                ControlBoardArea.Visibility = Visibility.Hidden;
             }
             else if (ele.Name == "WeightModule")
             {
                 Border WeightParent = VisualTreeHelper.GetParent(ele) as Border;
                 WeightParent.ClearValue(UIElement.OpacityProperty);
                 WeightModuleArea.Visibility = Visibility.Visible;
+                WeightParent.Background = (Brush)bc.ConvertFrom("#4eaee5");
 
                 Border MotorParent = VisualTreeHelper.GetParent(MotorDrive) as Border;
                 MotorParent.Opacity = 0.8;
+                MotorParent.Background = Brushes.White;
                 MotorDriveArea.Visibility = Visibility.Hidden;
+                
 
                 Border CamParent = VisualTreeHelper.GetParent(NetCamera) as Border;
                 CamParent.Opacity = 0.8;
+                CamParent.Background = Brushes.White;
                 NetCameraArea.Visibility = Visibility.Hidden;
                 NetworkCameraOuputArea.Visibility = Visibility.Hidden;
+
+                Border ControlParent = VisualTreeHelper.GetParent(ControlBoard) as Border;
+                ControlParent.Opacity = 0.8;
+                ControlParent.Background = Brushes.White;
+                ControlBoardArea.Visibility = Visibility.Hidden;
             }
             else if (ele.Name == "NetCamera")
             {
                 Border CamParent = VisualTreeHelper.GetParent(ele) as Border;
                 CamParent.ClearValue(UIElement.OpacityProperty);
+                CamParent.Background = (Brush)bc.ConvertFrom("#4eaee5");
                 NetCameraArea.Visibility = Visibility.Visible;
                 NetworkCameraOuputArea.Visibility = Visibility.Visible;
 
                 Border MotorParent = VisualTreeHelper.GetParent(MotorDrive) as Border;
                 MotorParent.Opacity = 0.8;
+                MotorParent.Background = Brushes.White;
                 MotorDriveArea.Visibility = Visibility.Hidden;
 
                 Border WeightParent = VisualTreeHelper.GetParent(WeightModule) as Border;
                 WeightParent.Opacity = 0.8;
+                WeightParent.Background = Brushes.White;
                 WeightModuleArea.Visibility = Visibility.Hidden;
+
+                Border ControlParent = VisualTreeHelper.GetParent(ControlBoard) as Border;
+                ControlParent.Opacity = 0.8;
+                ControlParent.Background = Brushes.White;
+                ControlBoardArea.Visibility = Visibility.Hidden;
+            }
+            else if (ele.Name == "ControlBoard")
+            {
+                Border ControlParent = VisualTreeHelper.GetParent(ele) as Border;
+                ControlParent.ClearValue(UIElement.OpacityProperty);
+                ControlParent.Background = (Brush)bc.ConvertFrom("#4eaee5");
+                ControlBoardArea.Visibility = Visibility.Visible;
+
+                Border MotorParent = VisualTreeHelper.GetParent(MotorDrive) as Border;
+                MotorParent.Opacity = 0.8;
+                MotorParent.Background = Brushes.White;
+                MotorDriveArea.Visibility = Visibility.Hidden;
+
+                Border WeightParent = VisualTreeHelper.GetParent(WeightModule) as Border;
+                WeightParent.Opacity = 0.8;
+                WeightParent.Background = Brushes.White;
+                WeightModuleArea.Visibility = Visibility.Hidden;
+
+                Border CamParent = VisualTreeHelper.GetParent(NetCamera) as Border;
+                CamParent.Opacity = 0.8;
+                CamParent.Background = Brushes.White;
+                NetCameraArea.Visibility = Visibility.Hidden;
+                NetworkCameraOuputArea.Visibility = Visibility.Hidden;
             }
         }
 

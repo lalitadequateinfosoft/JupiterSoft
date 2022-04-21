@@ -12,7 +12,12 @@
 
     <Page.Resources>
         <ResourceDictionary>
-
+            <SolidColorBrush x:Key="clrOff" Color="#9c9c9c"/>
+            <SolidColorBrush x:Key="clrOn" Color="#e7d607"/>
+            <Style x:Key="ni7segfamily" TargetType="Label">
+                <Setter Property="FontFamily"
+            Value="pack://application:,,,/fonts/#NI7SEG" />
+            </Style>
             <Style TargetType="Button" x:Key="RunButton" >
                 <Setter Property="Background" Value="#0082ca" />
                 <Setter Property="TextBlock.TextAlignment" Value="Center" />
@@ -759,6 +764,66 @@
                 </Setter>
             </Style>
 
+            <!--Toggle Style-->
+            
+            <Style x:Key="ButtonFocusVisual">
+                <Setter Property="Control.Template">
+                    <Setter.Value>
+                        <ControlTemplate>
+                            <Rectangle Margin="2" SnapsToDevicePixels="true" Stroke="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" StrokeThickness="1" StrokeDashArray="1 2"/>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <LinearGradientBrush x:Key="ButtonNormalBackground" EndPoint="0,1" StartPoint="0,0">
+                <GradientStop Color="#F3F3F3" Offset="0"/>
+                <GradientStop Color="#EBEBEB" Offset="0.5"/>
+                <GradientStop Color="#DDDDDD" Offset="0.5"/>
+                <GradientStop Color="#CDCDCD" Offset="1"/>
+            </LinearGradientBrush>
+            <SolidColorBrush x:Key="ButtonNormalBorder" Color="#FF707070"/>
+            <Style x:Key="ToggleButtonStyle1" TargetType="{x:Type ToggleButton}">
+                <Setter Property="FocusVisualStyle" Value="{StaticResource ButtonFocusVisual}"/>
+                <Setter Property="Background" Value="{StaticResource ButtonNormalBackground}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource ButtonNormalBorder}"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+                <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type ToggleButton}">
+                            <Border BorderBrush="#007acc" BorderThickness="1" CornerRadius="2">
+                                <StackPanel Orientation="Vertical">
+                                    <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                    <Border x:Name="on" Width="22" Height="22" Background="LightGray" CornerRadius="2,2,0,0" Margin="1,1,1,0">
+                                        <TextBlock x:Name="onText" Text="Open" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="{TemplateBinding FontSize}" Padding="1"/>
+                                    </Border>
+                                    <Border x:Name="off" Width="22" Height="22" Background="LightGray" CornerRadius="0,0,2,2" Margin="1,0,1,1">
+                                        <TextBlock x:Name="offText" Text="Close" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="{TemplateBinding FontSize}" Padding="1"/>
+                                    </Border>
+                                </StackPanel>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsEnabled" Value="false">
+                                    <Setter Property="Foreground" Value="#ADADAD"/>
+                                </Trigger>
+                                <Trigger Property="IsChecked" Value="true">
+                                    <Setter TargetName="on" Property="Background" Value="#007acc"/>
+                                    <Setter TargetName="onText" Property="Foreground" Value="White"/>
+                                </Trigger>
+                                <Trigger Property="IsChecked" Value="False">
+                                    <Setter TargetName="off" Property="Background" Value="red"/>
+                                    <Setter TargetName="offText" Property="Foreground" Value="White"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+
 
 
             <!--Move Button Style End-->
@@ -1044,15 +1109,16 @@
                                             <RowDefinition Height="*"/>
                                             <RowDefinition Height="*"/>
                                             <RowDefinition Height="*"/>
+                                            <RowDefinition Height="*"/>
 
 
                                         </Grid.RowDefinitions>
                                         <Grid.ColumnDefinitions >
                                             <ColumnDefinition Width="*"/>
                                         </Grid.ColumnDefinitions>
-                                        <Grid Grid.Row="0" Grid.Column="0" Background="#fff" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10" Width="Auto">
+                                        <Grid Grid.Row="0" Grid.Column="0" Background="#fff" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" Width="Auto">
 
-                                            <Border Style="{StaticResource StackPanelLink}">
+                                            <Border Style="{StaticResource StackPanelLink}" Background="#4eaee5">
                                                 <StackPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch" x:Name="MotorDrive" PreviewMouseLeftButtonDown="Device_MouseLeftButtonDown">
 
 
@@ -1072,7 +1138,7 @@
 
                                         </Grid>
 
-                                        <Grid Grid.Row="1" Grid.Column="0" Background="#fff" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10" Width="Auto">
+                                        <Grid Grid.Row="1" Grid.Column="0" Background="#fff" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" Width="Auto">
 
                                             <Border Style="{StaticResource StackPanelLink}" Opacity="0.8">
                                                 <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" x:Name="WeightModule" PreviewMouseLeftButtonDown="Device_MouseLeftButtonDown">
@@ -1093,7 +1159,7 @@
 
 
                                         </Grid>
-                                        <Grid Grid.Row="2" Grid.Column="0" Background="#fff" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10" Width="Auto">
+                                        <Grid Grid.Row="2" Grid.Column="0" Background="#fff" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" Width="Auto">
 
                                             <Border Style="{StaticResource StackPanelLink}" Opacity="0.8" Height="113" VerticalAlignment="Bottom">
                                                 <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" x:Name="NetCamera" PreviewMouseLeftButtonDown="Device_MouseLeftButtonDown">
@@ -1115,18 +1181,42 @@
 
                                         </Grid>
 
+                                        <Grid Grid.Row="3" Grid.Column="0" Background="#fff" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" Width="Auto">
+
+                                            <Border Style="{StaticResource StackPanelLink}" Opacity="0.8" Height="113" VerticalAlignment="Bottom">
+                                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" x:Name="ControlBoard" PreviewMouseLeftButtonDown="Device_MouseLeftButtonDown">
+
+
+                                                    <StackPanel Margin="15">
+                                                        <Image Source="/assets/controlBoard.png" HorizontalAlignment="Center" VerticalAlignment="Center" Width="50"  />
+                                                    </StackPanel>
+
+                                                    <Button Foreground="#fff" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Style="{StaticResource TextButton}" Width="120">
+                                                        <Label HorizontalAlignment="Center" Foreground="#fff"  FontSize="8" FontWeight="Bold">
+                                                            <TextBlock>CONTROL <LineBreak/><Run Text="  BOARD"/></TextBlock>
+                                                        </Label>
+
+                                                    </Button>
+                                                </StackPanel>
+                                            </Border>
+
+
+                                        </Grid>
+
                                     </Grid>
                                 </StackPanel>
                             </Border>
                             <Grid Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="#f4f4f4" Cursor="Arrow">
-                                <Grid Margin="5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" x:Name="MotorDriveArea"  Visibility="Visible">
+                                <Grid Margin="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" x:Name="MotorDriveArea"  Visibility="Visible">
+                                    <Label Content="Motor Drive Area" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+                                </Grid>
+                                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" x:Name="WeightModuleArea" Visibility="Hidden">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="120"/>
                                         <RowDefinition Height="*"/>
-                                        <RowDefinition Height="Auto"/>
                                     </Grid.RowDefinitions>
-
-                                    <Border Grid.Row="0" BorderBrush="#0082ca" BorderThickness=".5">
+                                    <Border Grid.Row="0" BorderBrush="#0082ca" BorderThickness=".5" CornerRadius="5">
                                         <GroupBox Padding="5" BorderThickness="3">
                                             <GroupBox.Header>
                                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
@@ -1140,26 +1230,39 @@
                                                     <ColumnDefinition Width="*"/>
                                                     <ColumnDefinition Width="*"/>
                                                     <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="*"/>
                                                 </Grid.ColumnDefinitions>
                                                 <Grid Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                                     <StackPanel Orientation="Vertical">
-                                                        <StackPanel Margin="5">
-                                                            <Label Content="Baud Rate" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                        <StackPanel Margin="2">
+                                                            <Label Content="COM Port" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                                         </StackPanel>
                                                         <StackPanel>
-                                                            <ComboBox Width="122" BorderBrush="#041124" ui:ControlHelper.CornerRadius="5" Background="White">
-                                                                <ComboBoxItem Content="38400" IsSelected="True"/>
+                                                            <ComboBox Width="100" BorderBrush="#041124" ui:ControlHelper.CornerRadius="5" Background="White">
+                                                                <ComboBoxItem Content="PR1" IsSelected="True"/>
                                                             </ComboBox>
                                                         </StackPanel>
                                                     </StackPanel>
                                                 </Grid>
                                                 <Grid Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                                     <StackPanel Orientation="Vertical">
-                                                        <StackPanel Margin="5">
+                                                        <StackPanel Margin="2">
+                                                            <Label Content="Baud Rate" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                        </StackPanel>
+                                                        <StackPanel>
+                                                            <ComboBox Width="100" BorderBrush="#041124" ui:ControlHelper.CornerRadius="5" Background="White">
+                                                                <ComboBoxItem Content="38400" IsSelected="True"/>
+                                                            </ComboBox>
+                                                        </StackPanel>
+                                                    </StackPanel>
+                                                </Grid>
+                                                <Grid Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                                    <StackPanel Orientation="Vertical">
+                                                        <StackPanel Margin="2">
                                                             <Label Content="Data Bits" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                                         </StackPanel>
                                                         <StackPanel>
-                                                            <ComboBox Width="122" BorderBrush="#041124" ui:ControlHelper.CornerRadius="5" Background="White">
+                                                            <ComboBox Width="100" BorderBrush="#041124" ui:ControlHelper.CornerRadius="5" Background="White">
                                                                 <ComboBoxItem Content="5" />
                                                                 <ComboBoxItem Content="6" />
                                                                 <ComboBoxItem Content="7" />
@@ -1169,13 +1272,13 @@
                                                     </StackPanel>
                                                 </Grid>
 
-                                                <Grid Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                                <Grid Grid.Column="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                                     <StackPanel Orientation="Vertical">
-                                                        <StackPanel Margin="5">
+                                                        <StackPanel Margin="2">
                                                             <Label Content="Stop Bits" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                                         </StackPanel>
                                                         <StackPanel>
-                                                            <ComboBox Width="122" BorderBrush="#041124" ui:ControlHelper.CornerRadius="5" Background="White">
+                                                            <ComboBox Width="100" BorderBrush="#041124" ui:ControlHelper.CornerRadius="5" Background="White">
                                                                 <ComboBoxItem Content="1" IsSelected="True"/>
                                                                 <ComboBoxItem Content="1.5" />
                                                                 <ComboBoxItem Content="2" />
@@ -1183,13 +1286,13 @@
                                                         </StackPanel>
                                                     </StackPanel>
                                                 </Grid>
-                                                <Grid Grid.Column="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                                <Grid Grid.Column="4" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                                     <StackPanel Orientation="Vertical">
-                                                        <StackPanel Margin="5">
+                                                        <StackPanel Margin="2">
                                                             <Label Content="Parity" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                                         </StackPanel>
                                                         <StackPanel>
-                                                            <ComboBox Width="122" BorderBrush="#041124" ui:ControlHelper.CornerRadius="5" Background="White">
+                                                            <ComboBox Width="100" BorderBrush="#041124" ui:ControlHelper.CornerRadius="5" Background="White">
                                                                 <ComboBoxItem Content="Even"/>
                                                                 <ComboBoxItem Content="Mark"/>
                                                                 <ComboBoxItem Content="None" IsSelected="True"/>
@@ -1201,119 +1304,45 @@
                                                 </Grid>
                                             </Grid>
                                         </GroupBox>
-                                    </Border>              
-                                    <Grid Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                                        <Grid Margin="0,5,5,5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto"/>
-                                                <ColumnDefinition Width="*"/>
-                                            </Grid.ColumnDefinitions>
-                                            <Grid Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                                                <Grid.RowDefinitions>
-                                                    <RowDefinition Height="*"/>
-                                                    <RowDefinition Height="*"/>
-                                                </Grid.RowDefinitions>
-                                                
-                                                    <Grid Grid.Row="0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-                                                        <Label Content="Out-" FontSize="12" Margin="0,5,0,0" HorizontalAlignment="Center" VerticalAlignment="Top"/>
-                                                    </Grid>
-                                                <Grid Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-                                                    <Label Content="In-" FontSize="12" Margin="0,0,0,5" HorizontalAlignment="Center" VerticalAlignment="Bottom" />
-                                                    </Grid>
-                                          
-                                            </Grid>
-                                            <Grid Grid.Column="1">
-                                                <Grid.RowDefinitions>
-                                                    <RowDefinition Height="Auto"/>
-                                                    <RowDefinition Height="*"/>
-                                                    <RowDefinition Height="Auto"/>
-                                                </Grid.RowDefinitions>
-                                                <Grid Grid.Row="0" Height="30">
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="*"/>
-                                                        <ColumnDefinition Width="*"/>
-                                                        <ColumnDefinition Width="*"/>
-                                                        <ColumnDefinition Width="*"/>
-                                                        <ColumnDefinition Width="*"/>
-                                                        <ColumnDefinition Width="*"/>
-                                                        <ColumnDefinition Width="*"/>
-                                                        <ColumnDefinition Width="*"/>
-                                                        <ColumnDefinition Width="*"/>
-                                                        <ColumnDefinition Width="*"/>
-                                                        <ColumnDefinition Width="*"/>
-                                                        <ColumnDefinition Width="*"/>
-                                                        <ColumnDefinition Width="*"/>
-                                                        <ColumnDefinition Width="*"/>
-                                                        <ColumnDefinition Width="*"/>
-                                                    </Grid.ColumnDefinitions>
-                                                    <Button Grid.Column="0" Content="1" Width="30" Margin="1" FontSize="12" />
-                                                    <Button Grid.Column="1" Content="2" Width="30" Margin="1" FontSize="12"/>
-                                                    <Button Grid.Column="2" Content="3" Width="30" Margin="1" FontSize="12"/>
-                                                    <Button Grid.Column="3" Content="4" Width="30" Margin="1" FontSize="12"/>
-                                                    <Button Grid.Column="4" Content="5" Width="30" Margin="1" FontSize="12"/>
-                                                    <Button Grid.Column="5" Content="6" Width="30" Margin="1" FontSize="12"/>
-                                                    <Button Grid.Column="6" Content="7" Width="30" Margin="1" FontSize="12"/>
-                                                    <Button Grid.Column="7" Content="8" Width="30" Margin="1" FontSize="12"/>
-                                                    <Button Grid.Column="8" Content="9" Width="30" Margin="1" FontSize="12"/>
-                                                    <Button Grid.Column="9" Content="10" Width="30" Margin="1" FontSize="12"/>
-                                                    <Button Grid.Column="10" Content="11" Width="30" Margin="1" FontSize="12"/>
-                                                    <Button Grid.Column="11" Content="12" Width="30" Margin="1" FontSize="12"/>
-                                                    <Button Grid.Column="12" Content="13" Width="30" Margin="1" FontSize="12"/>
-                                                    <Button Grid.Column="13" Content="14" Width="30" Margin="1" FontSize="12"/>
-                                                    <Button Grid.Column="14" Content="15" Width="30" Margin="1" FontSize="12"/>
+                                    </Border>
+                                    <Border Grid.Row="1"  Padding="10" CornerRadius="10" Background="#242726">
+                                        <Grid>
+                                            <Border CornerRadius="4" Background="#66797c" Padding="15,8,15,8">
+                                                <Grid>
+                                                    <Border BorderBrush="#fff" BorderThickness="2" Background="#66797c" Padding="5" CornerRadius="20">
+                                                        <Grid>
+                                                            <Border CornerRadius="20" Background="#1f2121">
+                                                                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="55">
+                                                                    <Grid.ColumnDefinitions>
+                                                                        <ColumnDefinition Width="*"/>
+                                                                        <ColumnDefinition Width="Auto"/>
+                                                                    </Grid.ColumnDefinitions>
+                                                                    <Border Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="#2e1511" CornerRadius="5">
+                                                                        <Label Content="888888888" Style="{StaticResource ni7segfamily}" Foreground="#af1708" Width="Auto" Height="Auto" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="40" FontStyle="Italic"/>
+                                                                    </Border>
+                                                                    <Grid Grid.Column="1" Width="30">
+                                                                        <Grid.RowDefinitions>
+                                                                            <RowDefinition Height="*"/>
+                                                                            <RowDefinition Height="*"/>
+                                                                            <RowDefinition Height="*"/>
+                                                                            <RowDefinition Height="*"/>
+                                                                        </Grid.RowDefinitions>
+                                                                        <Label Grid.Row="0" Margin="2" Content="kg" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="White"/>
+                                                                        <Label Grid.Row="1" Margin="2" Content="lb" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="White"/>
+                                                                        <Label Grid.Row="2" Margin="2" Content="oz" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="White"/>
+                                                                        <Label Grid.Row="3" Margin="2" Content="PCS" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="White"/>
+                                                                    </Grid>
+                                                                </Grid>
+                                                            </Border>
+                                                        </Grid>                                       
+                                                    </Border>
                                                 </Grid>
-                                                <Border Grid.Row="1" BorderBrush="Green" BorderThickness="1">
-                                                    <Label Content="Device" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                </Border>
-                                                <Border Grid.Row="2" Height="30" BorderBrush="Yellow" BorderThickness="1">
-                                                    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                                                        <Grid.ColumnDefinitions>
-                                                            <ColumnDefinition Width="*"/>
-                                                            <ColumnDefinition Width="*"/>
-                                                            <ColumnDefinition Width="*"/>
-                                                            <ColumnDefinition Width="*"/>
-                                                            <ColumnDefinition Width="*"/>
-                                                            <ColumnDefinition Width="*"/>
-                                                            <ColumnDefinition Width="*"/>
-                                                            <ColumnDefinition Width="*"/>
-                                                            <ColumnDefinition Width="*"/>
-                                                            <ColumnDefinition Width="*"/>
-                                                            <ColumnDefinition Width="*"/>
-                                                            <ColumnDefinition Width="*"/>
-                                                            <ColumnDefinition Width="*"/>
-                                                            <ColumnDefinition Width="*"/>
-                                                            <ColumnDefinition Width="*"/>
-                                                        </Grid.ColumnDefinitions>
-                                                        <Button Grid.Column="0" Content="1" Width="30" Margin="1" FontSize="12" />
-                                                        <Button Grid.Column="1" Content="2" Width="30" Margin="1" FontSize="12"/>
-                                                        <Button Grid.Column="2" Content="3" Width="30" Margin="1" FontSize="12"/>
-                                                        <Button Grid.Column="3" Content="4" Width="30" Margin="1" FontSize="12"/>
-                                                        <Button Grid.Column="4" Content="5" Width="30" Margin="1" FontSize="12"/>
-                                                        <Button Grid.Column="5" Content="6" Width="30" Margin="1" FontSize="12"/>
-                                                        <Button Grid.Column="6" Content="7" Width="30" Margin="1" FontSize="12"/>
-                                                        <Button Grid.Column="7" Content="8" Width="30" Margin="1" FontSize="12"/>
-                                                        <Button Grid.Column="8" Content="9" Width="30" Margin="1" FontSize="12"/>
-                                                        <Button Grid.Column="9" Content="10" Width="30" Margin="1" FontSize="12"/>
-                                                        <Button Grid.Column="10" Content="11" Width="30" Margin="1" FontSize="12"/>
-                                                        <Button Grid.Column="11" Content="12" Width="30" Margin="1" FontSize="12"/>
-                                                        <Button Grid.Column="12" Content="13" Width="30" Margin="1" FontSize="12"/>
-                                                        <Button Grid.Column="13" Content="14" Width="30" Margin="1" FontSize="12"/>
-                                                        <Button Grid.Column="14" Content="15" Width="30" Margin="1" FontSize="12"/>
-                                                    </Grid>
-                                                </Border>
-                                            </Grid>
+                                                
+                                            </Border>
                                         </Grid>
                                         
-                                    </Grid>
-                                    <Grid Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="200" Background="White">
-                                        <Label Content="Device Information" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                    </Grid>                                        
-                                        
-                                   
+                                    </Border>
                                 </Grid>
-                                <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" x:Name="WeightModuleArea" Background="Transparent" Visibility="Hidden">
-                                    <Label Content="Weight Module Area" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Black"/>
-                                </StackPanel>
                                 <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" x:Name="NetCameraArea" Background="Transparent" Visibility="Hidden">
                                     <TabControl HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent">
                                         
@@ -1444,7 +1473,642 @@
                                         
                                     </TabControl>
                                 </Grid>
-                                
+
+                                <Grid Margin="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" x:Name="ControlBoardArea"  Visibility="Hidden">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="120"/>
+                                        <RowDefinition Height="*"/>
+                                        <RowDefinition Height="100"/>
+                                    </Grid.RowDefinitions>
+
+                                    <Border Grid.Row="0" BorderBrush="#0082ca" BorderThickness=".5" CornerRadius="5">
+                                        <GroupBox Padding="5" BorderThickness="3">
+                                            <GroupBox.Header>
+                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                                    <TextBlock FontWeight="Bold" FontSize="12" Text="Configuration Setting"/>
+                                                </StackPanel>
+
+                                            </GroupBox.Header>
+                                            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,-15,0,0">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                </Grid.ColumnDefinitions>
+                                                <Grid Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                                    <StackPanel Orientation="Vertical">
+                                                        <StackPanel Margin="2">
+                                                            <Label Content="COM Port" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                        </StackPanel>
+                                                        <StackPanel>
+                                                            <ComboBox Width="100" BorderBrush="#041124" ui:ControlHelper.CornerRadius="5" Background="White">
+                                                                <ComboBoxItem Content="PR1" IsSelected="True"/>
+                                                            </ComboBox>
+                                                        </StackPanel>
+                                                    </StackPanel>
+                                                </Grid>
+                                                <Grid Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                                    <StackPanel Orientation="Vertical">
+                                                        <StackPanel Margin="2">
+                                                            <Label Content="Baud Rate" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                        </StackPanel>
+                                                        <StackPanel>
+                                                            <ComboBox Width="100" BorderBrush="#041124" ui:ControlHelper.CornerRadius="5" Background="White">
+                                                                <ComboBoxItem Content="38400" IsSelected="True"/>
+                                                            </ComboBox>
+                                                        </StackPanel>
+                                                    </StackPanel>
+                                                </Grid>
+                                                <Grid Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                                    <StackPanel Orientation="Vertical">
+                                                        <StackPanel Margin="2">
+                                                            <Label Content="Data Bits" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                        </StackPanel>
+                                                        <StackPanel>
+                                                            <ComboBox Width="100" BorderBrush="#041124" ui:ControlHelper.CornerRadius="5" Background="White">
+                                                                <ComboBoxItem Content="5" />
+                                                                <ComboBoxItem Content="6" />
+                                                                <ComboBoxItem Content="7" />
+                                                                <ComboBoxItem Content="8" IsSelected="True"/>
+                                                            </ComboBox>
+                                                        </StackPanel>
+                                                    </StackPanel>
+                                                </Grid>
+
+                                                <Grid Grid.Column="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                                    <StackPanel Orientation="Vertical">
+                                                        <StackPanel Margin="2">
+                                                            <Label Content="Stop Bits" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                        </StackPanel>
+                                                        <StackPanel>
+                                                            <ComboBox Width="100" BorderBrush="#041124" ui:ControlHelper.CornerRadius="5" Background="White">
+                                                                <ComboBoxItem Content="1" IsSelected="True"/>
+                                                                <ComboBoxItem Content="1.5" />
+                                                                <ComboBoxItem Content="2" />
+                                                            </ComboBox>
+                                                        </StackPanel>
+                                                    </StackPanel>
+                                                </Grid>
+                                                <Grid Grid.Column="4" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                                    <StackPanel Orientation="Vertical">
+                                                        <StackPanel Margin="2">
+                                                            <Label Content="Parity" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                        </StackPanel>
+                                                        <StackPanel>
+                                                            <ComboBox Width="100" BorderBrush="#041124" ui:ControlHelper.CornerRadius="5" Background="White">
+                                                                <ComboBoxItem Content="Even"/>
+                                                                <ComboBoxItem Content="Mark"/>
+                                                                <ComboBoxItem Content="None" IsSelected="True"/>
+                                                                <ComboBoxItem Content="Odd"/>
+                                                                <ComboBoxItem Content="Space"/>
+                                                            </ComboBox>
+                                                        </StackPanel>
+                                                    </StackPanel>
+                                                </Grid>
+                                            </Grid>
+                                        </GroupBox>
+                                    </Border>
+                                    <Grid Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                        <Grid Margin="0,5,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                            </Grid.RowDefinitions>
+                                            <Border Grid.Row="0" Height="70">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <ToggleButton 
+                                                        Content="16"
+                                                        Grid.Column="0"
+                                                        Style="{StaticResource ToggleButtonStyle1}"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        HorizontalContentAlignment="Center"
+                                                        IsChecked="True"
+                                                        FontSize="9"
+                                                        Cursor="Hand" />
+                                                    <ToggleButton 
+                                                        Content="17"
+                                                        Grid.Column="1"
+                                                        Style="{StaticResource ToggleButtonStyle1}"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        HorizontalContentAlignment="Center"
+                                                        IsChecked="True"
+                                                        FontSize="9" />
+                                                    <ToggleButton 
+                                                        Content="18"
+                                                        Grid.Column="2"
+                                                        Style="{StaticResource ToggleButtonStyle1}"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        HorizontalContentAlignment="Center"
+                                                        IsChecked="True"
+                                                        FontSize="9" />
+                                                    <ToggleButton 
+                                                        Content="19"
+                                                        Grid.Column="3"
+                                                        Style="{StaticResource ToggleButtonStyle1}"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        HorizontalContentAlignment="Center"
+                                                        IsChecked="True" FontSize="9" />
+                                                    <ToggleButton 
+                                                        Content="20" Grid.Column="4"
+                                                        Style="{StaticResource ToggleButtonStyle1}"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        HorizontalContentAlignment="Center"  IsChecked="True" FontSize="9" />
+                                                    <ToggleButton 
+                                                        Content="21" Grid.Column="5"
+                                                        Style="{StaticResource ToggleButtonStyle1}"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        HorizontalContentAlignment="Center"  IsChecked="True" FontSize="9" />
+
+                                                    <ToggleButton 
+                                                        Content="6" Grid.Column="6"
+                                                        Style="{StaticResource ToggleButtonStyle1}"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        HorizontalContentAlignment="Center"  IsChecked="True" FontSize="10" />
+
+                                                    <ToggleButton 
+                                                        Content="7" Grid.Column="7"
+                                                        Style="{StaticResource ToggleButtonStyle1}"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        HorizontalContentAlignment="Center"  IsChecked="True" FontSize="10" />
+
+                                                    <ToggleButton 
+                                                        Content="8" Grid.Column="8"
+                                                        Style="{StaticResource ToggleButtonStyle1}"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        HorizontalContentAlignment="Center"  IsChecked="True" FontSize="10" />
+
+                                                    <ToggleButton 
+                                                        Content="9" Grid.Column="9"
+                                                        Style="{StaticResource ToggleButtonStyle1}"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        HorizontalContentAlignment="Center"
+                                                        IsChecked="True" FontSize="10" />
+
+                                                    <ToggleButton 
+                                                        Content="10" Grid.Column="10"
+                                                        Style="{StaticResource ToggleButtonStyle1}"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        HorizontalContentAlignment="Center"
+                                                        IsChecked="True" FontSize="10" />
+
+                                                    <ToggleButton 
+                                                        Content="11"
+                                                        Grid.Column="11"
+                                                        Style="{StaticResource ToggleButtonStyle1}"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        HorizontalContentAlignment="Center"
+                                                        IsChecked="True" FontSize="10" />
+
+                                                    <ToggleButton 
+                                                        Content="12" Grid.Column="12"
+                                                        Style="{StaticResource ToggleButtonStyle1}"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        HorizontalContentAlignment="Center"
+                                                        IsChecked="True" FontSize="10" />
+
+                                                    <ToggleButton 
+                                                        Content="13" Grid.Column="13"
+                                                        Style="{StaticResource ToggleButtonStyle1}"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        HorizontalContentAlignment="Center"
+                                                        IsChecked="True" FontSize="10" />
+
+                                                    <ToggleButton 
+                                                        Content="14" Grid.Column="14"
+                                                        Style="{StaticResource ToggleButtonStyle1}"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        HorizontalContentAlignment="Center"
+                                                        IsChecked="True" FontSize="10" />
+
+                                                    <ToggleButton 
+                                                        Content="15" Grid.Column="15"
+                                                        Style="{StaticResource ToggleButtonStyle1}"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        HorizontalContentAlignment="Center" 
+                                                        IsChecked="True" FontSize="10" />
+                                                </Grid>
+                                            </Border>
+                                            <Border 
+                                                    Grid.Row="1"
+                                                    BorderBrush="ForestGreen"
+                                                    Background="ForestGreen"
+                                                    BorderThickness="1"
+                                                    >
+
+                                                <Label 
+                                                        Content="Device"
+                                                        Foreground="White"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"/>
+                                            </Border>
+                                            <Border 
+                                                    Grid.Row="2"
+                                                    Height="30"
+                                                    BorderBrush="#cccccc"
+                                                    BorderThickness="1">
+                                                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="32"/>
+                                                        <ColumnDefinition Width="32"/>
+                                                        <ColumnDefinition Width="32"/>
+                                                        <ColumnDefinition Width="32"/>
+                                                        <ColumnDefinition Width="32"/>
+                                                        <ColumnDefinition Width="32"/>
+                                                        <ColumnDefinition Width="32"/>
+                                                        <ColumnDefinition Width="32"/>
+                                                        <ColumnDefinition Width="32"/>
+                                                        <ColumnDefinition Width="32"/>
+                                                        <ColumnDefinition Width="32"/>
+                                                        <ColumnDefinition Width="32"/>
+                                                        <ColumnDefinition Width="32"/>
+                                                        <ColumnDefinition Width="32"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                    </Grid.ColumnDefinitions>
+
+
+                                                    <Border Grid.Column="0"
+                                                            Background="#041124"
+                                                            CornerRadius="2"
+                                                            BorderThickness="1">
+                                                        <StackPanel 
+                                                            Orientation="Vertical"
+                                                            HorizontalAlignment="Center">
+
+                                                            <Label Content="0"
+                                                                   FontSize="10"
+                                                                   Foreground="White"/>
+
+                                                            <Label Content="In"
+                                                                   FontSize="10"
+                                                                   Foreground="White"/>
+
+                                                        </StackPanel>
+
+
+                                                    </Border>
+
+                                                    <Border Grid.Column="1"
+                                                            Margin="1"
+                                                            Background="#041124"
+                                                            CornerRadius="2">
+
+                                                        <StackPanel 
+                                                            Orientation="Vertical"
+                                                            HorizontalAlignment="Center">
+
+                                                            <Label Content="1"
+                                                                   FontSize="10"
+                                                                   Foreground="White"/>
+
+                                                            <Label Content="In"
+                                                                   FontSize="10"
+                                                                   Foreground="White"/>
+                                                        </StackPanel>
+                                                    </Border>
+                                                    <Border Grid.Column="2"
+                                                            Margin="1"
+                                                            Background="#041124"
+                                                            CornerRadius="2">
+
+                                                        <StackPanel 
+                                                            Orientation="Vertical"
+                                                            HorizontalAlignment="Center">
+
+                                                            <Label Content="2"
+                                                                   FontSize="10"
+                                                                   Foreground="White"/>
+
+                                                            <Label Content="In"
+                                                                   FontSize="10"
+                                                                   Foreground="White"/>
+                                                        </StackPanel>
+
+                                                    </Border>
+                                                    <Border Grid.Column="3"
+                                                            Margin="1"
+                                                            Background="#041124"
+                                                            CornerRadius="2">
+
+                                                        <StackPanel 
+                                                            Orientation="Vertical"
+                                                            HorizontalAlignment="Center">
+
+                                                            <Label Content="3"
+                                                                   FontSize="10"
+                                                                   Foreground="White"/>
+
+                                                            <Label Content="In"
+                                                                   FontSize="10"
+                                                                   Foreground="White"/>
+                                                        </StackPanel>
+                                                    </Border>
+                                                    <Border Grid.Column="4"
+                                                            Margin="1"
+                                                            Background="#041124"
+                                                            CornerRadius="2">
+
+                                                        <StackPanel 
+                                                            Orientation="Vertical"
+                                                            HorizontalAlignment="Center">
+
+                                                            <Label Content="4"
+                                                                   FontSize="10"
+                                                                   Foreground="White"/>
+
+                                                            <Label Content="In"
+                                                                   FontSize="10"
+                                                                   Foreground="White"/>
+                                                        </StackPanel>
+                                                    </Border>
+                                                    <Border Grid.Column="5"
+                                                            Margin="1"
+                                                            Background="#041124"
+                                                            CornerRadius="2">
+
+                                                        <StackPanel 
+                                                            Orientation="Vertical"
+                                                            HorizontalAlignment="Center">
+
+                                                            <Label Content="5"
+                                                                   FontSize="10"
+                                                                   Foreground="White"/>
+
+                                                            <Label Content="In"
+                                                                   FontSize="10"
+                                                                   Foreground="White"/>
+                                                        </StackPanel>
+                                                    </Border>
+                                                    <Border Grid.Column="6"
+                                                            Margin="1"
+                                                            Background="#041124"
+                                                            CornerRadius="2">
+
+                                                        <StackPanel 
+                                                            Orientation="Vertical"
+                                                            HorizontalAlignment="Center">
+
+                                                            <Label Content="6"
+                                                                   FontSize="10"
+                                                                   Foreground="White"/>
+
+                                                            <Label Content="In"
+                                                                   FontSize="10"
+                                                                   Foreground="White"/>
+                                                        </StackPanel>
+                                                    </Border>
+                                                    <Border Grid.Column="7"
+                                                            Margin="1"
+                                                            Background="#041124"
+                                                            CornerRadius="2">
+
+                                                        <StackPanel 
+                                                            Orientation="Vertical"
+                                                            HorizontalAlignment="Center">
+
+                                                            <Label Content="7"
+                                                                   FontSize="10"
+                                                                   Foreground="White"/>
+
+                                                            <Label Content="In"
+                                                                   FontSize="10"
+                                                                   Foreground="White"/>
+                                                        </StackPanel>
+                                                    </Border>
+                                                    <Border Grid.Column="8"
+                                                            Margin="1"
+                                                            Background="#041124"
+                                                            CornerRadius="2">
+
+                                                        <StackPanel 
+                                                            Orientation="Vertical"
+                                                            HorizontalAlignment="Center">
+
+                                                            <Label Content="8"
+                                                                   FontSize="10"
+                                                                   Foreground="White"/>
+
+                                                            <Label Content="In"
+                                                                   FontSize="10"
+                                                                   Foreground="White"/>
+                                                        </StackPanel>
+                                                    </Border>
+                                                    <Border Grid.Column="9"
+                                                            Margin="1"
+                                                            Background="#041124"
+                                                            CornerRadius="2">
+
+                                                        <StackPanel 
+                                                            Orientation="Vertical"
+                                                            HorizontalAlignment="Center">
+
+                                                            <Label Content="9"
+                                                                   FontSize="10"
+                                                                   Foreground="White"/>
+
+                                                            <Label Content="In"
+                                                                   FontSize="10"
+                                                                   Foreground="White"/>
+                                                        </StackPanel>
+                                                    </Border>
+                                                    <Border Grid.Column="10"
+                                                            Margin="1"
+                                                            Background="#041124"
+                                                            CornerRadius="2">
+
+                                                        <StackPanel 
+                                                            Orientation="Vertical"
+                                                            HorizontalAlignment="Center">
+
+                                                            <Label Content="10"
+                                                                   FontSize="10"
+                                                                   Foreground="White"/>
+
+                                                            <Label Content="In"
+                                                                   FontSize="10"
+                                                                   Foreground="White"/>
+                                                        </StackPanel>
+                                                    </Border>
+                                                    <Border Grid.Column="11"
+                                                            Margin="1"
+                                                            Background="#041124"
+                                                            CornerRadius="2">
+
+                                                        <StackPanel 
+                                                            Orientation="Vertical"
+                                                            HorizontalAlignment="Center">
+
+                                                            <Label Content="11"
+                                                                   FontSize="10"
+                                                                   Foreground="White"/>
+
+                                                            <Label Content="In"
+                                                                   FontSize="10"
+                                                                   Foreground="White"/>
+                                                        </StackPanel>
+                                                    </Border>
+                                                    <Border Grid.Column="12"
+                                                            Margin="1"
+                                                            Background="#041124"
+                                                            CornerRadius="2">
+
+                                                        <StackPanel 
+                                                            Orientation="Vertical"
+                                                            HorizontalAlignment="Center">
+
+                                                            <Label Content="12"
+                                                                   FontSize="10"
+                                                                   Foreground="White"/>
+
+                                                            <Label Content="In"
+                                                                   FontSize="10"
+                                                                   Foreground="White"/>
+                                                        </StackPanel>
+                                                    </Border>
+                                                    <Border Grid.Column="13"
+                                                            Margin="1"
+                                                            Background="#041124"
+                                                            CornerRadius="2">
+
+                                                        <StackPanel 
+                                                            Orientation="Vertical"
+                                                            HorizontalAlignment="Center">
+
+                                                            <Label Content="13"
+                                                                   FontSize="10"
+                                                                   Foreground="White"/>
+
+                                                            <Label Content="In"
+                                                                   FontSize="10"
+                                                                   Foreground="White"/>
+                                                        </StackPanel>
+                                                    </Border>
+                                                    <Border Grid.Column="14"
+                                                            Margin="1"
+                                                            Background="#041124"
+                                                            CornerRadius="2">
+
+                                                        <StackPanel 
+                                                            Orientation="Vertical"
+                                                            HorizontalAlignment="Center">
+
+                                                            <Label Content="14"
+                                                                   FontSize="10"
+                                                                   Foreground="White"/>
+
+                                                            <Label Content="In"
+                                                                   FontSize="10"
+                                                                   Foreground="White"/>
+                                                        </StackPanel>
+                                                    </Border>
+                                                    <Border Grid.Column="15"
+                                                            Margin="1"
+                                                            Background="#041124"
+                                                            CornerRadius="2">
+
+                                                        <StackPanel 
+                                                            Orientation="Vertical"
+                                                            HorizontalAlignment="Center">
+
+                                                            <Label Content="15"
+                                                                   FontSize="10"
+                                                                   Foreground="White"/>
+
+                                                            <Label Content="In"
+                                                                   FontSize="10"
+                                                                   Foreground="White"/>
+                                                        </StackPanel>
+                                                    </Border>
+
+                                                </Grid>
+                                            </Border>
+                                            <Grid 
+                                                    Grid.Row="3"
+                                                    Background="White">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="32"/>
+                                                    <ColumnDefinition Width="32"/>
+                                                    <ColumnDefinition Width="32"/>
+                                                    <ColumnDefinition Width="32"/>
+                                                    <ColumnDefinition Width="32"/>
+                                                    <ColumnDefinition Width="32"/>
+                                                    <ColumnDefinition Width="32"/>
+                                                    <ColumnDefinition Width="32"/>
+                                                    <ColumnDefinition Width="32"/>
+                                                    <ColumnDefinition Width="32"/>
+                                                    <ColumnDefinition Width="32"/>
+                                                    <ColumnDefinition Width="32"/>
+                                                    <ColumnDefinition Width="32"/>
+                                                    <ColumnDefinition Width="32"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                </Grid.ColumnDefinitions>
+                                                <Image Grid.Column="0" Source="/assets/CtrlOn.png"  Stretch="Fill"/>
+                                                <Image Grid.Column="1" Source="/assets/CtrlOff.png"  Stretch="Fill"/>
+                                                <Image Grid.Column="2" Source="/assets/CtrlOff.png"  Stretch="Fill"/>
+                                                <Image Grid.Column="3" Source="/assets/CtrlOff.png"  Stretch="Fill"/>
+                                                <Image Grid.Column="4" Source="/assets/CtrlOff.png"  Stretch="Fill"/>
+                                                <Image Grid.Column="5" Source="/assets/CtrlOff.png"  Stretch="Fill"/>
+                                                <Image Grid.Column="6" Source="/assets/CtrlOff.png"  Stretch="Fill"/>
+                                                <Image Grid.Column="7" Source="/assets/CtrlOff.png"  Stretch="Fill"/>
+                                                <Image Grid.Column="8" Source="/assets/CtrlOff.png"  Stretch="Fill"/>
+                                                <Image Grid.Column="9" Source="/assets/CtrlOff.png"  Stretch="Fill"/>
+                                                <Image Grid.Column="10" Source="/assets/CtrlOff.png"  Stretch="Fill"/>
+                                                <Image Grid.Column="11" Source="/assets/CtrlOff.png"  Stretch="Fill"/>
+                                                <Image Grid.Column="12" Source="/assets/CtrlOff.png"  Stretch="Fill"/>
+                                                <Image Grid.Column="13" Source="/assets/CtrlOff.png"  Stretch="Fill"/>
+                                                <Image Grid.Column="14" Source="/assets/CtrlOff.png"  Stretch="Fill"/>
+                                                <Image Grid.Column="15" Source="/assets/CtrlOff.png"  Stretch="Fill"/>
+                                            </Grid>
+                                        </Grid>
+
+                                    </Grid>
+                                    <Grid Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="White">
+                                        <Label Content="Device Information" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Grid>
+
+
+                                </Grid>
+
                             </Grid>
 
                         </Grid>

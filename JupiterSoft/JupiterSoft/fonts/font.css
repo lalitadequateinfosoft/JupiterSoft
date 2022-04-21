@@ -1,0 +1,11 @@
+@font-face {
+	font-family: 'ni7seg';
+	src: url('./ni7seg.eot');
+	src: local('ni7seg'), url('./ni7seg.woff') format('woff'), url('./ni7seg.ttf') format('truetype');
+}
+/* use this class to attach this font to any element i.e. <p class="fontsforweb_fontid_1377">Text with this font applied</p> */
+.fontsforweb_fontid_1377 {
+	font-family: 'ni7seg' !important;
+}
+
+/* Font downloaded from FontsForWeb.com */

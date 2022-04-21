@@ -113,6 +113,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="fonts\ni7seg.eot" />
+    <Resource Include="fonts\ni7seg.ttf" />
+    <None Include="fonts\ni7seg.woff" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -180,6 +183,19 @@
     <Resource Include="assets\rotate-right-32.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="assets\CtrlOff.png" />
+    <Resource Include="assets\CtrlOn.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="assets\controlBoard.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="fonts\font.css" />
+    <Resource Include="fonts\ni7seg-bg.png" />
+    <Resource Include="fonts\ni7seg-thumb.png" />
+    <Resource Include="fonts\ni7seg.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

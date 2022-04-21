@@ -9,11 +9,11 @@
         ui:WindowHelper.UseModernWindowStyle="True"
         Title="JUPITER SOFTWARE"
         Icon="icon.ico"
-        Height="650" Width="1000"
+        Height="650" Width="1200"
         ui:TitleBar.Background="#e4e4e4"
         ui:TitleBar.IsIconVisible="True"
         WindowState="Maximized"
-        ResizeMode="CanMinimize">
+        ResizeMode="CanResize">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -131,7 +131,7 @@
                 <!--Help Menu End-->
             </Menu>
 
-            <Frame Grid.Row="1" Name="frame" NavigationUIVisibility="Hidden" Panel.ZIndex="1" Background="#eeeeee"/>
+            <Frame Grid.Row="1" Name="frame" NavigationUIVisibility="Hidden" Panel.ZIndex="1" Background="#eeeeee" ScrollViewer.CanContentScroll="True" ScrollViewer.HorizontalScrollBarVisibility="Auto"/>
 
 
             <!--Menu Area End-->
