@@ -1131,16 +1131,14 @@ namespace JupiterSoft.Pages
                 var ip = ipAddressText.Text;
                 var port = PortText.Text;
 
-                OzConf_MJPEGStreamServer config = new OzConf_MJPEGStreamServer();
-                config.ListenPort = int.Parse(port);
-                //config.ServerConfig = new OzConf_TCPServer( ip.ToString();
-                //_streamer = new MJPEGStreamer(config);
+                OzConf_MJPEGStreamServer ozConf_ = new OzConf_MJPEGStreamServer(int.Parse(port),25);
+                _streamer = new MJPEGStreamer(ozConf_);
 
-                //_connector.Connect(_videoSender, _streamer.VideoChannel);
+                _connector.Connect(_videoSender, _streamer.VideoChannel);
 
-                //_streamer.ClientConnected += streamer_ClientConnected;
-                //_streamer.ClientDisconnected += streamer_ClientDisconnected;
-                //_streamer.Start();
+                _streamer.ClientConnected += _streamer_ClientConnected;
+                _streamer.ClientDisconnected += _streamer_ClientDisconnected;
+              _streamer.Start();
 
                 OpenInBrowserButton.IsEnabled = true;
                 UnstreamUSBCam.IsEnabled = true;
@@ -1150,6 +1148,16 @@ namespace JupiterSoft.Pages
                 OpenInBrowserButton.IsEnabled = false;
                 UnstreamUSBCam.IsEnabled = false;
             }
+        }
+
+        private void _streamer_ClientDisconnected(object sender, OzEventArgs<OzBaseMJPEGStreamConnection> e)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void _streamer_ClientConnected(object sender, OzEventArgs<OzBaseMJPEGStreamConnection> e)
+        {
+            throw new NotImplementedException();
         }
 
         private void UnstreamUSBCam_Click(object sender, RoutedEventArgs e)
