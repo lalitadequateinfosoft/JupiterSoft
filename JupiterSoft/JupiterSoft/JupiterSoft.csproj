@@ -45,6 +45,9 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Drawing.Design" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Management.Instrumentation" />
+    <Reference Include="System.Messaging" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -90,6 +93,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\ApplicationConstant.cs" />
+    <Compile Include="Models\DeviceInfo.cs" />
+    <Compile Include="Models\DeviceInformation.cs" />
     <Compile Include="Models\DeviceModel.cs" />
     <Compile Include="Models\ElementModel.cs" />
     <Compile Include="Models\FileSystemModel.cs" />

@@ -18,8 +18,10 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Ozeki.Media;
 using Ozeki.Camera;
+using Ozeki;
 using System.IO;
 using Newtonsoft.Json;
+using System.IO.Ports;
 
 namespace JupiterSoft.Pages
 {
@@ -66,9 +68,13 @@ namespace JupiterSoft.Pages
         private MediaConnector _connector;
         private IWebCamera _webCamera;
         private static string _runningCamera = null;
+        private MJPEGStreamer _streamer;
+        private IVideoSender _videoSender;
+
         private string _CurrentFile = null;
         private List<DiscoveredDeviceInfo> devices;
         private List<DeviceModel> DeviceModels;
+        private DeviceInfo deviceInfo;
         public CreateTemplate()
         {
             bc = new BrushConverter();
@@ -81,6 +87,9 @@ namespace JupiterSoft.Pages
 
             devices = new List<DiscoveredDeviceInfo>();
             DeviceModels = new List<DeviceModel>();
+
+            deviceInfo = DeviceInformation.GetConnectedDevices();
+            ConnectedDevices();
         }
 
         public CreateTemplate(string _filename)
@@ -92,8 +101,18 @@ namespace JupiterSoft.Pages
             this.CanvasWidth = ReceiveDrop.Width;
             this.CanvasHeight = ReceiveDrop.Height;
             this.isloaded = true;
+
+
+            devices = new List<DiscoveredDeviceInfo>();
+            DeviceModels = new List<DeviceModel>();
+            //Saved project.
             _CurrentFile = _filename;
+            this.ProjectName.Content = System.IO.Path.GetFileName(_filename).Split('.')[0];
             LoadFile();
+
+            deviceInfo = DeviceInformation.GetConnectedDevices();
+            ConnectedDevices();
+
         }
 
         private void ButtonGrid_MouseEnter(object sender, MouseEventArgs e)
@@ -870,6 +889,9 @@ namespace JupiterSoft.Pages
                     videoViewer.SetImageProvider(_drawingImageProvider);
                     _webCamera.Start();
                     videoViewer.Start();
+                    _videoSender = _webCamera.VideoChannel;
+                    StreamUSBCamera.IsEnabled = true;
+
                     ConnectUSBCamera.IsEnabled = false;
                     ConnectUSBCamera.Content = "Connected";
                     DisconnectUSBCam.IsEnabled = true;
@@ -879,23 +901,26 @@ namespace JupiterSoft.Pages
             }
             catch (Exception ex)
             {
+                StreamUSBCamera.IsEnabled = false;
                 USBCam_error.Content = ex.ToString();
             }
         }
 
         private void DisconnectUSBCam_Click(object sender, RoutedEventArgs e)
         {
-
+            videoViewer.Stop();
+            videoViewer.Background = Brushes.Black;
             _webCamera.Stop();
             _webCamera.Dispose();
             _drawingImageProvider.Dispose();
             _connector.Disconnect(_webCamera.VideoChannel, _drawingImageProvider);
             _connector.Dispose();
-            videoViewer.Stop();
-            videoViewer.Background = Brushes.Black;
             ConnectUSBCamera.IsEnabled = true;
             ConnectUSBCamera.Content = "Connect";
             DisconnectUSBCam.IsEnabled = false;
+
+            UnstreamUSBCam.IsEnabled = false;
+            StreamUSBCamera.IsEnabled = false;
             _runningCamera = string.Empty;
 
         }
@@ -1053,6 +1078,84 @@ namespace JupiterSoft.Pages
             }
         }
 
-        
+
+        #region Custom Operation
+        public void ConnectedDevices()
+        {
+            if(deviceInfo!=null && deviceInfo.CustomDeviceInfos!=null && deviceInfo.CustomDeviceInfos.Count()>0)
+            {
+                var devices = deviceInfo.CustomDeviceInfos;
+                devices.Add(new CustomDeviceInfo { DeviceID = "0", PortName = "-Select-" });
+                ComPortMotor.ItemsSource = devices;
+                ComPortMotor.SelectedValuePath = "DeviceID";
+                ComPortMotor.DisplayMemberPath = "PortName";
+                ComPortMotor.SelectedValue = "0";
+
+                ComPortWeight.ItemsSource = devices;
+                ComPortWeight.SelectedValuePath = "DeviceID";
+                ComPortWeight.DisplayMemberPath = "PortName";
+                ComPortWeight.SelectedValue = "0";
+
+                ComPortControl.ItemsSource = devices;
+                ComPortControl.SelectedValuePath = "DeviceID";
+                ComPortControl.DisplayMemberPath = "PortName";
+                ComPortControl.SelectedValue = "0";
+            }
+        }
+
+        public SerialPort ConnectPort(string comPort)
+        {
+            SerialPort SerialDevice = new SerialPort(comPort);
+            SerialDevice.BaudRate = 2400;
+            SerialDevice.Parity = Parity.None;
+            SerialDevice.StopBits = StopBits.One;
+            SerialDevice.DataBits = 7;
+            SerialDevice.Handshake = Handshake.None;
+            SerialDevice.Encoding = ASCIIEncoding.ASCII;
+            SerialDevice.DataReceived += OnDataReceived;
+
+            SerialDevice.Open();
+            return SerialDevice;
+        }
+
+        private void OnDataReceived(object sender, SerialDataReceivedEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+        #endregion
+
+        private void StreamUSBCamera_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var ip = ipAddressText.Text;
+                var port = PortText.Text;
+
+                OzConf_MJPEGStreamServer config = new OzConf_MJPEGStreamServer();
+                config.ListenPort = int.Parse(port);
+                //config.ServerConfig = new OzConf_TCPServer( ip.ToString();
+                //_streamer = new MJPEGStreamer(config);
+
+                //_connector.Connect(_videoSender, _streamer.VideoChannel);
+
+                //_streamer.ClientConnected += streamer_ClientConnected;
+                //_streamer.ClientDisconnected += streamer_ClientDisconnected;
+                //_streamer.Start();
+
+                OpenInBrowserButton.IsEnabled = true;
+                UnstreamUSBCam.IsEnabled = true;
+            }
+            catch
+            {
+                OpenInBrowserButton.IsEnabled = false;
+                UnstreamUSBCam.IsEnabled = false;
+            }
+        }
+
+        private void UnstreamUSBCam_Click(object sender, RoutedEventArgs e)
+        {
+            OpenInBrowserButton.IsEnabled = false;
+            UnstreamUSBCam.IsEnabled = false;
+        }
     }
 }
