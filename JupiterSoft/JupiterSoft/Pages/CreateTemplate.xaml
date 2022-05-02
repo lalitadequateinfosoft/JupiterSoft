@@ -1371,7 +1371,7 @@
                                                                     </Grid>
                                                                 </Grid>
                                                                 <Grid Grid.Column="1">
-                                                                <Button Name="OpenInBrowserButton" IsEnabled="False" Content="Open in browser" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                <Button Name="OpenInBrowserButton" IsEnabled="False" Content="Open in browser" HorizontalAlignment="Center" VerticalAlignment="Center" Click="OpenInBrowserButton_Click"/>
                                                                 </Grid>
                                                             </Grid>
                                                      

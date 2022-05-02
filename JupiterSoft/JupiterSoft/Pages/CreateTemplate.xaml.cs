@@ -1142,28 +1142,52 @@ namespace JupiterSoft.Pages
 
                 OpenInBrowserButton.IsEnabled = true;
                 UnstreamUSBCam.IsEnabled = true;
+                StreamUSBCamera.IsEnabled = false;
             }
             catch
             {
                 OpenInBrowserButton.IsEnabled = false;
                 UnstreamUSBCam.IsEnabled = false;
+                StreamUSBCamera.IsEnabled = true;
             }
         }
 
         private void _streamer_ClientDisconnected(object sender, OzEventArgs<OzBaseMJPEGStreamConnection> e)
         {
-            throw new NotImplementedException();
+            e.Item.StopStreaming();
         }
 
         private void _streamer_ClientConnected(object sender, OzEventArgs<OzBaseMJPEGStreamConnection> e)
         {
-            throw new NotImplementedException();
+            e.Item.StartStreaming();
         }
 
         private void UnstreamUSBCam_Click(object sender, RoutedEventArgs e)
         {
+            _streamer.Stop();
+            _connector.Disconnect(_videoSender, _streamer.VideoChannel);
             OpenInBrowserButton.IsEnabled = false;
             UnstreamUSBCam.IsEnabled = false;
+            StreamUSBCamera.IsEnabled = true;
+        }
+
+        private void OpenInBrowserButton_Click(object sender, RoutedEventArgs e)
+        {
+            var ip = ipAddressText.Text;
+            var port = PortText.Text;
+            CreateHTMLPage(ip, port);
+            System.Diagnostics.Process.Start("test.html");
+        }
+
+        private void CreateHTMLPage(string ipaddress, string port)
+        {
+            using (var fs = new FileStream("test.html", FileMode.Create))
+            {
+                using (var w = new StreamWriter(fs, Encoding.UTF8))
+                {
+                    w.WriteLine("<img id='cameraImage' style='height: 100%;' src='http://" + ipaddress + ":" + port + "' alt='camera image' />");
+                }
+            }
         }
     }
 }
