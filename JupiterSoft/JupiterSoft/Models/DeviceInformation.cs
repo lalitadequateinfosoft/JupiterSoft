@@ -108,5 +108,17 @@ namespace JupiterSoft.Models
             catch { return new CustomDeviceInfo(); }
            return customDevice;
         }
+
+        public static List<System.Media.SystemSound> GetSystemSound()
+        {
+            var systemSounds = new List<System.Media.SystemSound>();
+            systemSounds.Add(System.Media.SystemSounds.Asterisk);
+            systemSounds.Add(System.Media.SystemSounds.Beep);
+            systemSounds.Add(System.Media.SystemSounds.Exclamation);
+            systemSounds.Add(System.Media.SystemSounds.Hand);
+            systemSounds.Add(System.Media.SystemSounds.Question);
+
+            return systemSounds;
+        }
     }
 }

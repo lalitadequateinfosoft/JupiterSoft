@@ -90,6 +90,7 @@ namespace JupiterSoft.Pages
 
             deviceInfo = DeviceInformation.GetConnectedDevices();
             ConnectedDevices();
+            LoadSystemSound();
         }
 
         public CreateTemplate(string _filename)
@@ -112,7 +113,7 @@ namespace JupiterSoft.Pages
 
             deviceInfo = DeviceInformation.GetConnectedDevices();
             ConnectedDevices();
-
+            LoadSystemSound();
         }
 
         private void ButtonGrid_MouseEnter(object sender, MouseEventArgs e)
@@ -1132,6 +1133,7 @@ namespace JupiterSoft.Pages
                 var port = PortText.Text;
 
                 OzConf_MJPEGStreamServer ozConf_ = new OzConf_MJPEGStreamServer(int.Parse(port),25);
+                ozConf_.Name = ipAddressText.Text.ToString();
                 _streamer = new MJPEGStreamer(ozConf_);
 
                 _connector.Connect(_videoSender, _streamer.VideoChannel);
@@ -1189,5 +1191,97 @@ namespace JupiterSoft.Pages
                 }
             }
         }
+
+        #region Sound Area
+
+        private void LoadSystemSound()
+        {
+            var listSound = DeviceInformation.GetSystemSound();
+            if(listSound!=null && listSound.Count()>0)
+            {
+                //Ist child.
+                StackPanel wrapper = new StackPanel();
+
+                //IInd child.
+                Border outer = new Border
+                {
+                    Background = Brushes.White,
+                    Width = 75,
+                    Height = 75,
+                    BorderThickness = new Thickness(0.6),
+                    BorderBrush = (Brush)bc.ConvertFrom("#0082ca"),
+                    CornerRadius = new CornerRadius(5),
+                    Margin = new Thickness(4),
+                    VerticalAlignment = VerticalAlignment.Top
+                };
+
+                StackPanel Ori = new StackPanel
+                {
+                    Orientation = Orientation.Vertical,
+                    Margin = new Thickness(2)
+                };
+
+                Border iconBorder = new Border
+                {
+                    BorderThickness=new Thickness(0,0,0,1),
+                    BorderBrush=(Brush)bc.ConvertFrom("#eeeeee")
+                };
+              
+                StackPanel iconParent = new StackPanel();
+                iconParent.Children.Add(new FontAwesome.WPF.ImageAwesome{Icon=FontAwesome.WPF.FontAwesomeIcon.Flag, VerticalAlignment=VerticalAlignment.Center,HorizontalAlignment=HorizontalAlignment.Center,Foreground=(Brush)bc.ConvertFrom("#95d0f1"),Width=35,Height=35 });
+                iconBorder.Child = iconParent;
+
+                Ori.Children.Add(iconBorder);
+                Grid grid = new Grid();
+                grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+                grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1,GridUnitType.Star) });
+
+                var child1 = new Grid();
+                child1.Children.Add(new Label {
+                Content="Flag",
+                HorizontalAlignment=HorizontalAlignment.Center,
+                VerticalAlignment=VerticalAlignment.Center
+                });
+                grid.Children.Add(child1);
+                Grid.SetRow(child1, 0);
+                Grid.SetColumn(child1, 0);
+
+                var child2 = new Grid();
+                var iconButton = new Button
+                {
+                    Width=20,
+                    Height=20,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Margin=new Thickness(2),
+                    Padding=new Thickness(2),
+                    Background=(Brush)bc.ConvertFrom("#fff"),
+                    BorderBrush= (Brush)bc.ConvertFrom("#95d0f1"),
+                    BorderThickness=new Thickness(1),
+                    ToolTip="Select"
+                };
+
+                StackPanel innerpanel = new StackPanel {Orientation=Orientation.Horizontal };
+                innerpanel.Children.Add(new FontAwesome.WPF.ImageAwesome { Icon = FontAwesome.WPF.FontAwesomeIcon.Check, Foreground = (Brush)bc.ConvertFrom("#95d0f1"), Width = 15, Height = 15 });
+                iconButton.Content = innerpanel;
+                child2.Children.Add(iconButton);
+                grid.Children.Add(child2);
+                Grid.SetRow(child2, 0);
+                Grid.SetColumn(child2, 1);
+
+                Ori.Children.Add(grid);
+                outer.Child = Ori;
+                wrapper.Children.Add(outer);
+                SoundArea.Children.Add(wrapper);
+
+                //wrapper.Children.Add();
+
+            }
+
+        }
+
+        #endregion
+
+
     }
 }
