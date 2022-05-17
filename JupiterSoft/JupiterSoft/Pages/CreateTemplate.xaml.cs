@@ -75,6 +75,10 @@ namespace JupiterSoft.Pages
         private List<DiscoveredDeviceInfo> devices;
         private List<DeviceModel> DeviceModels;
         private DeviceInfo deviceInfo;
+
+        //Serial Port Com
+        private SerialPort SerialDevice;
+        private string activeDevice = "MotorDrive";
         public CreateTemplate()
         {
             bc = new BrushConverter();
@@ -749,7 +753,7 @@ namespace JupiterSoft.Pages
                 {
                     ContentId = Guid.NewGuid().ToString("N"),
                     ContentType = Convert.ToInt32(child.Tag),
-                    ContentText = child.Content!=null?child.Content.ToString():null,
+                    ContentText = child.Content != null ? child.Content.ToString() : null,
                     ContentOrder = Order,
                     ContentLeftPosition = margin.X,
                     ContentTopPosition = margin.Y
@@ -779,7 +783,8 @@ namespace JupiterSoft.Pages
                 MotorParent.ClearValue(UIElement.OpacityProperty);
                 MotorParent.Background = (Brush)bc.ConvertFrom("#4eaee5");
                 MotorDriveArea.Visibility = Visibility.Visible;
-                
+                this.activeDevice = "MotorDrive";
+
 
                 Border WeightParent = VisualTreeHelper.GetParent(WeightModule) as Border;
                 WeightParent.Opacity = 0.8;
@@ -804,11 +809,13 @@ namespace JupiterSoft.Pages
                 WeightModuleArea.Visibility = Visibility.Visible;
                 WeightParent.Background = (Brush)bc.ConvertFrom("#4eaee5");
 
+                this.activeDevice = "WeightModule";
+
                 Border MotorParent = VisualTreeHelper.GetParent(MotorDrive) as Border;
                 MotorParent.Opacity = 0.8;
                 MotorParent.Background = Brushes.White;
                 MotorDriveArea.Visibility = Visibility.Hidden;
-                
+
 
                 Border CamParent = VisualTreeHelper.GetParent(NetCamera) as Border;
                 CamParent.Opacity = 0.8;
@@ -828,6 +835,8 @@ namespace JupiterSoft.Pages
                 CamParent.Background = (Brush)bc.ConvertFrom("#4eaee5");
                 NetCameraArea.Visibility = Visibility.Visible;
                 NetworkCameraOuputArea.Visibility = Visibility.Visible;
+
+                this.activeDevice = "NetCamera";
 
                 Border MotorParent = VisualTreeHelper.GetParent(MotorDrive) as Border;
                 MotorParent.Opacity = 0.8;
@@ -850,6 +859,8 @@ namespace JupiterSoft.Pages
                 ControlParent.ClearValue(UIElement.OpacityProperty);
                 ControlParent.Background = (Brush)bc.ConvertFrom("#4eaee5");
                 ControlBoardArea.Visibility = Visibility.Visible;
+
+                this.activeDevice = "ControlBoard";
 
                 Border MotorParent = VisualTreeHelper.GetParent(MotorDrive) as Border;
                 MotorParent.Opacity = 0.8;
@@ -960,7 +971,7 @@ namespace JupiterSoft.Pages
         private void AddDevices(DiscoveredDeviceInfo discovered)
         {
             devices.Add(discovered);
-            DeviceModels.Add(new DeviceModel { DeviceId = Guid.NewGuid().ToString("N"), Name = discovered.Name, DeviceIP = discovered.Host, DevicePort = discovered.Port,ConnectMessage="Connect",DisconnectMessage="Disconnect",Disconnected=true,Connected=false });
+            DeviceModels.Add(new DeviceModel { DeviceId = Guid.NewGuid().ToString("N"), Name = discovered.Name, DeviceIP = discovered.Host, DevicePort = discovered.Port, ConnectMessage = "Connect", DisconnectMessage = "Disconnect", Disconnected = true, Connected = false });
             DiscoveredDeviceList.ItemsSource = null;
             DiscoveredDeviceList.ItemsSource = DeviceModels;
         }
@@ -1025,7 +1036,7 @@ namespace JupiterSoft.Pages
                     ConnectUSBCamera.Content = "Connect";
                     DisconnectUSBCam.IsEnabled = false;
                 }
-               
+
             }
         }
 
@@ -1039,7 +1050,7 @@ namespace JupiterSoft.Pages
                 foreach (var item in items.fileContents.OrderBy(x => x.ContentOrder))
                 {
                     WrapPanel ele = new WrapPanel();
-                    if(Convert.ToInt32(item.ContentType) == (int)ElementConstant.Ten_Steps_Move)
+                    if (Convert.ToInt32(item.ContentType) == (int)ElementConstant.Ten_Steps_Move)
                     {
                         ele = Get_Ten_Steps_Move(item.ContentText);
                         Canvas.SetLeft(ele, item.ContentLeftPosition);
@@ -1083,7 +1094,7 @@ namespace JupiterSoft.Pages
         #region Custom Operation
         public void ConnectedDevices()
         {
-            if(deviceInfo!=null && deviceInfo.CustomDeviceInfos!=null && deviceInfo.CustomDeviceInfos.Count()>0)
+            if (deviceInfo != null && deviceInfo.CustomDeviceInfos != null && deviceInfo.CustomDeviceInfos.Count() > 0)
             {
                 var devices = deviceInfo.CustomDeviceInfos;
                 devices.Add(new CustomDeviceInfo { DeviceID = "0", PortName = "-Select-" });
@@ -1132,7 +1143,7 @@ namespace JupiterSoft.Pages
                 var ip = ipAddressText.Text;
                 var port = PortText.Text;
 
-                OzConf_MJPEGStreamServer ozConf_ = new OzConf_MJPEGStreamServer(int.Parse(port),25);
+                OzConf_MJPEGStreamServer ozConf_ = new OzConf_MJPEGStreamServer(int.Parse(port), 25);
                 ozConf_.Name = ipAddressText.Text.ToString();
                 _streamer = new MJPEGStreamer(ozConf_);
 
@@ -1140,7 +1151,7 @@ namespace JupiterSoft.Pages
 
                 _streamer.ClientConnected += _streamer_ClientConnected;
                 _streamer.ClientDisconnected += _streamer_ClientDisconnected;
-              _streamer.Start();
+                _streamer.Start();
 
                 OpenInBrowserButton.IsEnabled = true;
                 UnstreamUSBCam.IsEnabled = true;
@@ -1197,7 +1208,7 @@ namespace JupiterSoft.Pages
         private void LoadSystemSound()
         {
             var listSound = DeviceInformation.GetSystemSound();
-            if(listSound!=null && listSound.Count()>0)
+            if (listSound != null && listSound.Count() > 0)
             {
                 //Ist child.
                 StackPanel wrapper = new StackPanel();
@@ -1223,24 +1234,25 @@ namespace JupiterSoft.Pages
 
                 Border iconBorder = new Border
                 {
-                    BorderThickness=new Thickness(0,0,0,1),
-                    BorderBrush=(Brush)bc.ConvertFrom("#eeeeee")
+                    BorderThickness = new Thickness(0, 0, 0, 1),
+                    BorderBrush = (Brush)bc.ConvertFrom("#eeeeee")
                 };
-              
+
                 StackPanel iconParent = new StackPanel();
-                iconParent.Children.Add(new FontAwesome.WPF.ImageAwesome{Icon=FontAwesome.WPF.FontAwesomeIcon.Flag, VerticalAlignment=VerticalAlignment.Center,HorizontalAlignment=HorizontalAlignment.Center,Foreground=(Brush)bc.ConvertFrom("#95d0f1"),Width=35,Height=35 });
+                iconParent.Children.Add(new FontAwesome.WPF.ImageAwesome { Icon = FontAwesome.WPF.FontAwesomeIcon.Flag, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Center, Foreground = (Brush)bc.ConvertFrom("#95d0f1"), Width = 35, Height = 35 });
                 iconBorder.Child = iconParent;
 
                 Ori.Children.Add(iconBorder);
                 Grid grid = new Grid();
                 grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-                grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1,GridUnitType.Star) });
+                grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
 
                 var child1 = new Grid();
-                child1.Children.Add(new Label {
-                Content="Flag",
-                HorizontalAlignment=HorizontalAlignment.Center,
-                VerticalAlignment=VerticalAlignment.Center
+                child1.Children.Add(new Label
+                {
+                    Content = "Flag",
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center
                 });
                 grid.Children.Add(child1);
                 Grid.SetRow(child1, 0);
@@ -1249,19 +1261,19 @@ namespace JupiterSoft.Pages
                 var child2 = new Grid();
                 var iconButton = new Button
                 {
-                    Width=20,
-                    Height=20,
+                    Width = 20,
+                    Height = 20,
                     HorizontalAlignment = HorizontalAlignment.Center,
                     VerticalAlignment = VerticalAlignment.Center,
-                    Margin=new Thickness(2),
-                    Padding=new Thickness(2),
-                    Background=(Brush)bc.ConvertFrom("#fff"),
-                    BorderBrush= (Brush)bc.ConvertFrom("#95d0f1"),
-                    BorderThickness=new Thickness(1),
-                    ToolTip="Select"
+                    Margin = new Thickness(2),
+                    Padding = new Thickness(2),
+                    Background = (Brush)bc.ConvertFrom("#fff"),
+                    BorderBrush = (Brush)bc.ConvertFrom("#95d0f1"),
+                    BorderThickness = new Thickness(1),
+                    ToolTip = "Select"
                 };
 
-                StackPanel innerpanel = new StackPanel {Orientation=Orientation.Horizontal };
+                StackPanel innerpanel = new StackPanel { Orientation = Orientation.Horizontal };
                 innerpanel.Children.Add(new FontAwesome.WPF.ImageAwesome { Icon = FontAwesome.WPF.FontAwesomeIcon.Check, Foreground = (Brush)bc.ConvertFrom("#95d0f1"), Width = 15, Height = 15 });
                 iconButton.Content = innerpanel;
                 child2.Children.Add(iconButton);
@@ -1280,8 +1292,60 @@ namespace JupiterSoft.Pages
 
         }
 
+
         #endregion
 
+        private void Run_Click(object sender, RoutedEventArgs e)
+        {
+            var btn = sender as Button;
+            FontAwesome.WPF.ImageAwesome spinner = new FontAwesome.WPF.ImageAwesome { Icon = FontAwesome.WPF.FontAwesomeIcon.Spinner, Spin = true, Foreground = (Brush)bc.ConvertFrom("#fff") };
+            btn.Content = "";
+            btn.Content = spinner;
+            btn.IsEnabled = false;
+            string Port = string.Empty;
+            int Baudrate = 38400;
+            int databit = 8;
+            int stopbit = 1;
+            string parity = "None";
+            string other = string.Empty;
+            string selectedval = string.Empty;
+            if (this.activeDevice == "MotorDrive")
+            {
+                selectedval = ComPortMotor.SelectedValue.ToString();
 
+            }
+
+            if (this.activeDevice == "WeightModule")
+            {
+                selectedval = ComPortWeight.SelectedValue.ToString();
+            }
+
+            if (this.activeDevice == "ControlBoard")
+            {
+                selectedval = ComPortControl.SelectedValue.ToString();
+            }
+
+            var suctom = deviceInfo.CustomDeviceInfos.Where(x => x.DeviceID == selectedval).FirstOrDefault();
+            Port = suctom.PortName;
+            SerialPortCommunications(Port, Baudrate, databit, stopbit, parity);
+        }
+
+        private void SerialPortCommunications(string port = "", int baudRate = 0, int databit = 0, int stopBit = 0, string parity = "")
+        {
+            this.SerialDevice = new SerialPort(port);
+            this.SerialDevice.BaudRate = baudRate;
+            this.SerialDevice.DataBits = databit;
+            this.SerialDevice.StopBits = stopBit == 0 ? StopBits.None : (stopBit == 1 ? StopBits.One : (stopBit == 2 ? StopBits.Two : StopBits.OnePointFive));
+            this.SerialDevice.Parity = Parity.None;
+            this.SerialDevice.DataReceived += SerialDevice_DataReceived; ;
+            this.SerialDevice.Open();
+        }
+
+        private void SerialDevice_DataReceived(object sender, SerialDataReceivedEventArgs e)
+        {
+            var serialDevice = sender as SerialPort;
+            var buffer = new byte[serialDevice.BytesToRead];
+            serialDevice.Read(buffer, 0, buffer.Length);
+        }
     }
 }
