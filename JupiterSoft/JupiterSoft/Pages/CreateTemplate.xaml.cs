@@ -79,6 +79,7 @@ namespace JupiterSoft.Pages
         //Serial Port Com
         private SerialPort SerialDevice;
         private string activeDevice = "MotorDrive";
+        private byte[] buffer;
         public CreateTemplate()
         {
             bc = new BrushConverter();
@@ -1344,7 +1345,7 @@ namespace JupiterSoft.Pages
         private void SerialDevice_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
             var serialDevice = sender as SerialPort;
-            var buffer = new byte[serialDevice.BytesToRead];
+            buffer = new byte[serialDevice.BytesToRead];
             serialDevice.Read(buffer, 0, buffer.Length);
         }
     }
