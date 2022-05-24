@@ -18,8 +18,12 @@ namespace JupiterSoft.Models
         public int Y_Position_Move { get; set; }
 
         //Events
+        public int Start_Event { get; set; }
         public int Clicked_Event { get; set; }
+        public int Connect_Event { get; set; }
+        public int Disconnect_Event { get; set; }
         public int Space_Key_pressed_Event { get; set; }
+        public int Send_Message_Event { get; set; }
         public int Receive_Message_Event { get; set; }
         public int BroadCast_Message_Event { get; set; }
         public int BroadCast_Message_Wait_Event { get; set; }
@@ -96,9 +100,13 @@ namespace JupiterSoft.Models
                 Y_Position_Move= (int)ElementConstant.Y_Position_Move,
 
                 //Events Enum
+                Start_Event=(int)ElementConstant.Start_Event,
                 Clicked_Event = (int)ElementConstant.Clicked_Event,
+                Connect_Event= (int)ElementConstant.Connect_Event,
+                Disconnect_Event= (int)ElementConstant.Disconnect_Event,
                 Space_Key_pressed_Event = (int)ElementConstant.Space_Key_pressed_Event,
-                Receive_Message_Event=(int)ElementConstant.Receive_Message_Event,
+                Send_Message_Event= (int)ElementConstant.Send_Message_Event,
+                Receive_Message_Event =(int)ElementConstant.Receive_Message_Event,
                 BroadCast_Message_Event = (int)ElementConstant.BroadCast_Message_Event,
                 BroadCast_Message_Wait_Event = (int)ElementConstant.BroadCast_Message_Wait_Event,
 

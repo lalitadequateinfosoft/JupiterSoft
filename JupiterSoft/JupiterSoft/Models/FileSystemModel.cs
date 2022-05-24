@@ -25,4 +25,38 @@ namespace JupiterSoft.Models
         public double ContentLeftPosition { get; set; }
         public double ContentTopPosition { get; set; }
     }
+
+    public class userCommands
+    {
+        public string ContentId { get; set; }
+        public int ContentType { get; set; }
+        public string ContentText { get; set; }
+        public string ContentValue { get; set; }
+        public int ContentOrder { get; set; }
+    }
+
+    public class SelectedDevices
+    {
+        public string deviceId { get; set; }
+        public int Baudrate { get; set; }
+        public int databit { get; set; }
+        public int stopbit { get; set; }
+        public int parity { get; set; }
+        public int TypeOfDevice { get; set; }
+    }
+
+    public class CommandExecutionModel
+    {
+        public List<userCommands> uCommands { get; set; }
+        public List<SelectedDevices> sDevices { get; set; }
+    }
+
+    public enum userDeviceType
+    {
+        NetworkCamera,
+        USBCamera,
+        MotorDerive,
+        WeightModule,
+        ControlCard
+    }
 }

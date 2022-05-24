@@ -764,6 +764,33 @@
                     </Setter.Value>
                 </Setter>
             </Style>
+            
+      <!--Event Button Style Area-->
+            <Style x:Key="EventButtonStyle" TargetType="Button">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Grid>
+                                <Path Stroke="{TemplateBinding BorderBrush}" StrokeThickness="2" StrokeStartLineCap="Square" StrokeEndLineCap="Square" StrokeLineJoin="Round" Fill="{TemplateBinding Background}" Data="M 0,0 H10,10 L15,10 H15,15 L16,10 h14,0 L35,0 h0,164.5 h0,0 V32,32 H35,35 L30,41 H15 L10,32 H0,0 V0,0 Z" />
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Border Grid.Row="0" Grid.Column="0" CornerRadius="5" BorderThickness="{TemplateBinding BorderThickness}" Background="Transparent" Margin="15,-10,0,0" BorderBrush="#df88f9" Padding="10,5,5,5"  HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <Label Width="150" FontSize="{TemplateBinding FontSize}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Content="{TemplateBinding Content}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" Foreground="{TemplateBinding Foreground}" FontFamily="{TemplateBinding FontFamily}" />
+                                    </Border>
+                                    
+                                </Grid>
+                            </Grid>
+
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            
 
             <!--Toggle Style-->
             
@@ -2178,13 +2205,13 @@
                                 <ScrollViewer VerticalScrollBarVisibility="Hidden" x:Name="ButtonAreaScroll">
                                     <Grid x:Name="MyGrid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent">
                                         <Grid.RowDefinitions>
-                                            <RowDefinition Height="400"/>
-                                            <RowDefinition Height="400"/>
-                                            <RowDefinition Height="400"/>
-                                            <RowDefinition Height="400"/>
-                                            <RowDefinition Height="400"/>
-                                            <RowDefinition Height="400"/>
-                                            <RowDefinition Height="400"/>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="*"/>
                                         </Grid.RowDefinitions>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="*"/>
@@ -2206,16 +2233,19 @@
                                             <Button x:Name="Rotation_Style_Move" Margin="12,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="#2a6a8e" Background="#0082ca" BorderThickness="2" FontSize="10" Foreground="#fff" FontWeight="Bold" FontFamily="Georgia, serif;"  Width="175" Height="42" Style="{StaticResource BlueMoveRotation}" PreviewMouseMove="Button_PreviewMouseMove" IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}" Tag="{Binding Rotation_Style_Move,Mode=OneWay}"/>
 
 
-
-
-
-
-
                                         </StackPanel>
 
                                         <StackPanel x:Name="ButtonGridArea2" Grid.Row="1" HorizontalAlignment="Center" Margin="10" MouseEnter="ButtonGrid_MouseEnter" Width="250" MouseLeave="ButtonGrid_MouseLeave">
+                                            <Button x:Name="Start_Event" Style="{StaticResource EventButtonStyle}" Content="Start" Margin="12,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="#AA336A" Background="#df88f9" BorderThickness="0.5" FontSize="12" Foreground="#fff" FontWeight="Bold" FontFamily="Georgia, serif;"  Width="200" Height="42" PreviewMouseMove="Button_PreviewMouseMove" IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}" Tag="{Binding Start_Event,Mode=OneWay}"/>
+                                            <Button x:Name="Clicked_Event" Style="{StaticResource EventButtonStyle}" Content="Click" Margin="12,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="#AA336A" Background="#df88f9" BorderThickness="0.5" FontSize="12" Foreground="#fff" FontWeight="Bold" FontFamily="Georgia, serif;"  Width="200" Height="42" PreviewMouseMove="Button_PreviewMouseMove" IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}" Tag="{Binding Clicked_Event,Mode=OneWay}"/>
+                                            <Button x:Name="Connect_Event" Style="{StaticResource EventButtonStyle}" Content="Connect" Margin="12,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="#AA336A" Background="#df88f9" BorderThickness="0.5" FontSize="12" Foreground="#fff" FontWeight="Bold" FontFamily="Georgia, serif;"  Width="200" Height="42" PreviewMouseMove="Button_PreviewMouseMove" IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}" Tag="{Binding Connect_Event,Mode=OneWay}"/>
+                                            <Button x:Name="Disconnect_Event" Style="{StaticResource EventButtonStyle}" Content="Disconnect" Margin="12,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="#AA336A" Background="#df88f9" BorderThickness="0.5" FontSize="12" Foreground="#fff" FontWeight="Bold" FontFamily="Georgia, serif;"  Width="200" Height="42" PreviewMouseMove="Button_PreviewMouseMove" IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}" Tag="{Binding Disconnect_Event,Mode=OneWay}"/>
+                                            <Button x:Name="Space_Key_pressed_Event" Style="{StaticResource EventButtonStyle}" Content="Space key Pressed" Margin="12,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="#AA336A" Background="#df88f9" BorderThickness="0.5" FontSize="12" Foreground="#fff" FontWeight="Bold" FontFamily="Georgia, serif;"  Width="200" Height="42" PreviewMouseMove="Button_PreviewMouseMove" IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}" Tag="{Binding Space_Key_pressed_Event,Mode=OneWay}"/>
+                                            <Button x:Name="Send_Message_Event" Style="{StaticResource EventButtonStyle}" Content="Send Message" Margin="12,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="#AA336A" Background="#df88f9" BorderThickness="0.5" FontSize="12" Foreground="#fff" FontWeight="Bold" FontFamily="Georgia, serif;"  Width="200" Height="42" PreviewMouseMove="Button_PreviewMouseMove" IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}" Tag="{Binding Send_Message_Event,Mode=OneWay}"/>
+                                            <Button x:Name="Receive_Message_Event" Style="{StaticResource EventButtonStyle}" Content="Receive Message" Margin="12,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="#AA336A" Background="#df88f9" BorderThickness="0.5" FontSize="12" Foreground="#fff" FontWeight="Bold" FontFamily="Georgia, serif;"  Width="200" Height="42" PreviewMouseMove="Button_PreviewMouseMove" IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}" Tag="{Binding Receive_Message_Event,Mode=OneWay}"/>
+                                            <Button x:Name="BroadCast_Message_Event" Style="{StaticResource EventButtonStyle}" Content="Broadcast Message" Margin="12,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="#AA336A" Background="#df88f9" BorderThickness="0.5" FontSize="12" Foreground="#fff" FontWeight="Bold" FontFamily="Georgia, serif;"  Width="200" Height="42" PreviewMouseMove="Button_PreviewMouseMove" IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}" Tag="{Binding BroadCast_Message_Event,Mode=OneWay}"/>
+                                            <Button x:Name="BroadCast_Message_Wait_Event" Style="{StaticResource EventButtonStyle}" Content="Broadcast Message Wait" Margin="12,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="#AA336A" Background="#df88f9" BorderThickness="0.5" FontSize="12" Foreground="#fff" FontWeight="Bold" FontFamily="Georgia, serif;"  Width="200" Height="42" PreviewMouseMove="Button_PreviewMouseMove" IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}" Tag="{Binding BroadCast_Message_Wait_Event,Mode=OneWay}"/>
 
-                                            
                                         </StackPanel>
 
 

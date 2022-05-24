@@ -22,6 +22,7 @@ using Ozeki;
 using System.IO;
 using Newtonsoft.Json;
 using System.IO.Ports;
+using Components;
 
 namespace JupiterSoft.Pages
 {
@@ -30,6 +31,28 @@ namespace JupiterSoft.Pages
     /// </summary>
     public partial class CreateTemplate : Page
     {
+
+        const int REC_BUF_SIZE = 10000;
+        byte[] recBuf = new byte[REC_BUF_SIZE];
+        byte[] recBufParse = new byte[REC_BUF_SIZE];
+        List<byte> recBuflist = new List<byte>();
+
+        Byte[] _MbTgmBytes;
+        //bool IsActive = false;
+        //bool IsAck = false;
+        internal UInt32 TotalReceiveSize = 0;
+        bool IsComplete = false;
+        //int recIdx;
+        //int recState = 1;
+        bool IsLinkBoxTry = false;
+
+
+        System.Timers.Timer TimerCheckReceiveData = new System.Timers.Timer();
+        internal bool _UpdatePB = true;
+        internal bool UseThisPage = true;
+        static readonly object _object = new object();
+        string _CurrentActiveMenu = "Modbus";
+
         //Custom Property Declaration.
         public static readonly DependencyProperty IsChildHitTestVisibleProperty =
             DependencyProperty.Register("IsChildHitTestVisible", typeof(bool), typeof(CreateTemplate),
@@ -77,14 +100,19 @@ namespace JupiterSoft.Pages
         private DeviceInfo deviceInfo;
 
         //Serial Port Com
+        private CommandExecutionModel userCommandLogic;
         private SerialPort SerialDevice;
-        private string activeDevice = "MotorDrive";
         private byte[] buffer;
         public CreateTemplate()
         {
             bc = new BrushConverter();
+            userCommandLogic = new CommandExecutionModel();
             this.UElement = ElementOp.GetElementModel();
             InitializeComponent();
+            TimerCheckReceiveData.Elapsed += TimerCheckReceiveData_Elapsed;
+            TimerCheckReceiveData.Interval = 10;
+            TimerCheckReceiveData.Enabled = true;
+
             this.DataContext = this.UElement;
             this.CanvasWidth = ReceiveDrop.Width;
             this.CanvasHeight = ReceiveDrop.Height;
@@ -98,9 +126,12 @@ namespace JupiterSoft.Pages
             LoadSystemSound();
         }
 
+
+
         public CreateTemplate(string _filename)
         {
             bc = new BrushConverter();
+            userCommandLogic = new CommandExecutionModel();
             this.UElement = ElementOp.GetElementModel();
             InitializeComponent();
             this.DataContext = this.UElement;
@@ -334,44 +365,69 @@ namespace JupiterSoft.Pages
                 double NewTop = dropPosition.Y;
                 double NewLeft = dropPosition.X;
                 WrapPanel ele = new WrapPanel();
-                if (Convert.ToInt32(data) == (int)ElementConstant.Ten_Steps_Move)
+                switch (Convert.ToInt32(data))
                 {
-                    //Set Drop Position.
-                    getNewPosition(Ten_Steps_Move.Width, Ten_Steps_Move.Height, ref NewLeft, ref NewTop);
+                    case (int)ElementConstant.Ten_Steps_Move:
+                        getNewPosition(Ten_Steps_Move.Width, Ten_Steps_Move.Height, ref NewLeft, ref NewTop);
+                        ele = Get_Ten_Steps_Move();
+                        break;
+                    case (int)ElementConstant.Turn_Fiften_Degree_Right_Move:
+                        getNewPosition(Turn_Fiften_Degree_Right_Move.Width, Turn_Fiften_Degree_Right_Move.Height, ref NewLeft, ref NewTop);
+                        ele = Get_Turn_Fiften_Degree_Right_Move();
+                        break;
+                    case (int)ElementConstant.Turn_Fiften_Degree_Left_Move:
+                        getNewPosition(Turn_Fiften_Degree_Left_Move.Width, Turn_Fiften_Degree_Left_Move.Height, ref NewLeft, ref NewTop);
+                        ele = Get_Turn_Fiften_Degree_Left_Move();
+                        break;
+                    case (int)ElementConstant.Pointer_State_Move:
+                        getNewPosition(Pointer_State_Move.Width, Pointer_State_Move.Height, ref NewLeft, ref NewTop);
+                        ele = Get_Pointer_State_Move();
+                        break;
+                    case (int)ElementConstant.Rotation_Style_Move:
+                        getNewPosition(Rotation_Style_Move.Width, Rotation_Style_Move.Height, ref NewLeft, ref NewTop);
+                        ele = Get_Rotation_Style_Move();
+                        break;
+                    case (int)ElementConstant.Start_Event:
+                        getNewPosition(Start_Event.Width, Clicked_Event.Height, ref NewLeft, ref NewTop);
+                        ele = Get_EventStyle_Move(Convert.ToInt32(data));
+                        break;
+                    case (int)ElementConstant.Clicked_Event:
+                        getNewPosition(Clicked_Event.Width, Clicked_Event.Height, ref NewLeft, ref NewTop);
+                        ele = Get_EventStyle_Move(Convert.ToInt32(data));
+                        break;
+                    case (int)ElementConstant.Connect_Event:
+                        getNewPosition(Connect_Event.Width, Clicked_Event.Height, ref NewLeft, ref NewTop);
+                        ele = Get_EventStyle_Move(Convert.ToInt32(data));
+                        break;
+                    case (int)ElementConstant.Disconnect_Event:
+                        getNewPosition(Disconnect_Event.Width, Clicked_Event.Height, ref NewLeft, ref NewTop);
+                        ele = Get_EventStyle_Move(Convert.ToInt32(data));
+                        break;
+                    case (int)ElementConstant.Space_Key_pressed_Event:
+                        getNewPosition(Space_Key_pressed_Event.Width, Clicked_Event.Height, ref NewLeft, ref NewTop);
+                        ele = Get_EventStyle_Move(Convert.ToInt32(data));
+                        break;
+                    case (int)ElementConstant.Send_Message_Event:
+                        getNewPosition(Send_Message_Event.Width, Clicked_Event.Height, ref NewLeft, ref NewTop);
+                        ele = Get_EventStyle_Move(Convert.ToInt32(data));
+                        break;
+                    case (int)ElementConstant.Receive_Message_Event:
+                        getNewPosition(Receive_Message_Event.Width, Clicked_Event.Height, ref NewLeft, ref NewTop);
+                        ele = Get_EventStyle_Move(Convert.ToInt32(data));
+                        break;
+                    case (int)ElementConstant.BroadCast_Message_Event:
+                        getNewPosition(BroadCast_Message_Event.Width, Clicked_Event.Height, ref NewLeft, ref NewTop);
+                        ele = Get_EventStyle_Move(Convert.ToInt32(data));
+                        break;
+                    case (int)ElementConstant.BroadCast_Message_Wait_Event:
+                        getNewPosition(BroadCast_Message_Wait_Event.Width, Clicked_Event.Height, ref NewLeft, ref NewTop);
+                        ele = Get_EventStyle_Move(Convert.ToInt32(data));
+                        break;
 
-                    ele = Get_Ten_Steps_Move();
-                    Canvas.SetLeft(ele, NewLeft);
-                    Canvas.SetTop(ele, NewTop);
                 }
-                else if (Convert.ToInt32(data) == (int)ElementConstant.Turn_Fiften_Degree_Right_Move)
-                {
-                    //Set Drop Position.
-                    getNewPosition(Turn_Fiften_Degree_Right_Move.Width, Turn_Fiften_Degree_Right_Move.Height, ref NewLeft, ref NewTop);
-                    ele = Get_Turn_Fiften_Degree_Right_Move();
-                    Canvas.SetLeft(ele, NewLeft);
-                    Canvas.SetTop(ele, NewTop);
-                }
-                else if (Convert.ToInt32(data) == (int)ElementConstant.Turn_Fiften_Degree_Left_Move)
-                {
-                    getNewPosition(Turn_Fiften_Degree_Left_Move.Width, Turn_Fiften_Degree_Left_Move.Height, ref NewLeft, ref NewTop);
-                    ele = Get_Turn_Fiften_Degree_Left_Move();
-                    Canvas.SetLeft(ele, NewLeft);
-                    Canvas.SetTop(ele, NewTop);
-                }
-                else if (Convert.ToInt32(data) == (int)ElementConstant.Pointer_State_Move)
-                {
-                    getNewPosition(Pointer_State_Move.Width, Pointer_State_Move.Height, ref NewLeft, ref NewTop);
-                    ele = Get_Pointer_State_Move();
-                    Canvas.SetLeft(ele, NewLeft);
-                    Canvas.SetTop(ele, NewTop);
-                }
-                else if (Convert.ToInt32(data) == (int)ElementConstant.Rotation_Style_Move)
-                {
-                    getNewPosition(Rotation_Style_Move.Width, Rotation_Style_Move.Height, ref NewLeft, ref NewTop);
-                    ele = Get_Rotation_Style_Move();
-                    Canvas.SetLeft(ele, NewLeft);
-                    Canvas.SetTop(ele, NewTop);
-                }
+
+                Canvas.SetLeft(ele, NewLeft);
+                Canvas.SetTop(ele, NewTop);
 
                 try
                 {
@@ -689,6 +745,76 @@ namespace JupiterSoft.Pages
             return wrap;
         }
 
+        private WrapPanel Get_EventStyle_Move(int evEnum)
+        {
+            string content = string.Empty;
+            switch (evEnum)
+            {
+                case (int)ElementConstant.Start_Event:
+                    content = "Start";
+                    break;
+                case (int)ElementConstant.Clicked_Event:
+                    content = "Click";
+                    break;
+                case (int)ElementConstant.Connect_Event:
+                    content = "Connect";
+                    break;
+                case (int)ElementConstant.Disconnect_Event:
+                    content = "Disconnect";
+                    break;
+                case (int)ElementConstant.Space_Key_pressed_Event:
+                    content = "Space key Pressed";
+                    break;
+                case (int)ElementConstant.Send_Message_Event:
+                    content = "Send Message";
+                    break;
+                case (int)ElementConstant.Receive_Message_Event:
+                    content = "Receive Message";
+                    break;
+                case (int)ElementConstant.BroadCast_Message_Event:
+                    content = "Broadcast Message";
+                    break;
+                case (int)ElementConstant.BroadCast_Message_Wait_Event:
+                    content = "Broadcast Message Wait";
+                    break;
+            }
+            Button btn = new Button();
+            btn.Margin = new Thickness(12, 5, 0, 0);
+            btn.HorizontalAlignment = HorizontalAlignment.Left;
+            btn.VerticalAlignment = VerticalAlignment.Center;
+            btn.BorderBrush = (Brush)bc.ConvertFrom("#AA336A");
+            btn.Background = (Brush)bc.ConvertFrom("#df88f9");
+            btn.BorderThickness = new Thickness(0.5);
+            btn.FontSize = 12;
+            btn.Foreground = (Brush)bc.ConvertFrom("#fff");
+            btn.FontWeight = FontWeights.Bold;
+            btn.FontFamily = new FontFamily("Georgia, serif;");
+            btn.Content = content;
+            btn.Style = this.FindResource("EventButtonStyle") as Style;
+            btn.Width = 200;
+            btn.Height = 42;
+            btn.IsHitTestVisible = IsChildHitTestVisible;
+            btn.Tag = evEnum;
+
+            btn.PreviewMouseLeftButtonDown += new MouseButtonEventHandler(Ch_PreviewMouseDown);
+            var closeBtn = new Button();
+            closeBtn.Foreground = new SolidColorBrush(Colors.White);
+            closeBtn.Background = new SolidColorBrush(Colors.Red);
+            closeBtn.Content = "X";
+            closeBtn.FontSize = 10;
+            closeBtn.VerticalAlignment = VerticalAlignment.Top;
+            closeBtn.Style = this.FindResource("Closebtn") as Style;
+            closeBtn.Click += CloseBtn_Click;
+            Random random = new Random();
+            WrapPanel wrap = new WrapPanel();
+            wrap.Width = Double.NaN;
+            wrap.Height = Double.NaN;
+            wrap.Children.Add(btn);
+            wrap.Children.Add(closeBtn);
+
+            return wrap;
+        }
+
         private void Save_Click(object sender, RoutedEventArgs e)
         {
             SaveInitiated();
@@ -784,7 +910,7 @@ namespace JupiterSoft.Pages
                 MotorParent.ClearValue(UIElement.OpacityProperty);
                 MotorParent.Background = (Brush)bc.ConvertFrom("#4eaee5");
                 MotorDriveArea.Visibility = Visibility.Visible;
-                this.activeDevice = "MotorDrive";
+
 
 
                 Border WeightParent = VisualTreeHelper.GetParent(WeightModule) as Border;
@@ -810,7 +936,7 @@ namespace JupiterSoft.Pages
                 WeightModuleArea.Visibility = Visibility.Visible;
                 WeightParent.Background = (Brush)bc.ConvertFrom("#4eaee5");
 
-                this.activeDevice = "WeightModule";
+
 
                 Border MotorParent = VisualTreeHelper.GetParent(MotorDrive) as Border;
                 MotorParent.Opacity = 0.8;
@@ -837,7 +963,7 @@ namespace JupiterSoft.Pages
                 NetCameraArea.Visibility = Visibility.Visible;
                 NetworkCameraOuputArea.Visibility = Visibility.Visible;
 
-                this.activeDevice = "NetCamera";
+
 
                 Border MotorParent = VisualTreeHelper.GetParent(MotorDrive) as Border;
                 MotorParent.Opacity = 0.8;
@@ -861,7 +987,7 @@ namespace JupiterSoft.Pages
                 ControlParent.Background = (Brush)bc.ConvertFrom("#4eaee5");
                 ControlBoardArea.Visibility = Visibility.Visible;
 
-                this.activeDevice = "ControlBoard";
+
 
                 Border MotorParent = VisualTreeHelper.GetParent(MotorDrive) as Border;
                 MotorParent.Opacity = 0.8;
@@ -1051,41 +1177,55 @@ namespace JupiterSoft.Pages
                 foreach (var item in items.fileContents.OrderBy(x => x.ContentOrder))
                 {
                     WrapPanel ele = new WrapPanel();
-                    if (Convert.ToInt32(item.ContentType) == (int)ElementConstant.Ten_Steps_Move)
+                    switch (Convert.ToInt32(item.ContentType))
                     {
-                        ele = Get_Ten_Steps_Move(item.ContentText);
-                        Canvas.SetLeft(ele, item.ContentLeftPosition);
-                        Canvas.SetTop(ele, item.ContentTopPosition);
-                        ReceiveDrop.Children.Add(ele);
+                        case (int)ElementConstant.Ten_Steps_Move:
+                            ele = Get_Ten_Steps_Move();
+                            break;
+                        case (int)ElementConstant.Turn_Fiften_Degree_Right_Move:
+                            ele = Get_Turn_Fiften_Degree_Right_Move();
+                            break;
+                        case (int)ElementConstant.Turn_Fiften_Degree_Left_Move:
+                            ele = Get_Turn_Fiften_Degree_Left_Move();
+                            break;
+                        case (int)ElementConstant.Pointer_State_Move:
+                            ele = Get_Pointer_State_Move();
+                            break;
+                        case (int)ElementConstant.Rotation_Style_Move:
+                            ele = Get_Rotation_Style_Move();
+                            break;
+                        case (int)ElementConstant.Start_Event:
+                            ele = Get_EventStyle_Move(Convert.ToInt32(item.ContentType));
+                            break;
+                        case (int)ElementConstant.Clicked_Event:
+                            ele = Get_EventStyle_Move(Convert.ToInt32(item.ContentType));
+                            break;
+                        case (int)ElementConstant.Connect_Event:
+                            ele = Get_EventStyle_Move(Convert.ToInt32(item.ContentType));
+                            break;
+                        case (int)ElementConstant.Disconnect_Event:
+                            ele = Get_EventStyle_Move(Convert.ToInt32(item.ContentType));
+                            break;
+                        case (int)ElementConstant.Space_Key_pressed_Event:
+                            ele = Get_EventStyle_Move(Convert.ToInt32(item.ContentType));
+                            break;
+                        case (int)ElementConstant.Send_Message_Event:
+                            ele = Get_EventStyle_Move(Convert.ToInt32(item.ContentType));
+                            break;
+                        case (int)ElementConstant.Receive_Message_Event:
+                            ele = Get_EventStyle_Move(Convert.ToInt32(item.ContentType));
+                            break;
+                        case (int)ElementConstant.BroadCast_Message_Event:
+                            ele = Get_EventStyle_Move(Convert.ToInt32(item.ContentType));
+                            break;
+                        case (int)ElementConstant.BroadCast_Message_Wait_Event:
+                            ele = Get_EventStyle_Move(Convert.ToInt32(item.ContentType));
+                            break;
                     }
-                    else if (Convert.ToInt32(item.ContentType) == (int)ElementConstant.Turn_Fiften_Degree_Right_Move)
-                    {
-                        ele = Get_Turn_Fiften_Degree_Right_Move(item.ContentText);
-                        Canvas.SetLeft(ele, item.ContentLeftPosition);
-                        Canvas.SetTop(ele, item.ContentTopPosition);
-                        ReceiveDrop.Children.Add(ele);
-                    }
-                    else if (Convert.ToInt32(item.ContentType) == (int)ElementConstant.Turn_Fiften_Degree_Left_Move)
-                    {
-                        ele = Get_Turn_Fiften_Degree_Left_Move(item.ContentText);
-                        Canvas.SetLeft(ele, item.ContentLeftPosition);
-                        Canvas.SetTop(ele, item.ContentTopPosition);
-                        ReceiveDrop.Children.Add(ele);
-                    }
-                    else if (Convert.ToInt32(item.ContentType) == (int)ElementConstant.Pointer_State_Move)
-                    {
-                        ele = Get_Pointer_State_Move();
-                        Canvas.SetLeft(ele, item.ContentLeftPosition);
-                        Canvas.SetTop(ele, item.ContentTopPosition);
-                        ReceiveDrop.Children.Add(ele);
-                    }
-                    else if (Convert.ToInt32(item.ContentType) == (int)ElementConstant.Rotation_Style_Move)
-                    {
-                        ele = Get_Rotation_Style_Move();
-                        Canvas.SetLeft(ele, item.ContentLeftPosition);
-                        Canvas.SetTop(ele, item.ContentTopPosition);
-                        ReceiveDrop.Children.Add(ele);
-                    }
+
+                    Canvas.SetLeft(ele, item.ContentLeftPosition);
+                    Canvas.SetTop(ele, item.ContentTopPosition);
+                    ReceiveDrop.Children.Add(ele);
                 }
 
             }
@@ -1116,25 +1256,6 @@ namespace JupiterSoft.Pages
             }
         }
 
-        public SerialPort ConnectPort(string comPort)
-        {
-            SerialPort SerialDevice = new SerialPort(comPort);
-            SerialDevice.BaudRate = 2400;
-            SerialDevice.Parity = Parity.None;
-            SerialDevice.StopBits = StopBits.One;
-            SerialDevice.DataBits = 7;
-            SerialDevice.Handshake = Handshake.None;
-            SerialDevice.Encoding = ASCIIEncoding.ASCII;
-            SerialDevice.DataReceived += OnDataReceived;
-
-            SerialDevice.Open();
-            return SerialDevice;
-        }
-
-        private void OnDataReceived(object sender, SerialDataReceivedEventArgs e)
-        {
-            throw new NotImplementedException();
-        }
         #endregion
 
         private void StreamUSBCamera_Click(object sender, RoutedEventArgs e)
@@ -1298,55 +1419,612 @@ namespace JupiterSoft.Pages
 
         private void Run_Click(object sender, RoutedEventArgs e)
         {
-            var btn = sender as Button;
-            FontAwesome.WPF.ImageAwesome spinner = new FontAwesome.WPF.ImageAwesome { Icon = FontAwesome.WPF.FontAwesomeIcon.Spinner, Spin = true, Foreground = (Brush)bc.ConvertFrom("#fff") };
-            btn.Content = "";
-            btn.Content = spinner;
-            btn.IsEnabled = false;
-            string Port = string.Empty;
+
+            //try
+            //{
+            //    //Load all command.
+            //    var contentElement = ReceiveDrop.Children.OfType<WrapPanel>().ToList();
+            //    List<userCommands> commands = new List<userCommands>();
+            //    int Order = 1;
+            //    foreach (var item in contentElement)
+            //    {
+            //        var child = item.Children.OfType<Button>().FirstOrDefault();
+            //        commands.Add(new userCommands
+            //        {
+            //            ContentId = Guid.NewGuid().ToString("N"),
+            //            ContentType = Convert.ToInt32(child.Tag),
+            //            ContentText = child.Content != null ? child.Content.ToString() : null,
+            //            ContentOrder = Order
+            //        });
+            //        Order++;
+            //    }
+
+            //    List<SelectedDevices> _devices = new List<SelectedDevices>();
+            //    _devices = getConfiguredDevices();
+
+
+            //    if (commands != null || commands.Count() == 0)
+            //    {
+            //        MessageBox.Show("No logical commands found to execute..");
+            //        return;
+            //    }
+
+            //    if (_devices != null && _devices.Count() == 0)
+            //    {
+            //        MessageBox.Show("No devices has been configured..");
+            //        return;
+            //    }
+            //    userCommandLogic.sDevices = _devices;
+            //    userCommandLogic.uCommands = commands;
+
+            //    FontAwesome.WPF.ImageAwesome spinner = new FontAwesome.WPF.ImageAwesome { Icon = FontAwesome.WPF.FontAwesomeIcon.Spinner, Spin = true, Foreground = (Brush)bc.ConvertFrom("#fff") };
+            //    Run.Content = "";
+            //    Run.Content = spinner;
+            //    Run.IsEnabled = false;
+            //}
+            //catch
+            //{
+            //    Run.Content = "";
+            //    Run.Content = "Run";
+            //    Run.IsEnabled = true;
+            //}
+
+            string deviceId = ComPortWeight.SelectedValue.ToString();
+            int TypeOfDevice = (int)userDeviceType.WeightModule;
             int Baudrate = 38400;
             int databit = 8;
             int stopbit = 1;
-            string parity = "None";
-            string other = string.Empty;
-            string selectedval = string.Empty;
-            if (this.activeDevice == "MotorDrive")
-            {
-                selectedval = ComPortMotor.SelectedValue.ToString();
+            int parity = (int)Parity.None;
 
-            }
-
-            if (this.activeDevice == "WeightModule")
-            {
-                selectedval = ComPortWeight.SelectedValue.ToString();
-            }
-
-            if (this.activeDevice == "ControlBoard")
-            {
-                selectedval = ComPortControl.SelectedValue.ToString();
-            }
-
-            var suctom = deviceInfo.CustomDeviceInfos.Where(x => x.DeviceID == selectedval).FirstOrDefault();
-            Port = suctom.PortName;
+            var suctom = deviceInfo.CustomDeviceInfos.Where(x => x.DeviceID == deviceId).FirstOrDefault();
+            string Port = suctom.PortName;
             SerialPortCommunications(Port, Baudrate, databit, stopbit, parity);
+
         }
 
-        private void SerialPortCommunications(string port = "", int baudRate = 0, int databit = 0, int stopBit = 0, string parity = "")
+        public void ExecuteUserCommands()
+        {
+            if (userCommandLogic == null) return;
+
+            foreach (var _command in userCommandLogic.uCommands.OrderBy(x => x.ContentOrder))
+            {
+                //var suctom = deviceInfo.CustomDeviceInfos.Where(x => x.DeviceID == selectedval).FirstOrDefault();
+                //Port = suctom.PortName;
+                //SerialPortCommunications(Port, Baudrate, databit, stopbit, parity);
+            }
+        }
+
+        public List<SelectedDevices> getConfiguredDevices()
+        {
+            List<SelectedDevices> _devices = new List<SelectedDevices>();
+            int Baudrate = 38400;
+            int databit = 8;
+            int stopbit = 1;
+
+            if (ComPortMotor.SelectedValue.ToString() != "0")
+            {
+                _devices.Add(new SelectedDevices
+                {
+                    deviceId = ComPortMotor.SelectedValue.ToString(),
+                    TypeOfDevice = (int)userDeviceType.MotorDerive,
+                    Baudrate = Baudrate,
+                    databit = databit,
+                    stopbit = stopbit,
+                    parity = (int)Parity.None
+                });
+            }
+
+            if (ComPortWeight.SelectedValue.ToString() != "0")
+            {
+                _devices.Add(new SelectedDevices
+                {
+                    deviceId = ComPortWeight.SelectedValue.ToString(),
+                    TypeOfDevice = (int)userDeviceType.WeightModule,
+                    Baudrate = Baudrate,
+                    databit = databit,
+                    stopbit = stopbit,
+                    parity = (int)Parity.None
+                });
+            }
+
+            if (ComPortControl.SelectedValue.ToString() != "0")
+            {
+                _devices.Add(new SelectedDevices
+                {
+                    deviceId = ComPortControl.SelectedValue.ToString(),
+                    TypeOfDevice = (int)userDeviceType.ControlCard,
+                    Baudrate = Baudrate,
+                    databit = databit,
+                    stopbit = stopbit,
+                    parity = (int)Parity.None
+                });
+            }
+
+            return _devices;
+        }
+
+        private void SerialPortCommunications(string port = "", int baudRate = 0, int databit = 0, int stopBit = 0, int parity = 0)
         {
             this.SerialDevice = new SerialPort(port);
             this.SerialDevice.BaudRate = baudRate;
             this.SerialDevice.DataBits = databit;
             this.SerialDevice.StopBits = stopBit == 0 ? StopBits.None : (stopBit == 1 ? StopBits.One : (stopBit == 2 ? StopBits.Two : StopBits.OnePointFive));
             this.SerialDevice.Parity = Parity.None;
-            this.SerialDevice.DataReceived += SerialDevice_DataReceived; ;
+            this.SerialDevice.Handshake = Handshake.None;
+            this.SerialDevice.Encoding = ASCIIEncoding.ASCII;
+            this.SerialDevice.DataReceived += SerialDevice_DataReceived;
             this.SerialDevice.Open();
+        }
+
+        private void TimerCheckReceiveData_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            TimerCheckReceiveData.Enabled = false;
+            SB1Request _SB1Request = new SB1Request();
+
+            if (Common.RecState > 0)
+            {
+                if (!SerialDevice.IsOpen)
+                {
+                    //To show the status of Connects Ports
+                }
+                else
+                {
+                    //ToolTipStatus = ComStatus.OK;
+                }
+
+                TimeSpan _RqRsDiff = DateTime.Now - Common.LastRequestSent;
+                //Common.WriteLog(Common.LastRequestSent.ToString("dd-MM-yyyy mm:ss:ffff"));
+                if (_RqRsDiff.TotalMilliseconds > Common.SessionTimeOut)  // Timeout
+                {
+                    RecData _recData = Common.RequestDataList.Where(a => a.SessionId == Common.GetSessionId).FirstOrDefault();
+                    if (_recData != null)
+                    {
+                        //_SB1Request.EndSession(serialPort1); // End Session  
+                        //UpdateRequestStatus(PortDataStatus.SessionEnd, Common.GetSessionId);
+                        //Thread.Sleep(500);                                              
+                        if (_recData.Status == PortDataStatus.AckOkWait)
+                        {
+                            Common.TimeOuts++;  // SB1 Timeout & Tgm Timeout      
+                            //ToolTipStatus = ComStatus.OK;
+                            _recData.Status = PortDataStatus.SessionEnd;
+                            //Common.ReceiveDataQueue.Enqueue(_recData);
+                        }
+                        else
+                        {
+                            //ToolTipStatus = ComStatus.TimeOut;
+                            _recData.Status = PortDataStatus.Normal;
+
+                            Common.RecState = 0;
+                            //Common.ReceiveDataQueue.Enqueue(_recData);
+                        }
+
+                        if (_recData.SessionId > 0)
+                        {
+                            Common.ReceiveDataQueue.Enqueue(_recData);
+                        }
+                        _UpdatePB = true;
+                        _SB1Request.EndSession(SerialDevice); // End Session 
+                        Common.RequestDataList.Clear();
+                        //Thread.Sleep(100);
+                    }
+                    else
+                    {
+                        //_SB1Request.EndSession(serialPort1); // End Session  
+                    }
+                }
+            }
+
+            if (Common.RecState > 0 && IsComplete)
+            {
+                IsComplete = false;
+
+                if (Common.RecIdx > 0)
+                {
+                    //recState = 1;
+                    while (Common.ReceiveBufferQueue.Count > 0)
+                    {
+                        recBufParse = Common.ReceiveBufferQueue.Dequeue();
+
+                        Common.RecState = 1;
+                        SB1Reply _reply = new SB1Reply(Common.GetSessionId);
+                        SB1Handler _hndl = new SB1Handler(SerialDevice);
+                        _reply.SetTgm(recBufParse, _CurrentActiveMenu); //recBuf old implementation
+                        RecData _recData = Common.RequestDataList.Where(a => a.SessionId == _reply.sesId).FirstOrDefault();
+                        if (_recData != null && _reply != null)
+                        {
+                            //Common.WriteLog("Response :- " + _recData.PropertyName + "-" + _reply.sesId.ToString());
+                        }
+                        if (_reply.CheckCrc(recBufParse, Convert.ToInt32(_reply.length)) || _CurrentActiveMenu == AppTools.EnOcean)  // SB1 Check CRC
+                        {
+
+                            _UpdatePB = true;
+                            //TimerCheckReceiveData.Enabled = true;
+                            if (_reply.IsAckOk()) // Ok
+                            {
+                                //ToolTipStatus = ComStatus.OK;
+                                //IsActive = false;
+                                //RecData _recData = Common.RequestDataList.Where(a => a.SessionId == _reply.sesId).FirstOrDefault();
+                                if (_recData != null && _reply.sesId == _recData.SessionId)
+                                {
+                                    if (Common.COMSelected == COMType.XYZ && _recData.RqType == RQType.ModBus)
+                                    {
+                                        _recData.MbTgm = recBufParse;
+                                        _recData.Status = PortDataStatus.Received;
+                                        Common.GoodTmgm++;
+                                        Common.ReceiveDataQueue.Enqueue(_recData);
+                                        return;
+                                    }
+
+                                    Byte[] _payLoad = _reply.ExtractPayload();
+                                    PayloadRS _PayloadRS = new PayloadRS();
+                                    _PayloadRS.SetPayLoadRS(_payLoad);
+                                    _MbTgmBytes = _PayloadRS.ExtractModBusTgm(_payLoad);
+                                    if (Common.COMSelected == COMType.USB845)
+                                    {
+                                        _MbTgmBytes = _reply.RxSB1;
+                                        _PayloadRS.MbLength = (ushort)_reply.length;
+                                    }
+                                    if (_MbTgmBytes != null && _PayloadRS.MbLength > 0)
+                                    {
+                                        bool _IsTgmErr = false;
+                                        //RecData _recData = Common.RequestDataList.Where(a => a.SessionId == _reply.sesId).FirstOrDefault();
+                                        _IsTgmErr = CheckTgmError(_recData, _payLoad, _MbTgmBytes, _PayloadRS.MbLength);
+                                        if (_IsTgmErr)
+                                        {
+                                            if (_recData.RqType == RQType.WireLess)
+                                            {
+                                                Common.MbTgmBytes = _reply.payload;
+                                            }
+                                            else
+                                            {
+                                                Common.MbTgmBytes = _MbTgmBytes;
+                                            }
+                                            _recData.Status = PortDataStatus.Received;
+                                            _recData.MbTgm = Common.MbTgmBytes;
+                                            Common.ReceiveDataQueue.Enqueue(_recData);
+                                            //Common.IsClear = false;                                           
+                                        }
+                                    }
+                                    else if (_reply.ack == 5)
+                                    {
+                                        //UpdateRequestStatus(PortDataStatus.Ack, _reply.sesId);
+                                        //IsAck = true;
+                                        //ToolTipStatus = ComStatus.OK;
+                                        if (_recData != null)
+                                            _recData.Status = PortDataStatus.AckOkWait;
+                                    }
+                                    else
+                                    {
+                                        //UpdateRequestStatus(PortDataStatus.Ack, _reply.sesId);
+                                        //IsAck = true;
+                                        //ToolTipStatus = ComStatus.OK;
+                                        if (_recData != null)
+                                        {
+                                            if (_recData.Status == PortDataStatus.SessionEnd)
+                                            {
+                                                Common.RecState = 0;
+                                                _recData.Status = PortDataStatus.SessionEnd;
+                                            }
+                                            else
+                                            {
+                                                _recData.Status = PortDataStatus.AckOkWait;  // Change it to Ok
+                                            }
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    //UpdateRequestStatus(PortDataStatus.SessionEnd, _reply.sesId);
+                                    //_SB1Request.EndSession(serialPort1);
+                                    //IsActive = false;
+                                    //ToolTipStatus = ComStatus.WrongSession;
+                                    if (_recData != null)
+                                    {
+                                        _recData.Status = PortDataStatus.Normal;
+                                        if (_recData.SessionId > 0)
+                                        {
+                                            Common.ReceiveDataQueue.Enqueue(_recData);
+                                        }
+
+                                    }
+                                }
+                            }
+                            else if (_reply.ack == 1)  // Busy
+                            {
+                                // Check send/receive time diff.
+                                //UpdateRequestStatus(PortDataStatus.Busy, _reply.sesId);
+                                //IsActive = true;
+                                //ToolTipStatus = ComStatus.Busy;
+                                if (_recData != null)
+                                {
+                                    _recData.Status = PortDataStatus.Busy;
+
+                                    _SB1Request.EndSession(SerialDevice);
+
+                                }
+                            }
+                            else if (_reply.ack == 2)  // IllegalCommand
+                            {
+                                _SB1Request.EndSession(SerialDevice);
+                                //UpdateRequestStatus(PortDataStatus.SessionEnd, _reply.sesId);
+                                //IsActive = false;
+                                //ToolTipStatus = ComStatus.IllegalCommand;
+                                if (_recData != null)
+                                {
+                                    _recData.Status = PortDataStatus.Normal;
+                                    if (_recData.SessionId > 0)
+                                    {
+                                        Common.ReceiveDataQueue.Enqueue(_recData);
+                                    }
+                                }
+                            }
+                            else if (_reply.ack == 3)  //CrcFault
+                            {
+                                _SB1Request.EndSession(SerialDevice);
+                                //UpdateRequestStatus(PortDataStatus.SessionEnd, _reply.sesId);
+                                //IsActive = false;
+                                //Common.CRCFaults++;  //SB1 CRC 
+                                //ToolTipStatus = ComStatus.CRC;
+                                if (_recData != null)
+                                {
+                                    _recData.Status = PortDataStatus.Normal;
+                                    if (_recData.SessionId > 0)
+                                    {
+                                        Common.ReceiveDataQueue.Enqueue(_recData);
+                                        // Common.ReceiveDataQueueEventBased.Enqueue(_recData);
+                                    }
+                                }
+                            }
+                            else if (_reply.ack == 4)  //Tgm Fault
+                            {
+                                _SB1Request.EndSession(SerialDevice);
+                                //UpdateRequestStatus(PortDataStatus.SessionEnd, _reply.sesId);
+                                //IsActive = false;
+                                //Common.CRCFaults++;  //Tgm Fault
+                                // ToolTipStatus = ComStatus.Tgmfault;
+                                if (_recData != null)
+                                {
+                                    _recData.Status = PortDataStatus.Normal;
+                                    if (_recData.SessionId > 0)
+                                    {
+                                        Common.ReceiveDataQueue.Enqueue(_recData);
+                                        // Common.ReceiveDataQueueEventBased.Enqueue(_recData);
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            _UpdatePB = true;
+                            _SB1Request.EndSession(SerialDevice);
+                            //UpdateRequestStatus(PortDataStatus.SessionEnd, Common.GetSessionId);
+                            //IsActive = false;
+                            //ToolTipStatus = ComStatus.CRC;
+                            if (_recData != null)
+                            {
+                                _recData.Status = PortDataStatus.Normal;
+                                if (_recData.SessionId > 0)
+                                {
+                                    Common.ReceiveDataQueue.Enqueue(_recData);
+                                    // Common.ReceiveDataQueueEventBased.Enqueue(_recData);
+                                }
+                            }
+                            // Common.CRCFaults++; // SB1 CRC
+
+                        }
+                    }
+                }
+            }
+            TimerCheckReceiveData.Enabled = true;
         }
 
         private void SerialDevice_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
-            var serialDevice = sender as SerialPort;
-            buffer = new byte[serialDevice.BytesToRead];
-            serialDevice.Read(buffer, 0, buffer.Length);
+            // var serialDevice = sender as SerialPort;
+            //buffer = new byte[serialDevice.BytesToRead];
+            //serialDevice.Read(buffer, 0, buffer.Length);
+
+
+            switch (Common.RecState)
+            {
+                case 0:
+                    break;
+                case 1:
+                    int i = 0;
+                    if (Common.COMSelected == COMType.XYZ)
+                    {
+                        Common.RecIdx = 0;
+                        Common.RecState = 2;
+                        //Common.RecIdx += serialPort1.Read(recBuf, Common.RecIdx, serialPort1.BytesToRead);                                                      
+
+                        while (SerialDevice.BytesToRead > 0)
+                        {
+                            byte[] rec = new byte[1];
+                            Common.RecIdx += SerialDevice.Read(rec, 0, 1);
+                            recBuf[i] = rec[0];
+                            i++;
+                        }
+                        if (Common.RecIdx > 3)
+                        {
+                            TotalReceiveSize = Util.ByteArrayConvert.ToUInt32(recBuf, 0);
+                        }
+                        if (TotalReceiveSize > Common.RecIdx)
+                        {
+                            IsComplete = false;
+                        }
+                        else
+                        {
+                            IsComplete = true;
+                            Common.ReceiveBufferQueue.Enqueue(recBuf);
+                        }
+
+                    }
+                    else if (Common.COMSelected == COMType.USB845 || Common.COMSelected == COMType.USB232)
+                    {
+                        Common.RecIdx = 0;
+                        Common.RecState = 2;
+                        //Common.RecIdx += serialPort1.Read(recBuf, Common.RecIdx, serialPort1.BytesToRead);                                                      
+
+                        while (SerialDevice.BytesToRead > 0)
+                        {
+                            byte[] rec = new byte[1];
+                            Common.RecIdx += SerialDevice.Read(rec, 0, 1);
+                            recBuf[i] = rec[0];
+                            i++;
+                        }
+                        if (Common.RecIdx > 3)
+                        {
+                            if (_CurrentActiveMenu == AppTools.Modbus)
+                            {
+                                TotalReceiveSize = (uint)recBuf[2] + 5;
+                            }
+                        }
+                        if (TotalReceiveSize > Common.RecIdx)
+                        {
+                            IsComplete = false;
+                        }
+                        else
+                        {
+                            IsComplete = true;
+                            Common.ReceiveBufferQueue.Enqueue(recBuf);
+                        }
+                    }
+                    TimerCheckReceiveData.Enabled = true;
+                    Common.LastResponseReceived = DateTime.Now;
+                    break;
+                case 2:
+                    //recIdx += serialPort1.Read(recBuf, recIdx, serialPort1.BytesToRead);
+                    //Common.RecIdx += serialPort1.Read(recBuf, Common.RecIdx, serialPort1.BytesToRead);    
+
+                    if (Common.COMSelected == COMType.XYZ)
+                    {
+                        i = Common.RecIdx;
+                        while (SerialDevice.BytesToRead > 0)
+                        {
+                            byte[] rec = new byte[1];
+                            Common.RecIdx += SerialDevice.Read(rec, 0, 1);
+                            recBuf[i] = rec[0];
+                            i++;
+                        }
+                        if (Common.RecIdx > 3)
+                        {
+                            TotalReceiveSize = Util.ByteArrayConvert.ToUInt32(recBuf, 0);
+                        }
+
+                        if (TotalReceiveSize > Common.RecIdx)
+                        {
+                            IsComplete = false;
+                        }
+                        else
+                        {
+                            IsComplete = true;
+                            Common.ReceiveBufferQueue.Enqueue(recBuf);
+                        }
+                    }
+                    else if (Common.COMSelected == COMType.USB845 || Common.COMSelected == COMType.USB232)
+                    {
+                        i = Common.RecIdx;
+                        while (SerialDevice.BytesToRead > 0)
+                        {
+                            byte[] rec = new byte[1];
+                            Common.RecIdx += SerialDevice.Read(rec, 0, 1);
+                            recBuf[i] = rec[0];
+                            i++;
+                        }
+                        if (Common.RecIdx > 3)
+                        {
+                            if (_CurrentActiveMenu == AppTools.Modbus)
+                            {
+                                TotalReceiveSize = (uint)recBuf[2] + 5;
+                            }
+                            else if (_CurrentActiveMenu == AppTools.EnOcean)
+                            {
+                                byte[] Temp = new byte[4];
+                                Temp[2] = recBuf[1];
+                                Temp[3] = recBuf[2];
+                                UInt32 LenghtData = Util.ByteArrayConvert.ToUInt32(Temp, 0);
+                                Temp[3] = recBuf[3];
+                                UInt32 LengthOptional = Util.ByteArrayConvert.ToUInt32(Temp, 0);
+                                TotalReceiveSize = LenghtData + LengthOptional + 7;
+                            }
+                        }
+
+                        if (TotalReceiveSize > Common.RecIdx)
+                        {
+                            IsComplete = false;
+                        }
+                        else
+                        {
+                            IsComplete = true;
+                            Common.ReceiveBufferQueue.Enqueue(recBuf);
+                        }
+                    }
+                    Common.LastResponseReceived = DateTime.Now;
+                    TimerCheckReceiveData.Enabled = true;
+                    break;
+            }
+        }
+
+        private bool CheckTgmError(RecData _recData, Byte[] _payLoad, Byte[] _MBTgm, int _MbLength)
+        {
+            bool _IsTgmErr = false;
+            if (_recData != null)
+            {
+                switch (_recData.RqType)
+                {
+                    case RQType.ModBus:
+                        {
+                            ModBus_Ack _Ack = MbTgm.GetModBusAck(_payLoad);
+                            bool _IsOk = CrcModbus.CheckCrc(_MBTgm, _MbLength);
+                            if (!_IsOk)
+                            {
+                                _Ack = ModBus_Ack.CrcFault;
+                            }
+
+                            if (_Ack == ModBus_Ack.OK)  // MobBus TgmCRC Check
+                            {
+                                //if (_recData.deviceType != Models.DeviceType.MotorDerive)
+                                //{
+                                _IsTgmErr = true;
+                                //ToolTipStatus = ComStatus.OK;
+                                Common.GoodTmgm++;
+                                //}
+                            }
+                            else if (_Ack == ModBus_Ack.CrcFault)
+                            {
+                                _IsTgmErr = false;
+                                //ToolTipStatus = ComStatus.CRC;
+                                Common.CRCFaults++;
+                            }
+                            else if (_Ack == ModBus_Ack.Timeout)
+                            {
+                                _IsTgmErr = false;
+                                //ToolTipStatus = ComStatus.TimeOut;
+                                Common.TimeOuts++;
+                            }
+                            else
+                            {
+                                _IsTgmErr = false;
+                                //ToolTipStatus = ComStatus.CRC;
+                                Common.CRCFaults++;
+                            }
+                            break;
+                        }
+                }
+            }
+            return _IsTgmErr;
+        }
+
+        private void ReadWeight()
+        {
+            //BindData.Enabled = true;
+            //CancelCount = 0;                        
+            MODBUSComnn obj = new MODBUSComnn();
+            Common.COMSelected = COMType.USB845;
+            obj.GetMultiSendorValueFM4(Common.Address, Common.Parity, SerialDevice, 1, 1, "Weight", 1, 0, Models.DeviceType.WeightModule);   // GetSoftwareVersion(Common.Address, Common.Parity, sp, _ValueType);
+
         }
     }
+
+
 }

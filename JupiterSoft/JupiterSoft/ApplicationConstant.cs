@@ -18,7 +18,11 @@ namespace JupiterSoft
         Y_Position_Move,
 
         //Events Enum
+        Start_Event,
         Clicked_Event,
+        Connect_Event,
+        Disconnect_Event,
+        Send_Message_Event,
         Space_Key_pressed_Event,
         Receive_Message_Event,
         BroadCast_Message_Event,

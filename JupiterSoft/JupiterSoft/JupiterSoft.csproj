@@ -93,11 +93,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\ApplicationConstant.cs" />
+    <Compile Include="Models\Common.cs" />
+    <Compile Include="Models\ConvertMisc.cs" />
+    <Compile Include="Models\Crc.cs" />
     <Compile Include="Models\DeviceInfo.cs" />
     <Compile Include="Models\DeviceInformation.cs" />
     <Compile Include="Models\DeviceModel.cs" />
     <Compile Include="Models\ElementModel.cs" />
     <Compile Include="Models\FileSystemModel.cs" />
+    <Compile Include="Models\MODBUSComnn.cs" />
     <Compile Include="Pages\CreateTemplate.xaml.cs">
       <DependentUpon>CreateTemplate.xaml</DependentUpon>
     </Compile>
