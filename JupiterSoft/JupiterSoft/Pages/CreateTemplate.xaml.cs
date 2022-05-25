@@ -23,6 +23,9 @@ using System.IO;
 using Newtonsoft.Json;
 using System.IO.Ports;
 using Components;
+using Util;
+using System.Text.RegularExpressions;
+using System.Windows.Threading;
 
 namespace JupiterSoft.Pages
 {
@@ -103,15 +106,14 @@ namespace JupiterSoft.Pages
         private CommandExecutionModel userCommandLogic;
         private SerialPort SerialDevice;
         private byte[] buffer;
+        private Dispatcher _dispathcer;
         public CreateTemplate()
         {
             bc = new BrushConverter();
             userCommandLogic = new CommandExecutionModel();
             this.UElement = ElementOp.GetElementModel();
             InitializeComponent();
-            TimerCheckReceiveData.Elapsed += TimerCheckReceiveData_Elapsed;
-            TimerCheckReceiveData.Interval = 10;
-            TimerCheckReceiveData.Enabled = true;
+            
 
             this.DataContext = this.UElement;
             this.CanvasWidth = ReceiveDrop.Width;
@@ -124,6 +126,8 @@ namespace JupiterSoft.Pages
             deviceInfo = DeviceInformation.GetConnectedDevices();
             ConnectedDevices();
             LoadSystemSound();
+
+            _dispathcer = Dispatcher.CurrentDispatcher;
         }
 
 
@@ -1471,7 +1475,7 @@ namespace JupiterSoft.Pages
 
             string deviceId = ComPortWeight.SelectedValue.ToString();
             int TypeOfDevice = (int)userDeviceType.WeightModule;
-            int Baudrate = 38400;
+            int Baudrate = 9600;  //38400 for control card.
             int databit = 8;
             int stopbit = 1;
             int parity = (int)Parity.None;
@@ -1554,6 +1558,10 @@ namespace JupiterSoft.Pages
             this.SerialDevice.Encoding = ASCIIEncoding.ASCII;
             this.SerialDevice.DataReceived += SerialDevice_DataReceived;
             this.SerialDevice.Open();
+
+            TimerCheckReceiveData.Elapsed += TimerCheckReceiveData_Elapsed;
+            TimerCheckReceiveData.Interval = 10;
+            TimerCheckReceiveData.Enabled = true;
         }
 
         private void TimerCheckReceiveData_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
@@ -1820,11 +1828,7 @@ namespace JupiterSoft.Pages
 
         private void SerialDevice_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
-            // var serialDevice = sender as SerialPort;
-            //buffer = new byte[serialDevice.BytesToRead];
-            //serialDevice.Read(buffer, 0, buffer.Length);
-
-
+           
             switch (Common.RecState)
             {
                 case 0:

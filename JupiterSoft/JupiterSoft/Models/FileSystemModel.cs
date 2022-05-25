@@ -59,4 +59,13 @@ namespace JupiterSoft.Models
         WeightModule,
         ControlCard
     }
+
+    public enum weightUnit
+    {
+        KG,
+        KGM,
+        LB,
+        OZ,
+        PCS
+    }
 }

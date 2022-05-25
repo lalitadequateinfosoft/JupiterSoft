@@ -1143,7 +1143,8 @@
                                                         </StackPanel>
                                                         <StackPanel>
                                                             <ComboBox Width="100" BorderBrush="#041124" ui:ControlHelper.CornerRadius="5" Background="White">
-                                                                <ComboBoxItem Content="38400" IsSelected="True"/>
+                                                                <ComboBoxItem Content="38400"/>
+                                                                <ComboBoxItem Content="9600" IsSelected="True"/>
                                                             </ComboBox>
                                                         </StackPanel>
                                                     </StackPanel>
@@ -1210,7 +1211,7 @@
                                                                         <ColumnDefinition Width="Auto"/>
                                                                     </Grid.ColumnDefinitions>
                                                                     <Border Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="#2e1511" CornerRadius="5">
-                                                                        <Label Content="888888888" Style="{StaticResource ni7segfamily}" Foreground="#af1708" Width="Auto" Height="Auto" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="40" FontStyle="Italic"/>
+                                                                        <Label x:Name="WeightContent" Content="888888888" Style="{StaticResource ni7segfamily}" Foreground="#af1708" Width="Auto" Height="Auto" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="40" FontStyle="Italic"/>
                                                                     </Border>
                                                                     <Grid Grid.Column="1" Width="30">
                                                                         <Grid.RowDefinitions>
@@ -1219,10 +1220,10 @@
                                                                             <RowDefinition Height="*"/>
                                                                             <RowDefinition Height="*"/>
                                                                         </Grid.RowDefinitions>
-                                                                        <Label Grid.Row="0" Margin="2" Content="kg" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="White"/>
-                                                                        <Label Grid.Row="1" Margin="2" Content="lb" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="White"/>
-                                                                        <Label Grid.Row="2" Margin="2" Content="oz" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="White"/>
-                                                                        <Label Grid.Row="3" Margin="2" Content="PCS" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="White"/>
+                                                                        <Label x:Name="WeightUnitKG" Grid.Row="0" Margin="2" Content="kg" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="White"/>
+                                                                        <Label x:Name="WeightUnitLB" Grid.Row="1" Margin="2" Content="lb" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="White"/>
+                                                                        <Label x:Name="WeightUnitOZ" Grid.Row="2" Margin="2" Content="oz" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="White"/>
+                                                                        <Label x:Name="WeightUnitPCS" Grid.Row="3" Margin="2" Content="PCS" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="White"/>
                                                                     </Grid>
                                                                 </Grid>
                                                             </Border>
