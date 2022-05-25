@@ -26,6 +26,8 @@ using Components;
 using Util;
 using System.Text.RegularExpressions;
 using System.Windows.Threading;
+using System.ComponentModel;
+using System.Threading;
 
 namespace JupiterSoft.Pages
 {
@@ -107,13 +109,15 @@ namespace JupiterSoft.Pages
         private SerialPort SerialDevice;
         private byte[] buffer;
         private Dispatcher _dispathcer;
+        private BackgroundWorker worker;
+        private int readIndex = 0;
         public CreateTemplate()
         {
             bc = new BrushConverter();
             userCommandLogic = new CommandExecutionModel();
             this.UElement = ElementOp.GetElementModel();
             InitializeComponent();
-            
+
 
             this.DataContext = this.UElement;
             this.CanvasWidth = ReceiveDrop.Width;
@@ -128,6 +132,10 @@ namespace JupiterSoft.Pages
             LoadSystemSound();
 
             _dispathcer = Dispatcher.CurrentDispatcher;
+
+            //TimerCheckReceiveData.Elapsed += TimerCheckReceiveData_Elapsed;
+            //TimerCheckReceiveData.Interval = 1000 * 1;
+            //TimerCheckReceiveData.Enabled = true;
         }
 
 
@@ -1473,18 +1481,35 @@ namespace JupiterSoft.Pages
             //    Run.IsEnabled = true;
             //}
 
-            string deviceId = ComPortWeight.SelectedValue.ToString();
-            int TypeOfDevice = (int)userDeviceType.WeightModule;
-            int Baudrate = 9600;  //38400 for control card.
-            int databit = 8;
-            int stopbit = 1;
-            int parity = (int)Parity.None;
+            if (!string.IsNullOrEmpty(ComPortWeight.SelectedValue.ToString()) && ComPortWeight.SelectedValue.ToString() != "0")
+            {
+                ReadWeight();
+                Stop.Visibility = Visibility.Visible;
+                Run.Visibility = Visibility.Hidden;
+                return;
+            }
 
-            var suctom = deviceInfo.CustomDeviceInfos.Where(x => x.DeviceID == deviceId).FirstOrDefault();
-            string Port = suctom.PortName;
-            SerialPortCommunications(Port, Baudrate, databit, stopbit, parity);
+            if (!string.IsNullOrEmpty(ComPortControl.SelectedValue.ToString()) && ComPortControl.SelectedValue.ToString() != "0")
+            {
+                ReadWeight();
+                Stop.Visibility = Visibility.Visible;
+                Run.Visibility = Visibility.Hidden;
+                return;
+            }
+
+            if (!string.IsNullOrEmpty(ComPortMotor.SelectedValue.ToString()) && ComPortMotor.SelectedValue.ToString() != "0")
+            {
+                ReadWeight();
+                Stop.Visibility = Visibility.Visible;
+                Run.Visibility = Visibility.Hidden;
+                return;
+            }
+
+
 
         }
+
+
 
         public void ExecuteUserCommands()
         {
@@ -1557,16 +1582,13 @@ namespace JupiterSoft.Pages
             this.SerialDevice.Handshake = Handshake.None;
             this.SerialDevice.Encoding = ASCIIEncoding.ASCII;
             this.SerialDevice.DataReceived += SerialDevice_DataReceived;
-            this.SerialDevice.Open();
-
-            TimerCheckReceiveData.Elapsed += TimerCheckReceiveData_Elapsed;
-            TimerCheckReceiveData.Interval = 10;
-            TimerCheckReceiveData.Enabled = true;
+            this.SerialDevice.Open();          
         }
 
-        private void TimerCheckReceiveData_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        private void TimerCheckReceiveData_Elapsed()
         {
-            TimerCheckReceiveData.Enabled = false;
+            //TimerCheckReceiveData.Enabled = false;
+            
             SB1Request _SB1Request = new SB1Request();
 
             if (Common.RecState > 0)
@@ -1612,7 +1634,8 @@ namespace JupiterSoft.Pages
                         }
                         _UpdatePB = true;
                         _SB1Request.EndSession(SerialDevice); // End Session 
-                        Common.RequestDataList.Clear();
+                        if (_CurrentActiveMenu != AppTools.UART) Common.RequestDataList.Clear();
+
                         //Thread.Sleep(100);
                     }
                     else
@@ -1626,8 +1649,7 @@ namespace JupiterSoft.Pages
             {
                 IsComplete = false;
 
-                if (Common.RecIdx > 0)
-                {
+                
                     //recState = 1;
                     while (Common.ReceiveBufferQueue.Count > 0)
                     {
@@ -1642,7 +1664,7 @@ namespace JupiterSoft.Pages
                         {
                             //Common.WriteLog("Response :- " + _recData.PropertyName + "-" + _reply.sesId.ToString());
                         }
-                        if (_reply.CheckCrc(recBufParse, Convert.ToInt32(_reply.length)) || _CurrentActiveMenu == AppTools.EnOcean)  // SB1 Check CRC
+                        if (_reply.CheckCrc(recBufParse, Convert.ToInt32(_reply.length)) || _CurrentActiveMenu == AppTools.UART)  // SB1 Check CRC
                         {
 
                             _UpdatePB = true;
@@ -1654,12 +1676,15 @@ namespace JupiterSoft.Pages
                                 //RecData _recData = Common.RequestDataList.Where(a => a.SessionId == _reply.sesId).FirstOrDefault();
                                 if (_recData != null && _reply.sesId == _recData.SessionId)
                                 {
-                                    if (Common.COMSelected == COMType.XYZ && _recData.RqType == RQType.ModBus)
+                                    if (Common.COMSelected == COMType.UART)
                                     {
                                         _recData.MbTgm = recBufParse;
                                         _recData.Status = PortDataStatus.Received;
                                         Common.GoodTmgm++;
                                         Common.ReceiveDataQueue.Enqueue(_recData);
+
+                                        showWeightModuleResponse();
+                                        //TimerCheckReceiveData.Enabled = true;
                                         return;
                                     }
 
@@ -1667,7 +1692,7 @@ namespace JupiterSoft.Pages
                                     PayloadRS _PayloadRS = new PayloadRS();
                                     _PayloadRS.SetPayLoadRS(_payLoad);
                                     _MbTgmBytes = _PayloadRS.ExtractModBusTgm(_payLoad);
-                                    if (Common.COMSelected == COMType.USB845)
+                                    if (Common.COMSelected == COMType.MODBUS)
                                     {
                                         _MbTgmBytes = _reply.RxSB1;
                                         _PayloadRS.MbLength = (ushort)_reply.length;
@@ -1821,49 +1846,45 @@ namespace JupiterSoft.Pages
 
                         }
                     }
-                }
+                
             }
-            TimerCheckReceiveData.Enabled = true;
+
+            //TimerCheckReceiveData.Enabled = true;
         }
+
+
 
         private void SerialDevice_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
-           
+          
             switch (Common.RecState)
             {
                 case 0:
                     break;
                 case 1:
                     int i = 0;
-                    if (Common.COMSelected == COMType.XYZ)
+                    if (Common.COMSelected == COMType.UART)
                     {
                         Common.RecIdx = 0;
                         Common.RecState = 2;
                         //Common.RecIdx += serialPort1.Read(recBuf, Common.RecIdx, serialPort1.BytesToRead);                                                      
 
-                        while (SerialDevice.BytesToRead > 0)
-                        {
-                            byte[] rec = new byte[1];
-                            Common.RecIdx += SerialDevice.Read(rec, 0, 1);
-                            recBuf[i] = rec[0];
-                            i++;
-                        }
-                        if (Common.RecIdx > 3)
-                        {
-                            TotalReceiveSize = Util.ByteArrayConvert.ToUInt32(recBuf, 0);
-                        }
-                        if (TotalReceiveSize > Common.RecIdx)
-                        {
-                            IsComplete = false;
-                        }
-                        else
-                        {
-                            IsComplete = true;
-                            Common.ReceiveBufferQueue.Enqueue(recBuf);
-                        }
+                        recBuf = new byte[this.SerialDevice.BytesToRead];
+                        this.SerialDevice.Read(recBuf, 0, recBuf.Length);
+                        //while (SerialDevice.BytesToRead > 0)
+                        //{
+                        //    byte[] rec = new byte[1];
+                        //    Common.RecIdx += SerialDevice.Read(rec, 0, 1);
+                        //    recBuf[i] = rec[0];
+                        //    i++;
+                        //}
 
+                        IsComplete = true;
+                        Common.ReceiveBufferQueue.Enqueue(recBuf);
+
+                        
                     }
-                    else if (Common.COMSelected == COMType.USB845 || Common.COMSelected == COMType.USB232)
+                    else if (Common.COMSelected == COMType.MODBUS)
                     {
                         Common.RecIdx = 0;
                         Common.RecState = 2;
@@ -1893,7 +1914,8 @@ namespace JupiterSoft.Pages
                             Common.ReceiveBufferQueue.Enqueue(recBuf);
                         }
                     }
-                    TimerCheckReceiveData.Enabled = true;
+                    //TimerCheckReceiveData.Enabled = true;
+                    TimerCheckReceiveData_Elapsed();
                     Common.LastResponseReceived = DateTime.Now;
                     break;
                 case 2:
@@ -1925,7 +1947,7 @@ namespace JupiterSoft.Pages
                             Common.ReceiveBufferQueue.Enqueue(recBuf);
                         }
                     }
-                    else if (Common.COMSelected == COMType.USB845 || Common.COMSelected == COMType.USB232)
+                    else if (Common.COMSelected == COMType.MODBUS)
                     {
                         i = Common.RecIdx;
                         while (SerialDevice.BytesToRead > 0)
@@ -1964,7 +1986,8 @@ namespace JupiterSoft.Pages
                         }
                     }
                     Common.LastResponseReceived = DateTime.Now;
-                    TimerCheckReceiveData.Enabled = true;
+                    TimerCheckReceiveData_Elapsed();
+                    //TimerCheckReceiveData.Enabled = true;
                     break;
             }
         }
@@ -2021,14 +2044,171 @@ namespace JupiterSoft.Pages
 
         private void ReadWeight()
         {
+            Common.RecState = 1;
+            Common.CurrentDevice = Models.DeviceType.WeightModule;
+            string deviceId = ComPortWeight.SelectedValue.ToString();
+
+            //int TypeOfDevice = (int)userDeviceType.WeightModule;
+            int Baudrate = 9600;  //38400 for control card.
+            int databit = 8;
+            int stopbit = 1;
+            int parity = (int)Parity.None;
+
+            var suctom = deviceInfo.CustomDeviceInfos.Where(x => x.DeviceID == deviceId).FirstOrDefault();
+            string Port = suctom.PortName;
+            RecData _recData = new RecData();
+            _recData.deviceType = Models.DeviceType.WeightModule;
+            _recData.PropertyName = "WeightModule";
+            _recData.SessionId = Common.GetSessionNewId;
+            _recData.Ch = 0;
+            _recData.Indx = 0;
+            _recData.Reg = 0;
+            _recData.NoOfVal = 0;
+            Common.GetSessionId = _recData.SessionId;
+            _recData.Status = PortDataStatus.Requested;
+            _recData.RqType = RQType.UART;
+            Common.COMSelected = COMType.UART;
+            _CurrentActiveMenu = AppTools.UART;
+            Common.RequestDataList.Add(_recData);
+            SerialPortCommunications(Port, Baudrate, databit, stopbit, parity);
+
+
+        }
+
+        private void StopWeight()
+        {
+            this.SerialDevice.DtrEnable = false;
+            this.SerialDevice.RtsEnable = false;
+            this.SerialDevice.DiscardInBuffer();
+            this.SerialDevice.DiscardOutBuffer();
+            this.SerialDevice.DataReceived += SerialDevice_DataReceived;
+            //this.SerialDevice.Dispose();
+            //this.SerialDevice.Close();
+            
+            Stop.Visibility = Visibility.Hidden;
+            Run.Visibility = Visibility.Visible;
+            WeightContent.Content = "8888888";
+            WeightUnitKG.Content = "kg";
+            //TimerCheckReceiveData.Elapsed -= TimerCheckReceiveData_Elapsed;
+            //TimerCheckReceiveData.Enabled = false;
+        }
+
+        private void ReadControCardInput()
+        {
             //BindData.Enabled = true;
             //CancelCount = 0;                        
             MODBUSComnn obj = new MODBUSComnn();
-            Common.COMSelected = COMType.USB845;
+            Common.COMSelected = COMType.UART;
             obj.GetMultiSendorValueFM4(Common.Address, Common.Parity, SerialDevice, 1, 1, "Weight", 1, 0, Models.DeviceType.WeightModule);   // GetSoftwareVersion(Common.Address, Common.Parity, sp, _ValueType);
 
         }
+
+        #region UI Interactive Function
+        void showWeightModuleResponse()
+        {
+            RecData _recData = new RecData();
+            _recData = Common.ReceiveDataQueue.Dequeue();
+
+            if (_recData.MbTgm.Length > 0 && _recData.MbTgm.Length > readIndex)
+            {
+                byte[] bytestToRead = _recData.MbTgm.Skip(readIndex).ToArray();
+                string str = Encoding.Default.GetString(bytestToRead).Replace(System.Environment.NewLine, string.Empty);
+                //string actualdata = Regex.Replace(str, @"[^a-zA-Z0-9\\:_\- ]", string.Empty);
+                string actualdata = Regex.Replace(str, @"[^\t\r\n -~]", "_").RemoveWhitespace().Trim();
+                string[] data = actualdata.Split('_');
+
+                for (int i = 0; i < data.Length; i++)
+                {
+                    if (!string.IsNullOrEmpty(data[i]) || !string.IsNullOrWhiteSpace(data[i]))
+                    {
+                        if (data[i].All(char.IsDigit))
+                        {
+                            _dispathcer.Invoke(new Action(() => { WeightContent.Content = data[i].ToString().Trim(); }));
+                            //WeightContent.Content = data[i].ToString().Trim();
+
+                            continue;
+                        }
+
+                        _dispathcer.Invoke(new Action(() => { WeightContent.Content = new String(data[i].Where(Char.IsDigit).ToArray()); }));
+                        //WeightContent.Content = new String(data[i].Where(Char.IsDigit).ToArray());
+
+                        string unit = new String(data[i].Where(Char.IsLetter).ToArray());
+                        if (unit.ToLower().ToString().Contains(weightUnit.KG.ToString().ToLower()) || unit.ToLower().ToString().Contains(weightUnit.KGG.ToString().ToLower()) || unit.ToLower().ToString().Contains(weightUnit.KGGM.ToString().ToLower()))
+                        {
+                            _dispathcer.Invoke(new Action(() =>
+                            {
+                                if(unit.ToLower().ToString().Contains(weightUnit.KGGM.ToString().ToLower()))
+                                {
+                                    WeightUnitKG.Content = weightUnit.KGGM.ToString().ToLower();
+                                }
+                                else if (unit.ToLower().ToString().Contains(weightUnit.KGG.ToString().ToLower()))
+                                {
+                                    WeightUnitKG.Content = weightUnit.KGG.ToString().ToLower(); 
+                                }
+                                else
+                                {
+                                    WeightUnitKG.Content = weightUnit.KG.ToString().ToLower(); 
+                                }
+                                WeightUnitKG.Foreground = Brushes.Red;
+                                WeightUnitLB.Foreground = Brushes.White;
+                                WeightUnitOZ.Foreground = Brushes.White;
+                                WeightUnitPCS.Foreground = Brushes.White;
+                            }));
+
+
+                        }
+                        else if (unit.ToLower().ToString().Contains(weightUnit.LB.ToString().ToLower()))
+                        {
+                            _dispathcer.Invoke(new Action(() =>
+                            {
+                                WeightUnitKG.Foreground = Brushes.White;
+                                WeightUnitLB.Foreground = Brushes.Red;
+                                WeightUnitOZ.Foreground = Brushes.White;
+                                WeightUnitPCS.Foreground = Brushes.White;
+                            }));
+
+                        }
+                        else if (unit.ToLower().ToString().Contains(weightUnit.PCS.ToString().ToLower()))
+                        {
+                            _dispathcer.Invoke(new Action(() =>
+                            {
+                                WeightUnitKG.Foreground = Brushes.White;
+                                WeightUnitLB.Foreground = Brushes.White;
+                                WeightUnitOZ.Foreground = Brushes.White;
+                                WeightUnitPCS.Foreground = Brushes.Red;
+                            }));
+
+                        }
+                        else if (unit.ToLower().ToString().Contains(weightUnit.OZ.ToString().ToLower()))
+                        {
+                            _dispathcer.Invoke(new Action(() =>
+                            {
+                                WeightUnitKG.Foreground = Brushes.White;
+                                WeightUnitLB.Foreground = Brushes.White;
+                                WeightUnitOZ.Foreground = Brushes.Red;
+                                WeightUnitPCS.Foreground = Brushes.White;
+                            }));
+
+
+                        }
+                    }
+
+                }
+
+            }
+            //TimerCheckReceiveData.Enabled = true;
+        }
+
+
+        #endregion
+
+        private void Stop_Click(object sender, RoutedEventArgs e)
+        {
+            StopWeight();
+        }
     }
-
-
 }
+
+
+
+

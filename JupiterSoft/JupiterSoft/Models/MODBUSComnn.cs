@@ -401,7 +401,7 @@ namespace JupiterSoft.Models
                 {
                     sp.Write(raw, 0, (int)length);
                 }
-                else if (Common.COMSelected == COMType.USB845 || Common.COMSelected == COMType.USB232)
+                else if (Common.COMSelected == COMType.MODBUS)
                 {
                     if (payload != null)
                         sp.Write(payload.mbTgmBytes, 0, (int)payload.MbTgmLength);
@@ -476,7 +476,7 @@ namespace JupiterSoft.Models
                 crc = Util.ByteArrayConvert.ToUInt16(tgm, 30 + (int)payLoadSize);
                 RxSB1 = tgm;
             }
-            else if (Common.COMSelected == COMType.USB845)
+            else if (Common.COMSelected == COMType.MODBUS)
             {
 
                 length = (uint)tgm[2] + 5;
@@ -499,7 +499,7 @@ namespace JupiterSoft.Models
                 crc = Util.ByteArrayConvert.ToUInt16(tgm, 30 + (int)payLoadSize);
                 RxSB1 = tgm;
             }
-            else if (Common.COMSelected == COMType.USB845)
+            else if (Common.COMSelected == COMType.MODBUS)
             {
                 if (CurrentActiveMenu == AppTools.Modbus)
                 {

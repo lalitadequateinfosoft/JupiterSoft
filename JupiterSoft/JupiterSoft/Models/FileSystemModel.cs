@@ -63,7 +63,8 @@ namespace JupiterSoft.Models
     public enum weightUnit
     {
         KG,
-        KGM,
+        KGG,
+        KGGM,
         LB,
         OZ,
         PCS

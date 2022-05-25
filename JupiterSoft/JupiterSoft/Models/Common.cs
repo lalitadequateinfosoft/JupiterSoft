@@ -180,9 +180,9 @@ namespace JupiterSoft.Models
     }
 
     public enum COMType
-    {       
-        USB845,
-        USB232,        
+    {     
+        UART,
+        MODBUS,
         XYZ
     }
 
@@ -202,7 +202,8 @@ namespace JupiterSoft.Models
     {
         ModBus,
         MBus,
-        WireLess
+        WireLess,
+        UART
     }
 
     public enum DeviceType
@@ -276,6 +277,7 @@ namespace JupiterSoft.Models
         public const string Modbus = "Modbus";
         public const string Mbus = "Mbus";
         public const string EnOcean = "EnOcean";
+        public const string UART = "UART";
         public const string CleverHouse = "Clever House";
         public const string HC1SCC = "SC.CC.01";
         public const string SysemInformation = "SysemInformation";
