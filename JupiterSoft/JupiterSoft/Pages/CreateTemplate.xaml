@@ -1554,16 +1554,17 @@
                                                         <ColumnDefinition Width="*"/>
                                                         <ColumnDefinition Width="*"/>
                                                     </Grid.ColumnDefinitions>
-                                                    <ToggleButton 
+                                                    <ToggleButton x:Name="Toggle16"
                                                         Content="16"
                                                         Grid.Column="0"
                                                         Style="{StaticResource ToggleButtonStyle1}"
                                                         HorizontalAlignment="Center"
                                                         VerticalAlignment="Center"
                                                         HorizontalContentAlignment="Center"
-                                                        IsChecked="True"
+                                                        IsChecked="False"
                                                         FontSize="9"
-                                                        Cursor="Hand" />
+                                                        Cursor="Hand"
+                                                                  Checked="Toggle16_Checked"/>
                                                     <ToggleButton 
                                                         Content="17"
                                                         Grid.Column="1"
@@ -2037,7 +2038,7 @@
                                                     <ColumnDefinition Width="32"/>
                                                     <ColumnDefinition Width="*"/>
                                                 </Grid.ColumnDefinitions>
-                                                <Image Grid.Column="0" Source="/assets/CtrlOn.png"  Stretch="Fill"/>
+                                                <Image x:Name="Outpot1" Grid.Column="0" Source="/assets/CtrlOn.png"  Stretch="Fill"/>
                                                 <Image Grid.Column="1" Source="/assets/CtrlOff.png"  Stretch="Fill"/>
                                                 <Image Grid.Column="2" Source="/assets/CtrlOff.png"  Stretch="Fill"/>
                                                 <Image Grid.Column="3" Source="/assets/CtrlOff.png"  Stretch="Fill"/>

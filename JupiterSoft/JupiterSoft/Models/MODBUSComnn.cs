@@ -28,12 +28,12 @@ namespace JupiterSoft.Models
 
         public void GetMultiSendorValueFM3(int Adr, int Parity, SerialPort port, int register, int val, string PName, int Ch, int Indx, DeviceType deviceType)
         {
-            PrepareHC5MRRequestMulti(Adr, 3, register - 1 >> 8, register - 1, port, val, PName, Ch, Indx, deviceType);
+            PrepareHC5MRRequestMulti(Adr, 3, register  >> 8, register, port, val, PName, Ch, Indx, deviceType);
         }
 
         public void GetMultiSendorValueFM4(int Adr, int Parity, SerialPort port, int register, int val, string PName, int Ch, int Indx, DeviceType deviceType)
         {
-            PrepareHC5MRRequestMulti(Adr, 4, register - 1 >> 8, register - 1, port, val, PName, Ch, Indx, deviceType);
+            PrepareHC5MRRequestMulti(Adr, 4, register >> 8, register, port, val, PName, Ch, Indx, deviceType);
         }
 
         private void PrepareHC5MRRequestFM16(int Adr, int FCode, int Hi, int Lo, SerialPort port, int val, string PName, int Ch, int Indx, DeviceType deviceType, int[] byteArr)

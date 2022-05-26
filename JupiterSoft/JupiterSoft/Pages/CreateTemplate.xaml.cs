@@ -111,6 +111,7 @@ namespace JupiterSoft.Pages
         private Dispatcher _dispathcer;
         private BackgroundWorker worker;
         private int readIndex = 0;
+        private bool initialized = false;
         public CreateTemplate()
         {
             bc = new BrushConverter();
@@ -132,6 +133,8 @@ namespace JupiterSoft.Pages
             LoadSystemSound();
 
             _dispathcer = Dispatcher.CurrentDispatcher;
+            this.SerialDevice = new SerialPort();
+         
 
             //TimerCheckReceiveData.Elapsed += TimerCheckReceiveData_Elapsed;
             //TimerCheckReceiveData.Interval = 1000 * 1;
@@ -1491,7 +1494,7 @@ namespace JupiterSoft.Pages
 
             if (!string.IsNullOrEmpty(ComPortControl.SelectedValue.ToString()) && ComPortControl.SelectedValue.ToString() != "0")
             {
-                ReadWeight();
+                ReadAllControCardInputOutput();
                 Stop.Visibility = Visibility.Visible;
                 Run.Visibility = Visibility.Hidden;
                 return;
@@ -1574,20 +1577,24 @@ namespace JupiterSoft.Pages
 
         private void SerialPortCommunications(string port = "", int baudRate = 0, int databit = 0, int stopBit = 0, int parity = 0)
         {
-            this.SerialDevice = new SerialPort(port);
-            this.SerialDevice.BaudRate = baudRate;
-            this.SerialDevice.DataBits = databit;
-            this.SerialDevice.StopBits = stopBit == 0 ? StopBits.None : (stopBit == 1 ? StopBits.One : (stopBit == 2 ? StopBits.Two : StopBits.OnePointFive));
-            this.SerialDevice.Parity = Parity.None;
-            this.SerialDevice.Handshake = Handshake.None;
-            this.SerialDevice.Encoding = ASCIIEncoding.ASCII;
-            this.SerialDevice.DataReceived += SerialDevice_DataReceived;
-            this.SerialDevice.Open();          
+            if (!this.SerialDevice.IsOpen)
+            {
+
+                this.SerialDevice = new SerialPort(port);
+                this.SerialDevice.BaudRate = baudRate;
+                this.SerialDevice.DataBits = databit;
+                this.SerialDevice.StopBits = stopBit == 0 ? StopBits.None : (stopBit == 1 ? StopBits.One : (stopBit == 2 ? StopBits.Two : StopBits.OnePointFive));
+                this.SerialDevice.Parity = Parity.None;
+                this.SerialDevice.Handshake = Handshake.None;
+                this.SerialDevice.Encoding = ASCIIEncoding.ASCII;
+                this.SerialDevice.DataReceived += SerialDevice_DataReceived;
+                this.SerialDevice.Open();
+            }
         }
 
         private void TimerCheckReceiveData_Elapsed()
         {
-            //TimerCheckReceiveData.Enabled = false;
+            TimerCheckReceiveData.Enabled = false;
             
             SB1Request _SB1Request = new SB1Request();
 
@@ -1627,14 +1634,8 @@ namespace JupiterSoft.Pages
                             Common.RecState = 0;
                             //Common.ReceiveDataQueue.Enqueue(_recData);
                         }
-
-                        if (_recData.SessionId > 0)
-                        {
-                            Common.ReceiveDataQueue.Enqueue(_recData);
-                        }
-                        _UpdatePB = true;
-                        _SB1Request.EndSession(SerialDevice); // End Session 
-                        if (_CurrentActiveMenu != AppTools.UART) Common.RequestDataList.Clear();
+                        
+                        //if (_CurrentActiveMenu != AppTools.UART) Common.RequestDataList.Clear();
 
                         //Thread.Sleep(100);
                     }
@@ -1849,7 +1850,7 @@ namespace JupiterSoft.Pages
                 
             }
 
-            //TimerCheckReceiveData.Enabled = true;
+            TimerCheckReceiveData.Enabled = true;
         }
 
 
@@ -2093,13 +2094,40 @@ namespace JupiterSoft.Pages
             //TimerCheckReceiveData.Enabled = false;
         }
 
-        private void ReadControCardInput()
+        private void ReadAllControCardInputOutput()
         {
             //BindData.Enabled = true;
-            //CancelCount = 0;                        
+            //CancelCount = 0;              
+            
             MODBUSComnn obj = new MODBUSComnn();
-            Common.COMSelected = COMType.UART;
-            obj.GetMultiSendorValueFM4(Common.Address, Common.Parity, SerialDevice, 1, 1, "Weight", 1, 0, Models.DeviceType.WeightModule);   // GetSoftwareVersion(Common.Address, Common.Parity, sp, _ValueType);
+            Common.COMSelected = COMType.MODBUS;
+            SerialPortCommunications("COM7", 38400, 8, 1, 0);
+            obj.GetMultiSendorValueFM3(1,0, SerialDevice, 0, 30, "ControlCard", 1, 0, Models.DeviceType.WeightModule);   // GetSoftwareVersion(Common.Address, Common.Parity, sp, _ValueType);
+
+        }
+
+        private void ReadControCardState(int reg)
+        {
+            //BindData.Enabled = true;
+            //CancelCount = 0;              
+
+            MODBUSComnn obj = new MODBUSComnn();
+            Common.COMSelected = COMType.MODBUS;
+            SerialPortCommunications("COM7", 38400, 8, 1, 0);
+            obj.GetMultiSendorValueFM3(1, 0, SerialDevice, reg, 1, "ControlCard", 1, 0, Models.DeviceType.WeightModule);   // GetSoftwareVersion(Common.Address, Common.Parity, sp, _ValueType);
+
+        }
+
+        private void WriteControCardState(int reg,int val)
+        {
+            //BindData.Enabled = true;
+            //CancelCount = 0;              
+
+            MODBUSComnn obj = new MODBUSComnn();
+            Common.COMSelected = COMType.MODBUS;
+            int[] _val = new int[2] {0, val};
+            //SerialPortCommunications("COM7", 38400, 8, 1, 0);
+            obj.SetMultiSendorValueFM16(1, 0, SerialDevice, reg, 1, "ControlCard", 1, 0, Models.DeviceType.WeightModule, _val,false);   // GetSoftwareVersion(Common.Address, Common.Parity, sp, _ValueType);
 
         }
 
@@ -2205,6 +2233,15 @@ namespace JupiterSoft.Pages
         private void Stop_Click(object sender, RoutedEventArgs e)
         {
             StopWeight();
+        }
+
+        private void Toggle16_Checked(object sender, RoutedEventArgs e)
+        {
+                WriteControCardState(30, 1);
+
+                ReadAllControCardInputOutput();
+          
+            
         }
     }
 }
