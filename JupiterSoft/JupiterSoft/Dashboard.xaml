@@ -59,9 +59,10 @@
         BorderBrush="#041124" 
         BorderThickness="1">
                 <TextBlock VerticalAlignment="Center">
-            <Run Text="JUPI" FontSize="18" FontWeight="Bold" Foreground="#0182c9"/><Run Text="TER" FontSize="18" FontWeight="Bold" Foreground="#FFF"/>
+            <Run Text="Intel" FontSize="18" FontWeight="Bold" Foreground="#0060e9"/>
+                    <!--<Run Text="TER" FontSize="18" FontWeight="Bold" Foreground="#FFF"/>-->
             
-            <Run Text="SOFTWARE" FontSize="18" FontWeight="Normal" Foreground="#FFF"/>
+            <Run Text="Grids" FontSize="18" FontWeight="Normal" Foreground="#FFF"/>
                 </TextBlock>
                 <TextBlock Text="|" Foreground="#9c9c9c" FontSize="22" Height="36" Width="7"/>
                 <!--File Menu Start-->

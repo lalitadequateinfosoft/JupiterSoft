@@ -202,6 +202,7 @@
     <Resource Include="assets\controlBoard.png" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="assets\logojupiter.png" />
     <Content Include="fonts\font.css" />
     <Resource Include="fonts\ni7seg-bg.png" />
     <Resource Include="fonts\ni7seg-thumb.png" />
