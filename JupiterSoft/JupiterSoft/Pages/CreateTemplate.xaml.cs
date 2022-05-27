@@ -28,6 +28,7 @@ using System.Text.RegularExpressions;
 using System.Windows.Threading;
 using System.ComponentModel;
 using System.Threading;
+using System.Windows.Controls.Primitives;
 
 namespace JupiterSoft.Pages
 {
@@ -37,6 +38,7 @@ namespace JupiterSoft.Pages
     public partial class CreateTemplate : Page
     {
 
+        private bool write = false;
         const int REC_BUF_SIZE = 10000;
         byte[] recBuf = new byte[REC_BUF_SIZE];
         byte[] recBufParse = new byte[REC_BUF_SIZE];
@@ -112,6 +114,7 @@ namespace JupiterSoft.Pages
         private BackgroundWorker worker;
         private int readIndex = 0;
         private bool initialized = false;
+        int toggled = 0;
         public CreateTemplate()
         {
             bc = new BrushConverter();
@@ -134,7 +137,7 @@ namespace JupiterSoft.Pages
 
             _dispathcer = Dispatcher.CurrentDispatcher;
             this.SerialDevice = new SerialPort();
-         
+
 
             //TimerCheckReceiveData.Elapsed += TimerCheckReceiveData_Elapsed;
             //TimerCheckReceiveData.Interval = 1000 * 1;
@@ -1486,7 +1489,7 @@ namespace JupiterSoft.Pages
 
             if (!string.IsNullOrEmpty(ComPortWeight.SelectedValue.ToString()) && ComPortWeight.SelectedValue.ToString() != "0")
             {
-                ReadWeight();
+                ReadWeight(ComPortWeight.SelectedValue.ToString());
                 Stop.Visibility = Visibility.Visible;
                 Run.Visibility = Visibility.Hidden;
                 return;
@@ -1494,7 +1497,9 @@ namespace JupiterSoft.Pages
 
             if (!string.IsNullOrEmpty(ComPortControl.SelectedValue.ToString()) && ComPortControl.SelectedValue.ToString() != "0")
             {
-                ReadAllControCardInputOutput();
+                var suctom = deviceInfo.CustomDeviceInfos.Where(x => x.DeviceID == ComPortControl.SelectedValue.ToString()).FirstOrDefault();
+                string Port = suctom.PortName;
+                ReadAllControCardInputOutput(Port);
                 Stop.Visibility = Visibility.Visible;
                 Run.Visibility = Visibility.Hidden;
                 return;
@@ -1502,7 +1507,7 @@ namespace JupiterSoft.Pages
 
             if (!string.IsNullOrEmpty(ComPortMotor.SelectedValue.ToString()) && ComPortMotor.SelectedValue.ToString() != "0")
             {
-                ReadWeight();
+                //ReadWeight(ComPortWeight.SelectedValue.ToString());
                 Stop.Visibility = Visibility.Visible;
                 Run.Visibility = Visibility.Hidden;
                 return;
@@ -1595,7 +1600,7 @@ namespace JupiterSoft.Pages
         private void TimerCheckReceiveData_Elapsed()
         {
             TimerCheckReceiveData.Enabled = false;
-            
+
             SB1Request _SB1Request = new SB1Request();
 
             if (Common.RecState > 0)
@@ -1631,10 +1636,10 @@ namespace JupiterSoft.Pages
                             //ToolTipStatus = ComStatus.TimeOut;
                             _recData.Status = PortDataStatus.Normal;
 
-                            Common.RecState = 0;
+                            //Common.RecState = 0;
                             //Common.ReceiveDataQueue.Enqueue(_recData);
                         }
-                        
+
                         //if (_CurrentActiveMenu != AppTools.UART) Common.RequestDataList.Clear();
 
                         //Thread.Sleep(100);
@@ -1650,139 +1655,110 @@ namespace JupiterSoft.Pages
             {
                 IsComplete = false;
 
-                
-                    //recState = 1;
-                    while (Common.ReceiveBufferQueue.Count > 0)
+
+                //recState = 1;
+                while (Common.ReceiveBufferQueue.Count > 0)
+                {
+                    recBufParse = Common.ReceiveBufferQueue.Dequeue();
+
+                    Common.RecState = 1;
+                    SB1Reply _reply = new SB1Reply(Common.GetSessionId);
+                    SB1Handler _hndl = new SB1Handler(SerialDevice);
+                    _reply.SetTgm(recBufParse, _CurrentActiveMenu); //recBuf old implementation
+                    RecData _recData = Common.RequestDataList.Where(a => a.SessionId == _reply.sesId).FirstOrDefault();
+                    if (_recData != null && _reply != null)
                     {
-                        recBufParse = Common.ReceiveBufferQueue.Dequeue();
+                        //Common.WriteLog("Response :- " + _recData.PropertyName + "-" + _reply.sesId.ToString());
+                    }
+                    if (_reply.CheckCrc(recBufParse, Convert.ToInt32(_reply.length)) || _CurrentActiveMenu == AppTools.UART || write==true || write==false)  // SB1 Check CRC
+                    {
 
-                        Common.RecState = 1;
-                        SB1Reply _reply = new SB1Reply(Common.GetSessionId);
-                        SB1Handler _hndl = new SB1Handler(SerialDevice);
-                        _reply.SetTgm(recBufParse, _CurrentActiveMenu); //recBuf old implementation
-                        RecData _recData = Common.RequestDataList.Where(a => a.SessionId == _reply.sesId).FirstOrDefault();
-                        if (_recData != null && _reply != null)
+                        _UpdatePB = true;
+                        //TimerCheckReceiveData.Enabled = true;
+                        if (_reply.IsAckOk()) // Ok
                         {
-                            //Common.WriteLog("Response :- " + _recData.PropertyName + "-" + _reply.sesId.ToString());
-                        }
-                        if (_reply.CheckCrc(recBufParse, Convert.ToInt32(_reply.length)) || _CurrentActiveMenu == AppTools.UART)  // SB1 Check CRC
-                        {
-
-                            _UpdatePB = true;
-                            //TimerCheckReceiveData.Enabled = true;
-                            if (_reply.IsAckOk()) // Ok
+                            //ToolTipStatus = ComStatus.OK;
+                            //IsActive = false;
+                            //RecData _recData = Common.RequestDataList.Where(a => a.SessionId == _reply.sesId).FirstOrDefault();
+                            if (_recData != null && _reply.sesId == _recData.SessionId)
                             {
-                                //ToolTipStatus = ComStatus.OK;
-                                //IsActive = false;
-                                //RecData _recData = Common.RequestDataList.Where(a => a.SessionId == _reply.sesId).FirstOrDefault();
-                                if (_recData != null && _reply.sesId == _recData.SessionId)
+                                if (Common.COMSelected == COMType.UART)
                                 {
-                                    if (Common.COMSelected == COMType.UART)
+                                    _recData.MbTgm = recBufParse;
+                                    _recData.Status = PortDataStatus.Received;
+                                    Common.GoodTmgm++;
+                                    Common.ReceiveDataQueue.Enqueue(_recData);
+
+                                    showWeightModuleResponse();
+                                    //TimerCheckReceiveData.Enabled = true;
+                                    return;
+                                }
+
+                                Byte[] _payLoad = _reply.ExtractPayload();
+                                PayloadRS _PayloadRS = new PayloadRS();
+                                _PayloadRS.SetPayLoadRS(_payLoad);
+                                _MbTgmBytes = _PayloadRS.ExtractModBusTgm(_payLoad);
+                                if (Common.COMSelected == COMType.MODBUS)
+                                {
+                                    _MbTgmBytes = _reply.RxSB1;
+                                    _PayloadRS.MbLength = (ushort)_reply.length;
+                                }
+                                if (_MbTgmBytes != null && _PayloadRS.MbLength > 0)
+                                {
+                                    bool _IsTgmErr = false;
+                                    //RecData _recData = Common.RequestDataList.Where(a => a.SessionId == _reply.sesId).FirstOrDefault();
+                                    _IsTgmErr = CheckTgmError(_recData, _payLoad, _MbTgmBytes, _PayloadRS.MbLength);
+                                    if (_IsTgmErr || write==true)
                                     {
-                                        _recData.MbTgm = recBufParse;
+                                        if (_recData.RqType == RQType.WireLess)
+                                        {
+                                            Common.MbTgmBytes = _reply.payload;
+                                        }
+                                        else
+                                        {
+                                            Common.MbTgmBytes = _MbTgmBytes;
+                                        }
                                         _recData.Status = PortDataStatus.Received;
-                                        Common.GoodTmgm++;
+                                        _recData.MbTgm = Common.MbTgmBytes;
                                         Common.ReceiveDataQueue.Enqueue(_recData);
-
-                                        showWeightModuleResponse();
-                                        //TimerCheckReceiveData.Enabled = true;
+                                        ReadControlCardResponse();
                                         return;
+                                        //Common.IsClear = false;                                           
                                     }
-
-                                    Byte[] _payLoad = _reply.ExtractPayload();
-                                    PayloadRS _PayloadRS = new PayloadRS();
-                                    _PayloadRS.SetPayLoadRS(_payLoad);
-                                    _MbTgmBytes = _PayloadRS.ExtractModBusTgm(_payLoad);
-                                    if (Common.COMSelected == COMType.MODBUS)
-                                    {
-                                        _MbTgmBytes = _reply.RxSB1;
-                                        _PayloadRS.MbLength = (ushort)_reply.length;
-                                    }
-                                    if (_MbTgmBytes != null && _PayloadRS.MbLength > 0)
-                                    {
-                                        bool _IsTgmErr = false;
-                                        //RecData _recData = Common.RequestDataList.Where(a => a.SessionId == _reply.sesId).FirstOrDefault();
-                                        _IsTgmErr = CheckTgmError(_recData, _payLoad, _MbTgmBytes, _PayloadRS.MbLength);
-                                        if (_IsTgmErr)
-                                        {
-                                            if (_recData.RqType == RQType.WireLess)
-                                            {
-                                                Common.MbTgmBytes = _reply.payload;
-                                            }
-                                            else
-                                            {
-                                                Common.MbTgmBytes = _MbTgmBytes;
-                                            }
-                                            _recData.Status = PortDataStatus.Received;
-                                            _recData.MbTgm = Common.MbTgmBytes;
-                                            Common.ReceiveDataQueue.Enqueue(_recData);
-                                            //Common.IsClear = false;                                           
-                                        }
-                                    }
-                                    else if (_reply.ack == 5)
-                                    {
-                                        //UpdateRequestStatus(PortDataStatus.Ack, _reply.sesId);
-                                        //IsAck = true;
-                                        //ToolTipStatus = ComStatus.OK;
-                                        if (_recData != null)
-                                            _recData.Status = PortDataStatus.AckOkWait;
-                                    }
-                                    else
-                                    {
-                                        //UpdateRequestStatus(PortDataStatus.Ack, _reply.sesId);
-                                        //IsAck = true;
-                                        //ToolTipStatus = ComStatus.OK;
-                                        if (_recData != null)
-                                        {
-                                            if (_recData.Status == PortDataStatus.SessionEnd)
-                                            {
-                                                Common.RecState = 0;
-                                                _recData.Status = PortDataStatus.SessionEnd;
-                                            }
-                                            else
-                                            {
-                                                _recData.Status = PortDataStatus.AckOkWait;  // Change it to Ok
-                                            }
-                                        }
-                                    }
+                                }
+                                else if (_reply.ack == 5)
+                                {
+                                    //UpdateRequestStatus(PortDataStatus.Ack, _reply.sesId);
+                                    //IsAck = true;
+                                    //ToolTipStatus = ComStatus.OK;
+                                    if (_recData != null)
+                                        _recData.Status = PortDataStatus.AckOkWait;
                                 }
                                 else
                                 {
-                                    //UpdateRequestStatus(PortDataStatus.SessionEnd, _reply.sesId);
-                                    //_SB1Request.EndSession(serialPort1);
-                                    //IsActive = false;
-                                    //ToolTipStatus = ComStatus.WrongSession;
+                                    //UpdateRequestStatus(PortDataStatus.Ack, _reply.sesId);
+                                    //IsAck = true;
+                                    //ToolTipStatus = ComStatus.OK;
                                     if (_recData != null)
                                     {
-                                        _recData.Status = PortDataStatus.Normal;
-                                        if (_recData.SessionId > 0)
+                                        if (_recData.Status == PortDataStatus.SessionEnd)
                                         {
-                                            Common.ReceiveDataQueue.Enqueue(_recData);
+                                            Common.RecState = 0;
+                                            _recData.Status = PortDataStatus.SessionEnd;
                                         }
-
+                                        else
+                                        {
+                                            _recData.Status = PortDataStatus.AckOkWait;  // Change it to Ok
+                                        }
                                     }
                                 }
                             }
-                            else if (_reply.ack == 1)  // Busy
+                            else
                             {
-                                // Check send/receive time diff.
-                                //UpdateRequestStatus(PortDataStatus.Busy, _reply.sesId);
-                                //IsActive = true;
-                                //ToolTipStatus = ComStatus.Busy;
-                                if (_recData != null)
-                                {
-                                    _recData.Status = PortDataStatus.Busy;
-
-                                    _SB1Request.EndSession(SerialDevice);
-
-                                }
-                            }
-                            else if (_reply.ack == 2)  // IllegalCommand
-                            {
-                                _SB1Request.EndSession(SerialDevice);
                                 //UpdateRequestStatus(PortDataStatus.SessionEnd, _reply.sesId);
+                                //_SB1Request.EndSession(serialPort1);
                                 //IsActive = false;
-                                //ToolTipStatus = ComStatus.IllegalCommand;
+                                //ToolTipStatus = ComStatus.WrongSession;
                                 if (_recData != null)
                                 {
                                     _recData.Status = PortDataStatus.Normal;
@@ -1790,49 +1766,45 @@ namespace JupiterSoft.Pages
                                     {
                                         Common.ReceiveDataQueue.Enqueue(_recData);
                                     }
-                                }
-                            }
-                            else if (_reply.ack == 3)  //CrcFault
-                            {
-                                _SB1Request.EndSession(SerialDevice);
-                                //UpdateRequestStatus(PortDataStatus.SessionEnd, _reply.sesId);
-                                //IsActive = false;
-                                //Common.CRCFaults++;  //SB1 CRC 
-                                //ToolTipStatus = ComStatus.CRC;
-                                if (_recData != null)
-                                {
-                                    _recData.Status = PortDataStatus.Normal;
-                                    if (_recData.SessionId > 0)
-                                    {
-                                        Common.ReceiveDataQueue.Enqueue(_recData);
-                                        // Common.ReceiveDataQueueEventBased.Enqueue(_recData);
-                                    }
-                                }
-                            }
-                            else if (_reply.ack == 4)  //Tgm Fault
-                            {
-                                _SB1Request.EndSession(SerialDevice);
-                                //UpdateRequestStatus(PortDataStatus.SessionEnd, _reply.sesId);
-                                //IsActive = false;
-                                //Common.CRCFaults++;  //Tgm Fault
-                                // ToolTipStatus = ComStatus.Tgmfault;
-                                if (_recData != null)
-                                {
-                                    _recData.Status = PortDataStatus.Normal;
-                                    if (_recData.SessionId > 0)
-                                    {
-                                        Common.ReceiveDataQueue.Enqueue(_recData);
-                                        // Common.ReceiveDataQueueEventBased.Enqueue(_recData);
-                                    }
+
                                 }
                             }
                         }
-                        else
+                        else if (_reply.ack == 1)  // Busy
                         {
-                            _UpdatePB = true;
+                            // Check send/receive time diff.
+                            //UpdateRequestStatus(PortDataStatus.Busy, _reply.sesId);
+                            //IsActive = true;
+                            //ToolTipStatus = ComStatus.Busy;
+                            if (_recData != null)
+                            {
+                                _recData.Status = PortDataStatus.Busy;
+
+                                _SB1Request.EndSession(SerialDevice);
+
+                            }
+                        }
+                        else if (_reply.ack == 2)  // IllegalCommand
+                        {
                             _SB1Request.EndSession(SerialDevice);
-                            //UpdateRequestStatus(PortDataStatus.SessionEnd, Common.GetSessionId);
+                            //UpdateRequestStatus(PortDataStatus.SessionEnd, _reply.sesId);
                             //IsActive = false;
+                            //ToolTipStatus = ComStatus.IllegalCommand;
+                            if (_recData != null)
+                            {
+                                _recData.Status = PortDataStatus.Normal;
+                                if (_recData.SessionId > 0)
+                                {
+                                    Common.ReceiveDataQueue.Enqueue(_recData);
+                                }
+                            }
+                        }
+                        else if (_reply.ack == 3)  //CrcFault
+                        {
+                            _SB1Request.EndSession(SerialDevice);
+                            //UpdateRequestStatus(PortDataStatus.SessionEnd, _reply.sesId);
+                            //IsActive = false;
+                            //Common.CRCFaults++;  //SB1 CRC 
                             //ToolTipStatus = ComStatus.CRC;
                             if (_recData != null)
                             {
@@ -1843,11 +1815,47 @@ namespace JupiterSoft.Pages
                                     // Common.ReceiveDataQueueEventBased.Enqueue(_recData);
                                 }
                             }
-                            // Common.CRCFaults++; // SB1 CRC
-
+                        }
+                        else if (_reply.ack == 4)  //Tgm Fault
+                        {
+                            _SB1Request.EndSession(SerialDevice);
+                            //UpdateRequestStatus(PortDataStatus.SessionEnd, _reply.sesId);
+                            //IsActive = false;
+                            //Common.CRCFaults++;  //Tgm Fault
+                            // ToolTipStatus = ComStatus.Tgmfault;
+                            if (_recData != null)
+                            {
+                                _recData.Status = PortDataStatus.Normal;
+                                if (_recData.SessionId > 0)
+                                {
+                                    Common.ReceiveDataQueue.Enqueue(_recData);
+                                    // Common.ReceiveDataQueueEventBased.Enqueue(_recData);
+                                }
+                            }
                         }
                     }
-                
+                    else
+                    {
+                        _UpdatePB = true;
+                        _SB1Request.EndSession(SerialDevice);
+                        //UpdateRequestStatus(PortDataStatus.SessionEnd, Common.GetSessionId);
+                        //IsActive = false;
+                        //ToolTipStatus = ComStatus.CRC;
+                        if (_recData != null)
+                        {
+                            _recData.Status = PortDataStatus.Normal;
+                            if (_recData.SessionId > 0)
+                            {
+                                Common.ReceiveDataQueue.Enqueue(_recData);
+                                //ReadControlCardResponse();
+                                // Common.ReceiveDataQueueEventBased.Enqueue(_recData);
+                            }
+                        }
+                        // Common.CRCFaults++; // SB1 CRC
+
+                    }
+                }
+
             }
 
             TimerCheckReceiveData.Enabled = true;
@@ -1857,7 +1865,7 @@ namespace JupiterSoft.Pages
 
         private void SerialDevice_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
-          
+
             switch (Common.RecState)
             {
                 case 0:
@@ -1883,7 +1891,7 @@ namespace JupiterSoft.Pages
                         IsComplete = true;
                         Common.ReceiveBufferQueue.Enqueue(recBuf);
 
-                        
+
                     }
                     else if (Common.COMSelected == COMType.MODBUS)
                     {
@@ -2043,11 +2051,10 @@ namespace JupiterSoft.Pages
             return _IsTgmErr;
         }
 
-        private void ReadWeight()
+        private void ReadWeight(string deviceId)
         {
             Common.RecState = 1;
             Common.CurrentDevice = Models.DeviceType.WeightModule;
-            string deviceId = ComPortWeight.SelectedValue.ToString();
 
             //int TypeOfDevice = (int)userDeviceType.WeightModule;
             int Baudrate = 9600;  //38400 for control card.
@@ -2082,10 +2089,10 @@ namespace JupiterSoft.Pages
             this.SerialDevice.RtsEnable = false;
             this.SerialDevice.DiscardInBuffer();
             this.SerialDevice.DiscardOutBuffer();
-            this.SerialDevice.DataReceived += SerialDevice_DataReceived;
+            //this.SerialDevice.DataReceived -= SerialDevice_DataReceived;
             //this.SerialDevice.Dispose();
             //this.SerialDevice.Close();
-            
+
             Stop.Visibility = Visibility.Hidden;
             Run.Visibility = Visibility.Visible;
             WeightContent.Content = "8888888";
@@ -2094,40 +2101,42 @@ namespace JupiterSoft.Pages
             //TimerCheckReceiveData.Enabled = false;
         }
 
-        private void ReadAllControCardInputOutput()
+        private void ReadAllControCardInputOutput(string Comport)
         {
             //BindData.Enabled = true;
             //CancelCount = 0;              
-            
+
             MODBUSComnn obj = new MODBUSComnn();
             Common.COMSelected = COMType.MODBUS;
-            SerialPortCommunications("COM7", 38400, 8, 1, 0);
-            obj.GetMultiSendorValueFM3(1,0, SerialDevice, 0, 30, "ControlCard", 1, 0, Models.DeviceType.WeightModule);   // GetSoftwareVersion(Common.Address, Common.Parity, sp, _ValueType);
+            _CurrentActiveMenu = AppTools.Modbus;
+            SerialPortCommunications(Comport, 38400, 8, 1, 0);
+            obj.GetMultiSendorValueFM3(1, 0, SerialDevice, 0, 30, "ControlCard", 1, 0, Models.DeviceType.ControlCard);   // GetSoftwareVersion(Common.Address, Common.Parity, sp, _ValueType);
 
         }
 
-        private void ReadControCardState(int reg)
+        private void ReadControCardState(int reg, string Comport)
         {
             //BindData.Enabled = true;
             //CancelCount = 0;              
 
             MODBUSComnn obj = new MODBUSComnn();
             Common.COMSelected = COMType.MODBUS;
-            SerialPortCommunications("COM7", 38400, 8, 1, 0);
-            obj.GetMultiSendorValueFM3(1, 0, SerialDevice, reg, 1, "ControlCard", 1, 0, Models.DeviceType.WeightModule);   // GetSoftwareVersion(Common.Address, Common.Parity, sp, _ValueType);
+            _CurrentActiveMenu = AppTools.Modbus;
+            SerialPortCommunications(Comport, 38400, 8, 1, 0);
+            obj.GetMultiSendorValueFM3(1, 0, SerialDevice, reg, 1, "ControlCard", 1, 0, Models.DeviceType.ControlCard);   // GetSoftwareVersion(Common.Address, Common.Parity, sp, _ValueType);
 
         }
 
-        private void WriteControCardState(int reg,int val)
+        private void WriteControCardState(int reg, int val)
         {
             //BindData.Enabled = true;
             //CancelCount = 0;              
-
+            write = true;
             MODBUSComnn obj = new MODBUSComnn();
             Common.COMSelected = COMType.MODBUS;
-            int[] _val = new int[2] {0, val};
+            int[] _val = new int[2] { 0, val };
             //SerialPortCommunications("COM7", 38400, 8, 1, 0);
-            obj.SetMultiSendorValueFM16(1, 0, SerialDevice, reg, 1, "ControlCard", 1, 0, Models.DeviceType.WeightModule, _val,false);   // GetSoftwareVersion(Common.Address, Common.Parity, sp, _ValueType);
+            obj.SetMultiSendorValueFM16(1, 0, SerialDevice, reg+1, 1, "ControlCard", 1, 0, Models.DeviceType.ControlCard, _val, false);   // GetSoftwareVersion(Common.Address, Common.Parity, sp, _ValueType);
 
         }
 
@@ -2165,17 +2174,17 @@ namespace JupiterSoft.Pages
                         {
                             _dispathcer.Invoke(new Action(() =>
                             {
-                                if(unit.ToLower().ToString().Contains(weightUnit.KGGM.ToString().ToLower()))
+                                if (unit.ToLower().ToString().Contains(weightUnit.KGGM.ToString().ToLower()))
                                 {
                                     WeightUnitKG.Content = weightUnit.KGGM.ToString().ToLower();
                                 }
                                 else if (unit.ToLower().ToString().Contains(weightUnit.KGG.ToString().ToLower()))
                                 {
-                                    WeightUnitKG.Content = weightUnit.KGG.ToString().ToLower(); 
+                                    WeightUnitKG.Content = weightUnit.KGG.ToString().ToLower();
                                 }
                                 else
                                 {
-                                    WeightUnitKG.Content = weightUnit.KG.ToString().ToLower(); 
+                                    WeightUnitKG.Content = weightUnit.KG.ToString().ToLower();
                                 }
                                 WeightUnitKG.Foreground = Brushes.Red;
                                 WeightUnitLB.Foreground = Brushes.White;
@@ -2227,6 +2236,266 @@ namespace JupiterSoft.Pages
             //TimerCheckReceiveData.Enabled = true;
         }
 
+        void ReadControlCardResponse()
+        {
+            RecData _recData = new RecData();
+            _recData = Common.ReceiveDataQueue.Dequeue();
+            if (_recData.MbTgm.Length > 0 && _recData.MbTgm.Length > readIndex)
+            {
+                //To Read Function Code response.
+                if (_recData.MbTgm[1] == (int)COM_Code.three)
+                {
+                    // int read = _recData.MbTgm[2];
+                    // byte[] arr = _recData.MbTgm.Where((item, index) => index > 2 && index < 63).ToArray();
+                    //for (int i = 0; i < arr.Length; i+=2)
+                    //{
+                    int _i0 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 3);
+                    int _i1 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 5);
+                    int _i2 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 7);
+                    int _i3 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 9);
+                    int _i4 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 11);
+                    int _i5 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 13);
+                    int _i6 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 15);
+                    int _i7 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 17);
+                    int _i8 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 19);
+                    int _i9 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 21);
+                    int _i10 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 23);
+                    int _i11 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 25);
+                    int _i12 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 27);
+                    int _i13 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 29);
+                    int _i14 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 31);
+                    int _i15 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 33);
+                    int _i16 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 35);
+                    int _i17 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 37);
+                    int _i18 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 39);
+                    int _i19 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 41);
+                    int _i20 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 43);
+                    int _i21 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 45);
+                    int _i22 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 47);
+                    int _i23 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 49);
+                    int _i24 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 51);
+                    int _i25 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 53);
+                    int _i26 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 55);
+                    int _i27 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 57);
+                    int _i28 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 59);
+                    int _i29 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 61);
+                    //int _i30 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 63);
+                    //int _i31 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 65);
+
+
+
+                    if (_i0 == 0)
+                    {
+                        _dispathcer.Invoke(new Action(() => { ReadInput0.Source = new BitmapImage(new Uri(@"/assets/CtrlOn.png", UriKind.Relative)); }));
+
+                    }
+                    else
+                    {
+                        _dispathcer.Invoke(new Action(() => { ReadInput0.Source = new BitmapImage(new Uri(@"/assets/CtrlOff.png", UriKind.Relative)); }));
+
+                    }
+
+                    if (_i1 == 0)
+                    {
+                        _dispathcer.Invoke(new Action(() => { ReadInput1.Source = new BitmapImage(new Uri(@"/assets/CtrlOn.png", UriKind.Relative)); }));
+
+                    }
+                    else
+                    {
+                        _dispathcer.Invoke(new Action(() => { ReadInput1.Source = new BitmapImage(new Uri(@"/assets/CtrlOff.png", UriKind.Relative)); }));
+
+                    }
+
+
+                    if (_i2 == 0)
+                    {
+                        _dispathcer.Invoke(new Action(() => { ReadInput2.Source = new BitmapImage(new Uri(@"/assets/CtrlOn.png", UriKind.Relative)); }));
+                        
+                    }
+                    else
+                    {
+                        _dispathcer.Invoke(new Action(() => { ReadInput2.Source = new BitmapImage(new Uri(@"/assets/CtrlOff.png", UriKind.Relative)); }));
+                        
+                    }
+
+                    if (_i3 == 0)
+                    {
+                        _dispathcer.Invoke(new Action(() => { ReadInput3.Source = new BitmapImage(new Uri(@"/assets/CtrlOn.png", UriKind.Relative)); }));
+                        
+                    }
+                    else
+                    {
+                        _dispathcer.Invoke(new Action(() => { ReadInput3.Source = new BitmapImage(new Uri(@"/assets/CtrlOff.png", UriKind.Relative)); }));
+                        
+                    }
+
+                    if (_i4 == 0)
+                    {
+                        _dispathcer.Invoke(new Action(() => { ReadInput4.Source = new BitmapImage(new Uri(@"/assets/CtrlOn.png", UriKind.Relative)); }));
+                        
+                    }
+                    else
+                    {
+                        _dispathcer.Invoke(new Action(() => { ReadInput4.Source = new BitmapImage(new Uri(@"/assets/CtrlOff.png", UriKind.Relative)); }));
+                        
+                    }
+
+                    if (_i5 == 0)
+                    {
+                        _dispathcer.Invoke(new Action(() => { ReadInput5.Source = new BitmapImage(new Uri(@"/assets/CtrlOn.png", UriKind.Relative)); }));
+                        
+                    }
+                    else
+                    {
+                        _dispathcer.Invoke(new Action(() => { ReadInput5.Source = new BitmapImage(new Uri(@"/assets/CtrlOff.png", UriKind.Relative)); }));
+                        
+                    }
+
+                    if (_i6 == 0)
+                    {
+                        _dispathcer.Invoke(new Action(() => { ReadInput6.Source = new BitmapImage(new Uri(@"/assets/CtrlOn.png", UriKind.Relative)); }));
+                        
+                    }
+                    else
+                    {
+                        _dispathcer.Invoke(new Action(() => { ReadInput6.Source = new BitmapImage(new Uri(@"/assets/CtrlOff.png", UriKind.Relative)); }));
+                        
+                    }
+
+                    if (_i7 == 0)
+                    {
+                        _dispathcer.Invoke(new Action(() => { ReadInput7.Source = new BitmapImage(new Uri(@"/assets/CtrlOn.png", UriKind.Relative)); }));
+                        
+                    }
+                    else
+                    {
+                        _dispathcer.Invoke(new Action(() => { ReadInput7.Source = new BitmapImage(new Uri(@"/assets/CtrlOff.png", UriKind.Relative)); }));
+                        
+                    }
+
+                    if (_i8 == 0)
+                    {
+                        _dispathcer.Invoke(new Action(() => { ReadInput8.Source = new BitmapImage(new Uri(@"/assets/CtrlOn.png", UriKind.Relative)); }));
+                        
+                    }
+                    else
+                    {
+                        _dispathcer.Invoke(new Action(() => { ReadInput8.Source = new BitmapImage(new Uri(@"/assets/CtrlOff.png", UriKind.Relative)); }));
+                        
+                    }
+
+                    if (_i9 == 0)
+                    {
+                        _dispathcer.Invoke(new Action(() => { ReadInput9.Source = new BitmapImage(new Uri(@"/assets/CtrlOn.png", UriKind.Relative)); }));
+                        
+                    }
+                    else
+                    {
+                        _dispathcer.Invoke(new Action(() => { ReadInput9.Source = new BitmapImage(new Uri(@"/assets/CtrlOff.png", UriKind.Relative)); }));
+                        
+                    }
+
+                    if (_i10 == 0)
+                    {
+                        _dispathcer.Invoke(new Action(() => { ReadInput10.Source = new BitmapImage(new Uri(@"/assets/CtrlOn.png", UriKind.Relative)); }));
+                        
+                    }
+                    else
+                    {
+                        _dispathcer.Invoke(new Action(() => { ReadInput10.Source = new BitmapImage(new Uri(@"/assets/CtrlOff.png", UriKind.Relative)); }));
+                        
+                    }
+
+                    if (_i11 == 0)
+                    {
+                        _dispathcer.Invoke(new Action(() => { ReadInput11.Source = new BitmapImage(new Uri(@"/assets/CtrlOn.png", UriKind.Relative)); }));
+                        
+                    }
+                    else
+                    {
+                        _dispathcer.Invoke(new Action(() => { ReadInput0.Source = new BitmapImage(new Uri(@"/assets/CtrlOff.png", UriKind.Relative)); }));
+                        
+                    }
+
+                    if (_i12 == 0)
+                    {
+                        _dispathcer.Invoke(new Action(() => { ReadInput12.Source = new BitmapImage(new Uri(@"/assets/CtrlOn.png", UriKind.Relative)); }));
+                        
+                    }
+                    else
+                    {
+                        _dispathcer.Invoke(new Action(() => { ReadInput12.Source = new BitmapImage(new Uri(@"/assets/CtrlOff.png", UriKind.Relative)); }));
+                       
+                    }
+
+                    if (_i13 == 0)
+                    {
+                        _dispathcer.Invoke(new Action(() => { ReadInput13.Source = new BitmapImage(new Uri(@"/assets/CtrlOn.png", UriKind.Relative)); }));
+                        
+                    }
+                    else
+                    {
+                        _dispathcer.Invoke(new Action(() => { ReadInput13.Source = new BitmapImage(new Uri(@"/assets/CtrlOff.png", UriKind.Relative)); }));
+                        
+                    }
+
+                    if (_i14 == 0)
+                    {
+                        _dispathcer.Invoke(new Action(() => { ReadInput14.Source = new BitmapImage(new Uri(@"/assets/CtrlOn.png", UriKind.Relative)); }));
+                        
+                    }
+                    else
+                    {
+                        _dispathcer.Invoke(new Action(() => { ReadInput14.Source = new BitmapImage(new Uri(@"/assets/CtrlOff.png", UriKind.Relative)); }));
+                        
+                    }
+
+                    if (_i15 == 0)
+                    {
+                        _dispathcer.Invoke(new Action(() => { ReadInput15.Source = new BitmapImage(new Uri(@"/assets/CtrlOn.png", UriKind.Relative)); }));
+
+                    }
+                    else
+                    {
+                        _dispathcer.Invoke(new Action(() => { ReadInput15.Source = new BitmapImage(new Uri(@"/assets/CtrlOff.png", UriKind.Relative)); }));
+
+                    }
+
+
+                    //Read input register state.
+
+                    _dispathcer.Invoke(new Action(() =>
+                    {
+                        Toggle16.IsChecked = _i16 == 0 ? true : false;
+                        Toggle17.IsChecked = _i17 == 0 ? true : false;
+                        Toggle18.IsChecked = _i18 == 0 ? true : false;
+                        Toggle19.IsChecked = _i19 == 0 ? true : false;
+                        Toggle20.IsChecked = _i20 == 0 ? true : false;
+                        Toggle21.IsChecked = _i21 == 0 ? true : false;
+                        Toggle22.IsChecked = _i22 == 0 ? true : false;
+                        Toggle23.IsChecked = _i23 == 0 ? true : false;
+                        Toggle24.IsChecked = _i24 == 0 ? true : false;
+                        Toggle25.IsChecked = _i25 == 0 ? true : false;
+                        Toggle26.IsChecked = _i26 == 0 ? true : false;
+                        Toggle27.IsChecked = _i27 == 0 ? true : false;
+                        Toggle28.IsChecked = _i28 == 0 ? true : false;
+                        Toggle29.IsChecked = _i29 == 0 ? true : false;
+                        //Toggle30.IsChecked = _i30 == 0 ? true : false;
+                    }));
+
+                }
+                //To Write Function Code response.
+                else if (_recData.MbTgm[1] == (int)COM_Code.sixteen)
+                {
+                    //switch(toggled)
+                    //{
+                    //    case 16:
+                    //        Toggle16.IsChecked=
+                    //}
+                }
+            }
+        }
+
 
         #endregion
 
@@ -2235,14 +2504,30 @@ namespace JupiterSoft.Pages
             StopWeight();
         }
 
-        private void Toggle16_Checked(object sender, RoutedEventArgs e)
+        private void Toggle_Checked(object sender, RoutedEventArgs e)
         {
-                WriteControCardState(30, 1);
-
-                ReadAllControCardInputOutput();
-          
+            var inp = sender as ToggleButton;
+            toggled = Convert.ToInt32(inp.Content.ToString());
+            if(inp.IsChecked!=null && inp.IsChecked.Value)
+            {
+                if (Convert.ToInt32(inp.Content) < 31)
+                {
+                    WriteControCardState(Convert.ToInt32(inp.Content), 0);
+                }
+            }
+            else if(inp.IsChecked != null && !inp.IsChecked.Value)
+            {
+                if (Convert.ToInt32(inp.Content) < 31)
+                {
+                    WriteControCardState(Convert.ToInt32(inp.Content), 1);
+                }
+            }
             
+
+            // ReadAllControCardInputOutput();
         }
+
+       
     }
 }
 

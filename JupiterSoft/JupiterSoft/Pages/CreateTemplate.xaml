@@ -1554,133 +1554,191 @@
                                                         <ColumnDefinition Width="*"/>
                                                         <ColumnDefinition Width="*"/>
                                                     </Grid.ColumnDefinitions>
-                                                    <ToggleButton x:Name="Toggle16"
+                                                    <ToggleButton 
+                                                        x:Name="Toggle16"
                                                         Content="16"
                                                         Grid.Column="0"
                                                         Style="{StaticResource ToggleButtonStyle1}"
                                                         HorizontalAlignment="Center"
                                                         VerticalAlignment="Center"
                                                         HorizontalContentAlignment="Center"
-                                                        IsChecked="False"
+                                                        IsChecked="{x:Null}"
                                                         FontSize="9"
                                                         Cursor="Hand"
-                                                                  Checked="Toggle16_Checked"/>
-                                                    <ToggleButton 
+                                                        Click="Toggle_Checked"/>
+                                                    <ToggleButton
+                                                        x:Name="Toggle17"
                                                         Content="17"
                                                         Grid.Column="1"
                                                         Style="{StaticResource ToggleButtonStyle1}"
                                                         HorizontalAlignment="Center"
                                                         VerticalAlignment="Center"
                                                         HorizontalContentAlignment="Center"
-                                                        IsChecked="True"
-                                                        FontSize="9" />
-                                                    <ToggleButton 
+                                                        IsChecked="{x:Null}"
+                                                        FontSize="9"
+                                                        Click="Toggle_Checked"/>
+                                                    <ToggleButton
+                                                        x:Name="Toggle18"
                                                         Content="18"
                                                         Grid.Column="2"
                                                         Style="{StaticResource ToggleButtonStyle1}"
                                                         HorizontalAlignment="Center"
                                                         VerticalAlignment="Center"
                                                         HorizontalContentAlignment="Center"
-                                                        IsChecked="True"
-                                                        FontSize="9" />
-                                                    <ToggleButton 
+                                                        IsChecked="{x:Null}"
+                                                        FontSize="9"
+                                                        Click="Toggle_Checked"/>
+                                                    <ToggleButton
+                                                        x:Name="Toggle19"
                                                         Content="19"
                                                         Grid.Column="3"
                                                         Style="{StaticResource ToggleButtonStyle1}"
                                                         HorizontalAlignment="Center"
                                                         VerticalAlignment="Center"
                                                         HorizontalContentAlignment="Center"
-                                                        IsChecked="True" FontSize="9" />
-                                                    <ToggleButton 
+                                                        IsChecked="{x:Null}"
+                                                        FontSize="9"
+                                                        Click="Toggle_Checked"/>
+                                                    <ToggleButton
+                                                        x:Name="Toggle20"
                                                         Content="20" Grid.Column="4"
                                                         Style="{StaticResource ToggleButtonStyle1}"
                                                         HorizontalAlignment="Center"
                                                         VerticalAlignment="Center"
-                                                        HorizontalContentAlignment="Center"  IsChecked="True" FontSize="9" />
+                                                        HorizontalContentAlignment="Center"
+                                                        IsChecked="{x:Null}"
+                                                        FontSize="9"
+                                                        Click="Toggle_Checked"/>
                                                     <ToggleButton 
+                                                        x:Name="Toggle21"
                                                         Content="21" Grid.Column="5"
                                                         Style="{StaticResource ToggleButtonStyle1}"
                                                         HorizontalAlignment="Center"
                                                         VerticalAlignment="Center"
-                                                        HorizontalContentAlignment="Center"  IsChecked="True" FontSize="9" />
+                                                        HorizontalContentAlignment="Center"
+                                                        IsChecked="{x:Null}"
+                                                        FontSize="9"
+                                                        Click="Toggle_Checked"/>
 
-                                                    <ToggleButton 
-                                                        Content="6" Grid.Column="6"
-                                                        Style="{StaticResource ToggleButtonStyle1}"
-                                                        HorizontalAlignment="Center"
-                                                        VerticalAlignment="Center"
-                                                        HorizontalContentAlignment="Center"  IsChecked="True" FontSize="10" />
-
-                                                    <ToggleButton 
-                                                        Content="7" Grid.Column="7"
-                                                        Style="{StaticResource ToggleButtonStyle1}"
-                                                        HorizontalAlignment="Center"
-                                                        VerticalAlignment="Center"
-                                                        HorizontalContentAlignment="Center"  IsChecked="True" FontSize="10" />
-
-                                                    <ToggleButton 
-                                                        Content="8" Grid.Column="8"
-                                                        Style="{StaticResource ToggleButtonStyle1}"
-                                                        HorizontalAlignment="Center"
-                                                        VerticalAlignment="Center"
-                                                        HorizontalContentAlignment="Center"  IsChecked="True" FontSize="10" />
-
-                                                    <ToggleButton 
-                                                        Content="9" Grid.Column="9"
+                                                    <ToggleButton
+                                                        x:Name="Toggle22"
+                                                        Content="22"
+                                                        Grid.Column="6"
                                                         Style="{StaticResource ToggleButtonStyle1}"
                                                         HorizontalAlignment="Center"
                                                         VerticalAlignment="Center"
                                                         HorizontalContentAlignment="Center"
-                                                        IsChecked="True" FontSize="10" />
+                                                        IsChecked="{x:Null}"
+                                                        FontSize="10"
+                                                        Click="Toggle_Checked"/>
 
-                                                    <ToggleButton 
-                                                        Content="10" Grid.Column="10"
+                                                    <ToggleButton
+                                                        x:Name="Toggle23"
+                                                        Content="23"
+                                                        Grid.Column="7"
                                                         Style="{StaticResource ToggleButtonStyle1}"
                                                         HorizontalAlignment="Center"
                                                         VerticalAlignment="Center"
                                                         HorizontalContentAlignment="Center"
-                                                        IsChecked="True" FontSize="10" />
+                                                        IsChecked="{x:Null}"
+                                                        FontSize="10"
+                                                        Click="Toggle_Checked"/>
 
                                                     <ToggleButton 
-                                                        Content="11"
+                                                        x:Name="Toggle24"
+                                                        Content="24"
+                                                        Grid.Column="8"
+                                                        Style="{StaticResource ToggleButtonStyle1}"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        HorizontalContentAlignment="Center"
+                                                        IsChecked="{x:Null}"
+                                                        FontSize="10"
+                                                        Click="Toggle_Checked"/>
+
+                                                    <ToggleButton 
+                                                        x:Name="Toggle25"
+                                                        Content="25"
+                                                        Grid.Column="9"
+                                                        Style="{StaticResource ToggleButtonStyle1}"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        HorizontalContentAlignment="Center"
+                                                        IsChecked="{x:Null}"
+                                                        FontSize="10"
+                                                        Click="Toggle_Checked"/>
+
+                                                    <ToggleButton
+                                                        x:Name="Toggle26"
+                                                        Content="26"
+                                                        Grid.Column="10"
+                                                        Style="{StaticResource ToggleButtonStyle1}"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        HorizontalContentAlignment="Center"
+                                                        IsChecked="{x:Null}"
+                                                        FontSize="10"
+                                                        Click="Toggle_Checked"/>
+
+                                                    <ToggleButton 
+                                                        x:Name="Toggle27"
+                                                        Content="27"
                                                         Grid.Column="11"
                                                         Style="{StaticResource ToggleButtonStyle1}"
                                                         HorizontalAlignment="Center"
                                                         VerticalAlignment="Center"
                                                         HorizontalContentAlignment="Center"
-                                                        IsChecked="True" FontSize="10" />
+                                                        IsChecked="{x:Null}"
+                                                        FontSize="10"
+                                                        Click="Toggle_Checked"/>
 
-                                                    <ToggleButton 
-                                                        Content="12" Grid.Column="12"
+                                                    <ToggleButton
+                                                        x:Name="Toggle28"
+                                                        Content="28"
+                                                        Grid.Column="12"
                                                         Style="{StaticResource ToggleButtonStyle1}"
                                                         HorizontalAlignment="Center"
                                                         VerticalAlignment="Center"
                                                         HorizontalContentAlignment="Center"
-                                                        IsChecked="True" FontSize="10" />
+                                                        IsChecked="{x:Null}"
+                                                        FontSize="10"
+                                                        Click="Toggle_Checked"/>
 
-                                                    <ToggleButton 
-                                                        Content="13" Grid.Column="13"
+                                                    <ToggleButton
+                                                        x:Name="Toggle29"
+                                                        Content="29"
+                                                        Grid.Column="13"
                                                         Style="{StaticResource ToggleButtonStyle1}"
                                                         HorizontalAlignment="Center"
                                                         VerticalAlignment="Center"
                                                         HorizontalContentAlignment="Center"
-                                                        IsChecked="True" FontSize="10" />
+                                                        IsChecked="{x:Null}"
+                                                        FontSize="10"
+                                                        Click="Toggle_Checked"/>
 
-                                                    <ToggleButton 
-                                                        Content="14" Grid.Column="14"
+                                                    <ToggleButton
+                                                        x:Name="Toggle30"
+                                                        Content="30"
+                                                        Grid.Column="14"
                                                         Style="{StaticResource ToggleButtonStyle1}"
                                                         HorizontalAlignment="Center"
                                                         VerticalAlignment="Center"
                                                         HorizontalContentAlignment="Center"
-                                                        IsChecked="True" FontSize="10" />
+                                                        IsChecked="{x:Null}"
+                                                        FontSize="10"
+                                                        Click="Toggle_Checked"/>
 
-                                                    <ToggleButton 
-                                                        Content="15" Grid.Column="15"
+                                                    <ToggleButton
+                                                        x:Name="Toggle31"
+                                                        Content="31"
+                                                        Grid.Column="15"
                                                         Style="{StaticResource ToggleButtonStyle1}"
                                                         HorizontalAlignment="Center"
                                                         VerticalAlignment="Center"
                                                         HorizontalContentAlignment="Center" 
-                                                        IsChecked="True" FontSize="10" />
+                                                        IsChecked="{x:Null}"
+                                                        FontSize="10"
+                                                        Click="Toggle_Checked"/>
                                                 </Grid>
                                             </Border>
                                             <Border 
@@ -2038,22 +2096,22 @@
                                                     <ColumnDefinition Width="32"/>
                                                     <ColumnDefinition Width="*"/>
                                                 </Grid.ColumnDefinitions>
-                                                <Image x:Name="Outpot1" Grid.Column="0" Source="/assets/CtrlOn.png"  Stretch="Fill"/>
-                                                <Image Grid.Column="1" Source="/assets/CtrlOff.png"  Stretch="Fill"/>
-                                                <Image Grid.Column="2" Source="/assets/CtrlOff.png"  Stretch="Fill"/>
-                                                <Image Grid.Column="3" Source="/assets/CtrlOff.png"  Stretch="Fill"/>
-                                                <Image Grid.Column="4" Source="/assets/CtrlOff.png"  Stretch="Fill"/>
-                                                <Image Grid.Column="5" Source="/assets/CtrlOff.png"  Stretch="Fill"/>
-                                                <Image Grid.Column="6" Source="/assets/CtrlOff.png"  Stretch="Fill"/>
-                                                <Image Grid.Column="7" Source="/assets/CtrlOff.png"  Stretch="Fill"/>
-                                                <Image Grid.Column="8" Source="/assets/CtrlOff.png"  Stretch="Fill"/>
-                                                <Image Grid.Column="9" Source="/assets/CtrlOff.png"  Stretch="Fill"/>
-                                                <Image Grid.Column="10" Source="/assets/CtrlOff.png"  Stretch="Fill"/>
-                                                <Image Grid.Column="11" Source="/assets/CtrlOff.png"  Stretch="Fill"/>
-                                                <Image Grid.Column="12" Source="/assets/CtrlOff.png"  Stretch="Fill"/>
-                                                <Image Grid.Column="13" Source="/assets/CtrlOff.png"  Stretch="Fill"/>
-                                                <Image Grid.Column="14" Source="/assets/CtrlOff.png"  Stretch="Fill"/>
-                                                <Image Grid.Column="15" Source="/assets/CtrlOff.png"  Stretch="Fill"/>
+                                                <Image x:Name="ReadInput0" Grid.Column="0" Stretch="Fill" />
+                                                <Image x:Name="ReadInput1" Grid.Column="1" Stretch="Fill"/>
+                                                <Image x:Name="ReadInput2" Grid.Column="2" Stretch="Fill"/>
+                                                <Image x:Name="ReadInput3" Grid.Column="3" Stretch="Fill"/>
+                                                <Image x:Name="ReadInput4" Grid.Column="4" Stretch="Fill"/>
+                                                <Image x:Name="ReadInput5" Grid.Column="5" Stretch="Fill"/>
+                                                <Image x:Name="ReadInput6" Grid.Column="6" Stretch="Fill"/>
+                                                <Image x:Name="ReadInput7" Grid.Column="7" Stretch="Fill"/>
+                                                <Image x:Name="ReadInput8" Grid.Column="8" Stretch="Fill"/>
+                                                <Image x:Name="ReadInput9" Grid.Column="9" Stretch="Fill"/>
+                                                <Image x:Name="ReadInput10" Grid.Column="10" Stretch="Fill"/>
+                                                <Image x:Name="ReadInput11" Grid.Column="11" Stretch="Fill"/>
+                                                <Image x:Name="ReadInput12" Grid.Column="12" Stretch="Fill"/>
+                                                <Image x:Name="ReadInput13" Grid.Column="13" Stretch="Fill"/>
+                                                <Image x:Name="ReadInput14" Grid.Column="14" Stretch="Fill"/>
+                                                <Image x:Name="ReadInput15" Grid.Column="15" Stretch="Fill"/>
                                             </Grid>
                                         </Grid>
 

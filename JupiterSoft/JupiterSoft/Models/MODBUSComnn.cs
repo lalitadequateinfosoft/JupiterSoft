@@ -14,7 +14,7 @@ namespace JupiterSoft.Models
         {
             if (!IsReading)
             {                
-                PrepareHC5MRRequestFM16(Adr, 16, register - 1 >> 8, register - 1, port, val, PName, Ch, Indx, deviceType, byteArr);
+                PrepareHC5MRRequestFM16(Adr, 16, register-1 >> 8, register-1, port, val, PName, Ch, Indx, deviceType, byteArr);
             }
         }
 

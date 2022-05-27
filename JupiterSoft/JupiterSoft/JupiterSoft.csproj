@@ -94,6 +94,7 @@
   <ItemGroup>
     <Compile Include="Models\ApplicationConstant.cs" />
     <Compile Include="Models\Common.cs" />
+    <Compile Include="Models\COM_Code.cs" />
     <Compile Include="Models\ConvertMisc.cs" />
     <Compile Include="Models\Crc.cs" />
     <Compile Include="Models\DeviceInfo.cs" />
