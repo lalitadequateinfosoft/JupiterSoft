@@ -556,7 +556,7 @@
                                 <StreamGeometry x:Key="ChevronDown">M18.935547,4.560547L19.814453,5.439453 10,15.253906 0.185547,5.439453 1.064453,4.560547 10,13.496094z</StreamGeometry>
                             </ControlTemplate.Resources>
                             <Grid x:Name="LayoutRoot" SnapsToDevicePixels="True">
-                                
+
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="25"/>
@@ -619,7 +619,7 @@
                                         </MultiBinding>
                                     </Popup.PlacementRectangle>
                                     <ui:ThemeShadowChrome x:Name="Show" CornerRadius="10" IsShadowEnabled="{DynamicResource {x:Static SystemParameters.DropShadowKey}}" MaxHeight="{TemplateBinding MaxDropDownHeight}" Margin="28.8,28.8,28.8,41.6" MinWidth="{Binding ActualWidth, ElementName=LayoutRoot}">
-                                        
+
                                         <Border x:Name="PopupBorder" Background="{DynamicResource ComboBoxDropDownBackground}" CornerRadius="0" HorizontalAlignment="Stretch">
                                             <Border BorderBrush="{DynamicResource ComboBoxDropDownBorderBrush}" BorderThickness="{DynamicResource ComboBoxDropdownBorderThickness}" CornerRadius="0" Padding="{DynamicResource ComboBoxDropdownBorderPadding}" >
                                                 <ScrollViewer x:Name="ScrollViewer" Foreground="{DynamicResource ComboBoxDropDownForeground}" HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}" IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}" VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}">
@@ -777,8 +777,8 @@
                     </Setter.Value>
                 </Setter>
             </Style>
-            
-      <!--Event Button Style Area-->
+
+            <!--Event Button Style Area-->
             <Style x:Key="EventButtonStyle" TargetType="Button">
                 <Setter Property="Template">
                     <Setter.Value>
@@ -795,7 +795,7 @@
                                     <Border Grid.Row="0" Grid.Column="0" CornerRadius="5" BorderThickness="{TemplateBinding BorderThickness}" Background="Transparent" Margin="15,-10,0,0" BorderBrush="#df88f9" Padding="10,5,5,5"  HorizontalAlignment="Center" VerticalAlignment="Center">
                                         <Label Width="150" FontSize="{TemplateBinding FontSize}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Content="{TemplateBinding Content}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" Foreground="{TemplateBinding Foreground}" FontFamily="{TemplateBinding FontFamily}" />
                                     </Border>
-                                    
+
                                 </Grid>
                             </Grid>
 
@@ -803,10 +803,10 @@
                     </Setter.Value>
                 </Setter>
             </Style>
-            
+
 
             <!--Toggle Style-->
-            
+
             <Style x:Key="ButtonFocusVisual">
                 <Setter Property="Control.Template">
                     <Setter.Value>
@@ -831,7 +831,7 @@
                 <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
                 <Setter Property="HorizontalContentAlignment" Value="Center"/>
                 <Setter Property="VerticalContentAlignment" Value="Center"/>
-                
+
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type ToggleButton}">
@@ -1014,7 +1014,7 @@
                             <Grid Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="#f4f4f4" Cursor="Arrow">
                                 <Grid Margin="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" x:Name="MotorDriveArea"  Visibility="Visible">
                                     <Grid.RowDefinitions>
-                                        <RowDefinition Height="120"/>
+                                        <RowDefinition Height="150"/>
                                         <RowDefinition Height="*"/>
                                     </Grid.RowDefinitions>
                                     <Border Grid.Row="0" BorderBrush="#0082ca" BorderThickness=".5" CornerRadius="5">
@@ -1025,84 +1025,144 @@
                                                 </StackPanel>
 
                                             </GroupBox.Header>
-                                            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,-15,0,0">
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="*"/>
-                                                    <ColumnDefinition Width="*"/>
-                                                    <ColumnDefinition Width="*"/>
-                                                    <ColumnDefinition Width="*"/>
-                                                    <ColumnDefinition Width="*"/>
-                                                </Grid.ColumnDefinitions>
-                                                <Grid Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                                                    <StackPanel Orientation="Vertical">
-                                                        <StackPanel Margin="2">
-                                                            <Label Content="COM Port" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                        </StackPanel>
-                                                        <StackPanel>
-                                                            <ComboBox x:Name="ComPortMotor" Width="100" BorderBrush="#041124" ui:ControlHelper.CornerRadius="5" Background="White" />
+                                            <Grid>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="*"/>
+                                                    <RowDefinition Height="*"/>
+                                                </Grid.RowDefinitions>
+                                                
+                                                <Grid Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,-15,0,0">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Grid Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                                        <StackPanel Orientation="Vertical">
+                                                            <StackPanel Margin="2">
+                                                                <Label Content="COM Port" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                            </StackPanel>
+                                                            <StackPanel>
+                                                                <ComboBox x:Name="ComPortMotor" Width="100" BorderBrush="#041124" ui:ControlHelper.CornerRadius="5" Background="White" />
 
 
+                                                            </StackPanel>
                                                         </StackPanel>
-                                                    </StackPanel>
-                                                </Grid>
-                                                <Grid Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                                                    <StackPanel Orientation="Vertical">
-                                                        <StackPanel Margin="2">
-                                                            <Label Content="Baud Rate" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                    </Grid>
+                                                    <Grid Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                                        <StackPanel Orientation="Vertical">
+                                                            <StackPanel Margin="2">
+                                                                <Label Content="Baud Rate" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                            </StackPanel>
+                                                            <StackPanel>
+                                                                <ComboBox x:Name="BaudRateMotor" Width="100" BorderBrush="#041124" ui:ControlHelper.CornerRadius="5" Background="White">
+                                                                    <ComboBoxItem Content="38400" IsSelected="True"/>
+                                                                    <ComboBoxItem Content="9600"/>
+                                                                </ComboBox>
+                                                            </StackPanel>
                                                         </StackPanel>
-                                                        <StackPanel>
-                                                            <ComboBox Width="100" BorderBrush="#041124" ui:ControlHelper.CornerRadius="5" Background="White">
-                                                                <ComboBoxItem Content="38400" IsSelected="True"/>
-                                                            </ComboBox>
+                                                    </Grid>
+                                                    <Grid Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                                        <StackPanel Orientation="Vertical">
+                                                            <StackPanel Margin="2">
+                                                                <Label Content="Data Bits" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                            </StackPanel>
+                                                            <StackPanel>
+                                                                <ComboBox x:Name="DataBitMotor" Width="100" BorderBrush="#041124" ui:ControlHelper.CornerRadius="5" Background="White">
+                                                                    <ComboBoxItem Content="5" />
+                                                                    <ComboBoxItem Content="6" />
+                                                                    <ComboBoxItem Content="7" />
+                                                                    <ComboBoxItem Content="8" IsSelected="True"/>
+                                                                </ComboBox>
+                                                            </StackPanel>
                                                         </StackPanel>
-                                                    </StackPanel>
-                                                </Grid>
-                                                <Grid Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                                                    <StackPanel Orientation="Vertical">
-                                                        <StackPanel Margin="2">
-                                                            <Label Content="Data Bits" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                        </StackPanel>
-                                                        <StackPanel>
-                                                            <ComboBox Width="100" BorderBrush="#041124" ui:ControlHelper.CornerRadius="5" Background="White">
-                                                                <ComboBoxItem Content="5" />
-                                                                <ComboBoxItem Content="6" />
-                                                                <ComboBoxItem Content="7" />
-                                                                <ComboBoxItem Content="8" IsSelected="True"/>
-                                                            </ComboBox>
-                                                        </StackPanel>
-                                                    </StackPanel>
-                                                </Grid>
+                                                    </Grid>
 
-                                                <Grid Grid.Column="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                                                    <StackPanel Orientation="Vertical">
-                                                        <StackPanel Margin="2">
-                                                            <Label Content="Stop Bits" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                    <Grid Grid.Column="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                                        <StackPanel Orientation="Vertical">
+                                                            <StackPanel Margin="2">
+                                                                <Label Content="Stop Bits" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                            </StackPanel>
+                                                            <StackPanel>
+                                                                <ComboBox x:Name="StopBitMotor" Width="100" BorderBrush="#041124" ui:ControlHelper.CornerRadius="5" Background="White">
+                                                                    <ComboBoxItem Content="1" IsSelected="True"/>
+                                                                    <ComboBoxItem Content="1.5" />
+                                                                    <ComboBoxItem Content="2" />
+                                                                </ComboBox>
+                                                            </StackPanel>
                                                         </StackPanel>
-                                                        <StackPanel>
-                                                            <ComboBox Width="100" BorderBrush="#041124" ui:ControlHelper.CornerRadius="5" Background="White">
-                                                                <ComboBoxItem Content="1" IsSelected="True"/>
-                                                                <ComboBoxItem Content="1.5" />
-                                                                <ComboBoxItem Content="2" />
-                                                            </ComboBox>
+                                                    </Grid>
+                                                    <Grid Grid.Column="4" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                                        <StackPanel Orientation="Vertical">
+                                                            <StackPanel Margin="2">
+                                                                <Label Content="Parity" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                            </StackPanel>
+                                                            <StackPanel>
+                                                                <ComboBox x:Name="ParityMotor" Width="100" BorderBrush="#041124" ui:ControlHelper.CornerRadius="5" Background="White">
+                                                                    <ComboBoxItem Content="Even"/>
+                                                                    <ComboBoxItem Content="Mark"/>
+                                                                    <ComboBoxItem Content="None" IsSelected="True"/>
+                                                                    <ComboBoxItem Content="Odd"/>
+                                                                    <ComboBoxItem Content="Space"/>
+                                                                </ComboBox>
+                                                            </StackPanel>
                                                         </StackPanel>
+                                                    </Grid>
+                                                </Grid>
+                                                <Grid Grid.Row="1" >
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <StackPanel Grid.Column="0">
+                                                        <Button x:Name="TestMotor"
+                                                                Click="TestMotor_Click"
+                                                                Background="#0082ca"
+                                                                BorderBrush="#0082ca"
+                                                                Foreground="#fff"
+                                                                BorderThickness="2"
+                                                                Content="Test Motor"
+                                                                RenderTransformOrigin="4.955,2.353"
+                                                                Padding="5"
+                                                                HorizontalAlignment="Right"
+                                                                VerticalAlignment="Center" Margin="5">
+                                                            <Button.RenderTransform>
+                                                                <TransformGroup>
+                                                                    <ScaleTransform/>
+                                                                    <SkewTransform/>
+                                                                    <RotateTransform Angle="0.291"/>
+                                                                    <TranslateTransform/>
+                                                                </TransformGroup>
+                                                            </Button.RenderTransform>
+                                                        </Button>
+                                                    </StackPanel>
+                                                    <StackPanel Grid.Column="1">
+                                                        <Button x:Name="StopMotor"
+                                                                Click="StopMotor_Click"
+                                                                Background="red"
+                                                                BorderBrush="Red"
+                                                                Foreground="White"
+                                                                BorderThickness="2"
+                                                                Content="Stop"
+                                                                RenderTransformOrigin="4.955,2.353"
+                                                                Padding="5"
+                                                                HorizontalAlignment="Left"
+                                                                VerticalAlignment="Center" Margin="5">
+
+                                                            <Button.RenderTransform>
+                                                                <TransformGroup>
+                                                                    <ScaleTransform/>
+                                                                    <SkewTransform/>
+                                                                    <RotateTransform Angle="0.291"/>
+                                                                    <TranslateTransform/>
+                                                                </TransformGroup>
+                                                            </Button.RenderTransform>
+                                                        </Button>
                                                     </StackPanel>
                                                 </Grid>
-                                                <Grid Grid.Column="4" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                                                    <StackPanel Orientation="Vertical">
-                                                        <StackPanel Margin="2">
-                                                            <Label Content="Parity" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                        </StackPanel>
-                                                        <StackPanel>
-                                                            <ComboBox Width="100" BorderBrush="#041124" ui:ControlHelper.CornerRadius="5" Background="White">
-                                                                <ComboBoxItem Content="Even"/>
-                                                                <ComboBoxItem Content="Mark"/>
-                                                                <ComboBoxItem Content="None" IsSelected="True"/>
-                                                                <ComboBoxItem Content="Odd"/>
-                                                                <ComboBoxItem Content="Space"/>
-                                                            </ComboBox>
-                                                        </StackPanel>
-                                                    </StackPanel>
-                                                </Grid>
+                                               
                                             </Grid>
                                         </GroupBox>
                                     </Border>
@@ -1118,7 +1178,7 @@
                                 </Grid>
                                 <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" x:Name="WeightModuleArea" Visibility="Hidden">
                                     <Grid.RowDefinitions>
-                                        <RowDefinition Height="120"/>
+                                        <RowDefinition Height="180"/>
                                         <RowDefinition Height="*"/>
                                     </Grid.RowDefinitions>
                                     <Border Grid.Row="0" BorderBrush="#0082ca" BorderThickness=".5" CornerRadius="5">
@@ -1129,85 +1189,147 @@
                                                 </StackPanel>
 
                                             </GroupBox.Header>
-                                            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,-15,0,0">
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="*"/>
-                                                    <ColumnDefinition Width="*"/>
-                                                    <ColumnDefinition Width="*"/>
-                                                    <ColumnDefinition Width="*"/>
-                                                    <ColumnDefinition Width="*"/>
-                                                </Grid.ColumnDefinitions>
-                                                <Grid Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                                                    <StackPanel Orientation="Vertical">
-                                                        <StackPanel Margin="2">
-                                                            <Label Content="COM Port" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                        </StackPanel>
-                                                        <StackPanel>
-                                                            <ComboBox x:Name="ComPortWeight" Width="100" BorderBrush="#041124" ui:ControlHelper.CornerRadius="5" Background="White"/>
+                                            <Grid>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="*"/>
+                                                    <RowDefinition Height="*"/>
+                                                </Grid.RowDefinitions>
+                                                <Grid Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,0,0">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Grid Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                                        <StackPanel Orientation="Vertical">
+                                                            <StackPanel Margin="2">
+                                                                <Label Content="COM Port" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                            </StackPanel>
+                                                            <StackPanel>
+                                                                <ComboBox x:Name="ComPortWeight" Width="100" BorderBrush="#041124" ui:ControlHelper.CornerRadius="5" Background="White"/>
 
 
+                                                            </StackPanel>
                                                         </StackPanel>
-                                                    </StackPanel>
+                                                    </Grid>
+                                                    <Grid Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                                        <StackPanel Orientation="Vertical">
+                                                            <StackPanel Margin="2">
+                                                                <Label Content="Baud Rate" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                            </StackPanel>
+                                                            <StackPanel>
+                                                                <ComboBox x:Name="BaudRateWeight" Width="100" BorderBrush="#041124" ui:ControlHelper.CornerRadius="5" Background="White">
+                                                                    <ComboBoxItem Content="38400"/>
+                                                                    <ComboBoxItem Content="9600" IsSelected="True"/>
+                                                                </ComboBox>
+                                                            </StackPanel>
+                                                        </StackPanel>
+                                                    </Grid>
+                                                    <Grid Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                                        <StackPanel Orientation="Vertical">
+                                                            <StackPanel Margin="2">
+                                                                <Label Content="Data Bits" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                            </StackPanel>
+                                                            <StackPanel>
+                                                                <ComboBox x:Name="DataBitWeight" Width="100" BorderBrush="#041124" ui:ControlHelper.CornerRadius="5" Background="White">
+                                                                    <ComboBoxItem Content="5" />
+                                                                    <ComboBoxItem Content="6" />
+                                                                    <ComboBoxItem Content="7" />
+                                                                    <ComboBoxItem Content="8" IsSelected="True"/>
+                                                                </ComboBox>
+                                                            </StackPanel>
+                                                        </StackPanel>
+                                                    </Grid>
+
+                                                    <Grid Grid.Column="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                                        <StackPanel Orientation="Vertical">
+                                                            <StackPanel Margin="2">
+                                                                <Label Content="Stop Bits" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                            </StackPanel>
+                                                            <StackPanel>
+                                                                <ComboBox x:Name="StopBitWeight" Width="100" BorderBrush="#041124" ui:ControlHelper.CornerRadius="5" Background="White">
+                                                                    <ComboBoxItem Content="1" IsSelected="True"/>
+                                                                    <ComboBoxItem Content="1.5" />
+                                                                    <ComboBoxItem Content="2" />
+                                                                </ComboBox>
+                                                            </StackPanel>
+                                                        </StackPanel>
+                                                    </Grid>
+                                                    <Grid Grid.Column="4" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                                        <StackPanel Orientation="Vertical">
+                                                            <StackPanel Margin="2">
+                                                                <Label Content="Parity" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                            </StackPanel>
+                                                            <StackPanel>
+                                                                <ComboBox x:Name="ParityWeight" Width="100" BorderBrush="#041124" ui:ControlHelper.CornerRadius="5" Background="White">
+                                                                    <ComboBoxItem Content="Even"/>
+                                                                    <ComboBoxItem Content="Mark"/>
+                                                                    <ComboBoxItem Content="None" IsSelected="True"/>
+                                                                    <ComboBoxItem Content="Odd"/>
+                                                                    <ComboBoxItem Content="Space"/>
+                                                                </ComboBox>
+                                                            </StackPanel>
+
+
+
+                                                        </StackPanel>
+                                                    </Grid>
                                                 </Grid>
-                                                <Grid Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                                                    <StackPanel Orientation="Vertical">
-                                                        <StackPanel Margin="2">
-                                                            <Label Content="Baud Rate" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                        </StackPanel>
-                                                        <StackPanel>
-                                                            <ComboBox Width="100" BorderBrush="#041124" ui:ControlHelper.CornerRadius="5" Background="White">
-                                                                <ComboBoxItem Content="38400"/>
-                                                                <ComboBoxItem Content="9600" IsSelected="True"/>
-                                                            </ComboBox>
-                                                        </StackPanel>
+                                                <Grid Grid.Row="1">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <StackPanel Grid.Column="0">
+                                                        <Button x:Name="TestWeight"
+                                                                Click="TestWeight_Click"
+                                                                Background="#0082ca"
+                                                                BorderBrush="#0082ca"
+                                                                Foreground="#fff"
+                                                                BorderThickness="2"
+                                                                Content="Test Weight"
+                                                                RenderTransformOrigin="4.955,2.353"
+                                                                Padding="5"
+                                                                HorizontalAlignment="Right"
+                                                                VerticalAlignment="Center" Margin="5">
+                                                            <Button.RenderTransform>
+                                                                <TransformGroup>
+                                                                    <ScaleTransform/>
+                                                                    <SkewTransform/>
+                                                                    <RotateTransform Angle="0.291"/>
+                                                                    <TranslateTransform/>
+                                                                </TransformGroup>
+                                                            </Button.RenderTransform>
+                                                        </Button>
                                                     </StackPanel>
-                                                </Grid>
-                                                <Grid Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                                                    <StackPanel Orientation="Vertical">
-                                                        <StackPanel Margin="2">
-                                                            <Label Content="Data Bits" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                        </StackPanel>
-                                                        <StackPanel>
-                                                            <ComboBox Width="100" BorderBrush="#041124" ui:ControlHelper.CornerRadius="5" Background="White">
-                                                                <ComboBoxItem Content="5" />
-                                                                <ComboBoxItem Content="6" />
-                                                                <ComboBoxItem Content="7" />
-                                                                <ComboBoxItem Content="8" IsSelected="True"/>
-                                                            </ComboBox>
-                                                        </StackPanel>
+                                                    <StackPanel Grid.Column="1">
+                                                        <Button x:Name="StopWeights"
+                                                                Click="StopWeight_Click"
+                                                                Background="red"
+                                                                BorderBrush="Red"
+                                                                Foreground="White"
+                                                                BorderThickness="2"
+                                                                Content="Stop"
+                                                                RenderTransformOrigin="4.955,2.353"
+                                                                Padding="5"
+                                                                HorizontalAlignment="Left"
+                                                                VerticalAlignment="Center" Margin="5">
+
+                                                            <Button.RenderTransform>
+                                                                <TransformGroup>
+                                                                    <ScaleTransform/>
+                                                                    <SkewTransform/>
+                                                                    <RotateTransform Angle="0.291"/>
+                                                                    <TranslateTransform/>
+                                                                </TransformGroup>
+                                                            </Button.RenderTransform>
+                                                        </Button>
                                                     </StackPanel>
+
                                                 </Grid>
 
-                                                <Grid Grid.Column="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                                                    <StackPanel Orientation="Vertical">
-                                                        <StackPanel Margin="2">
-                                                            <Label Content="Stop Bits" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                        </StackPanel>
-                                                        <StackPanel>
-                                                            <ComboBox Width="100" BorderBrush="#041124" ui:ControlHelper.CornerRadius="5" Background="White">
-                                                                <ComboBoxItem Content="1" IsSelected="True"/>
-                                                                <ComboBoxItem Content="1.5" />
-                                                                <ComboBoxItem Content="2" />
-                                                            </ComboBox>
-                                                        </StackPanel>
-                                                    </StackPanel>
-                                                </Grid>
-                                                <Grid Grid.Column="4" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                                                    <StackPanel Orientation="Vertical">
-                                                        <StackPanel Margin="2">
-                                                            <Label Content="Parity" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                        </StackPanel>
-                                                        <StackPanel>
-                                                            <ComboBox Width="100" BorderBrush="#041124" ui:ControlHelper.CornerRadius="5" Background="White">
-                                                                <ComboBoxItem Content="Even"/>
-                                                                <ComboBoxItem Content="Mark"/>
-                                                                <ComboBoxItem Content="None" IsSelected="True"/>
-                                                                <ComboBoxItem Content="Odd"/>
-                                                                <ComboBoxItem Content="Space"/>
-                                                            </ComboBox>
-                                                        </StackPanel>
-                                                    </StackPanel>
-                                                </Grid>
                                             </Grid>
                                         </GroupBox>
                                     </Border>
@@ -1358,65 +1480,104 @@
                                                         <RowDefinition Height="*"/>
                                                     </Grid.RowDefinitions>
                                                     <Border Grid.Row="0" BorderBrush="Black" BorderThickness="1" CornerRadius="2">
-                                                            <GroupBox Header="Connect to USB camera"
+                                                        <GroupBox Header="Connect to USB camera"
                   HorizontalAlignment="Center" VerticalAlignment="Stretch">
                                                             <StackPanel Orientation="Horizontal">
-                                                                <Button HorizontalAlignment="Right" Content="Connect" VerticalAlignment="Bottom" BorderBrush="#0082ca" Background="#fff" Foreground="#0082ca" Margin="5" Click="ConnectUSBCamera_Click" x:Name="ConnectUSBCamera"/>
-                                                                <Button HorizontalAlignment="Left" Content="Disconnect" VerticalAlignment="Bottom" BorderBrush="Red" Background="#fff" Foreground="Red" IsEnabled="False" Margin="5" Click="DisconnectUSBCam_Click" x:Name="DisconnectUSBCam"/>
+                                                                <Button HorizontalAlignment="Right"
+                                                                        Content="Connect"
+                                                                        VerticalAlignment="Bottom"
+                                                                        BorderBrush="#0082ca"
+                                                                        Background="#fff"
+                                                                        Foreground="#0082ca"
+                                                                        Margin="5"
+                                                                        Click="ConnectUSBCamera_Click"
+                                                                        x:Name="ConnectUSBCamera"/>
+                                                                
+                                                                <Button HorizontalAlignment="Center"
+                                                                        Content="Disconnect"
+                                                                        VerticalAlignment="Bottom"
+                                                                        BorderBrush="Red"
+                                                                        Background="#fff"
+                                                                        Foreground="Red"
+                                                                        IsEnabled="False"
+                                                                        Margin="5"
+                                                                        Click="DisconnectUSBCam_Click"
+                                                                        x:Name="DisconnectUSBCam"/>
+                                                                <Button HorizontalAlignment="Left"
+                                                                        Content="Start Recording"
+                                                                        VerticalAlignment="Bottom"
+                                                                        BorderBrush="ForestGreen"
+                                                                        Background="#fff"
+                                                                        Foreground="ForestGreen"
+                                                                        IsEnabled="False"
+                                                                        Margin="5"
+                                                                        x:Name="StartRecording"
+                                                                        Click="StartCameraRecording"/>
+                                                                <Button HorizontalAlignment="Left"
+                                                                        Content="Stop Recording"
+                                                                        VerticalAlignment="Bottom"
+                                                                        BorderBrush="Red"
+                                                                        Background="#fff"
+                                                                        Foreground="Red"
+                                                                        IsEnabled="False"
+                                                                        Margin="5"
+                                                                        x:Name="StopRecording"
+                                                                        Click="StopCameraRecording"/>
                                                             </StackPanel>
-                                                            </GroupBox>
+                                                        </GroupBox>
 
                                                     </Border>
                                                     <Border Grid.Row="1" BorderBrush="Black" BorderThickness="1" CornerRadius="2" Margin="0,5,0,0" Padding="5">
-                                                        
-                                                            <Grid>
-                                                                <Grid.ColumnDefinitions>
-                                                                    <ColumnDefinition Width="*"/>
-                                                                    <ColumnDefinition Width="200"/>
-                                                                </Grid.ColumnDefinitions>
-                                                                <Grid Grid.Column="0">
-                                                                    <Grid.RowDefinitions>
-                                                                        <RowDefinition Height="*"/>
-                                                                        <RowDefinition Height="*"/>
-                                                                        <RowDefinition Height="*"/>
-                                                                    </Grid.RowDefinitions>
 
-                                                                    <Grid Grid.Row="0" Margin="5">
-                                                                        <Grid.ColumnDefinitions>
-                                                                            <ColumnDefinition Width="70"/>
-                                                                            <ColumnDefinition Width="*"/>
-                                                                        </Grid.ColumnDefinitions>
-                                                                        <Label Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center"  Content="IP/URL"/>
-                                                                        <TextBox Grid.Column="1" Name="ipAddressText" HorizontalAlignment="Stretch" Height="30" TextWrapping="Wrap" />
-                                                                    </Grid>
+                                                        <Grid>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="*"/>
+                                                                <ColumnDefinition Width="200"/>
+                                                            </Grid.ColumnDefinitions>
+                                                            <Grid Grid.Column="0">
+                                                                <Grid.RowDefinitions>
+                                                                    <RowDefinition Height="*"/>
+                                                                    <RowDefinition Height="*"/>
+                                                                    <RowDefinition Height="*"/>
+                                                                </Grid.RowDefinitions>
 
-                                                                    <Grid Grid.Row="1" Margin="5">
-                                                                        <Grid.ColumnDefinitions>
-                                                                            <ColumnDefinition Width="70"/>
-                                                                            <ColumnDefinition Width="*"/>
-                                                                        </Grid.ColumnDefinitions>
-                                                                        <Label Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center"  Content="Port"/>
-                                                                        <TextBox Text="554" Grid.Column="1" Name="PortText" HorizontalAlignment="Stretch" Height="30" TextWrapping="Wrap" />
-                                                                    </Grid>
+                                                                <Grid Grid.Row="0" Margin="5">
+                                                                    <Grid.ColumnDefinitions>
+                                                                        <ColumnDefinition Width="70"/>
+                                                                        <ColumnDefinition Width="*"/>
+                                                                    </Grid.ColumnDefinitions>
+                                                                    <Label Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center"  Content="IP/URL"/>
+                                                                    <TextBox Grid.Column="1" Name="ipAddressText" HorizontalAlignment="Stretch" Height="30" TextWrapping="Wrap" />
+                                                                </Grid>
 
-                                                                    <Grid Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                                                <Grid Grid.Row="1" Margin="5">
+                                                                    <Grid.ColumnDefinitions>
+                                                                        <ColumnDefinition Width="70"/>
+                                                                        <ColumnDefinition Width="*"/>
+                                                                    </Grid.ColumnDefinitions>
+                                                                    <Label Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center"  Content="Port"/>
+                                                                    <TextBox Text="554" Grid.Column="1" Name="PortText" HorizontalAlignment="Stretch" Height="30" TextWrapping="Wrap" />
+                                                                </Grid>
+
+                                                                <Grid Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                                                     <Grid.ColumnDefinitions>
                                                                         <ColumnDefinition Width="*"/>
                                                                         <ColumnDefinition Width="*"/>
                                                                     </Grid.ColumnDefinitions>
-                                                                        <Grid Grid.Column="0" HorizontalAlignment="Stretch">
-                                                                            <Button HorizontalAlignment="Right" Content="Start Streaming" VerticalAlignment="Bottom" BorderBrush="#0082ca" Background="#fff" Foreground="#0082ca"  x:Name="StreamUSBCamera" IsEnabled="False" Margin="0,0,5,0" Click="StreamUSBCamera_Click"/>
+                                                                    <Grid Grid.Column="0" HorizontalAlignment="Stretch">
+                                                                        <Button HorizontalAlignment="Right" Content="Start Streaming" VerticalAlignment="Bottom" BorderBrush="#0082ca" Background="#fff" Foreground="#0082ca"  x:Name="StreamUSBCamera" IsEnabled="False" Margin="0,0,5,0" Click="StreamUSBCamera_Click"/>
                                                                     </Grid>
-                                                                    <Grid Grid.Column="1" HorizontalAlignment="Stretch">
+                                                                  
+                                                                    <Grid Grid.Column="2" HorizontalAlignment="Stretch">
                                                                         <Button HorizontalAlignment="Left" Content="Stop Streaming" VerticalAlignment="Bottom" BorderBrush="Red" Background="#fff" Foreground="Red" IsEnabled="False"  x:Name="UnstreamUSBCam" Margin="5,0,0,0" Click="UnstreamUSBCam_Click"/>
                                                                     </Grid>
-                                                                    </Grid>
-                                                                </Grid>
-                                                                <Grid Grid.Column="1">
-                                                                <Button Name="OpenInBrowserButton" IsEnabled="False" Content="Open in browser" HorizontalAlignment="Center" VerticalAlignment="Center" Click="OpenInBrowserButton_Click"/>
                                                                 </Grid>
                                                             </Grid>
-                                                     
+                                                            <Grid Grid.Column="1">
+                                                                <Button Name="OpenInBrowserButton" IsEnabled="False" Content="Open in browser" HorizontalAlignment="Center" VerticalAlignment="Center" Click="OpenInBrowserButton_Click"/>
+                                                            </Grid>
+                                                        </Grid>
+
                                                     </Border>
                                                     <Grid Grid.Row="2">
                                                         <Label x:Name="USBCam_error" Foreground="Red" FontSize="10" HorizontalAlignment="Center" VerticalAlignment="Center"/>
@@ -1431,7 +1592,7 @@
 
                                 <Grid Margin="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" x:Name="ControlBoardArea"  Visibility="Hidden">
                                     <Grid.RowDefinitions>
-                                        <RowDefinition Height="120"/>
+                                        <RowDefinition Height="*"/>
                                         <RowDefinition Height="*"/>
                                         <RowDefinition Height="100"/>
                                     </Grid.RowDefinitions>
@@ -1444,85 +1605,143 @@
                                                 </StackPanel>
 
                                             </GroupBox.Header>
-                                            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,-15,0,0">
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="*"/>
-                                                    <ColumnDefinition Width="*"/>
-                                                    <ColumnDefinition Width="*"/>
-                                                    <ColumnDefinition Width="*"/>
-                                                    <ColumnDefinition Width="*"/>
-                                                </Grid.ColumnDefinitions>
-                                                <Grid Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                                                    <StackPanel Orientation="Vertical">
-                                                        <StackPanel Margin="2">
-                                                            <Label Content="COM Port" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                        </StackPanel>
-                                                        <StackPanel>
-                                                            <ComboBox x:Name="ComPortControl" Width="100" BorderBrush="#041124" ui:ControlHelper.CornerRadius="5" Background="White"/>
+                                            <Grid>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="*"/>
+                                                    <RowDefinition Height="*"/>
+                                                </Grid.RowDefinitions>
+                                                <Grid Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,-15,0,0">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Grid Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                                        <StackPanel Orientation="Vertical">
+                                                            <StackPanel Margin="2">
+                                                                <Label Content="COM Port" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                            </StackPanel>
+                                                            <StackPanel>
+                                                                <ComboBox x:Name="ComPortControl" Width="100" BorderBrush="#041124" ui:ControlHelper.CornerRadius="5" Background="White"/>
 
 
+                                                            </StackPanel>
                                                         </StackPanel>
-                                                    </StackPanel>
-                                                </Grid>
-                                                <Grid Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                                                    <StackPanel Orientation="Vertical">
-                                                        <StackPanel Margin="2">
-                                                            <Label Content="Baud Rate" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                    </Grid>
+                                                    <Grid Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                                        <StackPanel Orientation="Vertical">
+                                                            <StackPanel Margin="2">
+                                                                <Label Content="Baud Rate" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                            </StackPanel>
+                                                            <StackPanel>
+                                                                <ComboBox Width="100" BorderBrush="#041124" ui:ControlHelper.CornerRadius="5" Background="White">
+                                                                    <ComboBoxItem Content="38400" IsSelected="True"/>
+                                                                </ComboBox>
+                                                            </StackPanel>
                                                         </StackPanel>
-                                                        <StackPanel>
-                                                            <ComboBox Width="100" BorderBrush="#041124" ui:ControlHelper.CornerRadius="5" Background="White">
-                                                                <ComboBoxItem Content="38400" IsSelected="True"/>
-                                                            </ComboBox>
+                                                    </Grid>
+                                                    <Grid Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                                        <StackPanel Orientation="Vertical">
+                                                            <StackPanel Margin="2">
+                                                                <Label Content="Data Bits" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                            </StackPanel>
+                                                            <StackPanel>
+                                                                <ComboBox Width="100" BorderBrush="#041124" ui:ControlHelper.CornerRadius="5" Background="White">
+                                                                    <ComboBoxItem Content="5" />
+                                                                    <ComboBoxItem Content="6" />
+                                                                    <ComboBoxItem Content="7" />
+                                                                    <ComboBoxItem Content="8" IsSelected="True"/>
+                                                                </ComboBox>
+                                                            </StackPanel>
                                                         </StackPanel>
-                                                    </StackPanel>
-                                                </Grid>
-                                                <Grid Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                                                    <StackPanel Orientation="Vertical">
-                                                        <StackPanel Margin="2">
-                                                            <Label Content="Data Bits" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                        </StackPanel>
-                                                        <StackPanel>
-                                                            <ComboBox Width="100" BorderBrush="#041124" ui:ControlHelper.CornerRadius="5" Background="White">
-                                                                <ComboBoxItem Content="5" />
-                                                                <ComboBoxItem Content="6" />
-                                                                <ComboBoxItem Content="7" />
-                                                                <ComboBoxItem Content="8" IsSelected="True"/>
-                                                            </ComboBox>
-                                                        </StackPanel>
-                                                    </StackPanel>
-                                                </Grid>
+                                                    </Grid>
 
-                                                <Grid Grid.Column="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                                                    <StackPanel Orientation="Vertical">
-                                                        <StackPanel Margin="2">
-                                                            <Label Content="Stop Bits" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                    <Grid Grid.Column="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                                        <StackPanel Orientation="Vertical">
+                                                            <StackPanel Margin="2">
+                                                                <Label Content="Stop Bits" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                            </StackPanel>
+                                                            <StackPanel>
+                                                                <ComboBox Width="100" BorderBrush="#041124" ui:ControlHelper.CornerRadius="5" Background="White">
+                                                                    <ComboBoxItem Content="1" IsSelected="True"/>
+                                                                    <ComboBoxItem Content="1.5" />
+                                                                    <ComboBoxItem Content="2" />
+                                                                </ComboBox>
+                                                            </StackPanel>
                                                         </StackPanel>
-                                                        <StackPanel>
-                                                            <ComboBox Width="100" BorderBrush="#041124" ui:ControlHelper.CornerRadius="5" Background="White">
-                                                                <ComboBoxItem Content="1" IsSelected="True"/>
-                                                                <ComboBoxItem Content="1.5" />
-                                                                <ComboBoxItem Content="2" />
-                                                            </ComboBox>
+                                                    </Grid>
+                                                    <Grid Grid.Column="4" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                                        <StackPanel Orientation="Vertical">
+                                                            <StackPanel Margin="2">
+                                                                <Label Content="Parity" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                            </StackPanel>
+                                                            <StackPanel>
+                                                                <ComboBox Width="100" BorderBrush="#041124" ui:ControlHelper.CornerRadius="5" Background="White">
+                                                                    <ComboBoxItem Content="Even"/>
+                                                                    <ComboBoxItem Content="Mark"/>
+                                                                    <ComboBoxItem Content="None" IsSelected="True"/>
+                                                                    <ComboBoxItem Content="Odd"/>
+                                                                    <ComboBoxItem Content="Space"/>
+                                                                </ComboBox>
+                                                            </StackPanel>
                                                         </StackPanel>
-                                                    </StackPanel>
+                                                    </Grid>
                                                 </Grid>
-                                                <Grid Grid.Column="4" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                                                    <StackPanel Orientation="Vertical">
-                                                        <StackPanel Margin="2">
-                                                            <Label Content="Parity" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                        </StackPanel>
-                                                        <StackPanel>
-                                                            <ComboBox Width="100" BorderBrush="#041124" ui:ControlHelper.CornerRadius="5" Background="White">
-                                                                <ComboBoxItem Content="Even"/>
-                                                                <ComboBoxItem Content="Mark"/>
-                                                                <ComboBoxItem Content="None" IsSelected="True"/>
-                                                                <ComboBoxItem Content="Odd"/>
-                                                                <ComboBoxItem Content="Space"/>
-                                                            </ComboBox>
-                                                        </StackPanel>
+                                                <Grid Grid.Row="1">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <StackPanel Grid.Column="0">
+                                                        <Button x:Name="TestControlCard"
+                                                                Click="TestWeight_Click"
+                                                                Background="#0082ca"
+                                                                BorderBrush="#0082ca"
+                                                                Foreground="#fff"
+                                                                BorderThickness="2"
+                                                                Content="Test Control Card"
+                                                                RenderTransformOrigin="4.955,2.353"
+                                                                Padding="5"
+                                                                HorizontalAlignment="Right"
+                                                                VerticalAlignment="Center" Margin="5">
+                                                            <Button.RenderTransform>
+                                                                <TransformGroup>
+                                                                    <ScaleTransform/>
+                                                                    <SkewTransform/>
+                                                                    <RotateTransform Angle="0.291"/>
+                                                                    <TranslateTransform/>
+                                                                </TransformGroup>
+                                                            </Button.RenderTransform>
+                                                        </Button>
+                                                    </StackPanel>
+                                                    <StackPanel Grid.Column="1">
+                                                        <Button x:Name="StopControlCard"
+                                                                Click="StopWeight_Click"
+                                                                Background="red"
+                                                                BorderBrush="Red"
+                                                                Foreground="White"
+                                                                BorderThickness="2"
+                                                                Content="Stop"
+                                                                RenderTransformOrigin="4.955,2.353"
+                                                                Padding="5"
+                                                                HorizontalAlignment="Left"
+                                                                VerticalAlignment="Center" Margin="3">
+
+                                                            <Button.RenderTransform>
+                                                                <TransformGroup>
+                                                                    <ScaleTransform/>
+                                                                    <SkewTransform/>
+                                                                    <RotateTransform Angle="0.291"/>
+                                                                    <TranslateTransform/>
+                                                                </TransformGroup>
+                                                            </Button.RenderTransform>
+                                                        </Button>
                                                     </StackPanel>
                                                 </Grid>
                                             </Grid>
+                                            
                                         </GroupBox>
                                     </Border>
                                     <Grid Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
@@ -2312,7 +2531,37 @@
                                             <Button x:Name="Start_Event" Style="{StaticResource EventButtonStyle}" Content="Start" Margin="12,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="#AA336A" Background="#df88f9" BorderThickness="0.5" FontSize="12" Foreground="#fff" FontWeight="Bold" FontFamily="Georgia, serif;"  Width="200" Height="42" PreviewMouseMove="Button_PreviewMouseMove" IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}" Tag="{Binding Start_Event,Mode=OneWay}"/>
                                             <Button x:Name="Clicked_Event" Style="{StaticResource EventButtonStyle}" Content="Click" Margin="12,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="#AA336A" Background="#df88f9" BorderThickness="0.5" FontSize="12" Foreground="#fff" FontWeight="Bold" FontFamily="Georgia, serif;"  Width="200" Height="42" PreviewMouseMove="Button_PreviewMouseMove" IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}" Tag="{Binding Clicked_Event,Mode=OneWay}"/>
                                             <Button x:Name="Connect_Event" Style="{StaticResource EventButtonStyle}" Content="Connect" Margin="12,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="#AA336A" Background="#df88f9" BorderThickness="0.5" FontSize="12" Foreground="#fff" FontWeight="Bold" FontFamily="Georgia, serif;"  Width="200" Height="42" PreviewMouseMove="Button_PreviewMouseMove" IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}" Tag="{Binding Connect_Event,Mode=OneWay}"/>
-                                            <Button x:Name="Disconnect_Event" Style="{StaticResource EventButtonStyle}" Content="Disconnect" Margin="12,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="#AA336A" Background="#df88f9" BorderThickness="0.5" FontSize="12" Foreground="#fff" FontWeight="Bold" FontFamily="Georgia, serif;"  Width="200" Height="42" PreviewMouseMove="Button_PreviewMouseMove" IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}" Tag="{Binding Disconnect_Event,Mode=OneWay}"/>
+                                            <Button x:Name="Connect_Motor_Event" Style="{StaticResource EventButtonStyle}" Content="Connect Motor" Margin="12,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="#AA336A" Background="#df88f9" BorderThickness="0.5" FontSize="12" Foreground="#fff" FontWeight="Bold" FontFamily="Georgia, serif;"  Width="200" Height="42" PreviewMouseMove="Button_PreviewMouseMove" IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}" Tag="{Binding Connect_Motor_Event,Mode=OneWay}"/>
+                                            <Button x:Name="Connect_Weight_Event" Style="{StaticResource EventButtonStyle}" Content="Connect Weight" Margin="12,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="#AA336A" Background="#df88f9" BorderThickness="0.5" FontSize="12" Foreground="#fff" FontWeight="Bold" FontFamily="Georgia, serif;"  Width="200" Height="42" PreviewMouseMove="Button_PreviewMouseMove" IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}" Tag="{Binding Connect_Weight_Event,Mode=OneWay}"/>
+                                            <Button x:Name="Connect_Camera_Event" Style="{StaticResource EventButtonStyle}" Content="Connect Camera" Margin="12,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="#AA336A" Background="#df88f9" BorderThickness="0.5" FontSize="12" Foreground="#fff" FontWeight="Bold" FontFamily="Georgia, serif;"  Width="200" Height="42" PreviewMouseMove="Button_PreviewMouseMove" IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}" Tag="{Binding Connect_Camera_Event,Mode=OneWay}"/>
+                                            <Button x:Name="Connect_ControlCard_Event" Style="{StaticResource EventButtonStyle}" Content="Connect ControlCard" Margin="12,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="#AA336A" Background="#df88f9" BorderThickness="0.5" FontSize="12" Foreground="#fff" FontWeight="Bold" FontFamily="Georgia, serif;"  Width="200" Height="42" PreviewMouseMove="Button_PreviewMouseMove" IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}" Tag="{Binding Connect_ControlCard_Event,Mode=OneWay}"/>
+
+
+                                            <!--<Border BorderBrush="Blue" BorderThickness="1">
+                                                <WrapPanel x:Name="Connect_Event" Orientation="Horizontal" PreviewMouseMove="Button_PreviewMouseMove" IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}" Tag="{Binding Connect_Event,Mode=OneWay}">
+                                                <Label Content="Connect"/>
+                                                <ComboBox Name="ComboBox1"  HorizontalAlignment="Left" VerticalAlignment="Top" Width="120" Height="30">
+                                                    <ComboBoxItem Content="Control Card" IsSelected="True"></ComboBoxItem>
+                                                    <ComboBoxItem Content="Motor Drive"></ComboBoxItem>
+                                                    <ComboBoxItem Content="Camera"></ComboBoxItem>
+                                                </ComboBox>
+                                                </WrapPanel>
+                                            </Border>-->
+                                            <!--<ComboBox Name="ComboBox1"  HorizontalAlignment="Left" VerticalAlignment="Top" Width="120" Height="30">
+                                                <ComboBoxItem Content="Control Card" IsSelected="True"></ComboBoxItem>
+                                                <ComboBoxItem Content="Motor Drive"></ComboBoxItem>
+                                                <ComboBoxItem Content="Camera"></ComboBoxItem>
+                                            </ComboBox>-->
+
+
+
+                                            <Button x:Name="Disconnect_Event" Style="{StaticResource EventButtonStyle}" Content="Disconnect Motor" Margin="12,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="#AA336A" Background="#df88f9" BorderThickness="0.5" FontSize="12" Foreground="#fff" FontWeight="Bold" FontFamily="Georgia, serif;"  Width="200" Height="42" PreviewMouseMove="Button_PreviewMouseMove" IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}" Tag="{Binding Disconnect_Event,Mode=OneWay}"/>
+                                            <Button x:Name="Disconnect_Motor_Event" Style="{StaticResource EventButtonStyle}" Content="Disconnect Motor" Margin="12,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="#AA336A" Background="#df88f9" BorderThickness="0.5" FontSize="12" Foreground="#fff" FontWeight="Bold" FontFamily="Georgia, serif;"  Width="200" Height="42" PreviewMouseMove="Button_PreviewMouseMove" IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}" Tag="{Binding Disconnect_Motor_Event,Mode=OneWay}"/>
+                                            <Button x:Name="Disconnect_Weight_Event" Style="{StaticResource EventButtonStyle}" Content="Disconnect Weight" Margin="12,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="#AA336A" Background="#df88f9" BorderThickness="0.5" FontSize="12" Foreground="#fff" FontWeight="Bold" FontFamily="Georgia, serif;"  Width="200" Height="42" PreviewMouseMove="Button_PreviewMouseMove" IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}" Tag="{Binding Disconnect_Weight_Event,Mode=OneWay}"/>
+                                            <Button x:Name="Disconnect_Camera_Event" Style="{StaticResource EventButtonStyle}" Content="Disconnect Camera" Margin="12,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="#AA336A" Background="#df88f9" BorderThickness="0.5" FontSize="12" Foreground="#fff" FontWeight="Bold" FontFamily="Georgia, serif;"  Width="200" Height="42" PreviewMouseMove="Button_PreviewMouseMove" IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}" Tag="{Binding Disconnect_Camera_Event,Mode=OneWay}"/>
+                                            <Button x:Name="Disconnect_ControlCard_Event" Style="{StaticResource EventButtonStyle}" Content="Disconnect ControlCard" Margin="12,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="#AA336A" Background="#df88f9" BorderThickness="0.5" FontSize="12" Foreground="#fff" FontWeight="Bold" FontFamily="Georgia, serif;"  Width="200" Height="42" PreviewMouseMove="Button_PreviewMouseMove" IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}" Tag="{Binding Disconnect_ControlCard_Event,Mode=OneWay}"/>
+
+
                                             <Button x:Name="Space_Key_pressed_Event" Style="{StaticResource EventButtonStyle}" Content="Space key Pressed" Margin="12,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="#AA336A" Background="#df88f9" BorderThickness="0.5" FontSize="12" Foreground="#fff" FontWeight="Bold" FontFamily="Georgia, serif;"  Width="200" Height="42" PreviewMouseMove="Button_PreviewMouseMove" IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}" Tag="{Binding Space_Key_pressed_Event,Mode=OneWay}"/>
                                             <Button x:Name="Send_Message_Event" Style="{StaticResource EventButtonStyle}" Content="Send Message" Margin="12,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="#AA336A" Background="#df88f9" BorderThickness="0.5" FontSize="12" Foreground="#fff" FontWeight="Bold" FontFamily="Georgia, serif;"  Width="200" Height="42" PreviewMouseMove="Button_PreviewMouseMove" IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}" Tag="{Binding Send_Message_Event,Mode=OneWay}"/>
                                             <Button x:Name="Receive_Message_Event" Style="{StaticResource EventButtonStyle}" Content="Receive Message" Margin="12,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="#AA336A" Background="#df88f9" BorderThickness="0.5" FontSize="12" Foreground="#fff" FontWeight="Bold" FontFamily="Georgia, serif;"  Width="200" Height="42" PreviewMouseMove="Button_PreviewMouseMove" IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}" Tag="{Binding Receive_Message_Event,Mode=OneWay}"/>
@@ -2324,32 +2573,32 @@
 
                                         <StackPanel x:Name="ButtonGridArea3" Grid.Row="2" HorizontalAlignment="Center" Margin="10" MouseEnter="ButtonGrid_MouseEnter" Width="250" MouseLeave="ButtonGrid_MouseLeave">
 
-                                            
+
 
                                         </StackPanel>
 
                                         <StackPanel x:Name="ButtonGridArea4" Grid.Row="3" HorizontalAlignment="Center" Margin="10" MouseEnter="ButtonGrid_MouseEnter" Width="250" MouseLeave="ButtonGrid_MouseLeave">
 
-                                            
+
 
                                         </StackPanel>
 
                                         <StackPanel x:Name="ButtonGridArea5" Grid.Row="4" HorizontalAlignment="Center" Margin="10" MouseEnter="ButtonGrid_MouseEnter" Width="250" MouseLeave="ButtonGrid_MouseLeave">
 
-                                            
+
 
 
                                         </StackPanel>
 
                                         <StackPanel x:Name="ButtonGridArea6" Grid.Row="5" HorizontalAlignment="Center" Margin="10" MouseEnter="ButtonGrid_MouseEnter" Width="250" MouseLeave="ButtonGrid_MouseLeave">
 
-                                            
+
 
                                         </StackPanel>
 
                                         <StackPanel x:Name="ButtonGridArea7"  Grid.Row="6" HorizontalAlignment="Center" Margin="10" MouseEnter="ButtonGrid_MouseEnter" Width="250" MouseLeave="ButtonGrid_MouseLeave">
 
-                                            
+
 
 
                                         </StackPanel>
@@ -2359,22 +2608,22 @@
 
                             </Border>
                             <StackPanel Grid.Row="0" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Orientation="Vertical" Cursor="Arrow" Background="#eee" AllowDrop="False">
-                                
-                                
-                                    <ScrollViewer VerticalScrollBarVisibility="Hidden" Height="500" Cursor="Hand">
+
+
+                                <ScrollViewer VerticalScrollBarVisibility="Hidden" Height="500" Cursor="Hand">
                                     <Canvas x:Name="ReceiveDrop" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="700" Cursor="Hand" Width="370" AllowDrop="True" Background="Transparent" Drop="Canvas_Drop" DragOver="Canvas_DragOver" DragLeave="Canvas_DragLeave" DragEnter="ReceiveDrop_DragEnter" PreviewMouseMove="ReceiveDrop_PreviewMouseMove" PreviewMouseUp="ReceiveDrop_PreviewMouseUp">
-                                        
+
 
 
                                     </Canvas>
-                                    </ScrollViewer>
-                              
+                                </ScrollViewer>
+
                             </StackPanel>
 
                         </Grid>
                     </Border>
                 </TabItem>
-                
+
                 <TabItem Style="{StaticResource TabItemStyle}">
                     <TabItem.Header>
                         <StackPanel Orientation="Horizontal">
@@ -2438,7 +2687,7 @@
                             <Grid Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="#eee">
                                 <Grid ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" Margin="12,5,12,5">
                                     <WrapPanel Orientation="Horizontal" x:Name="SoundArea">
-                                        
+
                                     </WrapPanel>
                                 </Grid>
                             </Grid>
@@ -2464,7 +2713,7 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <Grid Grid.Row="0" Grid.Column="0" Background="Transparent">
-                            <Button Foreground="#fff" Content="Reset" Click="Reset_Click" HorizontalAlignment="Right" Margin="2,0,3,0" Style="{StaticResource ResetButton}" Cursor="Hand" ToolTip="Reset" />
+                            <Button x:Name="Reset" Foreground="#fff" Content="Reset" Click="Reset_Click" HorizontalAlignment="Right" Margin="2,0,3,0" Style="{StaticResource ResetButton}" Cursor="Hand" ToolTip="Reset" />
                         </Grid>
                         <Grid Grid.Row="0" Grid.Column="1" Background="Transparent">
                             <Button Click="Stop_Click" Visibility="Hidden" HorizontalAlignment="Right" Cursor="Hand"  x:Name="Stop" Content="Stop" Margin="0,2,2,2" ToolTip="Run" Style="{StaticResource StopButton}" Foreground="#fff" />
@@ -2488,11 +2737,11 @@
 
                             <Grid Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                 <StackPanel x:Name="NetworkCameraOuputArea" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="Hidden">
-                                <GroupBox Header="Live Camera Stream" HorizontalAlignment="Stretch" Margin="10" VerticalAlignment="Top" Height="250">
-                                    <Grid HorizontalAlignment="Stretch" Height="240" VerticalAlignment="Top">
-                                        <controls:VideoViewerWPF Name="videoViewer" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Black"/>
-                                    </Grid>
-                                </GroupBox>
+                                    <GroupBox Header="Live Camera Stream" HorizontalAlignment="Stretch" Margin="10" VerticalAlignment="Top" Height="250">
+                                        <Grid HorizontalAlignment="Stretch" Height="240" VerticalAlignment="Top">
+                                            <controls:VideoViewerWPF Name="videoViewer" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Black"/>
+                                        </Grid>
+                                    </GroupBox>
                                 </StackPanel>
                             </Grid>
 

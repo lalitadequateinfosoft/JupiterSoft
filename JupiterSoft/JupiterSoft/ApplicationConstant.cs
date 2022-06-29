@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace JupiterSoft
 {
-   public enum ElementConstant
+    public enum ElementConstant
     {
         // Move Enum
         Ten_Steps_Move,
@@ -21,7 +21,15 @@ namespace JupiterSoft
         Start_Event,
         Clicked_Event,
         Connect_Event,
+        Connect_Motor_Event,
+        Connect_Weight_Event,
+        Connect_Camera_Event,
+        Connect_ControlCard_Event,
         Disconnect_Event,
+        Disconnect_Motor_Event,
+        Disconnect_Weight_Event,
+        Disconnect_Camera_Event,
+        Disconnect_ControlCard_Event,
         Send_Message_Event,
         Space_Key_pressed_Event,
         Receive_Message_Event,

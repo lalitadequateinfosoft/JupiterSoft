@@ -14,6 +14,7 @@ namespace JupiterSoft.Models
     public class ApplicationConstant
     {
         public static readonly string _FileDirectory = @"C:\JupiterFiles";
+        public static readonly string _VideoDirectory = @"C:\JupiterFiles\VideoFiles";
         public static string CheckIPValid(string strIP)
         {
             if (string.IsNullOrEmpty(strIP)) return null;
