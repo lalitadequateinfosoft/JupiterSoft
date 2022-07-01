@@ -51,6 +51,58 @@ namespace JupiterSoft.Models
         public List<SelectedDevices> sDevices { get; set; }
     }
 
+    public class LogicalCommand
+    {
+        public string CommandId { get; set; }
+        public int CommandType { get; set; }
+        public int Order { get; set; }
+        public int ExecutionStatus { get; set; }
+        public DeviceConfiguration Configuration { get; set; }
+        public object InputData { get; set; }
+        public object OutPutData { get; set; }
+        public string CommandText { get; set; }
+        public object CommandData { get; set; }
+    }
+
+    public class DeviceConfiguration
+    {
+        public DeviceSettings deviceDetail { get; set; }
+        public CameraSettings cameraDetail { get; set; }
+
+    }
+
+    public class DeviceSettings
+    {
+        public string DeviceId { get; set; }
+        public string PortName { get; set; }
+        public int BaudRate { get; set; }
+        public int DataBit { get; set; }
+        public int StopBit { get; set; }
+        public int Parity { get; set; }
+    }
+    public class CameraSettings
+    {
+        public int TypeOfCamera { get; set; }
+        public string Host { get; set; }
+        public int Port { get; set; }
+        public string Accessid { get; set; }
+        public string AccessPassword { get; set; }
+    }
+
+    public enum CameraType
+    {
+        USB,
+        IP_ONVIF,
+        RTSP
+    }
+
+    public enum ExecutionStage
+    {
+        Not_Executed,
+        Executing,
+        Executed
+    }
+
     public enum userDeviceType
     {
         NetworkCamera,

@@ -51,4 +51,25 @@ namespace JupiterSoft.Models
         public string Caption { get; set; }
         public string DeviceID { get; set; }
     }
+
+    public class ParityModel
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+    }
+    public class BaudRateModel
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+    }
+    public class DatabitModel
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+    }
+    public class StopBitModel
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+    }
 }

@@ -19,14 +19,19 @@ namespace JupiterSoft.Models
 
         //Events
         public int Start_Event { get; set; }
-        public int Clicked_Event { get; set; }
-        public int Connect_Event { get; set; }
-        public int Disconnect_Event { get; set; }
-        public int Space_Key_pressed_Event { get; set; }
-        public int Send_Message_Event { get; set; }
+        public int Connect_Motor_Event { get; set; }
+        public int Disconnect_Motor_Event { get; set; }
+        public int Connect_Weight_Event { get; set; }
+        public int Disconnect_Weight_Event { get; set; }
+        public int Connect_Camera_Event { get; set; }
+        public int Disconnect_Camera_Event { get; set; }
+        public int Connect_ControlCard_Event { get; set; }
+        public int Disconnect_ControlCard_Event { get; set; }
         public int Receive_Message_Event { get; set; }
-        public int BroadCast_Message_Event { get; set; }
-        public int BroadCast_Message_Wait_Event { get; set; }
+        public int Start_Stream_Camera_Event { get; set; }
+        public int Stop_Stream_Camera_Event { get; set; }
+        public int Start_Camera_Recording_Event { get; set; }
+        public int Stop_Camera_recording_Event { get; set; }
 
         //Control
         public int Wait_One_Second_Control { get; set; }
@@ -101,14 +106,20 @@ namespace JupiterSoft.Models
 
                 //Events Enum
                 Start_Event=(int)ElementConstant.Start_Event,
-                Clicked_Event = (int)ElementConstant.Clicked_Event,
-                Connect_Event= (int)ElementConstant.Connect_Event,
-                Disconnect_Event= (int)ElementConstant.Disconnect_Event,
-                Space_Key_pressed_Event = (int)ElementConstant.Space_Key_pressed_Event,
-                Send_Message_Event= (int)ElementConstant.Send_Message_Event,
-                Receive_Message_Event =(int)ElementConstant.Receive_Message_Event,
-                BroadCast_Message_Event = (int)ElementConstant.BroadCast_Message_Event,
-                BroadCast_Message_Wait_Event = (int)ElementConstant.BroadCast_Message_Wait_Event,
+                Connect_Motor_Event = (int)ElementConstant.Connect_Motor_Event,
+                Disconnect_Motor_Event = (int)ElementConstant.Disconnect_Motor_Event,
+                Connect_Weight_Event = (int)ElementConstant.Connect_Weight_Event,
+                Disconnect_Weight_Event = (int)ElementConstant.Disconnect_Weight_Event,
+                Connect_Camera_Event = (int)ElementConstant.Connect_Camera_Event,
+                Disconnect_Camera_Event = (int)ElementConstant.Disconnect_Camera_Event,
+                Connect_ControlCard_Event = (int)ElementConstant.Connect_ControlCard_Event,
+                Disconnect_ControlCard_Event = (int)ElementConstant.Disconnect_ControlCard_Event,
+                Receive_Message_Event = (int)ElementConstant.Receive_Message_Event,
+                Start_Stream_Camera_Event = (int)ElementConstant.Start_Stream_Camera_Event,
+                Stop_Stream_Camera_Event=(int)ElementConstant.Stop_Stream_Camera_Event,
+                Start_Camera_Recording_Event=(int)ElementConstant.Start_Camera_Recording_Event,
+                Stop_Camera_recording_Event=(int)ElementConstant.Stop_Camera_recording_Event,
+
 
                 //Control Enum
                 Wait_One_Second_Control = (int)ElementConstant.Wait_One_Second_Control,
