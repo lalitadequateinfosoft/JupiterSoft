@@ -1482,6 +1482,28 @@ namespace JupiterSoft.Pages
 
         #endregion
 
+        #region network camera
+        private void ConnectIPCamera(string URL,string username,string password)
+        {
+            _camera = IPCameraFactory.GetCamera(URL, "root", "");
+            _connector.Connect(_camera.VideoChannel, _drawingImageProvider);
+            _camera.Start();
+            videoViewer.SetImageProvider(_drawingImageProvider);
+            videoViewer.Start();
+        }
+
+        private void DisconnectIPCamera()
+        {
+            _camera.Stop();
+            _camera.Dispose();
+            _drawingImageProvider.Dispose();
+            _connector.Disconnect(_webCamera.VideoChannel, _drawingImageProvider);
+            _connector.Dispose();
+            videoViewer.Stop();
+            videoViewer.Background = Brushes.Black;
+        }
+        #endregion
+
         #region Discover and Connect Device or Camera
         void GetIpCameras()
         {
@@ -1528,6 +1550,8 @@ namespace JupiterSoft.Pages
                 {
                     item.Connected = true;
                     item.Disconnected = false;
+                    var devicedetail = devices.Where(x => x.Host == item.DeviceIP && x.Port == item.DevicePort).FirstOrDefault();
+                    ConnectIPCamera(devicedetail.Uri.AbsoluteUri.ToString(), "admin", "");
                 }
                 else
                 {
@@ -1543,6 +1567,10 @@ namespace JupiterSoft.Pages
         {
             foreach (var item in DeviceModels)
             {
+                if(item.Connected)
+                {
+                    DisconnectIPCamera();
+                }
                 item.Connected = false;
                 item.ConnectMessage = "Connect";
                 item.Disconnected = true;

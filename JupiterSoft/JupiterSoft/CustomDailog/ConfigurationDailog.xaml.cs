@@ -87,7 +87,7 @@ namespace JupiterSoft.CustomDailog
             StopBitConfig.ItemsSource = StopbitData;
             StopBitConfig.SelectedValuePath = "Id";
             StopBitConfig.DisplayMemberPath = "Name";
-            StopBitConfig.SelectedValue = "3";
+            StopBitConfig.SelectedValue = "1";
 
             //Load Parity
             var parityData = new List<ParityModel> {
