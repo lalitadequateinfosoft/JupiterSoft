@@ -72,6 +72,11 @@ namespace JupiterSoft.Models
         public static Queue<RecData> ReceiveDataQueue = new Queue<RecData>();        
 
         public static List<RecData> RequestDataList = new List<RecData>();
+        public static RecData currentReequest
+        {
+            get;
+            set;
+        }
 
         public static int RecState
         {
@@ -183,7 +188,8 @@ namespace JupiterSoft.Models
     {     
         UART,
         MODBUS,
-        XYZ
+        XYZ,
+        None
     }
 
     public enum PortDataStatus
@@ -208,11 +214,11 @@ namespace JupiterSoft.Models
 
     public enum DeviceType
     {
-        NetworkCamera,
-        USBCamera,
+        Camera,
         MotorDerive,
         WeightModule,
-        ControlCard
+        ControlCard,
+        None
     }
 
     public enum ModBus_Ack

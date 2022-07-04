@@ -43,7 +43,7 @@ namespace JupiterSoft.CustomDailog
         {
             //Load Comport.
             var devices = CustomDeviceInfos;
-            devices.Add(new CustomDeviceInfo { DeviceID = "0", PortName = "-Select-" });
+            //devices.Add(new CustomDeviceInfo { DeviceID = "0", PortName = "-Select-" });
             ComPortConfig.ItemsSource = devices;
             ComPortConfig.SelectedValuePath = "DeviceID";
             ComPortConfig.DisplayMemberPath = "PortName";

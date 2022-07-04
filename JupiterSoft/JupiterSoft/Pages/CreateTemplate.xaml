@@ -2736,7 +2736,6 @@
                                                 IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}"
                                                 Tag="{Binding Connect_Weight_Event,Mode=OneWay}"
                                                 />
-
                                                 <Button 
                                                 x:Name="Disconnect_Weight_Event"
                                                 Style="{StaticResource EventButtonStyle}"
@@ -2757,7 +2756,47 @@
                                                 IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}"
                                                 Tag="{Binding Disconnect_Weight_Event,Mode=OneWay}"
                                                 />
-                                                <Button 
+                                            <Button 
+                                                x:Name="Connect_ControlCard_Event"
+                                                Style="{StaticResource EventButtonStyle}"
+                                                Content="Connect Control Card"
+                                                Margin="12,5,0,0"
+                                                HorizontalAlignment="Left"
+                                                VerticalAlignment="Center"
+                                                BorderBrush="#AA336A"
+                                                Background="#df88f9"
+                                                BorderThickness="0.5"
+                                                FontSize="12"
+                                                Foreground="#fff"
+                                                FontWeight="Bold"
+                                                FontFamily="Georgia, serif;" 
+                                                Width="200"
+                                                Height="42" 
+                                                PreviewMouseMove="Button_PreviewMouseMove"
+                                                IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}"
+                                                Tag="{Binding Connect_ControlCard_Event,Mode=OneWay}"
+                                                />
+                                            <Button 
+                                                x:Name="Disconnect_ControlCard_Event"
+                                                Style="{StaticResource EventButtonStyle}"
+                                                Content="Disconnect Control Card"
+                                                Margin="12,5,0,0"
+                                                HorizontalAlignment="Left"
+                                                VerticalAlignment="Center"
+                                                BorderBrush="#AA336A"
+                                                Background="#df88f9"
+                                                BorderThickness="0.5"
+                                                FontSize="12"
+                                                Foreground="#fff"
+                                                FontWeight="Bold"
+                                                FontFamily="Georgia, serif;" 
+                                                Width="200"
+                                                Height="42" 
+                                                PreviewMouseMove="Button_PreviewMouseMove"
+                                                IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}"
+                                                Tag="{Binding Disconnect_ControlCard_Event,Mode=OneWay}"
+                                                />
+                                            <Button 
                                                 x:Name="Receive_Message_Event"
                                                 Style="{StaticResource EventButtonStyle}"
                                                 Content="Receive Data"
@@ -2777,6 +2816,7 @@
                                                 IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}"
                                                 Tag="{Binding Receive_Message_Event,Mode=OneWay}"
                                                 />
+                                                
 
                                             </StackPanel>
 

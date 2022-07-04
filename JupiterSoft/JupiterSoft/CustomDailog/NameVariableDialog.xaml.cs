@@ -35,14 +35,14 @@ namespace JupiterSoft.CustomDailog
 
         private void BtnOk_Click(object sender, RoutedEventArgs e)
         {
-            if (!string.IsNullOrEmpty(VariableName.Text))
+            if (!string.IsNullOrEmpty(VariableName.Text) && !VariableName.Text.Contains(" "))
             {
                 Canceled = false;
                 Close();
             }
             else
             {
-                MessageBox.Show("Please variable name");
+                MessageBox.Show("Please enter variable name without space");
             }
 
         }

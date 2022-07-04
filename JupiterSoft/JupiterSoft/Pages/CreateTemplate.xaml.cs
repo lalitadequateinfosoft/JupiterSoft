@@ -385,43 +385,44 @@ namespace JupiterSoft.Pages
                 double NewTop = dropPosition.Y;
                 double NewLeft = dropPosition.X;
                 WrapPanel ele = new WrapPanel();
+                var contentId = Guid.NewGuid().ToString("N");
                 switch (Convert.ToInt32(data))
                 {
                     case (int)ElementConstant.Ten_Steps_Move:
                         getNewPosition(Ten_Steps_Move.Width, Ten_Steps_Move.Height, ref NewLeft, ref NewTop);
-                        ele = Get_Ten_Steps_Move();
+                        ele = Get_Ten_Steps_Move(contentId);
                         break;
                     case (int)ElementConstant.Turn_Fiften_Degree_Right_Move:
                         getNewPosition(Turn_Fiften_Degree_Right_Move.Width, Turn_Fiften_Degree_Right_Move.Height, ref NewLeft, ref NewTop);
-                        ele = Get_Turn_Fiften_Degree_Right_Move();
+                        ele = Get_Turn_Fiften_Degree_Right_Move(contentId);
                         break;
                     case (int)ElementConstant.Turn_Fiften_Degree_Left_Move:
                         getNewPosition(Turn_Fiften_Degree_Left_Move.Width, Turn_Fiften_Degree_Left_Move.Height, ref NewLeft, ref NewTop);
-                        ele = Get_Turn_Fiften_Degree_Left_Move();
+                        ele = Get_Turn_Fiften_Degree_Left_Move(contentId);
                         break;
                     case (int)ElementConstant.Pointer_State_Move:
                         getNewPosition(Pointer_State_Move.Width, Pointer_State_Move.Height, ref NewLeft, ref NewTop);
-                        ele = Get_Pointer_State_Move();
+                        ele = Get_Pointer_State_Move(contentId);
                         break;
                     case (int)ElementConstant.Rotation_Style_Move:
                         getNewPosition(Rotation_Style_Move.Width, Rotation_Style_Move.Height, ref NewLeft, ref NewTop);
-                        ele = Get_Rotation_Style_Move();
+                        ele = Get_Rotation_Style_Move(contentId);
                         break;
                     case (int)ElementConstant.Start_Event:
                         getNewPosition(Start_Event.Width, Start_Event.Height, ref NewLeft, ref NewTop);
-                        ele = Get_EventStyle(Convert.ToInt32(data));
+                        ele = Get_EventStyle(contentId,Convert.ToInt32(data));
                         break;
                     case (int)ElementConstant.Connect_Motor_Event:
                         getNewPosition(Connect_Motor_Event.Width, Connect_Motor_Event.Height, ref NewLeft, ref NewTop);
-                        ele = Get_EventStyle(Convert.ToInt32(data));
+                        ele = Get_EventStyle(contentId, Convert.ToInt32(data));
                         break;
                     case (int)ElementConstant.Disconnect_Motor_Event:
                         getNewPosition(Disconnect_Motor_Event.Width, Disconnect_Motor_Event.Height, ref NewLeft, ref NewTop);
-                        ele = Get_EventStyle(Convert.ToInt32(data));
+                        ele = Get_EventStyle(contentId, Convert.ToInt32(data));
                         break;
                     case (int)ElementConstant.Connect_Weight_Event:
                         getNewPosition(Connect_Weight_Event.Width, Connect_Weight_Event.Height, ref NewLeft, ref NewTop);
-                        ele = Get_EventStyle(Convert.ToInt32(data));
+                        ele = Get_EventStyle(contentId, Convert.ToInt32(data));
                         ConfigurationDailog dailog = new ConfigurationDailog("Set Weight Module Configuration", deviceInfo.CustomDeviceInfos);
                         dailog.ShowDialog();
                         if (!dailog.Canceled)
@@ -430,7 +431,7 @@ namespace JupiterSoft.Pages
                             {
                                 var command = new LogicalCommand
                                 {
-                                    CommandId = Guid.NewGuid().ToString(),
+                                    CommandId = contentId,
                                     CommandType = Convert.ToInt32(data),
                                     Order = 1,
                                     ExecutionStatus = (int)ExecutionStage.Not_Executed,
@@ -455,7 +456,7 @@ namespace JupiterSoft.Pages
                             {
                                 var command = new LogicalCommand
                                 {
-                                    CommandId = Guid.NewGuid().ToString(),
+                                    CommandId = contentId,
                                     CommandType = Convert.ToInt32(data),
                                     Order = Commands.OrderByDescending(x => x.Order).FirstOrDefault().Order + 1,
                                     ExecutionStatus = (int)ExecutionStage.Not_Executed,
@@ -481,12 +482,12 @@ namespace JupiterSoft.Pages
                         break;
                     case (int)ElementConstant.Disconnect_Weight_Event:
                         getNewPosition(Disconnect_Weight_Event.Width, Disconnect_Weight_Event.Height, ref NewLeft, ref NewTop);
-                        ele = Get_EventStyle(Convert.ToInt32(data));
+                        ele = Get_EventStyle(contentId, Convert.ToInt32(data));
                         if (Commands.Count() == 0)
                         {
                             var command = new LogicalCommand
                             {
-                                CommandId = Guid.NewGuid().ToString(),
+                                CommandId = contentId,
                                 CommandType = Convert.ToInt32(data),
                                 Order = 1,
                                 ExecutionStatus = (int)ExecutionStage.Not_Executed,
@@ -499,7 +500,7 @@ namespace JupiterSoft.Pages
                         {
                             var command = new LogicalCommand
                             {
-                                CommandId = Guid.NewGuid().ToString(),
+                                CommandId = contentId,
                                 CommandType = Convert.ToInt32(data),
                                 Order = Commands.OrderByDescending(x => x.Order).FirstOrDefault().Order + 1,
                                 ExecutionStatus = (int)ExecutionStage.Not_Executed,
@@ -510,23 +511,79 @@ namespace JupiterSoft.Pages
                         }
                         ShouldAdd = true;
                         break;
-                    case (int)ElementConstant.Receive_Message_Event:
-                        getNewPosition(Receive_Message_Event.Width, Receive_Message_Event.Height, ref NewLeft, ref NewTop);
-                        ele = Get_EventStyle(Convert.ToInt32(data));
-                        NameVariableDialog variableDialog = new NameVariableDialog("Define Variable Name");
-                        variableDialog.ShowDialog();
-                        if (!variableDialog.Canceled)
-                        { 
+                    case (int)ElementConstant.Connect_ControlCard_Event:
+                        getNewPosition(Connect_ControlCard_Event.Width, Connect_ControlCard_Event.Height, ref NewLeft, ref NewTop);
+                        ele = Get_EventStyle(contentId, Convert.ToInt32(data));
+                        ConfigurationDailog controldailog = new ConfigurationDailog("Set Control Card Configuration", deviceInfo.CustomDeviceInfos);
+                        controldailog.ShowDialog();
+                        if (!controldailog.Canceled)
+                        {
                             if (Commands.Count() == 0)
+                            {
+                                var command = new LogicalCommand
+                                {
+                                    CommandId = contentId,
+                                    CommandType = Convert.ToInt32(data),
+                                    Order = 1,
+                                    ExecutionStatus = (int)ExecutionStage.Not_Executed,
+                                    Configuration = new DeviceConfiguration
+                                    {
+                                        deviceDetail = new DeviceSettings
+                                        {
+                                            DeviceId = controldailog.DeviceId,
+                                            PortName = deviceInfo.CustomDeviceInfos.Where(x => x.DeviceID == controldailog.DeviceId).FirstOrDefault().PortName,
+                                            BaudRate = controldailog.BaudRate,
+                                            DataBit = controldailog.Databit,
+                                            StopBit = controldailog.Stopbit,
+                                            Parity = controldailog.ParityValue
+                                        },
+                                        cameraDetail = new CameraSettings()
+                                    },
+                                    CommandText = "Connect Control Card"
+                                };
+                                Commands.Add(command);
+                            }
+                            else
+                            {
+                                var command = new LogicalCommand
+                                {
+                                    CommandId = contentId,
+                                    CommandType = Convert.ToInt32(data),
+                                    Order = Commands.OrderByDescending(x => x.Order).FirstOrDefault().Order + 1,
+                                    ExecutionStatus = (int)ExecutionStage.Not_Executed,
+                                    Configuration = new DeviceConfiguration
+                                    {
+                                        deviceDetail = new DeviceSettings
+                                        {
+                                            DeviceId = controldailog.DeviceId,
+                                            PortName = deviceInfo.CustomDeviceInfos.Where(x => x.DeviceID == controldailog.DeviceId).FirstOrDefault().PortName,
+                                            BaudRate = controldailog.BaudRate,
+                                            DataBit = controldailog.Databit,
+                                            StopBit = controldailog.Stopbit,
+                                            Parity = controldailog.ParityValue
+                                        },
+                                        cameraDetail = new CameraSettings()
+                                    },
+                                    CommandText = "Connect Control Card"
+                                };
+                                Commands.Add(command);
+                            }
+                            ShouldAdd = true;
+                        }
+                        break;
+                    case (int)ElementConstant.Disconnect_ControlCard_Event:
+                        getNewPosition(Disconnect_ControlCard_Event.Width, Disconnect_ControlCard_Event.Height, ref NewLeft, ref NewTop);
+                        ele = Get_EventStyle(contentId, Convert.ToInt32(data));
+                        if (Commands.Count() == 0)
                         {
                             var command = new LogicalCommand
                             {
-                                CommandId = Guid.NewGuid().ToString(),
+                                CommandId = contentId,
                                 CommandType = Convert.ToInt32(data),
                                 Order = 1,
                                 ExecutionStatus = (int)ExecutionStage.Not_Executed,
                                 Configuration = new DeviceConfiguration(),
-                                CommandText = variableDialog.VariableName.Text
+                                CommandText = "Disconnect Control Card"
                             };
                             Commands.Add(command);
                         }
@@ -534,16 +591,51 @@ namespace JupiterSoft.Pages
                         {
                             var command = new LogicalCommand
                             {
-                                CommandId = Guid.NewGuid().ToString(),
+                                CommandId = contentId,
                                 CommandType = Convert.ToInt32(data),
                                 Order = Commands.OrderByDescending(x => x.Order).FirstOrDefault().Order + 1,
                                 ExecutionStatus = (int)ExecutionStage.Not_Executed,
                                 Configuration = new DeviceConfiguration(),
-                                CommandText = variableDialog.VariableName.Text
+                                CommandText = "Disconnect Control Card"
                             };
                             Commands.Add(command);
                         }
                         ShouldAdd = true;
+                        break;
+                    case (int)ElementConstant.Receive_Message_Event:
+                        getNewPosition(Receive_Message_Event.Width, Receive_Message_Event.Height, ref NewLeft, ref NewTop);
+                        ele = Get_EventStyle(contentId, Convert.ToInt32(data));
+                        NameVariableDialog variableDialog = new NameVariableDialog("Define Variable Name");
+                        variableDialog.ShowDialog();
+                        if (!variableDialog.Canceled)
+                        {
+                            if (Commands.Count() == 0)
+                            {
+                                var command = new LogicalCommand
+                                {
+                                    CommandId = contentId,
+                                    CommandType = Convert.ToInt32(data),
+                                    Order = 1,
+                                    ExecutionStatus = (int)ExecutionStage.Not_Executed,
+                                    Configuration = new DeviceConfiguration(),
+                                    CommandText = variableDialog.VariableName.Text
+                                };
+                                Commands.Add(command);
+                            }
+                            else
+                            {
+                                var command = new LogicalCommand
+                                {
+                                    CommandId = contentId,
+                                    CommandType = Convert.ToInt32(data),
+                                    Order = Commands.OrderByDescending(x => x.Order).FirstOrDefault().Order + 1,
+                                    ExecutionStatus = (int)ExecutionStage.Not_Executed,
+                                    Configuration = new DeviceConfiguration(),
+                                    CommandText = variableDialog.VariableName.Text
+                                };
+                                Commands.Add(command);
+                            }
+                            ShouldAdd = true;
                         }
                         break;
                 }
@@ -600,6 +692,9 @@ namespace JupiterSoft.Pages
         private void CloseBtn_Click(object sender, RoutedEventArgs e)
         {
             var CloseBtn = sender as Button;
+            var commandId= CloseBtn.Parent.GetValue(FrameworkElement.TagProperty);
+            var command = Commands.Where(x => x.CommandId == commandId).FirstOrDefault();
+            this.Commands.Remove(command);
             this.ReceiveDrop.Children.Remove(CloseBtn.Parent as WrapPanel);
 
         }
@@ -658,7 +753,7 @@ namespace JupiterSoft.Pages
         }
 
         // Copy Element of Defined Type.
-        private WrapPanel Get_Ten_Steps_Move(string content = "")
+        private WrapPanel Get_Ten_Steps_Move(string ContentId,string content = "")
         {
             Button btn = new Button();
             btn.Margin = new Thickness(12, 5, 0, 0);
@@ -690,6 +785,7 @@ namespace JupiterSoft.Pages
             closeBtn.Click += CloseBtn_Click;
             Random random = new Random();
             WrapPanel wrap = new WrapPanel();
+            wrap.Tag = ContentId;
             wrap.Width = Double.NaN;
             wrap.Height = Double.NaN;
             //wrap.Background = new SolidColorBrush(Colors.Blue);
@@ -699,7 +795,7 @@ namespace JupiterSoft.Pages
             return wrap;
         }
 
-        private WrapPanel Get_Turn_Fiften_Degree_Right_Move(string content = "")
+        private WrapPanel Get_Turn_Fiften_Degree_Right_Move(string ContentId, string content = "")
         {
             Button btn = new Button();
             btn.Margin = new Thickness(12, 5, 0, 0);
@@ -732,6 +828,7 @@ namespace JupiterSoft.Pages
             closeBtn.Click += CloseBtn_Click;
             Random random = new Random();
             WrapPanel wrap = new WrapPanel();
+            wrap.Tag = ContentId;
             wrap.Width = Double.NaN;
             wrap.Height = Double.NaN;
             //wrap.Background = new SolidColorBrush(Colors.Blue);
@@ -741,7 +838,7 @@ namespace JupiterSoft.Pages
             return wrap;
         }
 
-        private WrapPanel Get_Turn_Fiften_Degree_Left_Move(string content = "")
+        private WrapPanel Get_Turn_Fiften_Degree_Left_Move(string ContentId, string content = "")
         {
             Button btn = new Button();
             btn.Margin = new Thickness(12, 5, 0, 0);
@@ -774,6 +871,7 @@ namespace JupiterSoft.Pages
             closeBtn.Click += CloseBtn_Click;
             Random random = new Random();
             WrapPanel wrap = new WrapPanel();
+            wrap.Tag = ContentId;
             wrap.Width = Double.NaN;
             wrap.Height = Double.NaN;
             //wrap.Background = new SolidColorBrush(Colors.Blue);
@@ -783,7 +881,7 @@ namespace JupiterSoft.Pages
             return wrap;
         }
 
-        private WrapPanel Get_Pointer_State_Move()
+        private WrapPanel Get_Pointer_State_Move(string ContentId)
         {
             Button btn = new Button();
             btn.Margin = new Thickness(12, 5, 0, 0);
@@ -816,6 +914,7 @@ namespace JupiterSoft.Pages
             closeBtn.Click += CloseBtn_Click;
             Random random = new Random();
             WrapPanel wrap = new WrapPanel();
+            wrap.Tag = ContentId;
             wrap.Width = Double.NaN;
             wrap.Height = Double.NaN;
             //wrap.Background = new SolidColorBrush(Colors.Blue);
@@ -825,7 +924,7 @@ namespace JupiterSoft.Pages
             return wrap;
         }
 
-        private WrapPanel Get_Rotation_Style_Move()
+        private WrapPanel Get_Rotation_Style_Move(string ContentId)
         {
             Button btn = new Button();
             btn.Margin = new Thickness(12, 5, 0, 0);
@@ -853,11 +952,11 @@ namespace JupiterSoft.Pages
             closeBtn.FontSize = 10;
             closeBtn.VerticalAlignment = VerticalAlignment.Top;
             closeBtn.Style = this.FindResource("Closebtn") as Style;
-            //closeBtn.Margin = new Thickness(-5, 0, 0, 0);
-            //closeBtn.Padding = new Thickness(1);
             closeBtn.Click += CloseBtn_Click;
             Random random = new Random();
+
             WrapPanel wrap = new WrapPanel();
+            wrap.Tag = ContentId;
             wrap.Width = Double.NaN;
             wrap.Height = Double.NaN;
             wrap.Children.Add(btn);
@@ -866,7 +965,7 @@ namespace JupiterSoft.Pages
             return wrap;
         }
 
-        private WrapPanel Get_EventStyle(int evEnum)
+        private WrapPanel Get_EventStyle(string ContentId, int evEnum)
         {
             string content = string.Empty;
             switch (evEnum)
@@ -885,6 +984,12 @@ namespace JupiterSoft.Pages
                     break;
                 case (int)ElementConstant.Disconnect_Weight_Event:
                     content = "Disconnect Weight";
+                    break;
+                case (int)ElementConstant.Connect_ControlCard_Event:
+                    content = "Connect Control Card";
+                    break;
+                case (int)ElementConstant.Disconnect_ControlCard_Event:
+                    content = "Disconnect Control Card";
                     break;
                 case (int)ElementConstant.Receive_Message_Event:
                     content = "Receive Data";
@@ -919,6 +1024,7 @@ namespace JupiterSoft.Pages
             closeBtn.Click += CloseBtn_Click;
             Random random = new Random();
             WrapPanel wrap = new WrapPanel();
+            wrap.Tag = ContentId;
             wrap.Width = Double.NaN;
             wrap.Height = Double.NaN;
             wrap.Children.Add(btn);
@@ -1028,40 +1134,41 @@ namespace JupiterSoft.Pages
                 foreach (var item in items.fileContents.OrderBy(x => x.ContentOrder))
                 {
                     WrapPanel ele = new WrapPanel();
+                    string contentId = Guid.NewGuid().ToString("N");
                     switch (Convert.ToInt32(item.ContentType))
                     {
                         case (int)ElementConstant.Ten_Steps_Move:
-                            ele = Get_Ten_Steps_Move();
+                            ele = Get_Ten_Steps_Move(contentId);
                             break;
                         case (int)ElementConstant.Turn_Fiften_Degree_Right_Move:
-                            ele = Get_Turn_Fiften_Degree_Right_Move();
+                            ele = Get_Turn_Fiften_Degree_Right_Move(contentId);
                             break;
                         case (int)ElementConstant.Turn_Fiften_Degree_Left_Move:
-                            ele = Get_Turn_Fiften_Degree_Left_Move();
+                            ele = Get_Turn_Fiften_Degree_Left_Move(contentId);
                             break;
                         case (int)ElementConstant.Pointer_State_Move:
-                            ele = Get_Pointer_State_Move();
+                            ele = Get_Pointer_State_Move(contentId);
                             break;
                         case (int)ElementConstant.Rotation_Style_Move:
-                            ele = Get_Rotation_Style_Move();
+                            ele = Get_Rotation_Style_Move(contentId);
                             break;
                         case (int)ElementConstant.Start_Event:
-                            ele = Get_EventStyle(Convert.ToInt32(item.ContentType));
+                            ele = Get_EventStyle(contentId,Convert.ToInt32(item.ContentType));
                             break;
                         case (int)ElementConstant.Connect_Motor_Event:
-                            ele = Get_EventStyle(Convert.ToInt32(item.ContentType));
+                            ele = Get_EventStyle(contentId, Convert.ToInt32(item.ContentType));
                             break;
                         case (int)ElementConstant.Disconnect_Motor_Event:
-                            ele = Get_EventStyle(Convert.ToInt32(item.ContentType));
+                            ele = Get_EventStyle(contentId, Convert.ToInt32(item.ContentType));
                             break;
                         case (int)ElementConstant.Connect_Weight_Event:
-                            ele = Get_EventStyle(Convert.ToInt32(item.ContentType));
+                            ele = Get_EventStyle(contentId, Convert.ToInt32(item.ContentType));
                             break;
                         case (int)ElementConstant.Disconnect_Weight_Event:
-                            ele = Get_EventStyle(Convert.ToInt32(item.ContentType));
+                            ele = Get_EventStyle(contentId, Convert.ToInt32(item.ContentType));
                             break;
                         case (int)ElementConstant.Receive_Message_Event:
-                            ele = Get_EventStyle(Convert.ToInt32(item.ContentType));
+                            ele = Get_EventStyle(contentId, Convert.ToInt32(item.ContentType));
                             break;
                     }
 
@@ -2265,9 +2372,13 @@ namespace JupiterSoft.Pages
         {
             if (this.SerialDevice.IsOpen)
             {
+                Common.RecState = 0;
+                Common.CurrentDevice = Models.DeviceType.None;
+                Common.COMSelected = COMType.None;
+                Common.RequestDataList.Clear();
                 this.SerialDevice.DtrEnable = false;
                 this.SerialDevice.RtsEnable = false;
-                this.SerialDevice.DataReceived -= TestDevice_DataReceived;
+                this.SerialDevice.DataReceived -= SerialDevice_DataReceived;
                 this.SerialDevice.DiscardInBuffer();
                 this.SerialDevice.DiscardOutBuffer();
                 this.SerialDevice.Close();
@@ -2717,261 +2828,6 @@ namespace JupiterSoft.Pages
                 ComPortControl.DisplayMemberPath = "PortName";
                 ComPortControl.SelectedValue = "0";
             }
-        }
-
-        // For ordering the blocks 
-        public void ExecuteAllBlocks()
-        {
-            var contentElement = ReceiveDrop.Children.OfType<WrapPanel>().ToList();
-            List<userCommands> commands = new List<userCommands>();
-            int Order = 1;
-            foreach (var item in contentElement)
-            {
-                var child = item.Children.OfType<Button>().FirstOrDefault();
-
-                commands.Add(new userCommands
-                {
-                    ContentId = Guid.NewGuid().ToString("N"),
-                    ContentType = Convert.ToInt32(child.Tag),
-                    ContentText = child.Content != null ? child.Content.ToString() : null,
-                    ContentOrder = Order
-
-                });
-                Order++;
-            }
-
-            //userCommandLogic.sDevices = _devices;
-            userCommandLogic.uCommands = commands;
-
-            ExecuteUserCommands();
-
-        }
-
-
-        // To execute the blocks
-        public void ExecuteUserCommands()
-        {
-            if (userCommandLogic == null) return;
-
-
-            List<SelectedDevices> _devices = new List<SelectedDevices>();
-            _devices = getConfiguredDevices();
-
-            foreach (var _command in userCommandLogic.uCommands.OrderBy(x => x.ContentOrder))
-            {
-                Console.WriteLine(_command);
-                //var suctom = deviceInfo.CustomDeviceInfos.Where(x => x.DeviceID == selectedval).FirstOrDefault();
-                //Port = suctom.PortName;
-                //SerialPortCommunications(Port, Baudrate, databit, stopbit, parity);
-                var port = "";
-                switch (Convert.ToInt16(_command.ContentType))
-                {
-                    // Ten_Steps_Move
-                    case 0:
-                        for (int i = 0; i < 5; i++)
-                        {
-                            Console.WriteLine(i);
-                        }
-                        break;
-
-                    // Start_Event
-                    case 7:
-                        // Search the device he has selected and tell the user that it is started now
-                        //int mydelay = 5000;
-                        //Thread.Sleep(mydelay);
-                        //Task.Delay(60000);
-
-                        break;
-
-                    // Clicked_Event
-                    case 8:
-                        // You have clicked this button(Start/Stop/move)
-
-                        break;
-
-                    // Motor Event
-                    case 10:
-                        // Search the communication port of the motor and then save its data
-
-                        break;
-
-                    // Weight Module
-                    case 11:
-                        // Search the weight module and search its data
-                        port = _devices.Where(x => x.TypeOfDevice == (int)userDeviceType.WeightModule).FirstOrDefault().deviceId;
-                        ReadWeight(port);
-                        break;
-
-                    // Camera
-                    case 12:
-                        // Search the camera module and save its data
-                        //MessageBox.Show("Make sure camera is connectedd");
-                        ConnectionUSB();
-                        break;
-
-                    case 13:
-                        // Search the control card and save its data
-                        try
-                        {
-                            port = _devices.Where(x => x.TypeOfDevice == (int)userDeviceType.ControlCard).FirstOrDefault().deviceId;
-                            if (port != null)
-                            {
-                                MessageBox.Show("Please select the control card port");
-                                //ReadAllControCardInputOutput(port);
-                            }
-                            ReadAllControCardInputOutput(port);
-                            DataReader();
-                            //_MbTgmBytes
-                        }
-                        catch
-                        {
-                            MessageBox.Show("Something seems wrong!! Please check the control card port");
-                        }
-                        break;
-
-                    case 14:
-                        // Disconnect all the event including the devices
-                        DisconnectRunningCamera();
-
-                        break;
-
-                    case 15:
-                        // Disconnect_Motor_Event only
-                        //StopMotor_();
-                        break;
-
-                    case 16:
-                        // Disconnect_Weight_Event only
-                        MessageBox.Show("Weight module is disconnected");
-                        StopWeight();
-
-                        break;
-
-                    case 17:
-                        // Disconnect_Camera_Event only
-                        MessageBox.Show("Camera is disconnected now");
-                        DisconnectRunningCamera();
-                        break;
-
-                    case 18:
-                        // Disconnect_ControlCard_Event only
-                        break;
-
-                    case 19:
-                        // Send_Message_Event over http so require url
-                        break;
-
-                    case 20:
-                        // Space_Key_pressed_Event
-
-                        break;
-                    case 21:
-                        // Receive_Message_Event button
-                        //var data = Common.ReceiveDataQueue.Dequeue();
-                        //Console.WriteLine(data.MbTgm);
-                        //ReadControlCardResponse(); // Error
-
-                        RecData _recData = new RecData();
-                        _recData = Common.ReceiveDataQueue.Dequeue();
-                        if (_recData.MbTgm.Length > 0 && _recData.MbTgm.Length > readIndex)
-                        {
-                            //To Read Function Code response.
-                            if (_recData.MbTgm[1] == (int)COM_Code.three)
-                            {
-                                // int read = _recData.MbTgm[2];
-                                // byte[] arr = _recData.MbTgm.Where((item, index) => index > 2 && index < 63).ToArray();
-                                //for (int i = 0; i < arr.Length; i+=2)
-                                //{
-                                int _i0 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 3);
-                                int _i1 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 5);
-                                int _i2 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 7);
-                                int _i3 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 9);
-                                int _i4 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 11);
-                                int _i5 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 13);
-                                int _i6 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 15);
-                                int _i7 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 17);
-                                int _i8 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 19);
-                                int _i9 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 21);
-                                int _i10 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 23);
-                                int _i11 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 25);
-                                int _i12 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 27);
-                                int _i13 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 29);
-                                int _i14 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 31);
-                                int _i15 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 33);
-                                int _i16 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 35);
-                                int _i17 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 37);
-                                int _i18 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 39);
-                                int _i19 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 41);
-                                int _i20 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 43);
-                                int _i21 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 45);
-                                int _i22 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 47);
-                                int _i23 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 49);
-                                int _i24 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 51);
-                                int _i25 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 53);
-                                int _i26 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 55);
-                                int _i27 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 57);
-                                int _i28 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 59);
-                                int _i29 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 61);
-                            }
-
-                        }
-                        break;
-                    default:
-                        break;
-
-                }
-
-
-            }
-        }
-
-        public List<SelectedDevices> getConfiguredDevices()
-        {
-            List<SelectedDevices> _devices = new List<SelectedDevices>();
-            int Baudrate = 38400;
-            int databit = 8;
-            int stopbit = 1;
-
-            if (ComPortMotor.SelectedValue.ToString() != "0")
-            {
-                _devices.Add(new SelectedDevices
-                {
-                    deviceId = ((CustomDeviceInfo)ComPortMotor.SelectedItem).PortName,
-                    TypeOfDevice = (int)userDeviceType.MotorDerive,
-                    Baudrate = Baudrate,
-                    databit = databit,
-                    stopbit = stopbit,
-                    parity = (int)Parity.None
-                });
-            }
-
-            if (ComPortWeight.SelectedValue.ToString() != "0")
-            {
-                _devices.Add(new SelectedDevices
-                {
-                    deviceId = ((CustomDeviceInfo)ComPortWeight.SelectedItem).PortName,
-                    TypeOfDevice = (int)userDeviceType.WeightModule,
-                    Baudrate = Baudrate,
-                    databit = databit,
-                    stopbit = stopbit,
-                    parity = (int)Parity.None
-                });
-            }
-
-            if (ComPortControl.SelectedValue.ToString() != "0")
-            {
-                _devices.Add(new SelectedDevices
-                {
-                    deviceId = ((CustomDeviceInfo)ComPortControl.SelectedItem).PortName,
-                    TypeOfDevice = (int)userDeviceType.ControlCard,
-                    Baudrate = Baudrate,
-                    databit = databit,
-                    stopbit = stopbit,
-                    parity = (int)Parity.None
-                });
-            }
-
-            return _devices;
         }
 
         private void SerialPortCommunications(string port = "", int baudRate = 0, int databit = 0, int stopBit = 0, int parity = 0)
@@ -3443,17 +3299,10 @@ namespace JupiterSoft.Pages
             return _IsTgmErr;
         }
 
-        private void ReadWeight(string deviceId)
+        private void ReadWeight(string Port, int Baudrate, int databit, int stopbit, int parity)
         {
             Common.RecState = 1;
             Common.CurrentDevice = Models.DeviceType.WeightModule;
-
-            //int TypeOfDevice = (int)userDeviceType.WeightModule;
-            int Baudrate = 9600;  //38400 for control card.
-            int databit = 8;
-            int stopbit = 1;
-            int parity = (int)Parity.None;
-            string Port = deviceId;
             RecData _recData = new RecData();
             _recData.deviceType = Models.DeviceType.WeightModule;
             _recData.PropertyName = "WeightModule";
@@ -3467,33 +3316,23 @@ namespace JupiterSoft.Pages
             _recData.RqType = RQType.UART;
             Common.COMSelected = COMType.UART;
             _CurrentActiveMenu = AppTools.UART;
+            Common.currentReequest = _recData;
             Common.RequestDataList.Add(_recData);
             SerialPortCommunications(Port, Baudrate, databit, stopbit, parity);
 
 
         }
 
-        private void StopWeight()
-        {
-            this.SerialDevice.DtrEnable = false;
-            this.SerialDevice.RtsEnable = false;
-            this.SerialDevice.DiscardInBuffer();
-            this.SerialDevice.DiscardOutBuffer();
+       
 
-            Stop.Visibility = Visibility.Hidden;
-            Run.Visibility = Visibility.Visible;
-            WeightContent.Content = "8888888";
-            WeightUnitKG.Content = "kg";
-        }
-
-        private void ReadAllControCardInputOutput(string Comport)
+        private void ReadAllControCardInputOutput()
         {
 
             MODBUSComnn obj = new MODBUSComnn();
             Common.COMSelected = COMType.MODBUS;
             _CurrentActiveMenu = AppTools.Modbus;
-            //SerialPortCommunications(Comport, 38400, 8, 1, 0);
-            obj.GetMultiSendorValueFM3(1, 0, SerialDevice, 0, 30, "ControlCard", 1, 0, Models.DeviceType.ControlCard);   // GetSoftwareVersion(Common.Address, Common.Parity, sp, _ValueType);
+            obj.GetMultiSendorValueFM3(1, 0, SerialDevice, 0, 30, "ControlCard", 1, 0, Models.DeviceType.ControlCard);  
+            // GetSoftwareVersion(Common.Address, Common.Parity, sp, _ValueType);
 
         }
 
@@ -3536,31 +3375,115 @@ namespace JupiterSoft.Pages
 
         public void ExecuteProcesses()
         {
-            if(Commands!=null && Commands.Count()>0)
+            if (Commands != null && Commands.Count() > 0)
             {
-                if(Commands.Where(x=>x.ExecutionStatus!=(int)ExecutionStage.Executed).ToList().Count()>0)
+                if (Commands.Where(x => x.ExecutionStatus != (int)ExecutionStage.Executed).ToList().Count() > 0)
                 {
-                    foreach(var command in Commands.Where(x => x.ExecutionStatus != (int)ExecutionStage.Executed).OrderBy(x=>x.Order).ToList())
+                    foreach (var command in Commands.Where(x => x.ExecutionStatus != (int)ExecutionStage.Executed).OrderBy(x => x.Order).ToList())
                     {
-                        if(command.CommandType==(int)ElementConstant.Connect_Weight_Event)
+                        if (command.CommandType == (int)ElementConstant.Connect_ControlCard_Event)
                         {
-                            OutPutArea.AppendText("\n Executing " + command.CommandText + "..");
-                            ReadWeight(command.Configuration.deviceDetail.PortName);
+                            if (command.ExecutionStatus == (int)ExecutionStage.Not_Executed)
+                            {
+                                OutPutArea.AppendText("\n Execution started " + command.CommandText + "..");
+                                Connect_control_card(command.Configuration.deviceDetail.PortName, command.Configuration.deviceDetail.BaudRate, command.Configuration.deviceDetail.DataBit, command.Configuration.deviceDetail.StopBit, command.Configuration.deviceDetail.Parity);
+                                command.ExecutionStatus = (int)ExecutionStage.Executed;
+                                OutPutArea.AppendText("\n Execution Completed " + command.CommandText + "..");
+                            }
+                            break;
                         }
 
-                        if(command.CommandType==(int)ElementConstant.Receive_Message_Event)
+                        if (command.CommandType == (int)ElementConstant.Disconnect_ControlCard_Event)
                         {
-                            DataReader();
-                            RecData data = Common.ReceiveDataQueue.Dequeue();
+                            if (command.ExecutionStatus == (int)ExecutionStage.Not_Executed)
+                            {
+                                OutPutArea.AppendText("\n Execution started " + command.CommandText + "..");
+                                Disable_RunTimeButton();
+                                StopPortCommunication();
+                                command.ExecutionStatus = (int)ExecutionStage.Executed;
+                                OutPutArea.AppendText("\n Execution Completed " + command.CommandText + "..");
+                            }
+
+                            break;
                         }
-                        if(command.CommandType == (int)ElementConstant.Disconnect_Weight_Event)
+
+                        if (command.CommandType == (int)ElementConstant.Connect_Weight_Event)
                         {
-                            Disable_RunTimeButton();
-                            StopPortCommunication();
+                            if (command.ExecutionStatus == (int)ExecutionStage.Not_Executed)
+                            {
+                                OutPutArea.AppendText("\n Execution started " + command.CommandText + "..");
+                                ReadWeight(command.Configuration.deviceDetail.PortName, command.Configuration.deviceDetail.BaudRate, command.Configuration.deviceDetail.DataBit, command.Configuration.deviceDetail.StopBit, command.Configuration.deviceDetail.Parity);
+                                command.ExecutionStatus = (int)ExecutionStage.Executing;
+                            }
+                            else
+                            {
+                                OutPutArea.AppendText("\n Executing " + command.CommandText + "..");
+                                command.ExecutionStatus = (int)ExecutionStage.Executed;
+                            }
+                            break;
+                        }
+
+                        if (command.CommandType == (int)ElementConstant.Receive_Message_Event)
+                        {
+                            if (command.ExecutionStatus == (int)ExecutionStage.Not_Executed)
+                            { 
+                                if(Common.CurrentDevice==Models.DeviceType.WeightModule)
+                                {
+                                    OutPutArea.AppendText("\n Execution Started " + command.CommandText + "..");
+                                    DataReader();
+                                    command.OutPutData = Common.ReceiveDataQueue.Dequeue();
+                                    command.ExecutionStatus = (int)ExecutionStage.Executed;
+                                }
+                                else
+                                {
+                                    OutPutArea.AppendText("\n Execution Started " + command.CommandText + "..");
+                                    ReadAllControCardInputOutput();
+                                    command.ExecutionStatus = (int)ExecutionStage.Executing;
+                                }
+                            }
+                            else
+                            {
+                                if (Common.CurrentDevice == Models.DeviceType.ControlCard || Common.CurrentDevice == Models.DeviceType.MotorDerive)
+                                {
+                                    DataReader();
+                                    command.OutPutData = Common.ReceiveDataQueue.Dequeue();
+                                    OutPutArea.AppendText("\n Executing " + command.CommandText + "..");
+                                    command.ExecutionStatus = (int)ExecutionStage.Executed;
+                                }
+                                else
+                                {
+                                    OutPutArea.AppendText("\n Executing " + command.CommandText + "..");
+                                    command.ExecutionStatus = (int)ExecutionStage.Executed;
+                                }
+                            }
+                            break;
+                        }
+                        if (command.CommandType == (int)ElementConstant.Disconnect_Weight_Event)
+                        {
+                            if (command.ExecutionStatus == (int)ExecutionStage.Not_Executed)
+                            {
+                                Disable_RunTimeButton();
+                                StopPortCommunication();
+                                command.ExecutionStatus = (int)ExecutionStage.Executed;
+                            }
+                            else
+                            {
+                                OutPutArea.AppendText("\n Executing " + command.CommandText + "..");
+                                command.ExecutionStatus = (int)ExecutionStage.Executed;
+                            }
+
+                            break;
                         }
                     }
+
+                    ExecuteProcesses();
+                }
+                else
+                {
+                    OutPutArea.AppendText("\n Exection end.");
                 }
             }
+
         }
 
         private void Stop_Click(object sender, RoutedEventArgs e)
@@ -3568,10 +3491,32 @@ namespace JupiterSoft.Pages
             // StopWeight();
         }
 
-
+        private void Connect_control_card(string Port, int Baudrate, int databit, int stopbit, int parity)
+        {
+            Common.RecState = 1;
+            Common.CurrentDevice = Models.DeviceType.ControlCard;
+            RecData _recData = new RecData();
+            _recData.deviceType = Models.DeviceType.ControlCard;
+            _recData.PropertyName = "ControlCard";
+            _recData.SessionId = Common.GetSessionNewId;
+            _recData.Ch = 0;
+            _recData.Indx = 0;
+            _recData.Reg = 0;
+            _recData.NoOfVal = 0;
+            Common.GetSessionId = _recData.SessionId;
+            _recData.Status = PortDataStatus.Requested;
+            _recData.RqType = RQType.ModBus;
+            Common.COMSelected = COMType.MODBUS;
+            _CurrentActiveMenu = AppTools.Modbus;
+            Common.currentReequest = _recData;
+            Common.RequestDataList.Add(_recData);
+            SerialPortCommunications(Port, Baudrate, databit, stopbit, parity);
+        }
 
 
         #endregion
+
+        
 
     }
 }
