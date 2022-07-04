@@ -220,6 +220,7 @@
     <Resource Include="assets\controlBoard.png" />
   </ItemGroup>
   <ItemGroup>
+    <SplashScreen Include="splash-screen.jpg" />
     <Resource Include="assets\logojupiter.png" />
     <Content Include="fonts\font.css" />
     <Resource Include="fonts\ni7seg-bg.png" />
