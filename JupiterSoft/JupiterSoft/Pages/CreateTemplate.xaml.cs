@@ -1485,11 +1485,21 @@ namespace JupiterSoft.Pages
         #region network camera
         private void ConnectIPCamera(string URL,string username,string password)
         {
-            _camera = IPCameraFactory.GetCamera(URL, "root", "");
-            _connector.Connect(_camera.VideoChannel, _drawingImageProvider);
-            _camera.Start();
-            videoViewer.SetImageProvider(_drawingImageProvider);
-            videoViewer.Start();
+            _drawingImageProvider = new DrawingImageProvider();
+            _connector = new MediaConnector();
+            try
+            {
+                _camera = IPCameraFactory.GetCamera(URL, username, password);
+                _connector.Connect(_camera.VideoChannel, _drawingImageProvider);
+                _camera.Start();
+                videoViewer.SetImageProvider(_drawingImageProvider);
+                videoViewer.Start();
+            }
+            catch
+            {
+                MessageBox.Show("Failed to connect IP Camera..");
+            }
+           
         }
 
         private void DisconnectIPCamera()
@@ -1497,7 +1507,7 @@ namespace JupiterSoft.Pages
             _camera.Stop();
             _camera.Dispose();
             _drawingImageProvider.Dispose();
-            _connector.Disconnect(_webCamera.VideoChannel, _drawingImageProvider);
+            _connector.Disconnect(_camera.VideoChannel, _drawingImageProvider);
             _connector.Dispose();
             videoViewer.Stop();
             videoViewer.Background = Brushes.Black;
@@ -1551,7 +1561,7 @@ namespace JupiterSoft.Pages
                     item.Connected = true;
                     item.Disconnected = false;
                     var devicedetail = devices.Where(x => x.Host == item.DeviceIP && x.Port == item.DevicePort).FirstOrDefault();
-                    ConnectIPCamera(devicedetail.Uri.AbsoluteUri.ToString(), "admin", "");
+                    ConnectIPCamera(devicedetail.Uri.AbsoluteUri.ToString(), "", "");
                 }
                 else
                 {
