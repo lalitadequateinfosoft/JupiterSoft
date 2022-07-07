@@ -1,0 +1,882 @@
+﻿<Window x:Class="JupiterSoft.CustomDailog.HMIDialoge"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:JupiterSoft.CustomDailog"
+        xmlns:fa="http://schemas.fontawesome.io/icons/"
+        xmlns:ui="http://schemas.modernwpf.com/2019"
+        xmlns:controls="clr-namespace:Ozeki.Media;assembly=OzekiSDK"
+        mc:Ignorable="d"
+        Title="HMIDialoge" 
+        Icon="pack://application:,,,/JupiterSoft;component/icon.ico"
+        Width="1280"
+        Height="720"
+        WindowStartupLocation="CenterScreen"
+        WindowState="Maximized"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        HorizontalAlignment="Center"
+        VerticalAlignment="Center"
+        Background="Transparent"
+        ResizeMode="NoResize"
+       >
+    <Window.Resources>
+        <ResourceDictionary>
+            <Style x:Key="ni7segfamily" TargetType="Label">
+                <Setter Property="FontFamily"
+            Value="pack://application:,,,/fonts/#NI7SEG" />
+            </Style>
+
+            <Style x:Key="ButtonFocusVisual">
+                <Setter Property="Control.Template">
+                    <Setter.Value>
+                        <ControlTemplate>
+                            <Rectangle Margin="2" SnapsToDevicePixels="true" Stroke="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" StrokeThickness="1" StrokeDashArray="1 2"/>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <LinearGradientBrush x:Key="ButtonNormalBackground" EndPoint="0,1" StartPoint="0,0">
+                <GradientStop Color="#F3F3F3" Offset="0"/>
+                <GradientStop Color="#EBEBEB" Offset="0.5"/>
+                <GradientStop Color="#DDDDDD" Offset="0.5"/>
+                <GradientStop Color="#CDCDCD" Offset="1"/>
+            </LinearGradientBrush>
+            <SolidColorBrush x:Key="ButtonNormalBorder" Color="#FF707070"/>
+            <Style x:Key="ToggleButtonStyle1" TargetType="{x:Type ToggleButton}">
+                <Setter Property="FocusVisualStyle" Value="{StaticResource ButtonFocusVisual}"/>
+                <Setter Property="Background" Value="{StaticResource ButtonNormalBackground}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource ButtonNormalBorder}"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+                <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
+
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type ToggleButton}">
+                            <Border BorderBrush="#007acc" BorderThickness="1" CornerRadius="2">
+                                <StackPanel Orientation="Vertical">
+                                    <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                    <Border x:Name="on" Width="22" Height="22" Background="LightGray" CornerRadius="2,2,0,0" Margin="1,1,1,0">
+                                        <TextBlock x:Name="onText" Text="Open" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="{TemplateBinding FontSize}" Padding="1"/>
+                                    </Border>
+                                    <Border x:Name="off" Width="22" Height="22" Background="LightGray" CornerRadius="0,0,2,2" Margin="1,0,1,1">
+                                        <TextBlock x:Name="offText" Text="Close" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="{TemplateBinding FontSize}" Padding="1"/>
+                                    </Border>
+                                </StackPanel>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsEnabled" Value="false">
+                                    <Setter Property="Foreground" Value="#ADADAD"/>
+                                </Trigger>
+                                <Trigger Property="IsChecked" Value="true">
+                                    <Setter TargetName="on" Property="Background" Value="#007acc"/>
+                                    <Setter TargetName="onText" Property="Foreground" Value="White"/>
+                                </Trigger>
+                                <Trigger Property="IsChecked" Value="False">
+                                    <Setter TargetName="off" Property="Background" Value="red"/>
+                                    <Setter TargetName="offText" Property="Foreground" Value="White"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </ResourceDictionary>
+    </Window.Resources>
+    <Grid Background="Transparent">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1271*"/>
+            <ColumnDefinition Width="10*"/>
+        </Grid.ColumnDefinitions>
+        <Border
+                Background="#fff"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch" 
+                CornerRadius="6"
+                BorderBrush="#007acc"
+                BorderThickness="1"
+                Margin="5" Grid.ColumnSpan="2">
+            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Border 
+                        Grid.Row="0"
+                        BorderThickness="0,0,0,1"
+                        BorderBrush="#007acc"
+                     Background="#007acc"
+                    CornerRadius="6,6,0,0">
+                    <Grid>
+                        <Label 
+                        Content="Execution Processing Mode"
+                        Foreground="White"
+                        FontWeight="Bold"
+                        FontSize="12"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                            Margin="5,0,0,0"/>
+                        
+                        <Button 
+                            ToolTip="Close"
+                            Content="X"
+                            x:Name="StopProcess"
+                            Background="Red"
+                            Foreground="White"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            HorizontalContentAlignment="Center"
+                            FontSize="12"
+                            Height="20"
+                            Width="20"
+                            Margin="4"
+                            Padding="2"
+                            Click="StopProcess_Click"/>
+                    </Grid>
+                </Border>
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Border 
+                        Grid.Column="0"
+                        BorderBrush="#bbbbbb"
+                        BorderThickness="0,0,1,0"
+                        Margin="2,0,1,0">
+
+                    </Border>
+                    <Border 
+                        Grid.Column="1"
+                        Margin="2,0,1,0">
+                        <ScrollViewer 
+                            VerticalScrollBarVisibility="Auto"
+                            x:Name="OutPutContentArea">
+                            <Grid 
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
+                                Background="Transparent">
+                                <StackPanel 
+                                    Orientation="Vertical"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Stretch">
+                                    <StackPanel 
+                                        x:Name="CameraArea"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch"
+                                        Margin="2">
+                                        <GroupBox 
+                                            FontSize="14"
+                                            Background="Transparent"
+                                            BorderThickness="3"
+                                            BorderBrush="Black"
+                                            Header="Live Camera Stream"
+                                            HorizontalAlignment="Stretch" 
+                                            VerticalAlignment="Stretch"
+                                            Padding="5">
+                                            <Grid HorizontalAlignment="Stretch" Height="240" VerticalAlignment="Top">
+                                                <controls:VideoViewerWPF Name="videoViewer" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Black"/>
+                                            </Grid>
+                                        </GroupBox>
+                                    </StackPanel>
+                                    <StackPanel 
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch"
+                                        Margin="2">
+                                        <GroupBox 
+                                            FontSize="14"
+                                            Background="Transparent"
+                                            BorderThickness="3"
+                                            BorderBrush="Black"
+                                            HorizontalAlignment="Stretch"
+                                            VerticalAlignment="Stretch"
+                                            Header="Weight Module"
+                                            Padding="5">
+                                            <Border 
+                                            Padding="10"
+                                            CornerRadius="10"
+                                            Background="#242726">
+                                                <Grid>
+                                                    <Border CornerRadius="4" Background="#66797c" Padding="15,8,15,8">
+                                                        <Grid>
+                                                            <Border BorderBrush="#fff" BorderThickness="2" Background="#66797c" Padding="5" CornerRadius="20">
+                                                                <Grid>
+                                                                    <Border CornerRadius="20" Background="#1f2121">
+                                                                        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="55">
+                                                                            <Grid.ColumnDefinitions>
+                                                                                <ColumnDefinition Width="*"/>
+                                                                                <ColumnDefinition Width="Auto"/>
+                                                                            </Grid.ColumnDefinitions>
+                                                                            <Border Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="#2e1511" CornerRadius="5">
+                                                                                <Label HorizontalContentAlignment="Center" x:Name="WeightContent" Content="888888" Style="{StaticResource ni7segfamily}" Foreground="#af1708" Width="Auto" Height="Auto" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="40" FontStyle="Italic"/>
+                                                                            </Border>
+                                                                            <Grid Grid.Column="1" Width="30">
+                                                                                <Grid.RowDefinitions>
+                                                                                    <RowDefinition Height="*"/>
+                                                                                    <RowDefinition Height="*"/>
+                                                                                    <RowDefinition Height="*"/>
+                                                                                    <RowDefinition Height="*"/>
+                                                                                </Grid.RowDefinitions>
+                                                                                <Label x:Name="WeightUnitKG" Grid.Row="0" Margin="2" Content="kg" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="White"/>
+                                                                                <Label x:Name="WeightUnitLB" Grid.Row="1" Margin="2" Content="lb" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="White"/>
+                                                                                <Label x:Name="WeightUnitOZ" Grid.Row="2" Margin="2" Content="oz" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="White"/>
+                                                                                <Label x:Name="WeightUnitPCS" Grid.Row="3" Margin="2" Content="PCS" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="White"/>
+                                                                            </Grid>
+                                                                        </Grid>
+                                                                    </Border>
+                                                                </Grid>
+                                                            </Border>
+                                                        </Grid>
+
+                                                    </Border>
+                                                </Grid>
+
+                                            </Border>
+                                        </GroupBox>
+
+                                    </StackPanel>
+                                    <StackPanel x:Name="ControlBoardArea">
+                                        <GroupBox
+                                            FontSize="14"
+                                            Background="Transparent"
+                                            BorderThickness="3"
+                                            BorderBrush="Black"
+                                            HorizontalAlignment="Stretch"
+                                            VerticalAlignment="Stretch"
+                                            Header="Control Card"
+                                            Padding="5">
+                                            <Grid Margin="0,5,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="100"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                </Grid.RowDefinitions>
+                                                <Border Grid.Row="0" Height="70">
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="*"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <ToggleButton 
+                                                        x:Name="Toggle16"
+                                                        Content="16"
+                                                        Grid.Column="0"
+                                                        Style="{StaticResource ToggleButtonStyle1}"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        HorizontalContentAlignment="Center"
+                                                        IsChecked="{x:Null}"
+                                                        FontSize="9"
+                                                        Cursor="Hand"
+                                                        
+                                                        IsEnabled="False"/>
+                                                        <ToggleButton
+                                                        x:Name="Toggle17"
+                                                        Content="17"
+                                                        Grid.Column="1"
+                                                        Style="{StaticResource ToggleButtonStyle1}"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        HorizontalContentAlignment="Center"
+                                                        IsChecked="{x:Null}"
+                                                        FontSize="9"
+                                                        
+                                                        IsEnabled="False"/>
+                                                        <ToggleButton
+                                                        x:Name="Toggle18"
+                                                        Content="18"
+                                                        Grid.Column="2"
+                                                        Style="{StaticResource ToggleButtonStyle1}"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        HorizontalContentAlignment="Center"
+                                                        IsChecked="{x:Null}"
+                                                        FontSize="9"
+                                                        
+                                                        IsEnabled="False"/>
+                                                        <ToggleButton
+                                                        x:Name="Toggle19"
+                                                        Content="19"
+                                                        Grid.Column="3"
+                                                        Style="{StaticResource ToggleButtonStyle1}"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        HorizontalContentAlignment="Center"
+                                                        IsChecked="{x:Null}"
+                                                        FontSize="9"
+                                                        
+                                                        IsEnabled="False"/>
+                                                        <ToggleButton
+                                                        x:Name="Toggle20"
+                                                        Content="20" Grid.Column="4"
+                                                        Style="{StaticResource ToggleButtonStyle1}"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        HorizontalContentAlignment="Center"
+                                                        IsChecked="{x:Null}"
+                                                        FontSize="9"
+                                                        
+                                                        IsEnabled="False"/>
+                                                        <ToggleButton 
+                                                        x:Name="Toggle21"
+                                                        Content="21" Grid.Column="5"
+                                                        Style="{StaticResource ToggleButtonStyle1}"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        HorizontalContentAlignment="Center"
+                                                        IsChecked="{x:Null}"
+                                                        FontSize="9"
+                                                        
+                                                        IsEnabled="False"/>
+
+                                                        <ToggleButton
+                                                        x:Name="Toggle22"
+                                                        Content="22"
+                                                        Grid.Column="6"
+                                                        Style="{StaticResource ToggleButtonStyle1}"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        HorizontalContentAlignment="Center"
+                                                        IsChecked="{x:Null}"
+                                                        FontSize="10"
+                                                        
+                                                        IsEnabled="False"/>
+
+                                                        <ToggleButton
+                                                        x:Name="Toggle23"
+                                                        Content="23"
+                                                        Grid.Column="7"
+                                                        Style="{StaticResource ToggleButtonStyle1}"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        HorizontalContentAlignment="Center"
+                                                        IsChecked="{x:Null}"
+                                                        FontSize="10"
+                                                        
+                                                        IsEnabled="False"/>
+
+                                                        <ToggleButton 
+                                                        x:Name="Toggle24"
+                                                        Content="24"
+                                                        Grid.Column="8"
+                                                        Style="{StaticResource ToggleButtonStyle1}"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        HorizontalContentAlignment="Center"
+                                                        IsChecked="{x:Null}"
+                                                        FontSize="10"
+                                                        
+                                                        IsEnabled="False"/>
+
+                                                        <ToggleButton 
+                                                        x:Name="Toggle25"
+                                                        Content="25"
+                                                        Grid.Column="9"
+                                                        Style="{StaticResource ToggleButtonStyle1}"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        HorizontalContentAlignment="Center"
+                                                        IsChecked="{x:Null}"
+                                                        FontSize="10"
+                                                        
+                                                        IsEnabled="False"/>
+
+                                                        <ToggleButton
+                                                        x:Name="Toggle26"
+                                                        Content="26"
+                                                        Grid.Column="10"
+                                                        Style="{StaticResource ToggleButtonStyle1}"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        HorizontalContentAlignment="Center"
+                                                        IsChecked="{x:Null}"
+                                                        FontSize="10"
+                                                        
+                                                        IsEnabled="False"/>
+
+                                                        <ToggleButton 
+                                                        x:Name="Toggle27"
+                                                        Content="27"
+                                                        Grid.Column="11"
+                                                        Style="{StaticResource ToggleButtonStyle1}"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        HorizontalContentAlignment="Center"
+                                                        IsChecked="{x:Null}"
+                                                        FontSize="10"
+                                                        
+                                                        IsEnabled="False"/>
+
+                                                        <ToggleButton
+                                                        x:Name="Toggle28"
+                                                        Content="28"
+                                                        Grid.Column="12"
+                                                        Style="{StaticResource ToggleButtonStyle1}"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        HorizontalContentAlignment="Center"
+                                                        IsChecked="{x:Null}"
+                                                        FontSize="10"
+                                                        
+                                                        IsEnabled="False"/>
+
+                                                        <ToggleButton
+                                                        x:Name="Toggle29"
+                                                        Content="29"
+                                                        Grid.Column="13"
+                                                        Style="{StaticResource ToggleButtonStyle1}"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        HorizontalContentAlignment="Center"
+                                                        IsChecked="{x:Null}"
+                                                        FontSize="10"
+                                                        
+                                                        IsEnabled="False"/>
+
+                                                        <ToggleButton
+                                                        x:Name="Toggle30"
+                                                        Content="30"
+                                                        Grid.Column="14"
+                                                        Style="{StaticResource ToggleButtonStyle1}"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        HorizontalContentAlignment="Center"
+                                                        IsChecked="{x:Null}"
+                                                        FontSize="10"
+                                                        
+                                                        IsEnabled="False"/>
+
+                                                        <ToggleButton
+                                                        x:Name="Toggle31"
+                                                        Content="31"
+                                                        Grid.Column="15"
+                                                        Style="{StaticResource ToggleButtonStyle1}"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        HorizontalContentAlignment="Center" 
+                                                        IsChecked="{x:Null}"
+                                                        FontSize="10"
+                                                        
+                                                        IsEnabled="False"/>
+                                                    </Grid>
+                                                </Border>
+                                                <Border 
+                                                    Grid.Row="1"
+                                                    BorderBrush="ForestGreen"
+                                                    Background="ForestGreen"
+                                                    BorderThickness="1"
+                                                    >
+
+                                                    <Label 
+                                                        Content="Device"
+                                                        Foreground="White"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"/>
+                                                </Border>
+                                                <Border 
+                                                    Grid.Row="2"
+                                                    Height="30"
+                                                    BorderBrush="#cccccc"
+                                                    BorderThickness="1">
+                                                    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="28"/>
+                                                            <ColumnDefinition Width="28"/>
+                                                            <ColumnDefinition Width="28"/>
+                                                            <ColumnDefinition Width="28"/>
+                                                            <ColumnDefinition Width="28"/>
+                                                            <ColumnDefinition Width="28"/>
+                                                            <ColumnDefinition Width="28"/>
+                                                            <ColumnDefinition Width="28"/>
+                                                            <ColumnDefinition Width="28"/>
+                                                            <ColumnDefinition Width="28"/>
+                                                            <ColumnDefinition Width="28"/>
+                                                            <ColumnDefinition Width="28"/>
+                                                            <ColumnDefinition Width="28"/>
+                                                            <ColumnDefinition Width="28"/>
+                                                            <ColumnDefinition Width="28"/>
+                                                            <ColumnDefinition Width="28"/>
+                                                        </Grid.ColumnDefinitions>
+
+
+                                                        <Border Grid.Column="0"
+                                                            Background="#041124"
+                                                            CornerRadius="2"
+                                                            BorderThickness="1">
+                                                            <StackPanel 
+                                                            Orientation="Vertical"
+                                                            HorizontalAlignment="Center">
+
+                                                                <Label Content="0"
+                                                                   FontSize="10"
+                                                                   Foreground="White"/>
+
+                                                                <Label Content="In"
+                                                                   FontSize="10"
+                                                                   Foreground="White"/>
+
+                                                            </StackPanel>
+
+
+                                                        </Border>
+
+                                                        <Border Grid.Column="1"
+                                                            Margin="1"
+                                                            Background="#041124"
+                                                            CornerRadius="2">
+
+                                                            <StackPanel 
+                                                            Orientation="Vertical"
+                                                            HorizontalAlignment="Center">
+
+                                                                <Label Content="1"
+                                                                   FontSize="10"
+                                                                   Foreground="White"/>
+
+                                                                <Label Content="In"
+                                                                   FontSize="10"
+                                                                   Foreground="White"/>
+                                                            </StackPanel>
+                                                        </Border>
+                                                        <Border Grid.Column="2"
+                                                            Margin="1"
+                                                            Background="#041124"
+                                                            CornerRadius="2">
+
+                                                            <StackPanel 
+                                                            Orientation="Vertical"
+                                                            HorizontalAlignment="Center">
+
+                                                                <Label Content="2"
+                                                                   FontSize="10"
+                                                                   Foreground="White"/>
+
+                                                                <Label Content="In"
+                                                                   FontSize="10"
+                                                                   Foreground="White"/>
+                                                            </StackPanel>
+
+                                                        </Border>
+                                                        <Border Grid.Column="3"
+                                                            Margin="1"
+                                                            Background="#041124"
+                                                            CornerRadius="2">
+
+                                                            <StackPanel 
+                                                            Orientation="Vertical"
+                                                            HorizontalAlignment="Center">
+
+                                                                <Label Content="3"
+                                                                   FontSize="10"
+                                                                   Foreground="White"/>
+
+                                                                <Label Content="In"
+                                                                   FontSize="10"
+                                                                   Foreground="White"/>
+                                                            </StackPanel>
+                                                        </Border>
+                                                        <Border Grid.Column="4"
+                                                            Margin="1"
+                                                            Background="#041124"
+                                                            CornerRadius="2">
+
+                                                            <StackPanel 
+                                                            Orientation="Vertical"
+                                                            HorizontalAlignment="Center">
+
+                                                                <Label Content="4"
+                                                                   FontSize="10"
+                                                                   Foreground="White"/>
+
+                                                                <Label Content="In"
+                                                                   FontSize="10"
+                                                                   Foreground="White"/>
+                                                            </StackPanel>
+                                                        </Border>
+                                                        <Border Grid.Column="5"
+                                                            Margin="1"
+                                                            Background="#041124"
+                                                            CornerRadius="2">
+
+                                                            <StackPanel 
+                                                            Orientation="Vertical"
+                                                            HorizontalAlignment="Center">
+
+                                                                <Label Content="5"
+                                                                   FontSize="10"
+                                                                   Foreground="White"/>
+
+                                                                <Label Content="In"
+                                                                   FontSize="10"
+                                                                   Foreground="White"/>
+                                                            </StackPanel>
+                                                        </Border>
+                                                        <Border Grid.Column="6"
+                                                            Margin="1"
+                                                            Background="#041124"
+                                                            CornerRadius="2">
+
+                                                            <StackPanel 
+                                                            Orientation="Vertical"
+                                                            HorizontalAlignment="Center">
+
+                                                                <Label Content="6"
+                                                                   FontSize="10"
+                                                                   Foreground="White"/>
+
+                                                                <Label Content="In"
+                                                                   FontSize="10"
+                                                                   Foreground="White"/>
+                                                            </StackPanel>
+                                                        </Border>
+                                                        <Border Grid.Column="7"
+                                                            Margin="1"
+                                                            Background="#041124"
+                                                            CornerRadius="2">
+
+                                                            <StackPanel 
+                                                            Orientation="Vertical"
+                                                            HorizontalAlignment="Center">
+
+                                                                <Label Content="7"
+                                                                   FontSize="10"
+                                                                   Foreground="White"/>
+
+                                                                <Label Content="In"
+                                                                   FontSize="10"
+                                                                   Foreground="White"/>
+                                                            </StackPanel>
+                                                        </Border>
+                                                        <Border Grid.Column="8"
+                                                            Margin="1"
+                                                            Background="#041124"
+                                                            CornerRadius="2">
+
+                                                            <StackPanel 
+                                                            Orientation="Vertical"
+                                                            HorizontalAlignment="Center">
+
+                                                                <Label Content="8"
+                                                                   FontSize="10"
+                                                                   Foreground="White"/>
+
+                                                                <Label Content="In"
+                                                                   FontSize="10"
+                                                                   Foreground="White"/>
+                                                            </StackPanel>
+                                                        </Border>
+                                                        <Border Grid.Column="9"
+                                                            Margin="1"
+                                                            Background="#041124"
+                                                            CornerRadius="2">
+
+                                                            <StackPanel 
+                                                            Orientation="Vertical"
+                                                            HorizontalAlignment="Center">
+
+                                                                <Label Content="9"
+                                                                   FontSize="10"
+                                                                   Foreground="White"/>
+
+                                                                <Label Content="In"
+                                                                   FontSize="10"
+                                                                   Foreground="White"/>
+                                                            </StackPanel>
+                                                        </Border>
+                                                        <Border Grid.Column="10"
+                                                            Margin="1"
+                                                            Background="#041124"
+                                                            CornerRadius="2">
+
+                                                            <StackPanel 
+                                                            Orientation="Vertical"
+                                                            HorizontalAlignment="Center">
+
+                                                                <Label Content="10"
+                                                                   FontSize="10"
+                                                                   Foreground="White"/>
+
+                                                                <Label Content="In"
+                                                                   FontSize="10"
+                                                                   Foreground="White"/>
+                                                            </StackPanel>
+                                                        </Border>
+                                                        <Border Grid.Column="11"
+                                                            Margin="1"
+                                                            Background="#041124"
+                                                            CornerRadius="2">
+
+                                                            <StackPanel 
+                                                            Orientation="Vertical"
+                                                            HorizontalAlignment="Center">
+
+                                                                <Label Content="11"
+                                                                   FontSize="10"
+                                                                   Foreground="White"/>
+
+                                                                <Label Content="In"
+                                                                   FontSize="10"
+                                                                   Foreground="White"/>
+                                                            </StackPanel>
+                                                        </Border>
+                                                        <Border Grid.Column="12"
+                                                            Margin="1"
+                                                            Background="#041124"
+                                                            CornerRadius="2">
+
+                                                            <StackPanel 
+                                                            Orientation="Vertical"
+                                                            HorizontalAlignment="Center">
+
+                                                                <Label Content="12"
+                                                                   FontSize="10"
+                                                                   Foreground="White"/>
+
+                                                                <Label Content="In"
+                                                                   FontSize="10"
+                                                                   Foreground="White"/>
+                                                            </StackPanel>
+                                                        </Border>
+                                                        <Border Grid.Column="13"
+                                                            Margin="1"
+                                                            Background="#041124"
+                                                            CornerRadius="2">
+
+                                                            <StackPanel 
+                                                            Orientation="Vertical"
+                                                            HorizontalAlignment="Center">
+
+                                                                <Label Content="13"
+                                                                   FontSize="10"
+                                                                   Foreground="White"/>
+
+                                                                <Label Content="In"
+                                                                   FontSize="10"
+                                                                   Foreground="White"/>
+                                                            </StackPanel>
+                                                        </Border>
+                                                        <Border Grid.Column="14"
+                                                            Margin="1"
+                                                            Background="#041124"
+                                                            CornerRadius="2">
+
+                                                            <StackPanel 
+                                                            Orientation="Vertical"
+                                                            HorizontalAlignment="Center">
+
+                                                                <Label Content="14"
+                                                                   FontSize="10"
+                                                                   Foreground="White"/>
+
+                                                                <Label Content="In"
+                                                                   FontSize="10"
+                                                                   Foreground="White"/>
+                                                            </StackPanel>
+                                                        </Border>
+                                                        <Border Grid.Column="15"
+                                                            Margin="1"
+                                                            Background="#041124"
+                                                            CornerRadius="2">
+
+                                                            <StackPanel 
+                                                            Orientation="Vertical"
+                                                            HorizontalAlignment="Center">
+
+                                                                <Label Content="15"
+                                                                   FontSize="10"
+                                                                   Foreground="White"/>
+
+                                                                <Label Content="In"
+                                                                   FontSize="10"
+                                                                   Foreground="White"/>
+                                                            </StackPanel>
+                                                        </Border>
+
+                                                    </Grid>
+                                                </Border>
+                                                <Grid 
+                                                    Grid.Row="3"
+                                                    Background="White">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="28"/>
+                                                        <ColumnDefinition Width="28"/>
+                                                        <ColumnDefinition Width="28"/>
+                                                        <ColumnDefinition Width="28"/>
+                                                        <ColumnDefinition Width="28"/>
+                                                        <ColumnDefinition Width="28"/>
+                                                        <ColumnDefinition Width="28"/>
+                                                        <ColumnDefinition Width="28"/>
+                                                        <ColumnDefinition Width="28"/>
+                                                        <ColumnDefinition Width="28"/>
+                                                        <ColumnDefinition Width="28"/>
+                                                        <ColumnDefinition Width="28"/>
+                                                        <ColumnDefinition Width="28"/>
+                                                        <ColumnDefinition Width="28"/>
+                                                        <ColumnDefinition Width="28"/>
+                                                        <ColumnDefinition Width="28"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Image x:Name="ReadInput0" Grid.Column="0" Stretch="Fill" Source="/assets/CtrlOn.png" />
+                                                    <Image x:Name="ReadInput1" Grid.Column="1" Stretch="Fill" Source="/assets/CtrlOn.png"/>
+                                                    <Image x:Name="ReadInput2" Grid.Column="2" Stretch="Fill" Source="/assets/CtrlOn.png"/>
+                                                    <Image x:Name="ReadInput3" Grid.Column="3" Stretch="Fill" Source="/assets/CtrlOn.png"/>
+                                                    <Image x:Name="ReadInput4" Grid.Column="4" Stretch="Fill" Source="/assets/CtrlOn.png"/>
+                                                    <Image x:Name="ReadInput5" Grid.Column="5" Stretch="Fill" Source="/assets/CtrlOn.png"/>
+                                                    <Image x:Name="ReadInput6" Grid.Column="6" Stretch="Fill" Source="/assets/CtrlOn.png"/>
+                                                    <Image x:Name="ReadInput7" Grid.Column="7" Stretch="Fill" Source="/assets/CtrlOn.png"/>
+                                                    <Image x:Name="ReadInput8" Grid.Column="8" Stretch="Fill" Source="/assets/CtrlOn.png"/>
+                                                    <Image x:Name="ReadInput9" Grid.Column="9" Stretch="Fill" Source="/assets/CtrlOn.png"/>
+                                                    <Image x:Name="ReadInput10" Grid.Column="10" Stretch="Fill" Source="/assets/CtrlOn.png"/>
+                                                    <Image x:Name="ReadInput11" Grid.Column="11" Stretch="Fill" Source="/assets/CtrlOn.png"/>
+                                                    <Image x:Name="ReadInput12" Grid.Column="12" Stretch="Fill" Source="/assets/CtrlOn.png"/>
+                                                    <Image x:Name="ReadInput13" Grid.Column="13" Stretch="Fill" Source="/assets/CtrlOn.png"/>
+                                                    <Image x:Name="ReadInput14" Grid.Column="14" Stretch="Fill" Source="/assets/CtrlOn.png"/>
+                                                    <Image x:Name="ReadInput15" Grid.Column="15" Stretch="Fill" Source="/assets/CtrlOn.png"/>
+                                                </Grid>
+                                            </Grid>
+                                        </GroupBox>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Grid>
+                        </ScrollViewer>
+
+                    </Border>
+                </Grid>
+                <Border
+                    Grid.Row="2"
+                    BorderThickness="0,1,0,0"
+                    BorderBrush="#007acc"
+                    Background="#007acc"
+                    CornerRadius="0,0,6,6"
+                    Padding="4">
+                    <Label Content="Processing.."
+                           Foreground="White"
+                           FontSize="12"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Stretch"
+                           />
+                </Border>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

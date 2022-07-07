@@ -135,7 +135,7 @@ namespace JupiterSoft.Pages
 
             Commands = new List<LogicalCommand>();
 
-
+            //OutPutWindow.IsOpen = true;
             //TimerCheckReceiveData.Elapsed += TimerCheckReceiveData_Elapsed;
             //TimerCheckReceiveData.Interval = 1000 * 1;
             //TimerCheckReceiveData.Enabled = true;
@@ -3391,7 +3391,15 @@ namespace JupiterSoft.Pages
             try
             {
                 // ExecuteAllBlocks();
-                ExecuteProcesses();
+                // ExecuteProcesses();
+                this.parentWindow.Hide();
+                HMIDialoge dialoge = new HMIDialoge(Commands,deviceInfo);
+                dialoge.ShowDialog();
+                if(dialoge.IsClosed)
+                {
+                    this.parentWindow.Show();
+                    MessageBox.Show("Execution Stopped");
+                }
             }
             catch (Exception ex)
             {
@@ -3413,10 +3421,10 @@ namespace JupiterSoft.Pages
                         {
                             if (command.ExecutionStatus == (int)ExecutionStage.Not_Executed)
                             {
-                                OutPutArea.AppendText("\n Execution started " + command.CommandText + "..");
+                               // OutPutArea.AppendText("\n Execution started " + command.CommandText + "..");
                                 Connect_control_card(command.Configuration.deviceDetail.PortName, command.Configuration.deviceDetail.BaudRate, command.Configuration.deviceDetail.DataBit, command.Configuration.deviceDetail.StopBit, command.Configuration.deviceDetail.Parity);
                                 command.ExecutionStatus = (int)ExecutionStage.Executed;
-                                OutPutArea.AppendText("\n Execution Completed " + command.CommandText + "..");
+                                //OutPutArea.AppendText("\n Execution Completed " + command.CommandText + "..");
                             }
                             break;
                         }
@@ -3425,11 +3433,11 @@ namespace JupiterSoft.Pages
                         {
                             if (command.ExecutionStatus == (int)ExecutionStage.Not_Executed)
                             {
-                                OutPutArea.AppendText("\n Execution started " + command.CommandText + "..");
+                               // OutPutArea.AppendText("\n Execution started " + command.CommandText + "..");
                                 Disable_RunTimeButton();
                                 StopPortCommunication();
                                 command.ExecutionStatus = (int)ExecutionStage.Executed;
-                                OutPutArea.AppendText("\n Execution Completed " + command.CommandText + "..");
+                                //OutPutArea.AppendText("\n Execution Completed " + command.CommandText + "..");
                             }
 
                             break;
@@ -3439,13 +3447,13 @@ namespace JupiterSoft.Pages
                         {
                             if (command.ExecutionStatus == (int)ExecutionStage.Not_Executed)
                             {
-                                OutPutArea.AppendText("\n Execution started " + command.CommandText + "..");
+                                //OutPutArea.AppendText("\n Execution started " + command.CommandText + "..");
                                 ReadWeight(command.Configuration.deviceDetail.PortName, command.Configuration.deviceDetail.BaudRate, command.Configuration.deviceDetail.DataBit, command.Configuration.deviceDetail.StopBit, command.Configuration.deviceDetail.Parity);
                                 command.ExecutionStatus = (int)ExecutionStage.Executing;
                             }
                             else
                             {
-                                OutPutArea.AppendText("\n Executing " + command.CommandText + "..");
+                                //OutPutArea.AppendText("\n Executing " + command.CommandText + "..");
                                 command.ExecutionStatus = (int)ExecutionStage.Executed;
                             }
                             break;
@@ -3457,14 +3465,14 @@ namespace JupiterSoft.Pages
                             { 
                                 if(Common.CurrentDevice==Models.DeviceType.WeightModule)
                                 {
-                                    OutPutArea.AppendText("\n Execution Started " + command.CommandText + "..");
+                                    //OutPutArea.AppendText("\n Execution Started " + command.CommandText + "..");
                                     DataReader();
                                     command.OutPutData = Common.ReceiveDataQueue.Dequeue();
                                     command.ExecutionStatus = (int)ExecutionStage.Executed;
                                 }
                                 else
                                 {
-                                    OutPutArea.AppendText("\n Execution Started " + command.CommandText + "..");
+                                   // OutPutArea.AppendText("\n Execution Started " + command.CommandText + "..");
                                     ReadAllControCardInputOutput();
                                     command.ExecutionStatus = (int)ExecutionStage.Executing;
                                 }
@@ -3475,12 +3483,12 @@ namespace JupiterSoft.Pages
                                 {
                                     DataReader();
                                     command.OutPutData = Common.ReceiveDataQueue.Dequeue();
-                                    OutPutArea.AppendText("\n Executing " + command.CommandText + "..");
+                                    //OutPutArea.AppendText("\n Executing " + command.CommandText + "..");
                                     command.ExecutionStatus = (int)ExecutionStage.Executed;
                                 }
                                 else
                                 {
-                                    OutPutArea.AppendText("\n Executing " + command.CommandText + "..");
+                                    //OutPutArea.AppendText("\n Executing " + command.CommandText + "..");
                                     command.ExecutionStatus = (int)ExecutionStage.Executed;
                                 }
                             }
@@ -3496,7 +3504,7 @@ namespace JupiterSoft.Pages
                             }
                             else
                             {
-                                OutPutArea.AppendText("\n Executing " + command.CommandText + "..");
+                                //OutPutArea.AppendText("\n Executing " + command.CommandText + "..");
                                 command.ExecutionStatus = (int)ExecutionStage.Executed;
                             }
 
@@ -3508,7 +3516,7 @@ namespace JupiterSoft.Pages
                 }
                 else
                 {
-                    OutPutArea.AppendText("\n Exection end.");
+                    //OutPutArea.AppendText("\n Exection end.");
                 }
             }
 
@@ -3542,10 +3550,11 @@ namespace JupiterSoft.Pages
         }
 
 
+
+
         #endregion
 
         
-
     }
 }
 

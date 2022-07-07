@@ -66,11 +66,18 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="CustomDailog\HMIDialoge.xaml.cs">
+      <DependentUpon>HMIDialoge.xaml</DependentUpon>
+    </Compile>
     <Compile Include="CustomDailog\NameVariableDialog.xaml.cs">
       <DependentUpon>NameVariableDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\Annotations.cs" />
     <Page Include="CustomDailog\ConfigurationDailog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CustomDailog\HMIDialoge.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
