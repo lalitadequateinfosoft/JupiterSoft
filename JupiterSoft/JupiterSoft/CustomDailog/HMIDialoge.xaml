@@ -149,7 +149,29 @@
                         BorderBrush="#bbbbbb"
                         BorderThickness="0,0,1,0"
                         Margin="2,0,1,0">
+                        <ScrollViewer 
+                            x:Name="OutPutArea"
+                            VerticalScrollBarVisibility="Auto">
+                            
+                            <Grid 
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch">
+                                
+                                <StackPanel 
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Stretch">
 
+                                    <RichTextBox 
+                                    IsReadOnly="True"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Top">
+                                        <FlowDocument x:Name="OutPutControl">
+                                           
+                                        </FlowDocument>
+                                    </RichTextBox>
+                                </StackPanel>
+                            </Grid>
+                        </ScrollViewer>
                     </Border>
                     <Border 
                         Grid.Column="1"

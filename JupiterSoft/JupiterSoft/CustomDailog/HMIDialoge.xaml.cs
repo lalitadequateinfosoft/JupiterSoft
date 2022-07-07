@@ -1,5 +1,6 @@
 ﻿using Components;
 using JupiterSoft.Models;
+using Newtonsoft.Json;
 using Ozeki;
 using Ozeki.Camera;
 using Ozeki.Media;
@@ -74,6 +75,7 @@ namespace JupiterSoft.CustomDailog
             this.SerialDevice = new SerialPort();
             this.Commands = _Commands;
             this.deviceInfo = _deviceInfo;
+            AddOutPut("Commands compilation started..", (int)OutPutType.INFORMATION);
             ExecuteProcesses();
         }
 
@@ -204,11 +206,20 @@ namespace JupiterSoft.CustomDailog
         #region network camera
         private void ConnectIPCamera(string URL, string username, string password)
         {
-            _camera = IPCameraFactory.GetCamera(URL, "root", "");
-            _connector.Connect(_camera.VideoChannel, _drawingImageProvider);
-            _camera.Start();
-            videoViewer.SetImageProvider(_drawingImageProvider);
-            videoViewer.Start();
+            _drawingImageProvider = new DrawingImageProvider();
+            _connector = new MediaConnector();
+            try
+            {
+                _camera = IPCameraFactory.GetCamera(URL, username, password);
+                _connector.Connect(_camera.VideoChannel, _drawingImageProvider);
+                _camera.Start();
+                videoViewer.SetImageProvider(_drawingImageProvider);
+                videoViewer.Start();
+            }
+            catch
+            {
+               // MessageBox.Show("Failed to connect IP Camera..");
+            }
         }
 
         private void DisconnectIPCamera()
@@ -216,7 +227,7 @@ namespace JupiterSoft.CustomDailog
             _camera.Stop();
             _camera.Dispose();
             _drawingImageProvider.Dispose();
-            _connector.Disconnect(_webCamera.VideoChannel, _drawingImageProvider);
+            _connector.Disconnect(_camera.VideoChannel, _drawingImageProvider);
             _connector.Dispose();
             videoViewer.Stop();
             videoViewer.Background = Brushes.Black;
@@ -653,8 +664,10 @@ namespace JupiterSoft.CustomDailog
                 this.SerialDevice.DiscardInBuffer();
                 this.SerialDevice.DiscardOutBuffer();
                 this.SerialDevice.Close();
+                return;
             }
 
+            AddOutPut("No Serial Port is open..", (int)OutPutType.WARNING);
         }
 
         private void SerialPortCommunications(string port = "", int baudRate = 0, int databit = 0, int stopBit = 0, int parity = 0)
@@ -675,10 +688,11 @@ namespace JupiterSoft.CustomDailog
                 }
                 catch (Exception ex)
                 {
-
+                    AddOutPut("An error has occured : "+ex.Message.ToString(), (int)OutPutType.ERROR, true);
                 }
-
+                return;
             }
+            AddOutPut("Serial port is busy..", (int)OutPutType.WARNING, true);
         }
 
         private void DataReader()
@@ -1086,26 +1100,31 @@ namespace JupiterSoft.CustomDailog
 
         private void ReadWeight(string Port, int Baudrate, int databit, int stopbit, int parity)
         {
-            Common.RecState = 1;
-            Common.CurrentDevice = Models.DeviceType.WeightModule;
-            RecData _recData = new RecData();
-            _recData.deviceType = Models.DeviceType.WeightModule;
-            _recData.PropertyName = "WeightModule";
-            _recData.SessionId = Common.GetSessionNewId;
-            _recData.Ch = 0;
-            _recData.Indx = 0;
-            _recData.Reg = 0;
-            _recData.NoOfVal = 0;
-            Common.GetSessionId = _recData.SessionId;
-            _recData.Status = PortDataStatus.Requested;
-            _recData.RqType = RQType.UART;
-            Common.COMSelected = COMType.UART;
-            _CurrentActiveMenu = AppTools.UART;
-            Common.currentReequest = _recData;
-            Common.RequestDataList.Add(_recData);
-            SerialPortCommunications(Port, Baudrate, databit, stopbit, parity);
+            try
+            {
+                Common.RecState = 1;
+                Common.CurrentDevice = Models.DeviceType.WeightModule;
+                RecData _recData = new RecData();
+                _recData.deviceType = Models.DeviceType.WeightModule;
+                _recData.PropertyName = "WeightModule";
+                _recData.SessionId = Common.GetSessionNewId;
+                _recData.Ch = 0;
+                _recData.Indx = 0;
+                _recData.Reg = 0;
+                _recData.NoOfVal = 0;
+                Common.GetSessionId = _recData.SessionId;
+                _recData.Status = PortDataStatus.Requested;
+                _recData.RqType = RQType.UART;
+                Common.COMSelected = COMType.UART;
+                _CurrentActiveMenu = AppTools.UART;
+                Common.currentReequest = _recData;
+                Common.RequestDataList.Add(_recData);
+                SerialPortCommunications(Port, Baudrate, databit, stopbit, parity);
+            }
+            catch
+            {
 
-
+            }
         }
 
         private void ReadAllControCardInputOutput()
@@ -1147,16 +1166,19 @@ namespace JupiterSoft.CustomDailog
             {
                 if (Commands.Where(x => x.ExecutionStatus != (int)ExecutionStage.Executed).ToList().Count() > 0)
                 {
+                    
                     foreach (var command in Commands.Where(x => x.ExecutionStatus != (int)ExecutionStage.Executed).OrderBy(x => x.Order).ToList())
                     {
                         if (command.CommandType == (int)ElementConstant.Connect_ControlCard_Event)
                         {
                             if (command.ExecutionStatus == (int)ExecutionStage.Not_Executed)
                             {
-                                // OutPutArea.AppendText("\n Execution started " + command.CommandText + "..");
+                                AddOutPut("Initializing control card port..", (int)OutPutType.INFORMATION);
+                                AddOutPut("Connecting control card..", (int)OutPutType.INFORMATION);
                                 Connect_control_card(command.Configuration.deviceDetail.PortName, command.Configuration.deviceDetail.BaudRate, command.Configuration.deviceDetail.DataBit, command.Configuration.deviceDetail.StopBit, command.Configuration.deviceDetail.Parity);
                                 command.ExecutionStatus = (int)ExecutionStage.Executed;
-                                //OutPutArea.AppendText("\n Execution Completed " + command.CommandText + "..");
+                                AddOutPut("Control card is connected..", (int)OutPutType.SUCCESS, true);
+                                
                             }
                             break;
                         }
@@ -1165,11 +1187,11 @@ namespace JupiterSoft.CustomDailog
                         {
                             if (command.ExecutionStatus == (int)ExecutionStage.Not_Executed)
                             {
-                                // OutPutArea.AppendText("\n Execution started " + command.CommandText + "..");
-                                //Disable_RunTimeButton();
+                                AddOutPut("Disconnecting Control Card..", (int)OutPutType.INFORMATION);
                                 StopPortCommunication();
                                 command.ExecutionStatus = (int)ExecutionStage.Executed;
-                                //OutPutArea.AppendText("\n Execution Completed " + command.CommandText + "..");
+                                AddOutPut("Control card is disconnected..", (int)OutPutType.SUCCESS, true);
+                               
                             }
 
                             break;
@@ -1179,14 +1201,17 @@ namespace JupiterSoft.CustomDailog
                         {
                             if (command.ExecutionStatus == (int)ExecutionStage.Not_Executed)
                             {
-                                //OutPutArea.AppendText("\n Execution started " + command.CommandText + "..");
+                                AddOutPut("Connecting weight module..", (int)OutPutType.INFORMATION);
                                 ReadWeight(command.Configuration.deviceDetail.PortName, command.Configuration.deviceDetail.BaudRate, command.Configuration.deviceDetail.DataBit, command.Configuration.deviceDetail.StopBit, command.Configuration.deviceDetail.Parity);
                                 command.ExecutionStatus = (int)ExecutionStage.Executing;
+
+                                AddOutPut("weight module is connected..", (int)OutPutType.SUCCESS, true);
                             }
                             else
                             {
-                                //OutPutArea.AppendText("\n Executing " + command.CommandText + "..");
+                                AddOutPut("Started Fetching weight module input..", (int)OutPutType.SUCCESS, true);
                                 command.ExecutionStatus = (int)ExecutionStage.Executed;
+                                AddOutPut("Fetching Stopped..", (int)OutPutType.SUCCESS,true);
                             }
                             break;
                         }
@@ -1197,14 +1222,17 @@ namespace JupiterSoft.CustomDailog
                             {
                                 if (Common.CurrentDevice == Models.DeviceType.WeightModule)
                                 {
-                                    //OutPutArea.AppendText("\n Execution Started " + command.CommandText + "..");
+                                    AddOutPut("Receiving data..", (int)OutPutType.INFORMATION);
                                     DataReader();
                                     command.OutPutData = Common.ReceiveDataQueue.Dequeue();
                                     command.ExecutionStatus = (int)ExecutionStage.Executed;
+                                    AddOutPut("Storing data into "+command.CommandText+"..", (int)OutPutType.INFORMATION);
+                                    AddOutPut("Showing weight module response..", (int)OutPutType.INFORMATION);
+                                    showWeightModuleResponse(JsonConvert.DeserializeObject<RecData>(command.OutPutData.ToString()));
                                 }
                                 else
                                 {
-                                    // OutPutArea.AppendText("\n Execution Started " + command.CommandText + "..");
+                                    AddOutPut("Reading control card initial state..", (int)OutPutType.INFORMATION);
                                     ReadAllControCardInputOutput();
                                     command.ExecutionStatus = (int)ExecutionStage.Executing;
                                 }
@@ -1213,14 +1241,16 @@ namespace JupiterSoft.CustomDailog
                             {
                                 if (Common.CurrentDevice == Models.DeviceType.ControlCard || Common.CurrentDevice == Models.DeviceType.MotorDerive)
                                 {
+                                    AddOutPut("Storing data into " + command.CommandText + "..", (int)OutPutType.INFORMATION);
                                     DataReader();
                                     command.OutPutData = Common.ReceiveDataQueue.Dequeue();
-                                    //OutPutArea.AppendText("\n Executing " + command.CommandText + "..");
                                     command.ExecutionStatus = (int)ExecutionStage.Executed;
+                                    AddOutPut("Data stored into " + command.CommandText + "..", (int)OutPutType.INFORMATION);
+                                    ReadControlCardResponse(JsonConvert.DeserializeObject<RecData>(command.OutPutData.ToString()));
+                                    AddOutPut("Showing control card state..", (int)OutPutType.INFORMATION);
                                 }
                                 else
                                 {
-                                    //OutPutArea.AppendText("\n Executing " + command.CommandText + "..");
                                     command.ExecutionStatus = (int)ExecutionStage.Executed;
                                 }
                             }
@@ -1230,9 +1260,11 @@ namespace JupiterSoft.CustomDailog
                         {
                             if (command.ExecutionStatus == (int)ExecutionStage.Not_Executed)
                             {
-                                //Disable_RunTimeButton();
+                                AddOutPut("Disconnecting weight module..", (int)OutPutType.WARNING, true);
                                 StopPortCommunication();
                                 command.ExecutionStatus = (int)ExecutionStage.Executed;
+                                AddOutPut("Weight module disconnected..", (int)OutPutType.SUCCESS, true);
+                                
                             }
                             else
                             {
@@ -1256,26 +1288,64 @@ namespace JupiterSoft.CustomDailog
 
         private void Connect_control_card(string Port, int Baudrate, int databit, int stopbit, int parity)
         {
-            Common.RecState = 1;
-            Common.CurrentDevice = Models.DeviceType.ControlCard;
-            RecData _recData = new RecData();
-            _recData.deviceType = Models.DeviceType.ControlCard;
-            _recData.PropertyName = "ControlCard";
-            _recData.SessionId = Common.GetSessionNewId;
-            _recData.Ch = 0;
-            _recData.Indx = 0;
-            _recData.Reg = 0;
-            _recData.NoOfVal = 0;
-            Common.GetSessionId = _recData.SessionId;
-            _recData.Status = PortDataStatus.Requested;
-            _recData.RqType = RQType.ModBus;
-            Common.COMSelected = COMType.MODBUS;
-            _CurrentActiveMenu = AppTools.Modbus;
-            Common.currentReequest = _recData;
-            Common.RequestDataList.Add(_recData);
-            SerialPortCommunications(Port, Baudrate, databit, stopbit, parity);
+            try
+            {
+                Common.RecState = 1;
+                Common.CurrentDevice = Models.DeviceType.ControlCard;
+                RecData _recData = new RecData();
+                _recData.deviceType = Models.DeviceType.ControlCard;
+                _recData.PropertyName = "ControlCard";
+                _recData.SessionId = Common.GetSessionNewId;
+                _recData.Ch = 0;
+                _recData.Indx = 0;
+                _recData.Reg = 0;
+                _recData.NoOfVal = 0;
+                Common.GetSessionId = _recData.SessionId;
+                _recData.Status = PortDataStatus.Requested;
+                _recData.RqType = RQType.ModBus;
+                Common.COMSelected = COMType.MODBUS;
+                _CurrentActiveMenu = AppTools.Modbus;
+                Common.currentReequest = _recData;
+                Common.RequestDataList.Add(_recData);
+                SerialPortCommunications(Port, Baudrate, databit, stopbit, parity);
+            }
+            catch(Exception ex)
+            {
+                AddOutPut("An error has occured : " + ex.Message.ToString(), (int)OutPutType.ERROR, true);
+            }
+           
         }
 
+        #endregion
+
+        #region Output Function
+        private void AddOutPut(string Output, int MessageType,bool isBold=false)
+        {
+            Paragraph myParagraph = new Paragraph();
+            switch(MessageType)
+            {
+                case (int)OutPutType.SUCCESS:
+                    myParagraph.Foreground = Brushes.ForestGreen;
+                    break;
+                case (int)OutPutType.ERROR:
+                    myParagraph.Foreground = Brushes.Red;
+                    break;
+                case (int)OutPutType.INFORMATION:
+                    myParagraph.Foreground = Brushes.Black;
+                    break;
+            }
+            if(isBold)
+            {
+                Bold myBold = new Bold(new Run(Output));
+                myParagraph.Inlines.Add(myBold);
+            }
+            else
+            {
+                Run myRun = new Run(Output);
+                myParagraph.Inlines.Add(myRun);
+            }
+            OutPutControl.Blocks.Add(myParagraph);
+        }
         #endregion
 
     }

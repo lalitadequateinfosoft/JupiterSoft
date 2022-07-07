@@ -121,4 +121,12 @@ namespace JupiterSoft.Models
         OZ,
         PCS
     }
+
+    public enum OutPutType
+    {
+        SUCCESS,
+        ERROR,
+        INFORMATION,
+        WARNING
+    }
 }
