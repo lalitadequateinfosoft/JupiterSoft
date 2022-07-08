@@ -1,0 +1,186 @@
+﻿<Window x:Class="JupiterSoft.CustomDailog.ConditionsDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:JupiterSoft.CustomDailog"
+        xmlns:fa="http://schemas.fontawesome.io/icons/"
+        xmlns:ui="http://schemas.modernwpf.com/2019"
+        WindowStartupLocation="CenterScreen"
+        Height="220"
+        Width="650"
+        WindowState="Normal"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        HorizontalAlignment="Center"
+        VerticalAlignment="Center"
+        Background="Transparent"
+        ResizeMode="NoResize"
+        mc:Ignorable="d"
+        Title="ConditionsDialog">
+    <Border 
+        Background="White"
+        BorderBrush="#686868"
+        BorderThickness="1">
+        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Border Grid.Row="0"
+                Background="Gray"
+                BorderBrush="#686868"
+                BorderThickness="0,0,0,1">
+                <Grid 
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                Margin="5">
+                    <Label 
+                    Content="Condition [ IF ]"
+                    x:Name="ConditionName"
+                    FontSize="16"
+                    Foreground="White"/>
+                </Grid>
+            </Border>
+            <Grid 
+                Grid.Row="1"
+                >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Column="0"
+                           Content="Condition Name :"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           Margin="10"
+                           FontWeight="Bold"
+                           Foreground="Gray"/>
+                    <TextBox 
+                        Grid.Column="1"
+                    x:Name="Condition"
+                    Width="300"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Margin="5"
+                    />
+                </Grid>
+                <Grid Grid.Row="1" >
+                    <ScrollViewer>
+
+                        <Grid x:Name="ParentGrid">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0" Orientation="Vertical">
+                                    <StackPanel Margin="8">
+                                        <Label 
+                                    Content="Choose a value"
+                                    FontSize="14"
+                                FontWeight="Bold"
+                                Foreground="Gray"/>
+                                    </StackPanel>
+                                    <StackPanel Margin="8">
+                                        <TextBox 
+                                    x:Name="ComparisonValue1"
+                                    Text="Comparison Value"
+                                    Width="Auto"
+                                    Height="30"
+                                KeyDown="ComparisonValue1_KeyUp"/>
+                                    </StackPanel>
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" Orientation="Vertical">
+                                    <StackPanel Margin="8">
+                                        <Label 
+                                    Content="Select comparison expression"
+                                    FontSize="14"
+                                FontWeight="Bold"
+                                Foreground="Gray"/>
+                                    </StackPanel>
+                                    <StackPanel Margin="8">
+                                        <ComboBox x:Name="ComparisonType" Width="Auto" HorizontalAlignment="Stretch">
+
+                                        </ComboBox>
+                                    </StackPanel>
+                                </StackPanel>
+                                <StackPanel Grid.Column="2" Orientation="Vertical">
+                                    <StackPanel Margin="8">
+                                        <Label 
+                                    Content="Choose a value"
+                                    FontSize="14"
+                                FontWeight="Bold"
+                                Foreground="Gray"/>
+                                    </StackPanel>
+                                    <StackPanel Margin="8">
+                                        <TextBox 
+                                    x:Name="ComparisonValue2"
+                                    Text="Comparison Value"
+                                    Width="Auto"
+                                    Height="30"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Grid>
+                        </Grid>
+
+                    </ScrollViewer>
+                </Grid>
+
+            </Grid>
+
+            <Grid HorizontalAlignment="Stretch"
+                      VerticalAlignment="Stretch"
+                      Margin="5"
+                      Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid Grid.Column="0">
+                <ComboBox HorizontalAlignment="Left" x:Name="LogicalOperator" Width="80">
+                    <ComboBoxItem Tag="or" Content="OR" IsSelected="True"/>
+                    <ComboBoxItem Tag="and" Content="AND"/>
+                </ComboBox>
+                <Button Margin="80,0,0,0" Content="Add More" HorizontalAlignment="Center"/>
+                </Grid>
+                <Grid Grid.Column="1">
+                <Button
+                        x:Name="Ok"
+                        Content="OK"
+                        Height="30"
+                        Width="50"
+                        FontWeight="Bold"
+                        Background="#007acc"
+                        BorderBrush="#007acc"
+                        BorderThickness="1"
+                        Click="Ok_Click"
+                        Foreground="White"
+                        HorizontalAlignment="Right"
+                        Margin="0,0,80,0"/>
+                <Button
+                        x:Name="Cancel"
+                        Content="CANCEL"
+                        Height="30"
+                        Width="70"
+                        FontWeight="Bold"
+                        Background="White"
+                        BorderBrush="Gray"
+                        BorderThickness="1"
+                        Click="Cancel_Click"
+                        Foreground="Gray"
+                        HorizontalAlignment="Right"
+                        />
+                </Grid>
+            </Grid>
+
+        </Grid>
+    </Border>
+</Window>

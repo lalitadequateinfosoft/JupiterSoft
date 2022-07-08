@@ -36,9 +36,11 @@ namespace JupiterSoft.Models
         //Control
         public int Wait_One_Second_Control { get; set; }
         public int Repeat_Ten_Control { get; set; }
-        public int Forever_Control { get; set; }
-        public int If_Then_Control { get; set; }
-        public int If_Then_Else_Control { get; set; }
+        public int Forever_Control_Start { get; set; }
+        public int If_Condition_Start { get; set; }
+        public int Else_If_Start { get; set; }
+        public int Else_Start { get; set; }
+        public int End_Scope { get; set; }
         public int Wait_Until_Control { get; set; }
         public int Repeat_Until_Control { get; set; }
         public int Stop_All_Control { get; set; }
@@ -89,6 +91,12 @@ namespace JupiterSoft.Models
         public int Volume_Sound { get; set; }
     }
 
+    public class ConditionModel
+    {
+        public int value { get; set; }
+        public string text { get; set; }
+    }
+
     public static class ElementOp
     {
         public static ElementModel GetElementModel()
@@ -124,9 +132,11 @@ namespace JupiterSoft.Models
                 //Control Enum
                 Wait_One_Second_Control = (int)ElementConstant.Wait_One_Second_Control,
                 Repeat_Ten_Control = (int)ElementConstant.Repeat_Ten_Control,
-                Forever_Control = (int)ElementConstant.Forever_Control,
-                If_Then_Control = (int)ElementConstant.If_Then_Control,
-                If_Then_Else_Control = (int)ElementConstant.If_Then_Else_Control,
+                Forever_Control_Start = (int)ElementConstant.Forever_Control_Start,
+                If_Condition_Start = (int)ElementConstant.If_Condition_Start,
+                Else_If_Start= (int)ElementConstant.Else_If_Start,
+                Else_Start = (int)ElementConstant.Else_Start,
+                End_Scope = (int)ElementConstant.End_Scope,
                 Wait_Until_Control = (int)ElementConstant.Wait_Until_Control,
                 Repeat_Until_Control = (int)ElementConstant.Repeat_Until_Control,
                 Stop_All_Control = (int)ElementConstant.Stop_All_Control,
@@ -180,4 +190,28 @@ namespace JupiterSoft.Models
             return elementOp;
         }
     }
+
+    public static class ControlOp
+    {
+        public static List<ConditionModel> GetConditions()
+        {
+            List<ConditionModel> conditions = new List<ConditionModel>();
+            conditions.Add(new ConditionModel {value=(int)ConditionConstant.contains,text="contains" });
+            conditions.Add(new ConditionModel { value = (int)ConditionConstant.does_not_contains, text = "does not contains" });
+            conditions.Add(new ConditionModel { value = (int)ConditionConstant.is_equal_to, text = "is equal to" });
+            conditions.Add(new ConditionModel { value = (int)ConditionConstant.is_not_equal_to, text = "is not equal to" });
+            conditions.Add(new ConditionModel { value = (int)ConditionConstant.is_greater_then, text = "is greater then" });
+            conditions.Add(new ConditionModel { value = (int)ConditionConstant.is_greater_then_or_equal_to, text = "is greater then or equal to" });
+            conditions.Add(new ConditionModel { value = (int)ConditionConstant.is_less_then, text = "is less then" });
+            conditions.Add(new ConditionModel { value = (int)ConditionConstant.is_less_then_or_equal_to, text = "is less then or equal to" });
+            conditions.Add(new ConditionModel { value = (int)ConditionConstant.starts_with, text = "starts with" });
+            conditions.Add(new ConditionModel { value = (int)ConditionConstant.does_not_start_with, text = "does not start with" });
+            conditions.Add(new ConditionModel { value = (int)ConditionConstant.ends_with, text = "ends with" });
+            conditions.Add(new ConditionModel { value = (int)ConditionConstant.does_not_ends_with, text = "does not ends with" });
+
+            return conditions;
+
+        }
+    }
+
 }

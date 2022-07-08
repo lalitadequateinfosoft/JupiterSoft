@@ -36,9 +36,11 @@ namespace JupiterSoft
         //Control Enum
         Wait_One_Second_Control,
         Repeat_Ten_Control,
-        Forever_Control,
-        If_Then_Control,
-        If_Then_Else_Control,
+        Forever_Control_Start,
+        If_Condition_Start,
+        Else_If_Start,
+        Else_Start,
+        End_Scope,
         Wait_Until_Control,
         Repeat_Until_Control,
         Stop_All_Control,
@@ -89,5 +91,21 @@ namespace JupiterSoft
         Set_Volume_To_Percent_Sound,
         Volume_Sound
 
+    }
+
+    public enum ConditionConstant
+    {
+        contains,
+        does_not_contains,
+        is_equal_to,
+        is_not_equal_to,
+        is_greater_then,
+        is_greater_then_or_equal_to,
+        is_less_then,
+        is_less_then_or_equal_to,
+        starts_with,
+        does_not_start_with,
+        ends_with,
+        does_not_ends_with
     }
 }

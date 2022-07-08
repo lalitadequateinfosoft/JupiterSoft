@@ -66,6 +66,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="CustomDailog\ConditionsDialog.xaml.cs">
+      <DependentUpon>ConditionsDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="CustomDailog\HMIDialoge.xaml.cs">
       <DependentUpon>HMIDialoge.xaml</DependentUpon>
     </Compile>
@@ -73,6 +76,10 @@
       <DependentUpon>NameVariableDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\Annotations.cs" />
+    <Page Include="CustomDailog\ConditionsDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="CustomDailog\ConfigurationDailog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
