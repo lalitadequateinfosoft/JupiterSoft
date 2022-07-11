@@ -58,10 +58,18 @@ namespace JupiterSoft.Models
         public int Order { get; set; }
         public int ExecutionStatus { get; set; }
         public DeviceConfiguration Configuration { get; set; }
-        public object InputData { get; set; }
-        public object OutPutData { get; set; }
+        public ConditionDataModel InputData { get; set; }
+        public RecData OutPutData { get; set; }
         public string CommandText { get; set; }
         public object CommandData { get; set; }
+        public string ParentCommandId { get; set; }
+    }
+
+    public class ConditionDataModel
+    {
+        public string ComparisonVariable { get; set; }
+        public int ComparisonCondition { get; set; }
+        public string ComparisonValue { get; set; }
     }
 
     public class DeviceConfiguration

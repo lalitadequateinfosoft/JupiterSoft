@@ -76,7 +76,7 @@
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="Button">
-                            <Border Background="{TemplateBinding Background}" Padding="4" Margin="-12,-4,0,0" Width="20" Height="20" CornerRadius="15">
+                            <Border Background="{TemplateBinding Background}" Padding="4" HorizontalAlignment="{TemplateBinding HorizontalAlignment}" VerticalAlignment="{TemplateBinding VerticalAlignment}" Margin="{TemplateBinding Margin}" Width="20" Height="20" CornerRadius="15">
                                 <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                             </Border>
                         </ControlTemplate>
@@ -2951,6 +2951,8 @@
                                                 IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}"
                                                 Tag="{Binding End_Scope,Mode=OneWay}"
                                                     />
+                                            
+
 
 
                                         </StackPanel>
@@ -2990,7 +2992,7 @@
 
                                 <ScrollViewer VerticalScrollBarVisibility="Hidden" Height="500" Cursor="Hand">
                                     <Canvas x:Name="ReceiveDrop" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="700" Cursor="Hand" Width="370" AllowDrop="True" Background="Transparent" Drop="Canvas_Drop" DragOver="Canvas_DragOver" DragLeave="Canvas_DragLeave" DragEnter="ReceiveDrop_DragEnter" PreviewMouseMove="ReceiveDrop_PreviewMouseMove" PreviewMouseUp="ReceiveDrop_PreviewMouseUp">
-
+                                        
 
 
                                     </Canvas>

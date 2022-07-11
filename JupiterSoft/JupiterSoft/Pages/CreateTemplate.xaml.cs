@@ -410,7 +410,7 @@ namespace JupiterSoft.Pages
                         break;
                     case (int)ElementConstant.Start_Event:
                         getNewPosition(Start_Event.Width, Start_Event.Height, ref NewLeft, ref NewTop);
-                        ele = Get_EventStyle(contentId,Convert.ToInt32(data));
+                        ele = Get_EventStyle(contentId, Convert.ToInt32(data));
                         break;
                     case (int)ElementConstant.Connect_Motor_Event:
                         getNewPosition(Connect_Motor_Event.Width, Connect_Motor_Event.Height, ref NewLeft, ref NewTop);
@@ -604,13 +604,14 @@ namespace JupiterSoft.Pages
                         break;
                     case (int)ElementConstant.Receive_Message_Event:
                         getNewPosition(Receive_Message_Event.Width, Receive_Message_Event.Height, ref NewLeft, ref NewTop);
-                        ele = Get_EventStyle(contentId, Convert.ToInt32(data));
+                        
                         NameVariableDialog variableDialog = new NameVariableDialog("Define Variable Name");
                         variableDialog.ShowDialog();
                         if (!variableDialog.Canceled)
                         {
                             if (Commands.Count() == 0)
                             {
+                                ele = Get_EventStyle(contentId, Convert.ToInt32(data), variableDialog.VariableName.Text);
                                 var command = new LogicalCommand
                                 {
                                     CommandId = contentId,
@@ -624,6 +625,7 @@ namespace JupiterSoft.Pages
                             }
                             else
                             {
+                                ele = Get_EventStyle(contentId, Convert.ToInt32(data), variableDialog.VariableName.Text);
                                 var command = new LogicalCommand
                                 {
                                     CommandId = contentId,
@@ -638,6 +640,95 @@ namespace JupiterSoft.Pages
                             ShouldAdd = true;
                         }
                         break;
+                    case (int)ElementConstant.If_Condition_Start:
+                        getNewPosition(If_Condition_Start.Width, If_Condition_Start.Height, ref NewLeft, ref NewTop);
+                        if (Commands.Count() == 0)
+                        {
+                            ConditionsDialog conditions = new ConditionsDialog(Commands.Where(x => x.CommandType == (int)ElementConstant.Receive_Message_Event).ToList());
+                            conditions.ShowDialog();
+                            if (!conditions.Canceled)
+                            {
+                                ConditionDataModel conditionData = new ConditionDataModel();
+                                conditionData.ComparisonVariable = conditions.ComparisonVariable;
+                                conditionData.ComparisonCondition = conditions.ComparisonCondition;
+                                conditionData.ComparisonValue = conditions.ComparisonValue;
+                                ele = Get_ControlStyle(contentId, Convert.ToInt32(data), conditionData, conditions.ConditionTextName);
+                                var command = new LogicalCommand
+                                {
+                                    CommandId = contentId,
+                                    CommandType = Convert.ToInt32(data),
+                                    Order = 1,
+                                    ExecutionStatus = (int)ExecutionStage.Not_Executed,
+                                    Configuration = new DeviceConfiguration(),
+                                    CommandText = conditions.ConditionTextName,
+                                    InputData = conditionData
+                                };
+                                Commands.Add(command);
+                                ShouldAdd = true;
+                            }
+
+                        }
+                        else
+                        {
+                            ConditionsDialog conditions = new ConditionsDialog(Commands.Where(x => x.CommandType == (int)ElementConstant.Receive_Message_Event).ToList());
+                            conditions.ShowDialog();
+                            if (!conditions.Canceled)
+                            {
+                                ConditionDataModel conditionData = new ConditionDataModel();
+                                conditionData.ComparisonVariable = conditions.ComparisonVariable;
+                                conditionData.ComparisonCondition = conditions.ComparisonCondition;
+                                conditionData.ComparisonValue = conditions.ComparisonValue;
+                                ele = Get_ControlStyle(contentId, Convert.ToInt32(data), conditionData, conditions.ConditionTextName);
+                                var command = new LogicalCommand
+                                {
+                                    CommandId = contentId,
+                                    CommandType = Convert.ToInt32(data),
+                                    Order = Commands.OrderByDescending(x => x.Order).FirstOrDefault().Order + 1,
+                                    ExecutionStatus = (int)ExecutionStage.Not_Executed,
+                                    Configuration = new DeviceConfiguration(),
+                                    CommandText = conditions.ConditionTextName,
+                                    InputData = conditionData
+                                };
+                                Commands.Add(command);
+                                ShouldAdd = true;
+                            }
+                        }
+                        break;
+                    case (int)ElementConstant.End_Scope:
+                        getNewPosition(End_Scope.Width, End_Scope.Height, ref NewLeft, ref NewTop);
+                        ele = Get_ControlStyle(contentId, Convert.ToInt32(data), new ConditionDataModel(), "");
+                        if (Commands.Count() == 0)
+                        {
+                            var command = new LogicalCommand
+                            {
+                                CommandId = contentId,
+                                CommandType = Convert.ToInt32(data),
+                                Order = 1,
+                                ExecutionStatus = (int)ExecutionStage.Not_Executed,
+                                Configuration = new DeviceConfiguration(),
+                                CommandText = "End Scope",
+                                ParentCommandId = Commands.Where(x => x.CommandType == (int)ElementConstant.If_Condition_Start || x.CommandType == (int)ElementConstant.Else_If_Start || x.CommandType == (int)ElementConstant.Else_Start).OrderBy(x => x.Order).ToList().LastOrDefault().CommandId
+                            };
+                            Commands.Add(command);
+                        }
+                        else
+                        {
+                            var command = new LogicalCommand
+                            {
+                                CommandId = contentId,
+                                CommandType = Convert.ToInt32(data),
+                                Order = Commands.OrderByDescending(x => x.Order).FirstOrDefault().Order + 1,
+                                ExecutionStatus = (int)ExecutionStage.Not_Executed,
+                                Configuration = new DeviceConfiguration(),
+                                CommandText = "End Scope",
+                                ParentCommandId = Commands.Where(x => x.CommandType == (int)ElementConstant.If_Condition_Start || x.CommandType == (int)ElementConstant.Else_If_Start || x.CommandType == (int)ElementConstant.Else_Start).OrderBy(x => x.Order).ToList().LastOrDefault().CommandId
+                            };
+                            Commands.Add(command);
+                        }
+                        ShouldAdd = true;
+
+                        break;
+
                 }
 
                 if (ShouldAdd)
@@ -692,10 +783,19 @@ namespace JupiterSoft.Pages
         private void CloseBtn_Click(object sender, RoutedEventArgs e)
         {
             var CloseBtn = sender as Button;
-            var commandId= CloseBtn.Parent.GetValue(FrameworkElement.TagProperty);
+            var commandId = CloseBtn.Parent.GetValue(FrameworkElement.TagProperty);
             var command = Commands.Where(x => x.CommandId == commandId).FirstOrDefault();
             this.Commands.Remove(command);
             this.ReceiveDrop.Children.Remove(CloseBtn.Parent as WrapPanel);
+
+        }
+        private void CloseifStatement_Click(object sender, RoutedEventArgs e)
+        {
+            WrapPanel element = VisualTreeHelper.GetParent(sender as Button) as WrapPanel;
+            //var commandId = CloseBtn.Parent.GetValue(FrameworkElement.TagProperty);
+            //var command = Commands.Where(x => x.CommandId == commandId).FirstOrDefault();
+            //this.Commands.Remove(command);
+            //this.ReceiveDrop.Children.Remove(CloseBtn.Parent as WrapPanel);
 
         }
 
@@ -753,7 +853,7 @@ namespace JupiterSoft.Pages
         }
 
         // Copy Element of Defined Type.
-        private WrapPanel Get_Ten_Steps_Move(string ContentId,string content = "")
+        private WrapPanel Get_Ten_Steps_Move(string ContentId, string content = "")
         {
             Button btn = new Button();
             btn.Margin = new Thickness(12, 5, 0, 0);
@@ -779,8 +879,8 @@ namespace JupiterSoft.Pages
             closeBtn.Content = "X";
             closeBtn.FontSize = 10;
             closeBtn.VerticalAlignment = VerticalAlignment.Top;
-            //closeBtn.Margin = new Thickness(-5, 0, 0, 0);
-            //closeBtn.Padding = new Thickness(1);
+            closeBtn.HorizontalAlignment = HorizontalAlignment.Right;
+            closeBtn.Margin = new Thickness(-12, -4, 0, 0);
             closeBtn.Style = this.FindResource("Closebtn") as Style;
             closeBtn.Click += CloseBtn_Click;
             Random random = new Random();
@@ -788,7 +888,6 @@ namespace JupiterSoft.Pages
             wrap.Tag = ContentId;
             wrap.Width = Double.NaN;
             wrap.Height = Double.NaN;
-            //wrap.Background = new SolidColorBrush(Colors.Blue);
             wrap.Children.Add(btn);
             wrap.Children.Add(closeBtn);
 
@@ -822,16 +921,15 @@ namespace JupiterSoft.Pages
             closeBtn.Content = "X";
             closeBtn.FontSize = 10;
             closeBtn.VerticalAlignment = VerticalAlignment.Top;
+            closeBtn.HorizontalAlignment = HorizontalAlignment.Right;
+            closeBtn.Margin = new Thickness(-12, -4, 0, 0);
             closeBtn.Style = this.FindResource("Closebtn") as Style;
-            //closeBtn.Margin = new Thickness(-5, 0, 0, 0);
-            //closeBtn.Padding = new Thickness(1);
             closeBtn.Click += CloseBtn_Click;
             Random random = new Random();
             WrapPanel wrap = new WrapPanel();
             wrap.Tag = ContentId;
             wrap.Width = Double.NaN;
             wrap.Height = Double.NaN;
-            //wrap.Background = new SolidColorBrush(Colors.Blue);
             wrap.Children.Add(btn);
             wrap.Children.Add(closeBtn);
 
@@ -865,16 +963,15 @@ namespace JupiterSoft.Pages
             closeBtn.Content = "X";
             closeBtn.FontSize = 10;
             closeBtn.VerticalAlignment = VerticalAlignment.Top;
+            closeBtn.HorizontalAlignment = HorizontalAlignment.Right;
+            closeBtn.Margin = new Thickness(-12, -4, 0, 0);
             closeBtn.Style = this.FindResource("Closebtn") as Style;
-            //closeBtn.Margin = new Thickness(-5, 0, 0, 0);
-            //closeBtn.Padding = new Thickness(1);
             closeBtn.Click += CloseBtn_Click;
             Random random = new Random();
             WrapPanel wrap = new WrapPanel();
             wrap.Tag = ContentId;
             wrap.Width = Double.NaN;
             wrap.Height = Double.NaN;
-            //wrap.Background = new SolidColorBrush(Colors.Blue);
             wrap.Children.Add(btn);
             wrap.Children.Add(closeBtn);
 
@@ -908,16 +1005,17 @@ namespace JupiterSoft.Pages
             closeBtn.Content = "X";
             closeBtn.FontSize = 10;
             closeBtn.VerticalAlignment = VerticalAlignment.Top;
+            closeBtn.HorizontalAlignment = HorizontalAlignment.Right;
+            closeBtn.Margin = new Thickness(-12, -4, 0, 0);
             closeBtn.Style = this.FindResource("Closebtn") as Style;
-            //closeBtn.Margin = new Thickness(-5, 0, 0, 0);
-            //closeBtn.Padding = new Thickness(1);
             closeBtn.Click += CloseBtn_Click;
+
             Random random = new Random();
             WrapPanel wrap = new WrapPanel();
             wrap.Tag = ContentId;
             wrap.Width = Double.NaN;
             wrap.Height = Double.NaN;
-            //wrap.Background = new SolidColorBrush(Colors.Blue);
+
             wrap.Children.Add(btn);
             wrap.Children.Add(closeBtn);
 
@@ -951,6 +1049,8 @@ namespace JupiterSoft.Pages
             closeBtn.Content = "X";
             closeBtn.FontSize = 10;
             closeBtn.VerticalAlignment = VerticalAlignment.Top;
+            closeBtn.HorizontalAlignment = HorizontalAlignment.Right;
+            closeBtn.Margin = new Thickness(-12, -4, 0, 0);
             closeBtn.Style = this.FindResource("Closebtn") as Style;
             closeBtn.Click += CloseBtn_Click;
             Random random = new Random();
@@ -965,7 +1065,7 @@ namespace JupiterSoft.Pages
             return wrap;
         }
 
-        private WrapPanel Get_EventStyle(string ContentId, int evEnum)
+        private WrapPanel Get_EventStyle(string ContentId, int evEnum,string variablename="")
         {
             string content = string.Empty;
             switch (evEnum)
@@ -1006,7 +1106,15 @@ namespace JupiterSoft.Pages
             btn.Foreground = (Brush)bc.ConvertFrom("#fff");
             btn.FontWeight = FontWeights.Bold;
             btn.FontFamily = new FontFamily("Georgia, serif;");
-            btn.Content = content;
+            if(!string.IsNullOrEmpty(variablename))
+            {
+                btn.Content = variablename;
+            }
+            else
+            {
+                btn.Content = content;
+            }
+            
             btn.Style = this.FindResource("EventButtonStyle") as Style;
             btn.Width = 200;
             btn.Height = 42;
@@ -1020,6 +1128,225 @@ namespace JupiterSoft.Pages
             closeBtn.Content = "X";
             closeBtn.FontSize = 10;
             closeBtn.VerticalAlignment = VerticalAlignment.Top;
+            closeBtn.HorizontalAlignment = HorizontalAlignment.Right;
+            closeBtn.Margin = new Thickness(-12, -4, 0, 0);
+            closeBtn.Style = this.FindResource("Closebtn") as Style;
+            closeBtn.Click += CloseBtn_Click;
+            Random random = new Random();
+            WrapPanel wrap = new WrapPanel();
+            wrap.Tag = ContentId;
+            wrap.Width = Double.NaN;
+            wrap.Height = Double.NaN;
+            wrap.Children.Add(btn);
+            wrap.Children.Add(closeBtn);
+
+            return wrap;
+        }
+
+        private WrapPanel Get_ControlStyle(string ContentId, int evEnum, ConditionDataModel conditionData, string conditionName = "")
+        {
+            WrapPanel wrap = new WrapPanel();
+            switch (evEnum)
+            {
+                case (int)ElementConstant.If_Condition_Start:
+                    wrap = CreateIfStartElement(conditionName, conditionData);
+                    wrap.Tag = ContentId;
+                    wrap.Width = Double.NaN;
+                    wrap.Height = Double.NaN;
+                    break;
+                case (int)ElementConstant.End_Scope:
+                    wrap = CreateEndScope(ContentId, evEnum);
+                    break;
+            }
+            return wrap;
+        }
+
+        private WrapPanel CreateIfStartElement(string ConditionUniqueName, ConditionDataModel conditionData)
+        {
+            WrapPanel wrap = new WrapPanel();
+            Button closeBtn = new Button();
+            closeBtn.Foreground = new SolidColorBrush(Colors.White);
+            closeBtn.Background = new SolidColorBrush(Colors.Red);
+            closeBtn.Content = "X";
+            closeBtn.FontSize = 10;
+            closeBtn.VerticalAlignment = VerticalAlignment.Top;
+            closeBtn.HorizontalAlignment = HorizontalAlignment.Right;
+            closeBtn.Margin = new Thickness(0, -2, -2, 0);
+            closeBtn.Style = this.FindResource("Closebtn") as Style;
+            closeBtn.Click += CloseBtn_Click;
+            wrap.Children.Add(closeBtn);
+            Border parent = new Border();
+            parent.Width = 340;
+            parent.Height = Double.NaN;
+            parent.HorizontalAlignment = HorizontalAlignment.Stretch;
+            parent.VerticalAlignment = VerticalAlignment.Stretch;
+            parent.BorderBrush = (Brush)bc.ConvertFrom("#ffdab2");
+            parent.Background = (Brush)bc.ConvertFrom("#ffa94c");
+            parent.BorderThickness = new Thickness(0.5);
+            parent.CornerRadius = new CornerRadius(10, 1, 10, 1);
+            parent.Padding = new Thickness(5);
+            parent.PreviewMouseLeftButtonDown += new MouseButtonEventHandler(Ch_PreviewMouseDown);
+            parent.IsHitTestVisible = IsChildHitTestVisible;
+
+            Grid parentGrid = new Grid();
+            //RowDefinition gridRow1 = new RowDefinition();
+            //gridRow1.Height = new GridLength(1, GridUnitType.Auto);
+            RowDefinition gridRow2 = new RowDefinition();
+            gridRow2.Height = new GridLength(1, GridUnitType.Star);
+            //parentGrid.RowDefinitions.Add(gridRow1);
+            parentGrid.RowDefinitions.Add(gridRow2);
+
+            
+
+            //parentGrid.Children.Add(closeBtn);
+            //Grid.SetRow(closeBtn, 0);
+
+            Grid childGrid = new Grid();
+            childGrid.HorizontalAlignment = HorizontalAlignment.Stretch;
+            childGrid.VerticalAlignment = VerticalAlignment.Stretch;
+            RowDefinition childRow1 = new RowDefinition();
+            childRow1.Height = new GridLength(1, GridUnitType.Auto);
+            RowDefinition childRow2 = new RowDefinition();
+            childRow2.Height = new GridLength(1, GridUnitType.Star);
+
+            childGrid.RowDefinitions.Add(childRow1);
+            childGrid.RowDefinitions.Add(childRow2);
+            Grid.SetRow(childGrid, 0);
+
+            Grid childFirst = new Grid();
+            childFirst.HorizontalAlignment = HorizontalAlignment.Stretch;
+            childFirst.VerticalAlignment = VerticalAlignment.Stretch;
+            childFirst.Margin = new Thickness(8, 5, 8, 5);
+            Grid.SetRow(childFirst, 0);
+
+            Label Condition = new Label();
+            Condition.Content = "IF Statement";
+            Condition.HorizontalAlignment = HorizontalAlignment.Left;
+            Condition.FontSize = 16;
+            Condition.FontWeight = FontWeights.Bold;
+
+            Label ConditionName = new Label();
+            ConditionName.Content = ConditionUniqueName;
+            ConditionName.HorizontalAlignment = HorizontalAlignment.Right;
+            ConditionName.FontSize = 16;
+            ConditionName.FontWeight = FontWeights.Bold;
+            childFirst.Children.Add(Condition);
+            childFirst.Children.Add(ConditionName);
+            childGrid.Children.Add(childFirst);
+
+            Grid childSecond = new Grid();
+            childSecond.HorizontalAlignment = HorizontalAlignment.Stretch;
+            childSecond.VerticalAlignment = VerticalAlignment.Stretch;
+            Grid.SetRow(childSecond, 1);
+            ColumnDefinition column1 = new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) };
+            ColumnDefinition column2 = new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) };
+            ColumnDefinition column3 = new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) };
+            childSecond.ColumnDefinitions.Add(column1);
+            childSecond.ColumnDefinitions.Add(column2);
+            childSecond.ColumnDefinitions.Add(column3);
+
+            Grid fColmn = new Grid();
+            fColmn.HorizontalAlignment = HorizontalAlignment.Stretch;
+            fColmn.VerticalAlignment = VerticalAlignment.Center;
+            Grid.SetColumn(fColmn, 0);
+            fColmn.Children.Add(new Border
+            {
+                CornerRadius = new CornerRadius(10),
+                BorderBrush = (Brush)bc.ConvertFrom("#0082ca"),
+                BorderThickness = new Thickness(1),
+                Padding = new Thickness(5),
+                Background = Brushes.White,
+                Child = new TextBlock
+                {
+                    Text = conditionData.ComparisonVariable,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    Background = Brushes.Transparent,
+                    Foreground = (Brush)bc.ConvertFrom("#0082ca"),
+                    FontSize = 16
+                }
+            });
+            childSecond.Children.Add(fColmn);
+
+            Grid sColmn = new Grid();
+            sColmn.HorizontalAlignment = HorizontalAlignment.Stretch;
+            sColmn.VerticalAlignment = VerticalAlignment.Center;
+            Grid.SetColumn(sColmn, 1);
+            sColmn.Children.Add(new Border
+            {
+                CornerRadius = new CornerRadius(10),
+                BorderBrush = (Brush)bc.ConvertFrom("#0082ca"),
+                BorderThickness = new Thickness(1),
+                Padding = new Thickness(5),
+                Background = Brushes.White,
+                Child = new TextBlock
+                {
+                    Text = ControlOp.GetConditions().Where(x => x.value == conditionData.ComparisonCondition).FirstOrDefault().Icon,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    Background = Brushes.Transparent,
+                    Foreground = (Brush)bc.ConvertFrom("#0082ca"),
+                    FontSize = 16
+                }
+            });
+            childSecond.Children.Add(sColmn);
+
+            Grid tColmn = new Grid();
+            tColmn.HorizontalAlignment = HorizontalAlignment.Stretch;
+            tColmn.VerticalAlignment = VerticalAlignment.Center;
+            Grid.SetColumn(tColmn, 2);
+            tColmn.Children.Add(new Border
+            {
+                CornerRadius = new CornerRadius(10),
+                BorderBrush = (Brush)bc.ConvertFrom("#0082ca"),
+                BorderThickness = new Thickness(1),
+                Padding = new Thickness(5),
+                Background = Brushes.White,
+                Child = new TextBlock
+                {
+                    Text = conditionData.ComparisonValue,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    Background = Brushes.Transparent,
+                    Foreground = (Brush)bc.ConvertFrom("#0082ca"),
+                    FontSize = 16
+                }
+            });
+            childSecond.Children.Add(tColmn);
+            childGrid.Children.Add(childSecond);
+            parentGrid.Children.Add(childGrid);
+            parent.Child = parentGrid;
+            wrap.Children.Add(parent);
+
+            return wrap;
+        }
+
+        private WrapPanel CreateEndScope(string ContentId, int evEnum)
+        {
+            Button btn = new Button();
+            btn.Margin = new Thickness(12, 5, 0, 0);
+            btn.HorizontalAlignment = HorizontalAlignment.Left;
+            btn.VerticalAlignment = VerticalAlignment.Center;
+            btn.BorderBrush = (Brush)bc.ConvertFrom("#ffdab2");
+            btn.Background = (Brush)bc.ConvertFrom("#ffa94c");
+            btn.BorderThickness = new Thickness(0.5);
+            btn.FontSize = 12;
+            btn.Foreground = (Brush)bc.ConvertFrom("#fff");
+            btn.FontWeight = FontWeights.Bold;
+            btn.FontFamily = new FontFamily("Georgia, serif;");
+            btn.Content = "End Scope";
+            btn.Style = this.FindResource("ControlButtonStyle") as Style;
+            btn.Width = 200;
+            btn.Height = 42;
+            btn.IsHitTestVisible = IsChildHitTestVisible;
+            btn.Tag = evEnum;
+
+            btn.PreviewMouseLeftButtonDown += new MouseButtonEventHandler(Ch_PreviewMouseDown);
+            var closeBtn = new Button();
+            closeBtn.Foreground = new SolidColorBrush(Colors.White);
+            closeBtn.Background = new SolidColorBrush(Colors.Red);
+            closeBtn.Content = "X";
+            closeBtn.FontSize = 10;
+            closeBtn.VerticalAlignment = VerticalAlignment.Top;
+            closeBtn.HorizontalAlignment = HorizontalAlignment.Right;
+            closeBtn.Margin = new Thickness(-12, -4, 0, 0);
             closeBtn.Style = this.FindResource("Closebtn") as Style;
             closeBtn.Click += CloseBtn_Click;
             Random random = new Random();
@@ -1153,7 +1480,7 @@ namespace JupiterSoft.Pages
                             ele = Get_Rotation_Style_Move(contentId);
                             break;
                         case (int)ElementConstant.Start_Event:
-                            ele = Get_EventStyle(contentId,Convert.ToInt32(item.ContentType));
+                            ele = Get_EventStyle(contentId, Convert.ToInt32(item.ContentType));
                             break;
                         case (int)ElementConstant.Connect_Motor_Event:
                             ele = Get_EventStyle(contentId, Convert.ToInt32(item.ContentType));
@@ -1483,7 +1810,7 @@ namespace JupiterSoft.Pages
         #endregion
 
         #region network camera
-        private void ConnectIPCamera(string URL,string username,string password)
+        private void ConnectIPCamera(string URL, string username, string password)
         {
             _drawingImageProvider = new DrawingImageProvider();
             _connector = new MediaConnector();
@@ -1499,7 +1826,7 @@ namespace JupiterSoft.Pages
             {
                 MessageBox.Show("Failed to connect IP Camera..");
             }
-           
+
         }
 
         private void DisconnectIPCamera()
@@ -1577,7 +1904,7 @@ namespace JupiterSoft.Pages
         {
             foreach (var item in DeviceModels)
             {
-                if(item.Connected)
+                if (item.Connected)
                 {
                     DisconnectIPCamera();
                 }
@@ -3361,7 +3688,7 @@ namespace JupiterSoft.Pages
 
         }
 
-       
+
 
         private void ReadAllControCardInputOutput()
         {
@@ -3369,7 +3696,7 @@ namespace JupiterSoft.Pages
             MODBUSComnn obj = new MODBUSComnn();
             Common.COMSelected = COMType.MODBUS;
             _CurrentActiveMenu = AppTools.Modbus;
-            obj.GetMultiSendorValueFM3(1, 0, SerialDevice, 0, 30, "ControlCard", 1, 0, Models.DeviceType.ControlCard);  
+            obj.GetMultiSendorValueFM3(1, 0, SerialDevice, 0, 30, "ControlCard", 1, 0, Models.DeviceType.ControlCard);
             // GetSoftwareVersion(Common.Address, Common.Parity, sp, _ValueType);
 
         }
@@ -3403,9 +3730,9 @@ namespace JupiterSoft.Pages
                 // ExecuteAllBlocks();
                 // ExecuteProcesses();
                 this.parentWindow.Hide();
-                HMIDialoge dialoge = new HMIDialoge(Commands,deviceInfo);
+                HMIDialoge dialoge = new HMIDialoge(Commands, deviceInfo);
                 dialoge.ShowDialog();
-                if(dialoge.IsClosed)
+                if (dialoge.IsClosed)
                 {
                     this.parentWindow.Show();
                     MessageBox.Show("Execution Stopped");
@@ -3431,7 +3758,7 @@ namespace JupiterSoft.Pages
                         {
                             if (command.ExecutionStatus == (int)ExecutionStage.Not_Executed)
                             {
-                               // OutPutArea.AppendText("\n Execution started " + command.CommandText + "..");
+                                // OutPutArea.AppendText("\n Execution started " + command.CommandText + "..");
                                 Connect_control_card(command.Configuration.deviceDetail.PortName, command.Configuration.deviceDetail.BaudRate, command.Configuration.deviceDetail.DataBit, command.Configuration.deviceDetail.StopBit, command.Configuration.deviceDetail.Parity);
                                 command.ExecutionStatus = (int)ExecutionStage.Executed;
                                 //OutPutArea.AppendText("\n Execution Completed " + command.CommandText + "..");
@@ -3443,7 +3770,7 @@ namespace JupiterSoft.Pages
                         {
                             if (command.ExecutionStatus == (int)ExecutionStage.Not_Executed)
                             {
-                               // OutPutArea.AppendText("\n Execution started " + command.CommandText + "..");
+                                // OutPutArea.AppendText("\n Execution started " + command.CommandText + "..");
                                 Disable_RunTimeButton();
                                 StopPortCommunication();
                                 command.ExecutionStatus = (int)ExecutionStage.Executed;
@@ -3472,8 +3799,8 @@ namespace JupiterSoft.Pages
                         if (command.CommandType == (int)ElementConstant.Receive_Message_Event)
                         {
                             if (command.ExecutionStatus == (int)ExecutionStage.Not_Executed)
-                            { 
-                                if(Common.CurrentDevice==Models.DeviceType.WeightModule)
+                            {
+                                if (Common.CurrentDevice == Models.DeviceType.WeightModule)
                                 {
                                     //OutPutArea.AppendText("\n Execution Started " + command.CommandText + "..");
                                     DataReader();
@@ -3482,7 +3809,7 @@ namespace JupiterSoft.Pages
                                 }
                                 else
                                 {
-                                   // OutPutArea.AppendText("\n Execution Started " + command.CommandText + "..");
+                                    // OutPutArea.AppendText("\n Execution Started " + command.CommandText + "..");
                                     ReadAllControCardInputOutput();
                                     command.ExecutionStatus = (int)ExecutionStage.Executing;
                                 }
@@ -3564,7 +3891,7 @@ namespace JupiterSoft.Pages
 
         #endregion
 
-        
+
     }
 }
 

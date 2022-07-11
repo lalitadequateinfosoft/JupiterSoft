@@ -90,12 +90,10 @@
                                 Foreground="Gray"/>
                                     </StackPanel>
                                     <StackPanel Margin="8">
-                                        <TextBox 
-                                    x:Name="ComparisonValue1"
-                                    Text="Comparison Value"
-                                    Width="Auto"
-                                    Height="30"
-                                KeyDown="ComparisonValue1_KeyUp"/>
+                                       
+                                        <ComboBox x:Name="ComparisonValue1" Width="Auto" HorizontalAlignment="Stretch" >
+
+                                        </ComboBox>
                                     </StackPanel>
                                 </StackPanel>
                                 <StackPanel Grid.Column="1" Orientation="Vertical">

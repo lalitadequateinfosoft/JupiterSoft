@@ -18,4 +18,10 @@ namespace JupiterSoft.Models
         public string ConnectMessage { get; set; }
         public string DisconnectMessage { get; set; }
     }
+
+    public class OutPutModel
+    {
+        public string OutPutVal { get; set; }
+        public string OutPutText { get; set; }
+    }
 }

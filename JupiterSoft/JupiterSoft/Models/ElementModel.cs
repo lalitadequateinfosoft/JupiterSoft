@@ -95,6 +95,7 @@ namespace JupiterSoft.Models
     {
         public int value { get; set; }
         public string text { get; set; }
+        public string Icon { get; set; }
     }
 
     public static class ElementOp
@@ -196,18 +197,18 @@ namespace JupiterSoft.Models
         public static List<ConditionModel> GetConditions()
         {
             List<ConditionModel> conditions = new List<ConditionModel>();
-            conditions.Add(new ConditionModel {value=(int)ConditionConstant.contains,text="contains" });
-            conditions.Add(new ConditionModel { value = (int)ConditionConstant.does_not_contains, text = "does not contains" });
-            conditions.Add(new ConditionModel { value = (int)ConditionConstant.is_equal_to, text = "is equal to" });
-            conditions.Add(new ConditionModel { value = (int)ConditionConstant.is_not_equal_to, text = "is not equal to" });
-            conditions.Add(new ConditionModel { value = (int)ConditionConstant.is_greater_then, text = "is greater then" });
-            conditions.Add(new ConditionModel { value = (int)ConditionConstant.is_greater_then_or_equal_to, text = "is greater then or equal to" });
-            conditions.Add(new ConditionModel { value = (int)ConditionConstant.is_less_then, text = "is less then" });
-            conditions.Add(new ConditionModel { value = (int)ConditionConstant.is_less_then_or_equal_to, text = "is less then or equal to" });
-            conditions.Add(new ConditionModel { value = (int)ConditionConstant.starts_with, text = "starts with" });
-            conditions.Add(new ConditionModel { value = (int)ConditionConstant.does_not_start_with, text = "does not start with" });
-            conditions.Add(new ConditionModel { value = (int)ConditionConstant.ends_with, text = "ends with" });
-            conditions.Add(new ConditionModel { value = (int)ConditionConstant.does_not_ends_with, text = "does not ends with" });
+            conditions.Add(new ConditionModel {value=(int)ConditionConstant.contains,text="contains",Icon= "Contains()" });
+            conditions.Add(new ConditionModel { value = (int)ConditionConstant.does_not_contains, text = "does not contains", Icon = "!Contains()" });
+            conditions.Add(new ConditionModel { value = (int)ConditionConstant.is_equal_to, text = "is equal to", Icon = "=" });
+            conditions.Add(new ConditionModel { value = (int)ConditionConstant.is_not_equal_to, text = "is not equal to", Icon = "!=" });
+            conditions.Add(new ConditionModel { value = (int)ConditionConstant.is_greater_then, text = "is greater then", Icon = ">" });
+            conditions.Add(new ConditionModel { value = (int)ConditionConstant.is_greater_then_or_equal_to, text = "is greater then or equal to", Icon = ">=" });
+            conditions.Add(new ConditionModel { value = (int)ConditionConstant.is_less_then, text = "is less then", Icon = "<" });
+            conditions.Add(new ConditionModel { value = (int)ConditionConstant.is_less_then_or_equal_to, text = "is less then or equal to", Icon = "<=" });
+            conditions.Add(new ConditionModel { value = (int)ConditionConstant.starts_with, text = "starts with", Icon = "StartsWith()" });
+            conditions.Add(new ConditionModel { value = (int)ConditionConstant.does_not_start_with, text = "does not start with", Icon = "!StartsWith()" });
+            conditions.Add(new ConditionModel { value = (int)ConditionConstant.ends_with, text = "ends with", Icon = "EndsWith()" });
+            conditions.Add(new ConditionModel { value = (int)ConditionConstant.does_not_ends_with, text = "does not ends with", Icon = "!EndsWith()" });
 
             return conditions;
 

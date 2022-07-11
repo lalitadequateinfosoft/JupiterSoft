@@ -1193,7 +1193,7 @@ namespace JupiterSoft.CustomDailog
                 if (Commands.Where(x => x.ExecutionStatus != (int)ExecutionStage.Executed).ToList().Count() > 0)
                 {
 
-                    foreach (var command in Commands.Where(x=>x.ExecutionStatus != (int)ExecutionStage.Executed).OrderBy(x => x.Order).ToList())
+                    foreach (var command in Commands.OrderBy(x => x.Order).ToList())
                     {
                         if (command.CommandType == (int)ElementConstant.If_Condition_Start)
                         {
@@ -1400,10 +1400,8 @@ namespace JupiterSoft.CustomDailog
                                 {
                                     command.ExecutionStatus = (int)ExecutionStage.Executed;
                                     Commands.Where(x => x.Order > command.Order && x.Order < endscope).ToList().ForEach(x => x.ExecutionStatus = (int)ExecutionStage.Executed);
-                                    break;
                                 }
                             }
-                            break;
                         }
 
                         if (command.CommandType == (int)ElementConstant.Connect_ControlCard_Event)
