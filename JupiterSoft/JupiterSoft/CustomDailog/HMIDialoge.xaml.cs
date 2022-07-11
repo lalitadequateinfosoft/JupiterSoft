@@ -11,6 +11,7 @@ using System.IO.Ports;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -74,9 +75,9 @@ namespace JupiterSoft.CustomDailog
             _dispathcer = Dispatcher.CurrentDispatcher;
             this.SerialDevice = new SerialPort();
             this.Commands = _Commands;
+            this.Commands.ForEach(x => x.ExecutionStatus = (int)ExecutionStage.Not_Executed);
             this.deviceInfo = _deviceInfo;
-            AddOutPut("Commands compilation started..", (int)OutPutType.INFORMATION);
-            ExecuteProcesses();
+
         }
 
         private void StopProcess_Click(object sender, RoutedEventArgs e)
@@ -103,7 +104,7 @@ namespace JupiterSoft.CustomDailog
             }
             catch
             {
-               // MessageBox.Show("An error has occured. Recording will be saved at default location : " + _VideoDirectory);
+                // MessageBox.Show("An error has occured. Recording will be saved at default location : " + _VideoDirectory);
                 StartVideoCapture(_VideoDirectory);
             }
         }
@@ -218,7 +219,7 @@ namespace JupiterSoft.CustomDailog
             }
             catch
             {
-               // MessageBox.Show("Failed to connect IP Camera..");
+                // MessageBox.Show("Failed to connect IP Camera..");
             }
         }
 
@@ -252,11 +253,11 @@ namespace JupiterSoft.CustomDailog
                 _streamer.ClientDisconnected += _streamer_ClientDisconnected;
                 _streamer.Start();
 
-               
+
             }
             catch
             {
-                
+
             }
         }
 
@@ -390,9 +391,33 @@ namespace JupiterSoft.CustomDailog
             //TimerCheckReceiveData.Enabled = true;
         }
 
+        bool validateResponse(RecData _recData)
+        {
+            bool isvalide = false;
+            if (_recData.MbTgm.Length > 0 && _recData.MbTgm.Length > readIndex)
+            {
+                byte[] bytestToRead = _recData.MbTgm.Skip(readIndex).ToArray();
+                string str = Encoding.Default.GetString(bytestToRead).Replace(System.Environment.NewLine, string.Empty);
+                //string actualdata = Regex.Replace(str, @"[^a-zA-Z0-9\\:_\- ]", string.Empty);
+                string actualdata = Regex.Replace(str, @"[^\t\r\n -~]", "_").RemoveWhitespace().Trim();
+                string[] data = actualdata.Split('_');
+
+                for (int i = 0; i < data.Length; i++)
+                {
+                    if (!string.IsNullOrEmpty(data[i]) || !string.IsNullOrWhiteSpace(data[i]))
+                    {
+                        isvalide = true;
+                    }
+
+                }
+
+            }
+            return isvalide;
+        }
+
         void ReadControlCardResponse(RecData _recData)
         {
-            
+
             if (_recData.MbTgm.Length > 0 && _recData.MbTgm.Length > readIndex)
             {
                 //To Read Function Code response.
@@ -688,7 +713,7 @@ namespace JupiterSoft.CustomDailog
                 }
                 catch (Exception ex)
                 {
-                    AddOutPut("An error has occured : "+ex.Message.ToString(), (int)OutPutType.ERROR, true);
+                    AddOutPut("An error has occured : " + ex.Message.ToString(), (int)OutPutType.ERROR, true);
                 }
                 return;
             }
@@ -719,7 +744,7 @@ namespace JupiterSoft.CustomDailog
                     RecData _recData = Common.RequestDataList.Where(a => a.SessionId == Common.GetSessionId).FirstOrDefault();
                     if (_recData != null)
                     {
-                                                               
+
                         if (_recData.Status == PortDataStatus.AckOkWait)
                         {
                             Common.TimeOuts++;  // SB1 Timeout & Tgm Timeout      
@@ -733,7 +758,7 @@ namespace JupiterSoft.CustomDailog
                             _recData.Status = PortDataStatus.Normal;
                         }
 
-                       
+
                     }
                     else
                     {
@@ -811,12 +836,12 @@ namespace JupiterSoft.CustomDailog
                                         Common.ReceiveDataQueue.Enqueue(_recData);
                                         //ReadControlCardResponse();
                                         return;
-                                                                             
+
                                     }
                                 }
                                 else if (_reply.ack == 5)
                                 {
-                                   
+
                                     if (_recData != null)
                                         _recData.Status = PortDataStatus.AckOkWait;
                                 }
@@ -851,7 +876,7 @@ namespace JupiterSoft.CustomDailog
                         }
                         else if (_reply.ack == 1)  // Busy
                         {
-                            
+
                             if (_recData != null)
                             {
                                 _recData.Status = PortDataStatus.Busy;
@@ -1120,6 +1145,7 @@ namespace JupiterSoft.CustomDailog
                 Common.currentReequest = _recData;
                 Common.RequestDataList.Add(_recData);
                 SerialPortCommunications(Port, Baudrate, databit, stopbit, parity);
+                Thread.Sleep(30);
             }
             catch
             {
@@ -1166,7 +1192,7 @@ namespace JupiterSoft.CustomDailog
             {
                 if (Commands.Where(x => x.ExecutionStatus != (int)ExecutionStage.Executed).ToList().Count() > 0)
                 {
-                    
+
                     foreach (var command in Commands.Where(x => x.ExecutionStatus != (int)ExecutionStage.Executed).OrderBy(x => x.Order).ToList())
                     {
                         if (command.CommandType == (int)ElementConstant.Connect_ControlCard_Event)
@@ -1178,7 +1204,7 @@ namespace JupiterSoft.CustomDailog
                                 Connect_control_card(command.Configuration.deviceDetail.PortName, command.Configuration.deviceDetail.BaudRate, command.Configuration.deviceDetail.DataBit, command.Configuration.deviceDetail.StopBit, command.Configuration.deviceDetail.Parity);
                                 command.ExecutionStatus = (int)ExecutionStage.Executed;
                                 AddOutPut("Control card is connected..", (int)OutPutType.SUCCESS, true);
-                                
+
                             }
                             break;
                         }
@@ -1191,7 +1217,7 @@ namespace JupiterSoft.CustomDailog
                                 StopPortCommunication();
                                 command.ExecutionStatus = (int)ExecutionStage.Executed;
                                 AddOutPut("Control card is disconnected..", (int)OutPutType.SUCCESS, true);
-                               
+
                             }
 
                             break;
@@ -1206,12 +1232,14 @@ namespace JupiterSoft.CustomDailog
                                 command.ExecutionStatus = (int)ExecutionStage.Executing;
 
                                 AddOutPut("weight module is connected..", (int)OutPutType.SUCCESS, true);
+                                AddOutPut("Wait for weight module response..", (int)OutPutType.INFORMATION);
+                                //Thread.Sleep(500);
                             }
                             else
                             {
                                 AddOutPut("Started Fetching weight module input..", (int)OutPutType.SUCCESS, true);
                                 command.ExecutionStatus = (int)ExecutionStage.Executed;
-                                AddOutPut("Fetching Stopped..", (int)OutPutType.SUCCESS,true);
+                                AddOutPut("Fetching Stopped..", (int)OutPutType.SUCCESS, true);
                             }
                             break;
                         }
@@ -1223,12 +1251,28 @@ namespace JupiterSoft.CustomDailog
                                 if (Common.CurrentDevice == Models.DeviceType.WeightModule)
                                 {
                                     AddOutPut("Receiving data..", (int)OutPutType.INFORMATION);
-                                    DataReader();
-                                    command.OutPutData = Common.ReceiveDataQueue.Dequeue();
+                                    bool received = false;
+                                    RecData _rec = new RecData();
+                                    while (received == false)
+                                    {
+                                        DataReader();
+                                        if (Common.ReceiveDataQueue.Count > 0)
+                                        {
+                                            _rec = new RecData();
+                                            _rec = Common.ReceiveDataQueue.Dequeue();
+                                            if (validateResponse(_rec))
+                                            {
+                                                received = true;
+                                            }
+                                        }
+                                    }
+
+
+                                    command.OutPutData = _rec;
                                     command.ExecutionStatus = (int)ExecutionStage.Executed;
-                                    AddOutPut("Storing data into "+command.CommandText+"..", (int)OutPutType.INFORMATION);
+                                    AddOutPut("Storing data into " + command.CommandText + "..", (int)OutPutType.INFORMATION);
                                     AddOutPut("Showing weight module response..", (int)OutPutType.INFORMATION);
-                                    showWeightModuleResponse(JsonConvert.DeserializeObject<RecData>(command.OutPutData.ToString()));
+                                    showWeightModuleResponse(_rec);
                                 }
                                 else
                                 {
@@ -1243,10 +1287,12 @@ namespace JupiterSoft.CustomDailog
                                 {
                                     AddOutPut("Storing data into " + command.CommandText + "..", (int)OutPutType.INFORMATION);
                                     DataReader();
-                                    command.OutPutData = Common.ReceiveDataQueue.Dequeue();
+                                    RecData _rec = new RecData();
+                                    _rec = Common.ReceiveDataQueue.Dequeue();
+                                    command.OutPutData = _rec;
                                     command.ExecutionStatus = (int)ExecutionStage.Executed;
                                     AddOutPut("Data stored into " + command.CommandText + "..", (int)OutPutType.INFORMATION);
-                                    ReadControlCardResponse(JsonConvert.DeserializeObject<RecData>(command.OutPutData.ToString()));
+                                    ReadControlCardResponse(_rec);
                                     AddOutPut("Showing control card state..", (int)OutPutType.INFORMATION);
                                 }
                                 else
@@ -1264,7 +1310,7 @@ namespace JupiterSoft.CustomDailog
                                 StopPortCommunication();
                                 command.ExecutionStatus = (int)ExecutionStage.Executed;
                                 AddOutPut("Weight module disconnected..", (int)OutPutType.SUCCESS, true);
-                                
+
                             }
                             else
                             {
@@ -1309,20 +1355,20 @@ namespace JupiterSoft.CustomDailog
                 Common.RequestDataList.Add(_recData);
                 SerialPortCommunications(Port, Baudrate, databit, stopbit, parity);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 AddOutPut("An error has occured : " + ex.Message.ToString(), (int)OutPutType.ERROR, true);
             }
-           
+
         }
 
         #endregion
 
         #region Output Function
-        private void AddOutPut(string Output, int MessageType,bool isBold=false)
+        private void AddOutPut(string Output, int MessageType, bool isBold = false)
         {
             Paragraph myParagraph = new Paragraph();
-            switch(MessageType)
+            switch (MessageType)
             {
                 case (int)OutPutType.SUCCESS:
                     myParagraph.Foreground = Brushes.ForestGreen;
@@ -1333,8 +1379,11 @@ namespace JupiterSoft.CustomDailog
                 case (int)OutPutType.INFORMATION:
                     myParagraph.Foreground = Brushes.Black;
                     break;
+                case (int)OutPutType.WARNING:
+                    myParagraph.Foreground = Brushes.OrangeRed;
+                    break;
             }
-            if(isBold)
+            if (isBold)
             {
                 Bold myBold = new Bold(new Run(Output));
                 myParagraph.Inlines.Add(myBold);
@@ -1348,5 +1397,17 @@ namespace JupiterSoft.CustomDailog
         }
         #endregion
 
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            AddOutPut("Commands compilation started..", (int)OutPutType.INFORMATION);
+            Task.Delay(100);
+            //Thread.Sleep(100);
+            ExecuteProcesses();
+        }
+
+        //private void Window_Activated(object sender, EventArgs e)
+        //{
+
+        //}
     }
 }

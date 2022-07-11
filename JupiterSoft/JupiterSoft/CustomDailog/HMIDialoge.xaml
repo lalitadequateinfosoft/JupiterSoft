@@ -20,6 +20,8 @@
         VerticalAlignment="Center"
         Background="Transparent"
         ResizeMode="NoResize"
+        Loaded="Window_Loaded"
+       
        >
     <Window.Resources>
         <ResourceDictionary>
@@ -120,7 +122,7 @@
                         HorizontalAlignment="Left"
                         VerticalAlignment="Center"
                             Margin="5,0,0,0"/>
-                        
+
                         <Button 
                             ToolTip="Close"
                             Content="X"
@@ -152,11 +154,11 @@
                         <ScrollViewer 
                             x:Name="OutPutArea"
                             VerticalScrollBarVisibility="Auto">
-                            
+
                             <Grid 
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Stretch">
-                                
+
                                 <StackPanel 
                                     HorizontalAlignment="Stretch"
                                     VerticalAlignment="Stretch">
@@ -164,9 +166,11 @@
                                     <RichTextBox 
                                     IsReadOnly="True"
                                     HorizontalAlignment="Left"
-                                    VerticalAlignment="Top">
+                                    VerticalAlignment="Top"
+                                        BorderThickness="0"
+                                        Focusable="False">
                                         <FlowDocument x:Name="OutPutControl">
-                                           
+
                                         </FlowDocument>
                                     </RichTextBox>
                                 </StackPanel>
@@ -858,22 +862,22 @@
                                                         <ColumnDefinition Width="28"/>
                                                         <ColumnDefinition Width="28"/>
                                                     </Grid.ColumnDefinitions>
-                                                    <Image x:Name="ReadInput0" Grid.Column="0" Stretch="Fill" Source="/assets/CtrlOn.png" />
-                                                    <Image x:Name="ReadInput1" Grid.Column="1" Stretch="Fill" Source="/assets/CtrlOn.png"/>
-                                                    <Image x:Name="ReadInput2" Grid.Column="2" Stretch="Fill" Source="/assets/CtrlOn.png"/>
-                                                    <Image x:Name="ReadInput3" Grid.Column="3" Stretch="Fill" Source="/assets/CtrlOn.png"/>
-                                                    <Image x:Name="ReadInput4" Grid.Column="4" Stretch="Fill" Source="/assets/CtrlOn.png"/>
-                                                    <Image x:Name="ReadInput5" Grid.Column="5" Stretch="Fill" Source="/assets/CtrlOn.png"/>
-                                                    <Image x:Name="ReadInput6" Grid.Column="6" Stretch="Fill" Source="/assets/CtrlOn.png"/>
-                                                    <Image x:Name="ReadInput7" Grid.Column="7" Stretch="Fill" Source="/assets/CtrlOn.png"/>
-                                                    <Image x:Name="ReadInput8" Grid.Column="8" Stretch="Fill" Source="/assets/CtrlOn.png"/>
-                                                    <Image x:Name="ReadInput9" Grid.Column="9" Stretch="Fill" Source="/assets/CtrlOn.png"/>
-                                                    <Image x:Name="ReadInput10" Grid.Column="10" Stretch="Fill" Source="/assets/CtrlOn.png"/>
-                                                    <Image x:Name="ReadInput11" Grid.Column="11" Stretch="Fill" Source="/assets/CtrlOn.png"/>
-                                                    <Image x:Name="ReadInput12" Grid.Column="12" Stretch="Fill" Source="/assets/CtrlOn.png"/>
-                                                    <Image x:Name="ReadInput13" Grid.Column="13" Stretch="Fill" Source="/assets/CtrlOn.png"/>
-                                                    <Image x:Name="ReadInput14" Grid.Column="14" Stretch="Fill" Source="/assets/CtrlOn.png"/>
-                                                    <Image x:Name="ReadInput15" Grid.Column="15" Stretch="Fill" Source="/assets/CtrlOn.png"/>
+                                                    <Image x:Name="ReadInput0" Grid.Column="0" Stretch="Fill" />
+                                                    <Image x:Name="ReadInput1" Grid.Column="1" Stretch="Fill"  />
+                                                    <Image x:Name="ReadInput2" Grid.Column="2" Stretch="Fill"  />
+                                                    <Image x:Name="ReadInput3" Grid.Column="3" Stretch="Fill"  />
+                                                    <Image x:Name="ReadInput4" Grid.Column="4" Stretch="Fill"  />
+                                                    <Image x:Name="ReadInput5" Grid.Column="5" Stretch="Fill"  />
+                                                    <Image x:Name="ReadInput6" Grid.Column="6" Stretch="Fill"  />
+                                                    <Image x:Name="ReadInput7" Grid.Column="7" Stretch="Fill"  />
+                                                    <Image x:Name="ReadInput8" Grid.Column="8" Stretch="Fill"  />
+                                                    <Image x:Name="ReadInput9" Grid.Column="9" Stretch="Fill"  />
+                                                    <Image x:Name="ReadInput10" Grid.Column="10" Stretch="Fill"  />
+                                                    <Image x:Name="ReadInput11" Grid.Column="11" Stretch="Fill"  />
+                                                    <Image x:Name="ReadInput12" Grid.Column="12" Stretch="Fill"  />
+                                                    <Image x:Name="ReadInput13" Grid.Column="13" Stretch="Fill"  />
+                                                    <Image x:Name="ReadInput14" Grid.Column="14" Stretch="Fill"  />
+                                                    <Image x:Name="ReadInput15" Grid.Column="15" Stretch="Fill"  />
                                                 </Grid>
                                             </Grid>
                                         </GroupBox>
