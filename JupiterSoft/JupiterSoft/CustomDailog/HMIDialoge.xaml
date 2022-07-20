@@ -191,11 +191,12 @@
                                     Orientation="Vertical"
                                     HorizontalAlignment="Stretch"
                                     VerticalAlignment="Stretch">
-                                    <StackPanel 
+                                    <!--<StackPanel 
                                         x:Name="CameraArea"
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Stretch"
-                                        Margin="2">
+                                        Margin="2"
+                                        Visibility="Hidden">
                                         <GroupBox 
                                             FontSize="14"
                                             Background="Transparent"
@@ -209,7 +210,7 @@
                                                 <controls:VideoViewerWPF Name="videoViewer" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Black"/>
                                             </Grid>
                                         </GroupBox>
-                                    </StackPanel>
+                                    </StackPanel>-->
                                     <StackPanel 
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Stretch"

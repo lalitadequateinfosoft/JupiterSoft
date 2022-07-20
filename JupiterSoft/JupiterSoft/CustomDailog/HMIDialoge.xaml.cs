@@ -130,9 +130,9 @@ namespace JupiterSoft.CustomDailog
                 {
                     _webCamera = new WebCamera();
                     _connector.Connect(_webCamera.VideoChannel, _drawingImageProvider);
-                    videoViewer.SetImageProvider(_drawingImageProvider);
+                    //videoViewer.SetImageProvider(_drawingImageProvider);
                     _webCamera.Start();
-                    videoViewer.Start();
+                    //videoViewer.Start();
 
                     // save
                     //if (!System.IO.Directory.Exists(_VideoDirectory))
@@ -164,8 +164,8 @@ namespace JupiterSoft.CustomDailog
                     _drawingImageProvider.Dispose();
                     _connector.Disconnect(_webCamera.VideoChannel, _drawingImageProvider);
                     _connector.Dispose();
-                    videoViewer.Stop();
-                    videoViewer.Background = Brushes.Black;
+                    //videoViewer.Stop();
+                    //videoViewer.Background = Brushes.Black;
 
                 }
 
@@ -215,8 +215,8 @@ namespace JupiterSoft.CustomDailog
                 _camera = IPCameraFactory.GetCamera(URL, username, password);
                 _connector.Connect(_camera.VideoChannel, _drawingImageProvider);
                 _camera.Start();
-                videoViewer.SetImageProvider(_drawingImageProvider);
-                videoViewer.Start();
+                //videoViewer.SetImageProvider(_drawingImageProvider);
+                //videoViewer.Start();
             }
             catch
             {
@@ -231,8 +231,8 @@ namespace JupiterSoft.CustomDailog
             _drawingImageProvider.Dispose();
             _connector.Disconnect(_camera.VideoChannel, _drawingImageProvider);
             _connector.Dispose();
-            videoViewer.Stop();
-            videoViewer.Background = Brushes.Black;
+            //videoViewer.Stop();
+            //videoViewer.Background = Brushes.Black;
         }
         #endregion
         #region Camera Streaming
@@ -317,6 +317,7 @@ namespace JupiterSoft.CustomDailog
                         if (data[i].All(char.IsDigit))
                         {
                             _dispathcer.Invoke(new Action(() => { WeightContent.Content = data[i].ToString().Trim(); }));
+                            AddOutPut("Current weight is "+ data[i].ToString().Trim(), (int)OutPutType.INFORMATION);
                             //WeightContent.Content = data[i].ToString().Trim();
 
                             continue;
@@ -328,6 +329,7 @@ namespace JupiterSoft.CustomDailog
                             builder.Replace("kgg", "");
                             //weight = Convert.ToInt32(builder.ToString());
                             _dispathcer.Invoke(new Action(() => { WeightContent.Content = builder.ToString(); }));
+                            AddOutPut("Current weight is " + builder.ToString(), (int)OutPutType.INFORMATION);
                         }
 
 
@@ -1417,9 +1419,19 @@ namespace JupiterSoft.CustomDailog
                                                 if (Common.CurrentDevice == Models.DeviceType.ControlCard || Common.CurrentDevice == Models.DeviceType.MotorDerive)
                                                 {
                                                     AddOutPut("Storing data into " + Scopecommand.CommandText + "..", (int)OutPutType.INFORMATION);
-                                                    DataReader();
+                                                    bool received = false;
                                                     RecData _rec = new RecData();
-                                                    _rec = Common.ReceiveDataQueue.Dequeue();
+                                                    while (received == false)
+                                                    {
+                                                        DataReader();
+                                                        if (Common.ReceiveDataQueue.Count > 0)
+                                                        {
+                                                            _rec = new RecData();
+                                                            _rec = Common.ReceiveDataQueue.Dequeue();
+                                                           received = true;
+                                                        }
+                                                    }
+                                                    //DataReader();
                                                     Scopecommand.OutPutData = _rec;
                                                     Commands.Where(x => x.CommandId == Scopecommand.CommandId).ToList().ForEach(x => x.ExecutionStatus = (int)ExecutionStage.Executed);
                                                     //Scopecommand.ExecutionStatus = (int)ExecutionStage.Executed;
@@ -1567,9 +1579,21 @@ namespace JupiterSoft.CustomDailog
                                 if (Common.CurrentDevice == Models.DeviceType.ControlCard || Common.CurrentDevice == Models.DeviceType.MotorDerive)
                                 {
                                     AddOutPut("Storing data into " + command.CommandText + "..", (int)OutPutType.INFORMATION);
-                                    DataReader();
+                                    bool received = false;
                                     RecData _rec = new RecData();
-                                    _rec = Common.ReceiveDataQueue.Dequeue();
+                                    while (received == false)
+                                    {
+                                        DataReader();
+                                        if (Common.ReceiveDataQueue.Count > 0)
+                                        {
+                                            _rec = new RecData();
+                                            _rec = Common.ReceiveDataQueue.Dequeue();
+                                            received = true;
+                                        }
+                                    }
+                                    //DataReader();
+                                    //RecData _rec = new RecData();
+                                    //_rec = Common.ReceiveDataQueue.Dequeue();
                                     command.OutPutData = _rec;
                                     command.ExecutionStatus = (int)ExecutionStage.Executed;
                                     AddOutPut("Data stored into " + command.CommandText + "..", (int)OutPutType.INFORMATION);
