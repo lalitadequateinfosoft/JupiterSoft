@@ -40,6 +40,7 @@ namespace JupiterSoft.CustomDailog
         public Byte[] _MbTgmBytes;
         internal UInt32 TotalReceiveSize = 0;
         bool IsComplete = false;
+     
 
 
         System.Timers.Timer TimerCheckReceiveData = new System.Timers.Timer();
@@ -321,7 +322,15 @@ namespace JupiterSoft.CustomDailog
                             continue;
                         }
 
-                        _dispathcer.Invoke(new Action(() => { WeightContent.Content = new String(data[i].Where(Char.IsDigit).ToArray()); }));
+                        if (data[i].ToLower().Contains("kgg"))
+                        {
+                            StringBuilder builder = new StringBuilder(data[i].ToString().ToLower());
+                            builder.Replace("kgg", "");
+                            //weight = Convert.ToInt32(builder.ToString());
+                            _dispathcer.Invoke(new Action(() => { WeightContent.Content = builder.ToString(); }));
+                        }
+
+
                         //WeightContent.Content = new String(data[i].Where(Char.IsDigit).ToArray());
 
                         string unit = new String(data[i].Where(Char.IsLetter).ToArray());
@@ -423,10 +432,7 @@ namespace JupiterSoft.CustomDailog
                 //To Read Function Code response.
                 if (_recData.MbTgm[1] == (int)COM_Code.three)
                 {
-                    // int read = _recData.MbTgm[2];
-                    // byte[] arr = _recData.MbTgm.Where((item, index) => index > 2 && index < 63).ToArray();
-                    //for (int i = 0; i < arr.Length; i+=2)
-                    //{
+
                     int _i0 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 3);
                     int _i1 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 5);
                     int _i2 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 7);
@@ -457,9 +463,6 @@ namespace JupiterSoft.CustomDailog
                     int _i27 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 57);
                     int _i28 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 59);
                     int _i29 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 61);
-                    //int _i30 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 63);
-                    //int _i31 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 65);
-
 
 
                     if (_i0 == 0)
@@ -660,6 +663,97 @@ namespace JupiterSoft.CustomDailog
                         Toggle29.IsChecked = _i29 == 0 ? true : false;
                         //Toggle30.IsChecked = _i30 == 0 ? true : false;
                     }));
+
+                }
+                //To Write Function Code response.
+                else if (_recData.MbTgm[1] == (int)COM_Code.sixteen)
+                {
+                    //switch(toggled)
+                    //{
+                    //    case 16:
+                    //        Toggle16.IsChecked=
+                    //}
+                }
+            }
+        }
+
+        void GetControlCardInputOutputState(RecData _recData)
+        {
+            if (_recData.MbTgm.Length > 0 && _recData.MbTgm.Length > readIndex)
+            {
+                //To Read Function Code response.
+                if (_recData.MbTgm[1] == (int)COM_Code.three)
+                {
+
+                    int _i0 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 3);
+                    int _i1 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 5);
+                    int _i2 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 7);
+                    int _i3 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 9);
+                    int _i4 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 11);
+                    int _i5 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 13);
+                    int _i6 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 15);
+                    int _i7 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 17);
+                    int _i8 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 19);
+                    int _i9 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 21);
+                    int _i10 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 23);
+                    int _i11 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 25);
+                    int _i12 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 27);
+                    int _i13 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 29);
+                    int _i14 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 31);
+                    int _i15 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 33);
+                    int _i16 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 35);
+                    int _i17 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 37);
+                    int _i18 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 39);
+                    int _i19 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 41);
+                    int _i20 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 43);
+                    int _i21 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 45);
+                    int _i22 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 47);
+                    int _i23 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 49);
+                    int _i24 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 51);
+                    int _i25 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 53);
+                    int _i26 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 55);
+                    int _i27 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 57);
+                    int _i28 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 59);
+                    int _i29 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 61);
+
+
+
+
+                    //set register state.
+                    ModBusInputOutput.I0 = _i0 == 0 ? true : false;
+                    ModBusInputOutput.I1 = _i1 == 0 ? true : false;
+                    ModBusInputOutput.I2 = _i2 == 0 ? true : false;
+                    ModBusInputOutput.I3 = _i3 == 0 ? true : false;
+                    ModBusInputOutput.I4 = _i4 == 0 ? true : false;
+                    ModBusInputOutput.I5 = _i5 == 0 ? true : false;
+                    ModBusInputOutput.I6 = _i6 == 0 ? true : false;
+                    ModBusInputOutput.I7 = _i7 == 0 ? true : false;
+                    ModBusInputOutput.I8 = _i8 == 0 ? true : false;
+                    ModBusInputOutput.I9 = _i9 == 0 ? true : false;
+                    ModBusInputOutput.I10 = _i10 == 0 ? true : false;
+                    ModBusInputOutput.I11 = _i11 == 0 ? true : false;
+                    ModBusInputOutput.I12 = _i12 == 0 ? true : false;
+                    ModBusInputOutput.I13 = _i13 == 0 ? true : false;
+                    ModBusInputOutput.I14 = _i14 == 0 ? true : false;
+                    ModBusInputOutput.I15 = _i15 == 0 ? true : false;
+                    ModBusInputOutput.O16 = _i16 == 0 ? true : false;
+                    ModBusInputOutput.O17 = _i17 == 0 ? true : false;
+                    ModBusInputOutput.O18 = _i18 == 0 ? true : false;
+                    ModBusInputOutput.O19 = _i19 == 0 ? true : false;
+                    ModBusInputOutput.O20 = _i20 == 0 ? true : false;
+                    ModBusInputOutput.O21 = _i21 == 0 ? true : false;
+                    ModBusInputOutput.O22 = _i22 == 0 ? true : false;
+                    ModBusInputOutput.O23 = _i23 == 0 ? true : false;
+                    ModBusInputOutput.O24 = _i24 == 0 ? true : false;
+                    ModBusInputOutput.O25 = _i25 == 0 ? true : false;
+                    ModBusInputOutput.O26 = _i26 == 0 ? true : false;
+                    ModBusInputOutput.O27 = _i27 == 0 ? true : false;
+                    ModBusInputOutput.O28 = _i28 == 0 ? true : false;
+                    ModBusInputOutput.O29 = _i29 == 0 ? true : false;
+                    ModBusInputOutput.O30 = false;
+                    ModBusInputOutput.O31 = false;
+
+
 
                 }
                 //To Write Function Code response.
@@ -962,7 +1056,7 @@ namespace JupiterSoft.CustomDailog
                         this.SerialDevice.Read(recBuf, 0, recBuf.Length);
                         IsComplete = true;
                         Common.ReceiveBufferQueue.Enqueue(recBuf);
-
+                        recBuf = new byte[REC_BUF_SIZE];
 
                     }
                     else if (Common.COMSelected == COMType.MODBUS)
@@ -992,7 +1086,9 @@ namespace JupiterSoft.CustomDailog
                         else
                         {
                             IsComplete = true;
+                          
                             Common.ReceiveBufferQueue.Enqueue(recBuf);
+                            recBuf = new byte[REC_BUF_SIZE];
                         }
                     }
 
@@ -1063,7 +1159,9 @@ namespace JupiterSoft.CustomDailog
                         else
                         {
                             IsComplete = true;
+                           
                             Common.ReceiveBufferQueue.Enqueue(recBuf);
+                            recBuf = new byte[REC_BUF_SIZE];
                         }
                     }
                     Common.LastResponseReceived = DateTime.Now;
@@ -1192,8 +1290,9 @@ namespace JupiterSoft.CustomDailog
             {
                 if (Commands.Where(x => x.ExecutionStatus != (int)ExecutionStage.Executed).ToList().Count() > 0)
                 {
+                    
 
-                    foreach (var command in Commands.Where(x=>x.ExecutionStatus != (int)ExecutionStage.Executed).OrderBy(x => x.Order).ToList())
+                    foreach (var command in Commands.Where(x => x.ExecutionStatus != (int)ExecutionStage.Executed).OrderBy(x => x.Order).ToList())
                     {
                         if (command.CommandType == (int)ElementConstant.If_Condition_Start)
                         {
@@ -1203,71 +1302,24 @@ namespace JupiterSoft.CustomDailog
                                 command.ExecutionStatus = (int)ExecutionStage.Executing;
                                 if (command.InputData.ComparisonVariable.Contains('-'))
                                 {
+                                    var input = command.InputData.ComparisonVariable.Split('-')[0];
+                                    GetControlCardInputOutputState(Commands.Where(x => x.CommandText == command.InputData.ComparisonVariable).FirstOrDefault().OutPutData);
                                     //isConditionTrue
                                 }
                                 else
                                 {
                                     //Commands.
                                     int weight = getWeightModuleResponse(Commands.Where(x => x.CommandText == command.InputData.ComparisonVariable).FirstOrDefault().OutPutData);
-                                    if (command.InputData.ComparisonCondition == (int)ConditionConstant.contains)
-                                    {
+                                    isConditionTrue = CompareWeightdata(command.InputData.ComparisonCondition, weight, command.InputData.ComparisonValue);
 
-                                    }
-                                    else if (command.InputData.ComparisonCondition == (int)ConditionConstant.does_not_contains)
-                                    {
 
-                                    }
-                                    else if (command.InputData.ComparisonCondition == (int)ConditionConstant.is_equal_to)
-                                    {
-                                        if(weight== Convert.ToInt32(command.InputData.ComparisonValue))
-                                        {
-                                            isConditionTrue = true;
-
-                                        }
-                                    }
-                                    else if (command.InputData.ComparisonCondition == (int)ConditionConstant.is_not_equal_to)
-                                    {
-
-                                    }
-                                    else if (command.InputData.ComparisonCondition == (int)ConditionConstant.is_greater_then)
-                                    {
-
-                                    }
-                                    else if (command.InputData.ComparisonCondition == (int)ConditionConstant.is_greater_then_or_equal_to)
-                                    {
-
-                                    }
-                                    else if (command.InputData.ComparisonCondition == (int)ConditionConstant.is_less_then)
-                                    {
-
-                                    }
-                                    else if (command.InputData.ComparisonCondition == (int)ConditionConstant.is_less_then_or_equal_to)
-                                    {
-
-                                    }
-                                    else if (command.InputData.ComparisonCondition == (int)ConditionConstant.starts_with)
-                                    {
-
-                                    }
-                                    else if (command.InputData.ComparisonCondition == (int)ConditionConstant.does_not_start_with)
-                                    {
-
-                                    }
-                                    else if (command.InputData.ComparisonCondition == (int)ConditionConstant.ends_with)
-                                    {
-
-                                    }
-                                    else if (command.InputData.ComparisonCondition == (int)ConditionConstant.does_not_ends_with)
-                                    {
-
-                                    }
                                 }
 
                                 var endscope = Commands.Where(x => x.ParentCommandId == command.CommandId).FirstOrDefault
                                    ().Order;
                                 if (isConditionTrue)
                                 {
-                                    foreach (var Scopecommand in Commands.Where(x => x.Order > command.Order && x.Order < endscope).ToList())
+                                    foreach (var Scopecommand in Commands.Where(x => x.Order > command.Order && x.Order < endscope && x.ExecutionStatus!=(int)ExecutionStage.Executed).ToList())
                                     {
                                         if (Scopecommand.CommandType == (int)ElementConstant.Connect_ControlCard_Event)
                                         {
@@ -1275,20 +1327,22 @@ namespace JupiterSoft.CustomDailog
                                             {
 
                                                 Connect_control_card(Scopecommand.Configuration.deviceDetail.PortName, Scopecommand.Configuration.deviceDetail.BaudRate, Scopecommand.Configuration.deviceDetail.DataBit, Scopecommand.Configuration.deviceDetail.StopBit, Scopecommand.Configuration.deviceDetail.Parity);
-                                                Scopecommand.ExecutionStatus = (int)ExecutionStage.Executed;
+                                                Commands.Where(x => x.CommandId == Scopecommand.CommandId).ToList().ForEach(x => x.ExecutionStatus = (int)ExecutionStage.Executed);
+                                                //Scopecommand.ExecutionStatus = (int)ExecutionStage.Executed;
 
 
                                             }
                                             break;
                                         }
 
-                                        if (Scopecommand.CommandType == (int)ElementConstant.Disconnect_ControlCard_Event)
+                                       else if (Scopecommand.CommandType == (int)ElementConstant.Disconnect_ControlCard_Event)
                                         {
                                             if (Scopecommand.ExecutionStatus == (int)ExecutionStage.Not_Executed)
                                             {
                                                 AddOutPut("Disconnecting Control Card..", (int)OutPutType.INFORMATION);
                                                 StopPortCommunication();
-                                                Scopecommand.ExecutionStatus = (int)ExecutionStage.Executed;
+                                                Commands.Where(x => x.CommandId == Scopecommand.CommandId).ToList().ForEach(x => x.ExecutionStatus = (int)ExecutionStage.Executed);
+                                                //Scopecommand.ExecutionStatus = (int)ExecutionStage.Executed;
                                                 AddOutPut("Control card is disconnected..", (int)OutPutType.SUCCESS, true);
 
                                             }
@@ -1296,13 +1350,14 @@ namespace JupiterSoft.CustomDailog
                                             break;
                                         }
 
-                                        if (Scopecommand.CommandType == (int)ElementConstant.Connect_Weight_Event)
+                                        else if (Scopecommand.CommandType == (int)ElementConstant.Connect_Weight_Event)
                                         {
                                             if (Scopecommand.ExecutionStatus == (int)ExecutionStage.Not_Executed)
                                             {
                                                 AddOutPut("Connecting weight module..", (int)OutPutType.INFORMATION);
                                                 ReadWeight(Scopecommand.Configuration.deviceDetail.PortName, Scopecommand.Configuration.deviceDetail.BaudRate, Scopecommand.Configuration.deviceDetail.DataBit, Scopecommand.Configuration.deviceDetail.StopBit, Scopecommand.Configuration.deviceDetail.Parity);
-                                                Scopecommand.ExecutionStatus = (int)ExecutionStage.Executing;
+                                                Commands.Where(x => x.CommandId == Scopecommand.CommandId).ToList().ForEach(x => x.ExecutionStatus = (int)ExecutionStage.Executing);
+                                                //Scopecommand.ExecutionStatus = (int)ExecutionStage.Executing;
 
                                                 AddOutPut("weight module is connected..", (int)OutPutType.SUCCESS, true);
                                                 AddOutPut("Wait for weight module response..", (int)OutPutType.INFORMATION);
@@ -1311,13 +1366,14 @@ namespace JupiterSoft.CustomDailog
                                             else
                                             {
                                                 AddOutPut("Started Fetching weight module input..", (int)OutPutType.SUCCESS, true);
-                                                Scopecommand.ExecutionStatus = (int)ExecutionStage.Executed;
+                                                Commands.Where(x => x.CommandId == Scopecommand.CommandId).ToList().ForEach(x => x.ExecutionStatus = (int)ExecutionStage.Executed);
+                                                // Scopecommand.ExecutionStatus = (int)ExecutionStage.Executed;
                                                 AddOutPut("Fetching Stopped..", (int)OutPutType.SUCCESS, true);
                                             }
                                             break;
                                         }
 
-                                        if (Scopecommand.CommandType == (int)ElementConstant.Receive_Message_Event)
+                                        else if (Scopecommand.CommandType == (int)ElementConstant.Receive_Message_Event)
                                         {
                                             if (Scopecommand.ExecutionStatus == (int)ExecutionStage.Not_Executed)
                                             {
@@ -1342,7 +1398,8 @@ namespace JupiterSoft.CustomDailog
 
 
                                                     Scopecommand.OutPutData = _rec;
-                                                    Scopecommand.ExecutionStatus = (int)ExecutionStage.Executed;
+                                                    Commands.Where(x => x.CommandId == Scopecommand.CommandId).ToList().ForEach(x => x.ExecutionStatus = (int)ExecutionStage.Executed);
+                                                    //Scopecommand.ExecutionStatus = (int)ExecutionStage.Executed;
                                                     AddOutPut("Storing data into " + Scopecommand.CommandText + "..", (int)OutPutType.INFORMATION);
                                                     AddOutPut("Showing weight module response..", (int)OutPutType.INFORMATION);
                                                     showWeightModuleResponse(_rec);
@@ -1351,7 +1408,8 @@ namespace JupiterSoft.CustomDailog
                                                 {
                                                     AddOutPut("Reading control card initial state..", (int)OutPutType.INFORMATION);
                                                     ReadAllControCardInputOutput();
-                                                    Scopecommand.ExecutionStatus = (int)ExecutionStage.Executing;
+                                                    Commands.Where(x => x.CommandId == Scopecommand.CommandId).ToList().ForEach(x => x.ExecutionStatus = (int)ExecutionStage.Executing);
+                                                    //Scopecommand.ExecutionStatus = (int)ExecutionStage.Executing;
                                                 }
                                             }
                                             else
@@ -1363,25 +1421,28 @@ namespace JupiterSoft.CustomDailog
                                                     RecData _rec = new RecData();
                                                     _rec = Common.ReceiveDataQueue.Dequeue();
                                                     Scopecommand.OutPutData = _rec;
-                                                    Scopecommand.ExecutionStatus = (int)ExecutionStage.Executed;
+                                                    Commands.Where(x => x.CommandId == Scopecommand.CommandId).ToList().ForEach(x => x.ExecutionStatus = (int)ExecutionStage.Executed);
+                                                    //Scopecommand.ExecutionStatus = (int)ExecutionStage.Executed;
                                                     AddOutPut("Data stored into " + Scopecommand.CommandText + "..", (int)OutPutType.INFORMATION);
                                                     ReadControlCardResponse(_rec);
                                                     AddOutPut("Showing control card state..", (int)OutPutType.INFORMATION);
                                                 }
                                                 else
                                                 {
-                                                    Scopecommand.ExecutionStatus = (int)ExecutionStage.Executed;
+                                                    Commands.Where(x => x.CommandId == Scopecommand.CommandId).ToList().ForEach(x => x.ExecutionStatus = (int)ExecutionStage.Executed);
+                                                    //Scopecommand.ExecutionStatus = (int)ExecutionStage.Executed;
                                                 }
                                             }
                                             break;
                                         }
-                                        if (Scopecommand.CommandType == (int)ElementConstant.Disconnect_Weight_Event)
+                                        else if (Scopecommand.CommandType == (int)ElementConstant.Disconnect_Weight_Event)
                                         {
                                             if (Scopecommand.ExecutionStatus == (int)ExecutionStage.Not_Executed)
                                             {
                                                 AddOutPut("Disconnecting weight module..", (int)OutPutType.WARNING, true);
                                                 StopPortCommunication();
-                                                Scopecommand.ExecutionStatus = (int)ExecutionStage.Executed;
+                                                Commands.Where(x => x.CommandId == Scopecommand.CommandId).ToList().ForEach(x => x.ExecutionStatus = (int)ExecutionStage.Executed);
+                                                //Scopecommand.ExecutionStatus = (int)ExecutionStage.Executed;
                                                 AddOutPut("Weight module disconnected..", (int)OutPutType.SUCCESS, true);
 
                                             }
@@ -1395,6 +1456,16 @@ namespace JupiterSoft.CustomDailog
                                         }
 
                                     }
+
+                                    var totalcomand = Commands.Where(x => x.Order == (endscope - 1)).FirstOrDefault();
+                                    if (totalcomand.ExecutionStatus==(int)ExecutionStage.Executed)
+                                    {
+                                        command.ExecutionStatus = (int)ExecutionStage.Executed;
+                                        Commands.Where(x => x.Order > command.Order && x.Order < endscope).ToList().ForEach(x => x.ExecutionStatus = (int)ExecutionStage.Executed);
+
+                                    }
+                                    break;
+
                                 }
                                 else
                                 {
@@ -1406,7 +1477,7 @@ namespace JupiterSoft.CustomDailog
                             break;
                         }
 
-                        if (command.CommandType == (int)ElementConstant.Connect_ControlCard_Event)
+                        else if (command.CommandType == (int)ElementConstant.Connect_ControlCard_Event)
                         {
                             if (command.ExecutionStatus == (int)ExecutionStage.Not_Executed)
                             {
@@ -1419,7 +1490,7 @@ namespace JupiterSoft.CustomDailog
                             break;
                         }
 
-                        if (command.CommandType == (int)ElementConstant.Disconnect_ControlCard_Event)
+                        else if (command.CommandType == (int)ElementConstant.Disconnect_ControlCard_Event)
                         {
                             if (command.ExecutionStatus == (int)ExecutionStage.Not_Executed)
                             {
@@ -1433,7 +1504,7 @@ namespace JupiterSoft.CustomDailog
                             break;
                         }
 
-                        if (command.CommandType == (int)ElementConstant.Connect_Weight_Event)
+                        else if (command.CommandType == (int)ElementConstant.Connect_Weight_Event)
                         {
                             if (command.ExecutionStatus == (int)ExecutionStage.Not_Executed)
                             {
@@ -1454,7 +1525,7 @@ namespace JupiterSoft.CustomDailog
                             break;
                         }
 
-                        if (command.CommandType == (int)ElementConstant.Receive_Message_Event)
+                        else if (command.CommandType == (int)ElementConstant.Receive_Message_Event)
                         {
                             if (command.ExecutionStatus == (int)ExecutionStage.Not_Executed)
                             {
@@ -1512,7 +1583,7 @@ namespace JupiterSoft.CustomDailog
                             }
                             break;
                         }
-                        if (command.CommandType == (int)ElementConstant.Disconnect_Weight_Event)
+                        else if (command.CommandType == (int)ElementConstant.Disconnect_Weight_Event)
                         {
                             if (command.ExecutionStatus == (int)ExecutionStage.Not_Executed)
                             {
@@ -1529,6 +1600,12 @@ namespace JupiterSoft.CustomDailog
                             }
 
                             break;
+                        }
+
+                        else if (command.CommandType == (int)ElementConstant.End_Scope)
+                        {
+                            AddOutPut("Scope Ended..", (int)OutPutType.SUCCESS, true);
+                            command.ExecutionStatus = (int)ExecutionStage.Executed;
                         }
                     }
 
@@ -1560,13 +1637,27 @@ namespace JupiterSoft.CustomDailog
                     {
                         if (data[i].All(char.IsDigit))
                         {
-                            weight = Convert.ToInt32(WeightContent.Content = data[i].ToString().Trim());
+                            weight = Convert.ToInt32(data[i].ToString().Trim());
 
                             continue;
                         }
 
+                        try
+                        {
+                            var outP = data[i].ToLower().ToString();
+                            if (outP.Contains("kgg"))
+                            {
+                                StringBuilder builder = new StringBuilder(outP);
+                                builder.Replace("kgg", "");
+                                weight = Convert.ToInt32(builder.ToString());
+                            }
+                        }
+                        catch (Exception ex)
+                        {
 
-                        weight = Convert.ToInt32(WeightContent.Content = new String(data[i].Where(Char.IsDigit).ToArray()));
+                        }
+
+
                         //WeightContent.Content = new String(data[i].Where(Char.IsDigit).ToArray());
 
 
@@ -1584,23 +1675,10 @@ namespace JupiterSoft.CustomDailog
             AddOutPut("Connecting control card..", (int)OutPutType.INFORMATION);
             try
             {
-                Common.RecState = 1;
+                Common.RecState = 0;
                 Common.CurrentDevice = Models.DeviceType.ControlCard;
-                RecData _recData = new RecData();
-                _recData.deviceType = Models.DeviceType.ControlCard;
-                _recData.PropertyName = "ControlCard";
-                _recData.SessionId = Common.GetSessionNewId;
-                _recData.Ch = 0;
-                _recData.Indx = 0;
-                _recData.Reg = 0;
-                _recData.NoOfVal = 0;
-                Common.GetSessionId = _recData.SessionId;
-                _recData.Status = PortDataStatus.Requested;
-                _recData.RqType = RQType.ModBus;
                 Common.COMSelected = COMType.MODBUS;
                 _CurrentActiveMenu = AppTools.Modbus;
-                Common.currentReequest = _recData;
-                Common.RequestDataList.Add(_recData);
                 SerialPortCommunications(Port, Baudrate, databit, stopbit, parity);
             }
             catch (Exception ex)
@@ -1609,6 +1687,131 @@ namespace JupiterSoft.CustomDailog
             }
             AddOutPut("Control card is connected..", (int)OutPutType.SUCCESS, true);
         }
+
+        private bool CompareWeightdata(int ComparisonCondition, int weightdata, string comparisonValue)
+        {
+            bool isConditionTrue = false;
+            if (ComparisonCondition == (int)ConditionConstant.contains)
+            {
+                if (weightdata.ToString().Contains(comparisonValue))
+                {
+                    isConditionTrue = true;
+
+                }
+            }
+            else if (ComparisonCondition == (int)ConditionConstant.does_not_contains)
+            {
+                if (!weightdata.ToString().Contains(comparisonValue))
+                {
+                    isConditionTrue = true;
+
+                }
+            }
+            else if (ComparisonCondition == (int)ConditionConstant.is_equal_to)
+            {
+                if (weightdata == Convert.ToInt32(comparisonValue))
+                {
+                    isConditionTrue = true;
+
+                }
+            }
+            else if (ComparisonCondition == (int)ConditionConstant.is_not_equal_to)
+            {
+                if (weightdata != Convert.ToInt32(comparisonValue))
+                {
+                    isConditionTrue = true;
+
+                }
+            }
+            else if (ComparisonCondition == (int)ConditionConstant.is_greater_then)
+            {
+                if (weightdata > Convert.ToInt32(comparisonValue))
+                {
+                    isConditionTrue = true;
+
+                }
+            }
+            else if (ComparisonCondition == (int)ConditionConstant.is_greater_then_or_equal_to)
+            {
+                if (weightdata >= Convert.ToInt32(comparisonValue))
+                {
+                    isConditionTrue = true;
+
+                }
+            }
+            else if (ComparisonCondition == (int)ConditionConstant.is_less_then)
+            {
+                if (weightdata < Convert.ToInt32(comparisonValue))
+                {
+                    isConditionTrue = true;
+
+                }
+            }
+            else if (ComparisonCondition == (int)ConditionConstant.is_less_then_or_equal_to)
+            {
+                if (weightdata <= Convert.ToInt32(comparisonValue))
+                {
+                    isConditionTrue = true;
+
+                }
+            }
+            else if (ComparisonCondition == (int)ConditionConstant.starts_with)
+            {
+                if (weightdata.ToString().StartsWith(comparisonValue))
+                {
+                    isConditionTrue = true;
+
+                }
+            }
+            else if (ComparisonCondition == (int)ConditionConstant.does_not_start_with)
+            {
+                if (!weightdata.ToString().StartsWith(comparisonValue))
+                {
+                    isConditionTrue = true;
+
+                }
+            }
+            else if (ComparisonCondition == (int)ConditionConstant.ends_with)
+            {
+                if (weightdata.ToString().EndsWith(comparisonValue))
+                {
+                    isConditionTrue = true;
+
+                }
+            }
+            else if (ComparisonCondition == (int)ConditionConstant.does_not_ends_with)
+            {
+                if (!weightdata.ToString().EndsWith(comparisonValue))
+                {
+                    isConditionTrue = true;
+
+                }
+            }
+
+            return isConditionTrue;
+        }
+        //private bool? CompareControlInput(int comparisonCondition, string comparisonValue)
+        //{
+        //    bool? isConditionTrue;
+
+        //    bool ActualValue = false;
+        //    if(comparisonValue.ToLower().Contains("true"))
+        //    {
+        //        ActualValue= true;
+        //    }
+        //    else if(comparisonValue.ToLower().Contains("false"))
+        //    {
+        //        ActualValue = false;
+        //    }
+        //    else if (comparisonValue=="0")
+        //    {
+        //        ActualValue = false;
+        //    }
+        //    else if (comparisonValue == "1")
+        //    {
+        //        ActualValue = false;
+        //    }
+        //}
 
         #endregion
 
@@ -1648,14 +1851,10 @@ namespace JupiterSoft.CustomDailog
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             AddOutPut("Commands compilation started..", (int)OutPutType.INFORMATION);
-            Task.Delay(100);
-            //Thread.Sleep(100);
+           // Task.Delay(100);
             ExecuteProcesses();
+            AddOutPut("Commands compilation completed..", (int)OutPutType.SUCCESS);
         }
 
-        //private void Window_Activated(object sender, EventArgs e)
-        //{
-
-        //}
     }
 }

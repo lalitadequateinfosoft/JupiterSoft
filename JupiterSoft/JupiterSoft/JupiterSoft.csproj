@@ -75,6 +75,7 @@
     <Compile Include="CustomDailog\NameVariableDialog.xaml.cs">
       <DependentUpon>NameVariableDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Models\ModBusInput.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Page Include="CustomDailog\ConditionsDialog.xaml">
       <SubType>Designer</SubType>
