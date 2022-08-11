@@ -61,6 +61,7 @@ namespace JupiterSoft.Pages
 
 
         System.Timers.Timer TimerCheckReceiveData = new System.Timers.Timer();
+        System.Timers.Timer MotorTimer = new System.Timers.Timer();
         internal bool _UpdatePB = true;
         internal bool UseThisPage = true;
         static readonly object _object = new object();
@@ -110,6 +111,9 @@ namespace JupiterSoft.Pages
         private List<LogicalCommand> Commands;
 
         #endregion
+
+        private int _currentAngle;
+
 
         public CreateTemplate()
         {
@@ -2774,37 +2778,10 @@ namespace JupiterSoft.Pages
                     TestMotor.IsEnabled = false;
                     StopMotor.IsEnabled = true;
                     Disable_RunTimeButton();
-
-                    string deviceId = ComPortControl.SelectedValue.ToString();
-                    int Baudrate = Convert.ToInt32(BaudRateControlCard.SelectedValue.ToString());
-                    int databit = Convert.ToInt32(DataBitControlCard.SelectedValue.ToString());
-                    int stopbit = Convert.ToInt32(StopBitControlCard.SelectedValue.ToString());
-                    int parity = Convert.ToInt32(ParityControlCard.SelectedValue.ToString());
-
-                    var suctom = deviceInfo.CustomDeviceInfos.Where(x => x.DeviceID == deviceId).FirstOrDefault();
-                    string Port = suctom.PortName;
-
-                    Common.RecState = 1;
-                    Common.CurrentDevice = Models.DeviceType.MotorDerive;
+                    //Connect_Motor();
+                    run_motor();
 
 
-                    RecData _recData = new RecData();
-                    _recData.deviceType = Models.DeviceType.MotorDerive;
-                    _recData.PropertyName = "MotorDrive";
-                    _recData.SessionId = Common.GetSessionNewId;
-                    _recData.Ch = 0;
-                    _recData.Indx = 0;
-                    _recData.Reg = 0;
-                    _recData.NoOfVal = 0;
-                    Common.GetSessionId = _recData.SessionId;
-                    _recData.Status = PortDataStatus.Requested;
-                    _recData.RqType = RQType.ModBus;
-                    Common.COMSelected = COMType.MODBUS;
-                    _CurrentActiveMenu = AppTools.Modbus;
-                    Common.RequestDataList.Add(_recData);
-                    TestPortCommunications(Port, Baudrate, databit, stopbit, parity);
-                    TestRunMotor();
-                    //EnableControlInput();
                     return;
                 }
 
@@ -2820,10 +2797,75 @@ namespace JupiterSoft.Pages
 
         }
 
+        private void run_motor()
+        {
+            MotorTimer.Elapsed += MotorTimer_Elapsed;
+            MotorTimer.Interval = 100 * 1;
+            MotorTimer.Enabled = true;
+            MotorTimer.Start();
+        }
+
+        private void MotorTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            _dispathcer.Invoke(new Action(() =>
+            {
+                _currentAngle = _currentAngle + 45;
+                RotateTransform rotateTransform = new RotateTransform(_currentAngle);
+                MotorContainer.RenderTransform = rotateTransform;
+            }));
+        }
+
+        private void stop_motor()
+        {
+            _currentAngle = 0;
+            MotorTimer.Enabled = false;
+            MotorTimer.Stop();
+            _dispathcer.Invoke(new Action(() =>
+            {
+                RotateTransform rotateTransform = new RotateTransform(0);
+                MotorContainer.RenderTransform = rotateTransform;
+            }));
+        }
+
+        private void Connect_Motor()
+        {
+            string deviceId = ComPortControl.SelectedValue.ToString();
+            int Baudrate = Convert.ToInt32(BaudRateControlCard.SelectedValue.ToString());
+            int databit = Convert.ToInt32(DataBitControlCard.SelectedValue.ToString());
+            int stopbit = Convert.ToInt32(StopBitControlCard.SelectedValue.ToString());
+            int parity = Convert.ToInt32(ParityControlCard.SelectedValue.ToString());
+
+            var suctom = deviceInfo.CustomDeviceInfos.Where(x => x.DeviceID == deviceId).FirstOrDefault();
+            string Port = suctom.PortName;
+
+            Common.RecState = 1;
+            Common.CurrentDevice = Models.DeviceType.MotorDerive;
+
+
+            RecData _recData = new RecData();
+            _recData.deviceType = Models.DeviceType.MotorDerive;
+            _recData.PropertyName = "MotorDrive";
+            _recData.SessionId = Common.GetSessionNewId;
+            _recData.Ch = 0;
+            _recData.Indx = 0;
+            _recData.Reg = 0;
+            _recData.NoOfVal = 0;
+            Common.GetSessionId = _recData.SessionId;
+            _recData.Status = PortDataStatus.Requested;
+            _recData.RqType = RQType.ModBus;
+            Common.COMSelected = COMType.MODBUS;
+            _CurrentActiveMenu = AppTools.Modbus;
+            Common.RequestDataList.Add(_recData);
+            TestPortCommunications(Port, Baudrate, databit, stopbit, parity);
+            TestRunMotor();
+            //EnableControlInput();
+        }
+
         private void StopMotor_Click(object sender, RoutedEventArgs e)
         {
             TestMotor.IsEnabled = true;
             StopMotor.IsEnabled = false;
+            stop_motor();
             Enable_RunTimeButton();
             StopPortCommunication();
         }
