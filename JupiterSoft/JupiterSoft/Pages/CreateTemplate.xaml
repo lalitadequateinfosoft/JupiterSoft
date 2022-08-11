@@ -1086,8 +1086,13 @@
                                                             </StackPanel>
                                                             <StackPanel>
                                                                 <ComboBox x:Name="BaudRateMotor" Width="100" BorderBrush="#041124" ui:ControlHelper.CornerRadius="5" Background="White">
-                                                                    <ComboBoxItem Content="38400" IsSelected="True"/>
+                                                                    <ComboBoxItem Content="19200" IsSelected="True"/>
                                                                     <ComboBoxItem Content="9600"/>
+                                                                    <ComboBoxItem Content="19200"/>
+                                                                    <ComboBoxItem Content="38400"/>
+                                                                    <ComboBoxItem Content="114200"/>
+                                                                    <ComboBoxItem Content="115200"/>
+
                                                                 </ComboBox>
                                                             </StackPanel>
                                                         </StackPanel>

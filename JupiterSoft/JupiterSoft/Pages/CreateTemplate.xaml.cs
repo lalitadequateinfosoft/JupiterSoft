@@ -411,14 +411,72 @@ namespace JupiterSoft.Pages
                     case (int)ElementConstant.Start_Event:
                         getNewPosition(Start_Event.Width, Start_Event.Height, ref NewLeft, ref NewTop);
                         ele = Get_EventStyle(contentId, Convert.ToInt32(data));
+                        ShouldAdd = true;
                         break;
                     case (int)ElementConstant.Connect_Motor_Event:
                         getNewPosition(Connect_Motor_Event.Width, Connect_Motor_Event.Height, ref NewLeft, ref NewTop);
                         ele = Get_EventStyle(contentId, Convert.ToInt32(data));
+                        ConfigurationDailog Motordailog = new ConfigurationDailog("Set Motor Configuration", deviceInfo.CustomDeviceInfos);
+                        Motordailog.ShowDialog();
+                        if (!Motordailog.Canceled)
+                        {
+                            if (Commands.Count() == 0)
+                            {
+                                var command = new LogicalCommand
+                                {
+                                    CommandId = contentId,
+                                    CommandType = Convert.ToInt32(data),
+                                    Order = 1,
+                                    ExecutionStatus = (int)ExecutionStage.Not_Executed,
+                                    Configuration = new DeviceConfiguration
+                                    {
+                                        deviceDetail = new DeviceSettings
+                                        {
+                                            DeviceId = Motordailog.DeviceId,
+                                            PortName = deviceInfo.CustomDeviceInfos.Where(x => x.DeviceID == Motordailog.DeviceId).FirstOrDefault().PortName,
+                                            BaudRate = Motordailog.BaudRate,
+                                            DataBit = Motordailog.Databit,
+                                            StopBit = Motordailog.Stopbit,
+                                            Parity = Motordailog.ParityValue
+                                        },
+                                        cameraDetail = new CameraSettings()
+                                    },
+                                    CommandText = "Motor Drive"
+                                };
+                                Commands.Add(command);
+                            }
+                            else
+                            {
+                                var command = new LogicalCommand
+                                {
+                                    CommandId = contentId,
+                                    CommandType = Convert.ToInt32(data),
+                                    Order = Commands.OrderByDescending(x => x.Order).FirstOrDefault().Order + 1,
+                                    ExecutionStatus = (int)ExecutionStage.Not_Executed,
+                                    Configuration = new DeviceConfiguration
+                                    {
+                                        deviceDetail = new DeviceSettings
+                                        {
+                                            DeviceId = Motordailog.DeviceId,
+                                            PortName = deviceInfo.CustomDeviceInfos.Where(x => x.DeviceID == Motordailog.DeviceId).FirstOrDefault().PortName,
+                                            BaudRate = Motordailog.BaudRate,
+                                            DataBit = Motordailog.Databit,
+                                            StopBit = Motordailog.Stopbit,
+                                            Parity = Motordailog.ParityValue
+                                        },
+                                        cameraDetail = new CameraSettings()
+                                    },
+                                    CommandText = "Motor Drive"
+                                };
+                                Commands.Add(command);
+                            }
+                            ShouldAdd = true;
+                        }
                         break;
                     case (int)ElementConstant.Disconnect_Motor_Event:
                         getNewPosition(Disconnect_Motor_Event.Width, Disconnect_Motor_Event.Height, ref NewLeft, ref NewTop);
                         ele = Get_EventStyle(contentId, Convert.ToInt32(data));
+                        ShouldAdd = true;
                         break;
                     case (int)ElementConstant.Connect_Weight_Event:
                         getNewPosition(Connect_Weight_Event.Width, Connect_Weight_Event.Height, ref NewLeft, ref NewTop);
@@ -2445,6 +2503,265 @@ namespace JupiterSoft.Pages
                 }
             }
         }
+        void ReadMotorResponse()
+        {
+            RecData _recData = new RecData();
+            _recData = Common.ReceiveDataQueue.Dequeue();
+            if (_recData.MbTgm.Length > 0 && _recData.MbTgm.Length > readIndex)
+            {
+                //To Read Function Code response.
+                if (_recData.MbTgm[1] == (int)COM_Code.three)
+                {
+                    // int read = _recData.MbTgm[2];
+                    // byte[] arr = _recData.MbTgm.Where((item, index) => index > 2 && index < 63).ToArray();
+                    //for (int i = 0; i < arr.Length; i+=2)
+                    //{
+                    int _i0 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 3);
+                    int _i1 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 5);
+                    int _i2 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 7);
+                    int _i3 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 9);
+                    int _i4 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 11);
+                    int _i5 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 13);
+                    int _i6 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 15);
+                    int _i7 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 17);
+                    int _i8 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 19);
+                    int _i9 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 21);
+                    int _i10 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 23);
+                    int _i11 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 25);
+                    int _i12 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 27);
+                    int _i13 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 29);
+                    int _i14 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 31);
+                    int _i15 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 33);
+                    int _i16 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 35);
+                    int _i17 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 37);
+                    int _i18 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 39);
+                    int _i19 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 41);
+                    int _i20 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 43);
+                    int _i21 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 45);
+                    int _i22 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 47);
+                    int _i23 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 49);
+                    int _i24 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 51);
+                    int _i25 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 53);
+                    int _i26 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 55);
+                    int _i27 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 57);
+                    int _i28 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 59);
+                    int _i29 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 61);
+                    //int _i30 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 63);
+                    //int _i31 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 65);
+
+
+
+                    if (_i0 == 0)
+                    {
+                        _dispathcer.Invoke(new Action(() => { ReadInput0.Source = new BitmapImage(new Uri(@"/assets/CtrlOn.png", UriKind.Relative)); }));
+
+                    }
+                    else
+                    {
+                        _dispathcer.Invoke(new Action(() => { ReadInput0.Source = new BitmapImage(new Uri(@"/assets/CtrlOff.png", UriKind.Relative)); }));
+
+                    }
+
+                    if (_i1 == 0)
+                    {
+                        _dispathcer.Invoke(new Action(() => { ReadInput1.Source = new BitmapImage(new Uri(@"/assets/CtrlOn.png", UriKind.Relative)); }));
+
+                    }
+                    else
+                    {
+                        _dispathcer.Invoke(new Action(() => { ReadInput1.Source = new BitmapImage(new Uri(@"/assets/CtrlOff.png", UriKind.Relative)); }));
+
+                    }
+
+
+                    if (_i2 == 0)
+                    {
+                        _dispathcer.Invoke(new Action(() => { ReadInput2.Source = new BitmapImage(new Uri(@"/assets/CtrlOn.png", UriKind.Relative)); }));
+
+                    }
+                    else
+                    {
+                        _dispathcer.Invoke(new Action(() => { ReadInput2.Source = new BitmapImage(new Uri(@"/assets/CtrlOff.png", UriKind.Relative)); }));
+
+                    }
+
+                    if (_i3 == 0)
+                    {
+                        _dispathcer.Invoke(new Action(() => { ReadInput3.Source = new BitmapImage(new Uri(@"/assets/CtrlOn.png", UriKind.Relative)); }));
+
+                    }
+                    else
+                    {
+                        _dispathcer.Invoke(new Action(() => { ReadInput3.Source = new BitmapImage(new Uri(@"/assets/CtrlOff.png", UriKind.Relative)); }));
+
+                    }
+
+                    if (_i4 == 0)
+                    {
+                        _dispathcer.Invoke(new Action(() => { ReadInput4.Source = new BitmapImage(new Uri(@"/assets/CtrlOn.png", UriKind.Relative)); }));
+
+                    }
+                    else
+                    {
+                        _dispathcer.Invoke(new Action(() => { ReadInput4.Source = new BitmapImage(new Uri(@"/assets/CtrlOff.png", UriKind.Relative)); }));
+
+                    }
+
+                    if (_i5 == 0)
+                    {
+                        _dispathcer.Invoke(new Action(() => { ReadInput5.Source = new BitmapImage(new Uri(@"/assets/CtrlOn.png", UriKind.Relative)); }));
+
+                    }
+                    else
+                    {
+                        _dispathcer.Invoke(new Action(() => { ReadInput5.Source = new BitmapImage(new Uri(@"/assets/CtrlOff.png", UriKind.Relative)); }));
+
+                    }
+
+                    if (_i6 == 0)
+                    {
+                        _dispathcer.Invoke(new Action(() => { ReadInput6.Source = new BitmapImage(new Uri(@"/assets/CtrlOn.png", UriKind.Relative)); }));
+
+                    }
+                    else
+                    {
+                        _dispathcer.Invoke(new Action(() => { ReadInput6.Source = new BitmapImage(new Uri(@"/assets/CtrlOff.png", UriKind.Relative)); }));
+
+                    }
+
+                    if (_i7 == 0)
+                    {
+                        _dispathcer.Invoke(new Action(() => { ReadInput7.Source = new BitmapImage(new Uri(@"/assets/CtrlOn.png", UriKind.Relative)); }));
+
+                    }
+                    else
+                    {
+                        _dispathcer.Invoke(new Action(() => { ReadInput7.Source = new BitmapImage(new Uri(@"/assets/CtrlOff.png", UriKind.Relative)); }));
+
+                    }
+
+                    if (_i8 == 0)
+                    {
+                        _dispathcer.Invoke(new Action(() => { ReadInput8.Source = new BitmapImage(new Uri(@"/assets/CtrlOn.png", UriKind.Relative)); }));
+
+                    }
+                    else
+                    {
+                        _dispathcer.Invoke(new Action(() => { ReadInput8.Source = new BitmapImage(new Uri(@"/assets/CtrlOff.png", UriKind.Relative)); }));
+
+                    }
+
+                    if (_i9 == 0)
+                    {
+                        _dispathcer.Invoke(new Action(() => { ReadInput9.Source = new BitmapImage(new Uri(@"/assets/CtrlOn.png", UriKind.Relative)); }));
+
+                    }
+                    else
+                    {
+                        _dispathcer.Invoke(new Action(() => { ReadInput9.Source = new BitmapImage(new Uri(@"/assets/CtrlOff.png", UriKind.Relative)); }));
+
+                    }
+
+                    if (_i10 == 0)
+                    {
+                        _dispathcer.Invoke(new Action(() => { ReadInput10.Source = new BitmapImage(new Uri(@"/assets/CtrlOn.png", UriKind.Relative)); }));
+
+                    }
+                    else
+                    {
+                        _dispathcer.Invoke(new Action(() => { ReadInput10.Source = new BitmapImage(new Uri(@"/assets/CtrlOff.png", UriKind.Relative)); }));
+
+                    }
+
+                    if (_i11 == 0)
+                    {
+                        _dispathcer.Invoke(new Action(() => { ReadInput11.Source = new BitmapImage(new Uri(@"/assets/CtrlOn.png", UriKind.Relative)); }));
+
+                    }
+                    else
+                    {
+                        _dispathcer.Invoke(new Action(() => { ReadInput0.Source = new BitmapImage(new Uri(@"/assets/CtrlOff.png", UriKind.Relative)); }));
+
+                    }
+
+                    if (_i12 == 0)
+                    {
+                        _dispathcer.Invoke(new Action(() => { ReadInput12.Source = new BitmapImage(new Uri(@"/assets/CtrlOn.png", UriKind.Relative)); }));
+
+                    }
+                    else
+                    {
+                        _dispathcer.Invoke(new Action(() => { ReadInput12.Source = new BitmapImage(new Uri(@"/assets/CtrlOff.png", UriKind.Relative)); }));
+
+                    }
+
+                    if (_i13 == 0)
+                    {
+                        _dispathcer.Invoke(new Action(() => { ReadInput13.Source = new BitmapImage(new Uri(@"/assets/CtrlOn.png", UriKind.Relative)); }));
+
+                    }
+                    else
+                    {
+                        _dispathcer.Invoke(new Action(() => { ReadInput13.Source = new BitmapImage(new Uri(@"/assets/CtrlOff.png", UriKind.Relative)); }));
+
+                    }
+
+                    if (_i14 == 0)
+                    {
+                        _dispathcer.Invoke(new Action(() => { ReadInput14.Source = new BitmapImage(new Uri(@"/assets/CtrlOn.png", UriKind.Relative)); }));
+
+                    }
+                    else
+                    {
+                        _dispathcer.Invoke(new Action(() => { ReadInput14.Source = new BitmapImage(new Uri(@"/assets/CtrlOff.png", UriKind.Relative)); }));
+
+                    }
+
+                    if (_i15 == 0)
+                    {
+                        _dispathcer.Invoke(new Action(() => { ReadInput15.Source = new BitmapImage(new Uri(@"/assets/CtrlOn.png", UriKind.Relative)); }));
+
+                    }
+                    else
+                    {
+                        _dispathcer.Invoke(new Action(() => { ReadInput15.Source = new BitmapImage(new Uri(@"/assets/CtrlOff.png", UriKind.Relative)); }));
+
+                    }
+
+
+                    //Read input register state.
+
+                    _dispathcer.Invoke(new Action(() =>
+                    {
+                        Toggle16.IsChecked = _i16 == 0 ? true : false;
+                        Toggle17.IsChecked = _i17 == 0 ? true : false;
+                        Toggle18.IsChecked = _i18 == 0 ? true : false;
+                        Toggle19.IsChecked = _i19 == 0 ? true : false;
+                        Toggle20.IsChecked = _i20 == 0 ? true : false;
+                        Toggle21.IsChecked = _i21 == 0 ? true : false;
+                        Toggle22.IsChecked = _i22 == 0 ? true : false;
+                        Toggle23.IsChecked = _i23 == 0 ? true : false;
+                        Toggle24.IsChecked = _i24 == 0 ? true : false;
+                        Toggle25.IsChecked = _i25 == 0 ? true : false;
+                        Toggle26.IsChecked = _i26 == 0 ? true : false;
+                        Toggle27.IsChecked = _i27 == 0 ? true : false;
+                        Toggle28.IsChecked = _i28 == 0 ? true : false;
+                        Toggle29.IsChecked = _i29 == 0 ? true : false;
+                        //Toggle30.IsChecked = _i30 == 0 ? true : false;
+                    }));
+
+                }
+                //To Write Function Code response.
+                else if (_recData.MbTgm[1] == (int)COM_Code.sixteen)
+                {
+                    //switch(toggled)
+                    //{
+                    //    case 16:
+                    //        Toggle16.IsChecked=
+                    //}
+                }
+            }
+        }
         #endregion
 
         #region Motor Area Test Function
@@ -2457,6 +2774,37 @@ namespace JupiterSoft.Pages
                     TestMotor.IsEnabled = false;
                     StopMotor.IsEnabled = true;
                     Disable_RunTimeButton();
+
+                    string deviceId = ComPortControl.SelectedValue.ToString();
+                    int Baudrate = Convert.ToInt32(BaudRateControlCard.SelectedValue.ToString());
+                    int databit = Convert.ToInt32(DataBitControlCard.SelectedValue.ToString());
+                    int stopbit = Convert.ToInt32(StopBitControlCard.SelectedValue.ToString());
+                    int parity = Convert.ToInt32(ParityControlCard.SelectedValue.ToString());
+
+                    var suctom = deviceInfo.CustomDeviceInfos.Where(x => x.DeviceID == deviceId).FirstOrDefault();
+                    string Port = suctom.PortName;
+
+                    Common.RecState = 1;
+                    Common.CurrentDevice = Models.DeviceType.MotorDerive;
+
+
+                    RecData _recData = new RecData();
+                    _recData.deviceType = Models.DeviceType.MotorDerive;
+                    _recData.PropertyName = "MotorDrive";
+                    _recData.SessionId = Common.GetSessionNewId;
+                    _recData.Ch = 0;
+                    _recData.Indx = 0;
+                    _recData.Reg = 0;
+                    _recData.NoOfVal = 0;
+                    Common.GetSessionId = _recData.SessionId;
+                    _recData.Status = PortDataStatus.Requested;
+                    _recData.RqType = RQType.ModBus;
+                    Common.COMSelected = COMType.MODBUS;
+                    _CurrentActiveMenu = AppTools.Modbus;
+                    Common.RequestDataList.Add(_recData);
+                    TestPortCommunications(Port, Baudrate, databit, stopbit, parity);
+                    TestRunMotor();
+                    //EnableControlInput();
                     return;
                 }
 
@@ -2464,7 +2812,10 @@ namespace JupiterSoft.Pages
             }
             catch
             {
+                TestMotor.IsEnabled = true;
+                StopMotor.IsEnabled = false;
                 Enable_RunTimeButton();
+                StopPortCommunication();
             }
 
         }
@@ -2474,6 +2825,7 @@ namespace JupiterSoft.Pages
             TestMotor.IsEnabled = true;
             StopMotor.IsEnabled = false;
             Enable_RunTimeButton();
+            StopPortCommunication();
         }
 
         #endregion
@@ -2672,6 +3024,17 @@ namespace JupiterSoft.Pages
             _CurrentActiveMenu = AppTools.Modbus;
             //SerialPortCommunications(Comport, 38400, 8, 1, 0);
             obj.GetMultiSendorValueFM3(1, 0, SerialDevice, 0, 30, "ControlCard", 1, 0, Models.DeviceType.ControlCard);   // GetSoftwareVersion(Common.Address, Common.Parity, sp, _ValueType);
+
+        }
+
+        private void TestRunMotor()
+        {
+
+            MODBUSComnn obj = new MODBUSComnn();
+            Common.COMSelected = COMType.MODBUS;
+            _CurrentActiveMenu = AppTools.Modbus;
+            //SerialPortCommunications(Comport, 38400, 8, 1, 0);
+            obj.GetMultiSendorValueFM3(2, (int)Parity.Even, SerialDevice, 8193, 10, "MotorDrive", 1, 0, Models.DeviceType.MotorDerive);   // GetSoftwareVersion(Common.Address, Common.Parity, sp, _ValueType);
 
         }
         #endregion
@@ -3028,7 +3391,16 @@ namespace JupiterSoft.Pages
                                         _recData.MbTgm = Common.MbTgmBytes;
                                         Common.ReceiveDataQueue.Enqueue(_recData);
 
-                                        ReadControlCardResponse(); // to reflect on the devices
+                                        if(Common.CurrentDevice==Models.DeviceType.ControlCard)
+                                        {
+                                            ReadControlCardResponse(); // to reflect on the devices
+                                        }
+                                        else if(Common.CurrentDevice == Models.DeviceType.MotorDerive)
+                                        {
+                                            ReadMotorResponse();
+                                        }
+
+                                        
 
                                         return;
                                         //Common.IsClear = false;                                           

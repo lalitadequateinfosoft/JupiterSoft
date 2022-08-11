@@ -254,6 +254,10 @@ namespace JupiterSoft.Models
             BR_2400,
             BR_9600,
             BR_114200,
+            BR_19200,
+            BR_28800,
+            BR_38400,
+            BR_115200
         };
 
         public enum SB1_Ack

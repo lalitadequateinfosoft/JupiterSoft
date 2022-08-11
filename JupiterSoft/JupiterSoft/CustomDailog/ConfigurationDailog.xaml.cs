@@ -28,7 +28,7 @@ namespace JupiterSoft.CustomDailog
         public int ParityValue { get; set; }
 
 
-        public ConfigurationDailog(string title,List<CustomDeviceInfo> _CustomDeviceInfos)
+        public ConfigurationDailog(string title, List<CustomDeviceInfo> _CustomDeviceInfos)
         {
             InitializeComponent();
             CustomDeviceInfos = _CustomDeviceInfos;
@@ -53,8 +53,11 @@ namespace JupiterSoft.CustomDailog
             //Load BaudRate.
             var baudRateData = new List<BaudRateModel>
             {
-            new BaudRateModel{Id=1,Name="38400" },
-            new BaudRateModel{Id=2,Name="9600" }
+            new BaudRateModel{Id=1,Name="19200" },
+            new BaudRateModel{Id=2,Name="9600" },
+            new BaudRateModel{Id=3,Name="38400" },
+            new BaudRateModel{Id=4,Name="114200" },
+            new BaudRateModel{Id=5,Name="115200" }
             };
 
             BaudRateConfig.ItemsSource = baudRateData;
@@ -131,7 +134,7 @@ namespace JupiterSoft.CustomDailog
             {
                 MessageBox.Show("Please select COM PORT");
             }
-                
+
         }
 
     }
