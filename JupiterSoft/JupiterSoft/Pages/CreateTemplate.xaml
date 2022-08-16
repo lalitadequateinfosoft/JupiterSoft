@@ -1042,7 +1042,7 @@
                             <Grid Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="#f4f4f4" Cursor="Arrow">
                                 <Grid Margin="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" x:Name="MotorDriveArea"  Visibility="Visible">
                                     <Grid.RowDefinitions>
-                                        <RowDefinition Height="150"/>
+                                        <RowDefinition Height="180"/>
                                         <RowDefinition Height="*"/>
                                     </Grid.RowDefinitions>
                                     <Border Grid.Row="0" BorderBrush="#0082ca" BorderThickness=".5" CornerRadius="5">
@@ -1055,6 +1055,7 @@
                                             </GroupBox.Header>
                                             <Grid>
                                                 <Grid.RowDefinitions>
+                                                    <RowDefinition Height="*"/>
                                                     <RowDefinition Height="*"/>
                                                     <RowDefinition Height="*"/>
                                                 </Grid.RowDefinitions>
@@ -1086,9 +1087,9 @@
                                                             </StackPanel>
                                                             <StackPanel>
                                                                 <ComboBox x:Name="BaudRateMotor" Width="100" BorderBrush="#041124" ui:ControlHelper.CornerRadius="5" Background="White">
-                                                                    <ComboBoxItem Content="19200" IsSelected="True"/>
+
                                                                     <ComboBoxItem Content="9600"/>
-                                                                    <ComboBoxItem Content="19200"/>
+                                                                    <ComboBoxItem Content="19200" IsSelected="True"/>
                                                                     <ComboBoxItem Content="38400"/>
                                                                     <ComboBoxItem Content="114200"/>
                                                                     <ComboBoxItem Content="115200"/>
@@ -1182,7 +1183,9 @@
                                                                 RenderTransformOrigin="4.955,2.353"
                                                                 Padding="5"
                                                                 HorizontalAlignment="Left"
-                                                                VerticalAlignment="Center" Margin="5">
+                                                                VerticalAlignment="Center"
+                                                                Margin="5"
+                                                                IsEnabled="False">
 
                                                             <Button.RenderTransform>
                                                                 <TransformGroup>
@@ -1195,24 +1198,57 @@
                                                         </Button>
                                                     </StackPanel>
                                                 </Grid>
-
+                                                <Grid Grid.Row="2">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="213*"/>
+                                                        <ColumnDefinition Width="299*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.ColumnSpan="2" Margin="122,0">
+                                                        <StackPanel>
+                                                            <Button 
+                                                                Margin="5"
+                                                                x:Name="ReadFrequency"
+                                                                Content="Read Frequency"
+                                                                IsEnabled="False"
+                                                                Background="#0082ca"
+                                                                BorderBrush="#0082ca"
+                                                                Foreground="White"
+                                                                Click="ReadFrequency_Click"/>
+                                                        </StackPanel>
+                                                        <StackPanel>
+                                                            <Button 
+                                                                Margin="5"
+                                                                x:Name="WriteFrequency"
+                                                                Content="Change Frequency"
+                                                                IsEnabled="False"
+                                                                Background="#0082ca"
+                                                                BorderBrush="#0082ca"
+                                                                Foreground="White"
+                                                                Click="WriteFrequency_Click"/>
+                                                        </StackPanel>
+                                                    </StackPanel>
+                                                </Grid>
                                             </Grid>
                                         </GroupBox>
                                     </Border>
                                     <Border Grid.Row="1"  Margin="0,10,0,10" CornerRadius="2" BorderBrush="#242726" BorderThickness="1" Background="#fff">
-                                        <Ellipse 
+                                        <Grid>
+                                            <Ellipse 
                                             Height="250"
                                             Width="250"
                                             RenderTransformOrigin="0.5,0.5"
                                             Stretch="UniformToFill"
                                             x:Name="MotorContainer">
-                                            <Ellipse.RenderTransform>
-                                                <RotateTransform CenterX="0" CenterY="0" Angle="0" />
-                                            </Ellipse.RenderTransform>
-                                            <Ellipse.Fill>
-                                                <ImageBrush ImageSource="/assets/1.png"/>
-                                            </Ellipse.Fill>
-                                        </Ellipse>
+                                                <Ellipse.RenderTransform>
+                                                    <RotateTransform CenterX="0" CenterY="0" Angle="0" />
+                                                </Ellipse.RenderTransform>
+                                                <Ellipse.Fill>
+                                                    <ImageBrush ImageSource="/assets/1.png"/>
+                                                </Ellipse.Fill>
+                                            </Ellipse>
+                                            <Label Padding="10" x:Name="MotorSpeed" Content="Current Speed : 0 Hz" HorizontalAlignment="Right" VerticalAlignment="Bottom"/>
+                                        </Grid>
+
 
                                     </Border>
 
@@ -2964,7 +3000,7 @@
                                                 IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}"
                                                 Tag="{Binding End_Scope,Mode=OneWay}"
                                                     />
-                                            
+
 
 
 
@@ -3005,7 +3041,7 @@
 
                                 <ScrollViewer VerticalScrollBarVisibility="Hidden" Height="500" Cursor="Hand">
                                     <Canvas x:Name="ReceiveDrop" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="700" Cursor="Hand" Width="370" AllowDrop="True" Background="Transparent" Drop="Canvas_Drop" DragOver="Canvas_DragOver" DragLeave="Canvas_DragLeave" DragEnter="ReceiveDrop_DragEnter" PreviewMouseMove="ReceiveDrop_PreviewMouseMove" PreviewMouseUp="ReceiveDrop_PreviewMouseUp">
-                                        
+
 
 
                                     </Canvas>

@@ -39,7 +39,7 @@
   <ItemGroup>
     <Reference Include="netstandard" />
     <Reference Include="OzekiSDK">
-      <HintPath>..\..\..\..\..\Downloads\OzekiSDK.dll</HintPath>
+      <HintPath>..\..\OzekiSDK.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -75,6 +75,9 @@
     <Compile Include="CustomDailog\NameVariableDialog.xaml.cs">
       <DependentUpon>NameVariableDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="CustomDailog\NumberInputDialog.xaml.cs">
+      <DependentUpon>NumberInputDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Models\ModBusInput.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Page Include="CustomDailog\ConditionsDialog.xaml">
@@ -90,6 +93,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="CustomDailog\NameVariableDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CustomDailog\NumberInputDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

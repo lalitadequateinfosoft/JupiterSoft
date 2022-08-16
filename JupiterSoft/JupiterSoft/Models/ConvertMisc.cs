@@ -21,6 +21,21 @@ namespace Util
             }
             return ret;
         }
+
+        public static Byte[] ConvertUInt16BcdToByteArray(UInt16 u16)
+        {
+            Byte[] ret = new Byte[4];
+            if (u16 < 100000000)
+            {
+                int decValue = Convert.ToInt16(u16.ToString(), 8);
+                Byte[] a = BitConverter.GetBytes(decValue);
+                //ret[0] = a[3];
+                //ret[1] = a[2];
+                ret[0] = a[1];
+                ret[1] = a[0];
+            }
+            return ret;
+        }
     }
 
     public static class ByteArrayConvert
