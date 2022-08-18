@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO.Ports;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -87,6 +88,7 @@ namespace JupiterSoft.Models
         public int DataBit { get; set; }
         public int StopBit { get; set; }
         public int Parity { get; set; }
+        public SerialPort SerialDevice { get; set; }
     }
     public class CameraSettings
     {
