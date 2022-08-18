@@ -829,6 +829,32 @@
                     </Setter.Value>
                 </Setter>
             </Style>
+            
+            <!--Function Button Style Area-->
+            <Style x:Key="FunctionButtonStyle" TargetType="Button">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Grid>
+                                <Path Stroke="{TemplateBinding BorderBrush}" StrokeThickness="2" StrokeStartLineCap="Square" StrokeEndLineCap="Square" StrokeLineJoin="Round" Fill="{TemplateBinding Background}" Data="M 0,0 H10,10 L15,10 H15,15 L16,10 h14,0 L35,0 h0,164.5 h0,0 V32,32 H35,35 L30,41 H15 L10,32 H0,0 V0,0 Z" />
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Border Grid.Row="0" Grid.Column="0" CornerRadius="5" BorderThickness="{TemplateBinding BorderThickness}" Background="Transparent" Margin="15,-10,0,0" BorderBrush="#df88f9" Padding="10,5,5,5"  HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <Label Width="150" FontSize="{TemplateBinding FontSize}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Content="{TemplateBinding Content}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" Foreground="{TemplateBinding Foreground}" FontFamily="{TemplateBinding FontFamily}" />
+                                    </Border>
+
+                                </Grid>
+                            </Grid>
+
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
 
 
             <!--Toggle Style-->
@@ -2516,7 +2542,8 @@
     StrokeThickness="4"
     Canvas.Left="135"
     Canvas.Top="100"
-      Fill="#ffa94c"                                              />
+      Fill="#ffa94c"                                              
+      />
                                                     <Label Content="Control" FontSize="10" FontWeight="Bold" Foreground="#6c717c"/>
                                                 </StackPanel>
                                             </Border>
@@ -2532,7 +2559,7 @@
     Canvas.Left="135"
     Canvas.Top="100"
       Fill="#f97279"                                              />
-                                                    <Label Content="Sensing" FontSize="10" FontWeight="Bold" Foreground="#6c717c"/>
+                                                    <Label Content="Functions" FontSize="10" FontWeight="Bold" Foreground="#6c717c"/>
                                                 </StackPanel>
                                             </Border>
                                         </Grid>
@@ -2871,28 +2898,6 @@
                                                 IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}"
                                                 Tag="{Binding Disconnect_ControlCard_Event,Mode=OneWay}"
                                                 />
-                                            <Button 
-                                                x:Name="Receive_Message_Event"
-                                                Style="{StaticResource EventButtonStyle}"
-                                                Content="Receive Data"
-                                                Margin="12,5,0,0"
-                                                HorizontalAlignment="Left"
-                                                VerticalAlignment="Center"
-                                                BorderBrush="#AA336A"
-                                                Background="#df88f9"
-                                                BorderThickness="0.5"
-                                                FontSize="12"
-                                                Foreground="#fff"
-                                                FontWeight="Bold"
-                                                FontFamily="Georgia, serif;" 
-                                                Width="200"
-                                                Height="42" 
-                                                PreviewMouseMove="Button_PreviewMouseMove"
-                                                IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}"
-                                                Tag="{Binding Receive_Message_Event,Mode=OneWay}"
-                                                />
-
-
                                         </StackPanel>
 
 
@@ -3007,7 +3012,147 @@
                                         </StackPanel>
 
                                         <StackPanel x:Name="ButtonGridArea4" Grid.Row="3" HorizontalAlignment="Center" Margin="10" MouseEnter="ButtonGrid_MouseEnter" Width="250" MouseLeave="ButtonGrid_MouseLeave">
+                                            <Button 
+                                                x:Name="Read_Motor_Frequency"
+                                                Style="{StaticResource FunctionButtonStyle}"
+                                                Content="Read Motor Frequency"
+                                                Margin="12,5,0,0"
+                                                HorizontalAlignment="Left"
+                                                VerticalAlignment="Center"
+                                                BorderBrush="#ffc3c8"
+                                                Background="#f97279"
+                                                BorderThickness="0.5"
+                                                FontSize="12"
+                                                Foreground="#fff"
+                                                FontWeight="Bold"
+                                                FontFamily="Georgia, serif;" 
+                                                Width="200"
+                                                Height="42" 
+                                                PreviewMouseMove="Button_PreviewMouseMove"
+                                                IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}"
+                                                Tag="{Binding Read_Motor_Frequency,Mode=OneWay}"
+                                                    />
 
+                                            <Button 
+                                                x:Name="Change_Motor_Frequency"
+                                                Style="{StaticResource FunctionButtonStyle}"
+                                                Content="Change Motor Frequency"
+                                                Margin="12,5,0,0"
+                                                HorizontalAlignment="Left"
+                                                VerticalAlignment="Center"
+                                                BorderBrush="#ffc3c8"
+                                                Background="#f97279"
+                                                BorderThickness="0.5"
+                                                FontSize="12"
+                                                Foreground="#fff"
+                                                FontWeight="Bold"
+                                                FontFamily="Georgia, serif;" 
+                                                Width="200"
+                                                Height="42" 
+                                                PreviewMouseMove="Button_PreviewMouseMove"
+                                                IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}"
+                                                Tag="{Binding Change_Motor_Frequency,Mode=OneWay}"
+                                                    />
+                                            <Button 
+                                                x:Name="Turn_ON_Motor"
+                                                Style="{StaticResource FunctionButtonStyle}"
+                                                Content="Turn On Motor"
+                                                Margin="12,5,0,0"
+                                                HorizontalAlignment="Left"
+                                                VerticalAlignment="Center"
+                                                BorderBrush="#ffc3c8"
+                                                Background="#f97279"
+                                                BorderThickness="0.5"
+                                                FontSize="12"
+                                                Foreground="#fff"
+                                                FontWeight="Bold"
+                                                FontFamily="Georgia, serif;" 
+                                                Width="200"
+                                                Height="42" 
+                                                PreviewMouseMove="Button_PreviewMouseMove"
+                                                IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}"
+                                                Tag="{Binding Turn_ON_Motor,Mode=OneWay}"
+                                                    />
+                                            <Button 
+                                                x:Name="Turn_OFF_Motor"
+                                                Style="{StaticResource FunctionButtonStyle}"
+                                                Content="Turn Off Motor"
+                                                Margin="12,5,0,0"
+                                                HorizontalAlignment="Left"
+                                                VerticalAlignment="Center"
+                                                BorderBrush="#ffc3c8"
+                                                Background="#f97279"
+                                                BorderThickness="0.5"
+                                                FontSize="12"
+                                                Foreground="#fff"
+                                                FontWeight="Bold"
+                                                FontFamily="Georgia, serif;" 
+                                                Width="200"
+                                                Height="42" 
+                                                PreviewMouseMove="Button_PreviewMouseMove"
+                                                IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}"
+                                                Tag="{Binding Turn_OFF_Motor,Mode=OneWay}"
+                                                    />
+                                            <Button 
+                                                x:Name="Read_All_Card_In_Out"
+                                                Style="{StaticResource FunctionButtonStyle}"
+                                                Content="Read All Card In Out"
+                                                Margin="12,5,0,0"
+                                                HorizontalAlignment="Left"
+                                                VerticalAlignment="Center"
+                                                BorderBrush="#ffc3c8"
+                                                Background="#f97279"
+                                                BorderThickness="0.5"
+                                                FontSize="12"
+                                                Foreground="#fff"
+                                                FontWeight="Bold"
+                                                FontFamily="Georgia, serif;" 
+                                                Width="200"
+                                                Height="42" 
+                                                PreviewMouseMove="Button_PreviewMouseMove"
+                                                IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}"
+                                                Tag="{Binding Read_All_Card_In_Out,Mode=OneWay}"
+                                                    />
+                                            <Button 
+                                                x:Name="Write_Card_Out"
+                                                Style="{StaticResource FunctionButtonStyle}"
+                                                Content="Write Card Out"
+                                                Margin="12,5,0,0"
+                                                HorizontalAlignment="Left"
+                                                VerticalAlignment="Center"
+                                                BorderBrush="#ffc3c8"
+                                                Background="#f97279"
+                                                BorderThickness="0.5"
+                                                FontSize="12"
+                                                Foreground="#fff"
+                                                FontWeight="Bold"
+                                                FontFamily="Georgia, serif;" 
+                                                Width="200"
+                                                Height="42" 
+                                                PreviewMouseMove="Button_PreviewMouseMove"
+                                                IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}"
+                                                Tag="{Binding Write_Card_Out,Mode=OneWay}"
+                                                    />
+                                            <Button 
+                                                x:Name="Read_Weight"
+                                                Style="{StaticResource FunctionButtonStyle}"
+                                                Content="Read Weight"
+                                                Margin="12,5,0,0"
+                                                HorizontalAlignment="Left"
+                                                VerticalAlignment="Center"
+                                                BorderBrush="#ffc3c8"
+                                                Background="#f97279"
+                                                BorderThickness="0.5"
+                                                FontSize="12"
+                                                Foreground="#fff"
+                                                FontWeight="Bold"
+                                                FontFamily="Georgia, serif;" 
+                                                Width="200"
+                                                Height="42" 
+                                                PreviewMouseMove="Button_PreviewMouseMove"
+                                                IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}"
+                                                Tag="{Binding Read_Weight,Mode=OneWay}"
+                                                    />
 
 
                                         </StackPanel>

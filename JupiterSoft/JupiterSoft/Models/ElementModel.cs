@@ -45,13 +45,14 @@ namespace JupiterSoft.Models
         public int Repeat_Until_Control { get; set; }
         public int Stop_All_Control { get; set; }
 
-        //Sensor
-        public int Touching_Mouse_Pointer_Sensor { get; set; }
-        public int Ask_And_Wait_Sensor { get; set; }
-        public int Answer_Sensor { get; set; }
-        public int Timer_Sensor { get; set; }
-        public int Reset_Timer_Sensor { get; set; }
-        public int Device_Name_Sensor { get; set; }
+        //Functions
+        public int Read_Motor_Frequency { get; set; }
+        public int Change_Motor_Frequency { get; set; }
+        public int Turn_ON_Motor { get; set; }
+        public int Turn_OFF_Motor { get; set; }
+        public int Read_All_Card_In_Out { get; set; }
+        public int Write_Card_Out { get; set; }
+        public int Read_Weight { get; set; }
 
         //Operator
         public int Add_Operator { get; set; }
@@ -123,7 +124,6 @@ namespace JupiterSoft.Models
                 Disconnect_Camera_Event = (int)ElementConstant.Disconnect_Camera_Event,
                 Connect_ControlCard_Event = (int)ElementConstant.Connect_ControlCard_Event,
                 Disconnect_ControlCard_Event = (int)ElementConstant.Disconnect_ControlCard_Event,
-                Receive_Message_Event = (int)ElementConstant.Receive_Message_Event,
                 Start_Stream_Camera_Event = (int)ElementConstant.Start_Stream_Camera_Event,
                 Stop_Stream_Camera_Event=(int)ElementConstant.Stop_Stream_Camera_Event,
                 Start_Camera_Recording_Event=(int)ElementConstant.Start_Camera_Recording_Event,
@@ -142,13 +142,14 @@ namespace JupiterSoft.Models
                 Repeat_Until_Control = (int)ElementConstant.Repeat_Until_Control,
                 Stop_All_Control = (int)ElementConstant.Stop_All_Control,
 
-                //Sensing Enum
-                Touching_Mouse_Pointer_Sensor = (int)ElementConstant.Touching_Mouse_Pointer_Sensor,
-                Ask_And_Wait_Sensor = (int)ElementConstant.Ask_And_Wait_Sensor,
-                Answer_Sensor = (int)ElementConstant.Answer_Sensor,
-                Timer_Sensor = (int)ElementConstant.Timer_Sensor,
-                Reset_Timer_Sensor = (int)ElementConstant.Reset_Timer_Sensor,
-                Device_Name_Sensor = (int)ElementConstant.Device_Name_Sensor,
+                //Functions Enum
+                Read_Motor_Frequency = (int)ElementConstant.Read_Motor_Frequency,
+                Change_Motor_Frequency = (int)ElementConstant.Change_Motor_Frequency,
+                Turn_ON_Motor = (int)ElementConstant.Turn_ON_Motor,
+                Turn_OFF_Motor = (int)ElementConstant.Turn_OFF_Motor,
+                Read_All_Card_In_Out = (int)ElementConstant.Read_All_Card_In_Out,
+                Write_Card_Out = (int)ElementConstant.Write_Card_Out,
+                Read_Weight = (int)ElementConstant.Read_Weight,
 
 
                 //Operator Enum,

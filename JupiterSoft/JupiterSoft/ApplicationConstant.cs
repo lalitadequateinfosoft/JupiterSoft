@@ -27,7 +27,6 @@ namespace JupiterSoft
         Disconnect_Camera_Event,
         Connect_ControlCard_Event,
         Disconnect_ControlCard_Event,
-        Receive_Message_Event,
         Start_Stream_Camera_Event,
         Stop_Stream_Camera_Event,
         Start_Camera_Recording_Event,
@@ -45,13 +44,14 @@ namespace JupiterSoft
         Repeat_Until_Control,
         Stop_All_Control,
 
-        //Sensing Enum
-        Touching_Mouse_Pointer_Sensor,
-        Ask_And_Wait_Sensor,
-        Answer_Sensor,
-        Timer_Sensor,
-        Reset_Timer_Sensor,
-        Device_Name_Sensor,
+        //Functions Enum
+        Read_Motor_Frequency,
+        Change_Motor_Frequency,
+        Turn_ON_Motor,
+        Turn_OFF_Motor,
+        Read_All_Card_In_Out,
+        Write_Card_Out,
+        Read_Weight,
 
 
         //Operator Enum,
@@ -90,7 +90,6 @@ namespace JupiterSoft
         Change_Volume_by_Number_Sound,
         Set_Volume_To_Percent_Sound,
         Volume_Sound
-
     }
 
     public enum ConditionConstant

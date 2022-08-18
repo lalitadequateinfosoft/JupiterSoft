@@ -43,7 +43,7 @@
                             BorderThickness="1"
                             CornerRadius="5,5,0,0"
                             Padding="15">
-                    <Label x:Name="HeaderTitle" Content="Define Variable Name" Foreground="White"/>
+                    <Label x:Name="HeaderTitle" Content="Define Function Name" Foreground="White"/>
                 </Border>
                 <Grid 
                         Grid.Row="1"
@@ -59,7 +59,7 @@
                         VerticalAlignment="Stretch">
                         <StackPanel Orientation="Vertical">
                             <StackPanel Margin="5">
-                                <Label Content="Variable Name"
+                                <Label Content="Function Name"
                                        HorizontalAlignment="Center"
                                        VerticalAlignment="Center"/>
                             </StackPanel>
