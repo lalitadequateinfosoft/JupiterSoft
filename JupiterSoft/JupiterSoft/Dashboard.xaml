@@ -7,10 +7,10 @@
         mc:Ignorable="d"
          xmlns:ui="http://schemas.modernwpf.com/2019"
         ui:WindowHelper.UseModernWindowStyle="True"
-        Title="JUPITER SOFTWARE"
-        Icon="icon.ico"
+        Title="InteGrids"
+        Icon="EnLogo.png"
         Height="650" Width="1200"
-        ui:TitleBar.Background="#e4e4e4"
+        ui:TitleBar.Background="White"
         ui:TitleBar.IsIconVisible="True"
         WindowState="Maximized"
         ResizeMode="CanResize">
@@ -59,7 +59,7 @@
         BorderBrush="#041124" 
         BorderThickness="1">
                 <TextBlock VerticalAlignment="Center">
-            <Run Text="Intel" FontSize="18" FontWeight="Bold" Foreground="#0060e9"/>
+            <Run Text="Inte" FontSize="18" FontWeight="Bold" Foreground="#0060e9"/>
                     <!--<Run Text="TER" FontSize="18" FontWeight="Bold" Foreground="#FFF"/>-->
             
             <Run Text="Grids" FontSize="18" FontWeight="Normal" Foreground="#FFF"/>

@@ -36,6 +36,8 @@ namespace JupiterSoft.Models
         //Control
         public int Wait_One_Second_Control { get; set; }
         public int Repeat_Ten_Control { get; set; }
+        public int Repeat_Control { get; set; }
+        public int Stop_Repeat { get; set; }
         public int Forever_Control_Start { get; set; }
         public int If_Condition_Start { get; set; }
         public int Else_If_Start { get; set; }
@@ -132,6 +134,8 @@ namespace JupiterSoft.Models
 
                 //Control Enum
                 Wait_One_Second_Control = (int)ElementConstant.Wait_One_Second_Control,
+                Repeat_Control=(int)ElementConstant.Repeat_Control,
+                Stop_Repeat= (int)ElementConstant.Stop_Repeat,
                 Repeat_Ten_Control = (int)ElementConstant.Repeat_Ten_Control,
                 Forever_Control_Start = (int)ElementConstant.Forever_Control_Start,
                 If_Condition_Start = (int)ElementConstant.If_Condition_Start,

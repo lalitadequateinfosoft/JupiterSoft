@@ -214,11 +214,10 @@ namespace JupiterSoft.Models
 
     public enum DeviceType
     {
-        Camera,
+        None,
         MotorDerive,
         WeightModule,
-        ControlCard,
-        None
+        ControlCard
     }
 
     public enum ModBus_Ack

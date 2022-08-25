@@ -35,6 +35,8 @@ namespace JupiterSoft
         //Control Enum
         Wait_One_Second_Control,
         Repeat_Ten_Control,
+        Repeat_Control,
+        Stop_Repeat,
         Forever_Control_Start,
         If_Condition_Start,
         Else_If_Start,

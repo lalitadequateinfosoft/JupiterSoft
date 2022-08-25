@@ -488,7 +488,7 @@ namespace JupiterSoft.Models
             }
         }
 
-        public void SetTgm(Byte[] tgm, string CurrentActiveMenu)
+        public void SetTgm(Byte[] tgm, string CurrentActiveMenu, int device=0)
         {
             if (Common.COMSelected == COMType.XYZ)
             {
@@ -499,9 +499,9 @@ namespace JupiterSoft.Models
                 crc = Util.ByteArrayConvert.ToUInt16(tgm, 30 + (int)payLoadSize);
                 RxSB1 = tgm;
             }
-            else if (Common.COMSelected == COMType.MODBUS)
+            else if (Common.COMSelected == COMType.MODBUS || device==(int)Models.DeviceType.ControlCard || device == (int)Models.DeviceType.MotorDerive)
             {
-                if (CurrentActiveMenu == AppTools.Modbus)
+                if (CurrentActiveMenu == AppTools.Modbus || device == (int)Models.DeviceType.ControlCard || device == (int)Models.DeviceType.MotorDerive)
                 {
                     length = (uint)tgm[2] + 5;
                     payLoadSize = 0;

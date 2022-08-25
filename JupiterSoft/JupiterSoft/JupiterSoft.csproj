@@ -78,6 +78,10 @@
     <Compile Include="CustomDailog\NumberInputDialog.xaml.cs">
       <DependentUpon>NumberInputDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="CustomDailog\RegisterCommand.xaml.cs">
+      <DependentUpon>RegisterCommand.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ConnectedDevices.cs" />
     <Compile Include="Models\ModBusInput.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Page Include="CustomDailog\ConditionsDialog.xaml">
@@ -97,6 +101,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="CustomDailog\NumberInputDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CustomDailog\RegisterCommand.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -244,6 +252,7 @@
   <ItemGroup>
     <SplashScreen Include="splash-screen.jpg" />
     <Resource Include="assets\logojupiter.png" />
+    <Resource Include="EnLogo.png" />
     <Content Include="fonts\font.css" />
     <Resource Include="fonts\ni7seg-bg.png" />
     <Resource Include="fonts\ni7seg-thumb.png" />

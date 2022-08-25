@@ -2777,6 +2777,46 @@
                                                 />
 
                                             <Button 
+                                                x:Name="Connect_Camera_Event"
+                                                Style="{StaticResource EventButtonStyle}"
+                                                Content="Connect Camera"
+                                                Margin="12,5,0,0"
+                                                HorizontalAlignment="Left"
+                                                VerticalAlignment="Center"
+                                                BorderBrush="#AA336A"
+                                                Background="#df88f9"
+                                                BorderThickness="0.5"
+                                                FontSize="12"
+                                                Foreground="#fff"
+                                                FontWeight="Bold"
+                                                FontFamily="Georgia, serif;" 
+                                                Width="200"
+                                                Height="42" 
+                                                PreviewMouseMove="Button_PreviewMouseMove"
+                                                IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}"
+                                                Tag="{Binding Connect_Camera_Event,Mode=OneWay}"
+                                                />
+                                            <Button 
+                                                x:Name="Disconnect_Camera_Event"
+                                                Style="{StaticResource EventButtonStyle}"
+                                                Content="Disconnect Camera"
+                                                Margin="12,5,0,0"
+                                                HorizontalAlignment="Left"
+                                                VerticalAlignment="Center"
+                                                BorderBrush="#AA336A"
+                                                Background="#df88f9"
+                                                BorderThickness="0.5"
+                                                FontSize="12"
+                                                Foreground="#fff"
+                                                FontWeight="Bold"
+                                                FontFamily="Georgia, serif;" 
+                                                Width="200"
+                                                Height="42" 
+                                                PreviewMouseMove="Button_PreviewMouseMove"
+                                                IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}"
+                                                Tag="{Binding Disconnect_Camera_Event,Mode=OneWay}"
+                                                />
+                                            <Button 
                                                 x:Name="Connect_Motor_Event"
                                                 Style="{StaticResource EventButtonStyle}"
                                                 Content="Connect Motor"
@@ -2921,6 +2961,46 @@
                                                 PreviewMouseMove="Button_PreviewMouseMove"
                                                 IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}"
                                                 Tag="{Binding Forever_Control_Start,Mode=OneWay}"
+                                                    />
+                                            <Button 
+                                                x:Name="Repeat_Control"
+                                                Style="{StaticResource ControlButtonStyle}"
+                                                Content="Repeat Control"
+                                                Margin="12,5,0,0"
+                                                HorizontalAlignment="Left"
+                                                VerticalAlignment="Center"
+                                                BorderBrush="#ffdab2"
+                                                Background="#ffa94c"
+                                                BorderThickness="0.5"
+                                                FontSize="12"
+                                                Foreground="#fff"
+                                                FontWeight="Bold"
+                                                FontFamily="Georgia, serif;" 
+                                                Width="200"
+                                                Height="42" 
+                                                PreviewMouseMove="Button_PreviewMouseMove"
+                                                IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}"
+                                                Tag="{Binding Repeat_Control,Mode=OneWay}"
+                                                    />
+                                            <Button 
+                                                x:Name="Stop_Repeat"
+                                                Style="{StaticResource ControlButtonStyle}"
+                                                Content="Stop Control"
+                                                Margin="12,5,0,0"
+                                                HorizontalAlignment="Left"
+                                                VerticalAlignment="Center"
+                                                BorderBrush="#ffdab2"
+                                                Background="#ffa94c"
+                                                BorderThickness="0.5"
+                                                FontSize="12"
+                                                Foreground="#fff"
+                                                FontWeight="Bold"
+                                                FontFamily="Georgia, serif;" 
+                                                Width="200"
+                                                Height="42" 
+                                                PreviewMouseMove="Button_PreviewMouseMove"
+                                                IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}"
+                                                Tag="{Binding Stop_Repeat,Mode=OneWay}"
                                                     />
                                             <Button 
                                                 x:Name="If_Condition_Start"
@@ -3291,7 +3371,6 @@
                             <Button x:Name="Reset" Foreground="#fff" Content="Reset" Click="Reset_Click" HorizontalAlignment="Right" Margin="2,0,3,0" Style="{StaticResource ResetButton}" Cursor="Hand" ToolTip="Reset" />
                         </Grid>
                         <Grid Grid.Row="0" Grid.Column="1" Background="Transparent">
-                            <Button Click="Stop_Click" Visibility="Hidden" HorizontalAlignment="Right" Cursor="Hand"  x:Name="Stop" Content="Stop" Margin="0,2,2,2" ToolTip="Run" Style="{StaticResource StopButton}" Foreground="#fff" />
                             <Button Click="Run_Click" HorizontalAlignment="Right" Cursor="Hand"  x:Name="Run" Content="Run" Margin="0,2,2,2" ToolTip="Run" Style="{StaticResource RunButton}" Foreground="#fff" />
                         </Grid>
                         <Grid Grid.Column="2" Grid.Row="0" Background="Transparent">

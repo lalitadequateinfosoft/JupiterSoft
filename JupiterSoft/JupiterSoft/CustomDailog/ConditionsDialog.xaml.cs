@@ -116,9 +116,9 @@ namespace JupiterSoft.CustomDailog
             List<OutPutModel> outPuts = new List<OutPutModel>();
             foreach (var item in Commands)
             {
-                var data = GetControlCardVariableIndex(item);
-                outPuts.AddRange(data);
-                outPuts.Add(new OutPutModel { OutPutText = item.CommandText, OutPutVal = item.CommandText});
+                //var data = GetControlCardVariableIndex(item);
+                //outPuts.AddRange(data);
+                outPuts.Add(new OutPutModel { OutPutText = item.CommandText, OutPutVal = item.CommandType.ToString()});
             }
 
             ComparisonValue1.ItemsSource = outPuts;

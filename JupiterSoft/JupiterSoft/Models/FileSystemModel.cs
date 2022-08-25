@@ -66,6 +66,12 @@ namespace JupiterSoft.Models
         public string ParentCommandId { get; set; }
     }
 
+    public class RegisterWriteCommand
+    {
+        public int RegisterNumber { get; set; }
+        public int RegisterOutput { get; set; }
+    }
+
     public class ConditionDataModel
     {
         public string ComparisonVariable { get; set; }
@@ -88,7 +94,6 @@ namespace JupiterSoft.Models
         public int DataBit { get; set; }
         public int StopBit { get; set; }
         public int Parity { get; set; }
-        public SerialPort SerialDevice { get; set; }
     }
     public class CameraSettings
     {
