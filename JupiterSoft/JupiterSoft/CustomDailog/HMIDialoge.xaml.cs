@@ -1826,6 +1826,27 @@ namespace JupiterSoft.CustomDailog
                     weight = Convert.ToInt32(builder.ToString());
                     weight = Math.Round(weight * 2.20462, 2);
                 }
+               else if (outP.Contains("kgn"))
+                {
+                    StringBuilder builder = new StringBuilder(outP);
+                    builder.Replace("kgn", "");
+                    weight = Convert.ToInt32(builder.ToString());
+                    weight = Math.Round(weight * 2.20462, 2);
+                }
+                else if (outP.Contains("lbs"))
+                {
+                    //StringBuilder builder = new StringBuilder(outP);
+                    //builder.Replace("lbs", "");
+                    //weight = Convert.ToInt32(builder.ToString());
+                    //weight = Math.Round(weight * 2.20462, 2);
+
+                    Regex re = new Regex(@"([a-zA-Z]+)(\d+)");
+                    Match result = re.Match(outP);
+
+                    string alphaPart = result.Groups[1].Value;
+                    string numberPart = result.Groups[2].Value;
+                    weight = Convert.ToDouble(numberPart);
+                }
                 else
                 {
                     weight = 0;
