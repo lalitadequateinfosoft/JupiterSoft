@@ -480,12 +480,40 @@ namespace JupiterSoft.Pages
                     case (int)ElementConstant.Connect_Camera_Event:
                         getNewPosition(Connect_Camera_Event.Width, Connect_Camera_Event.Height, ref NewLeft, ref NewTop);
                         ele = Get_EventStyle(contentId, Convert.ToInt32(data));
+                        if (Commands.Count() > 0)
+                        {
+                            var Cameracommand = new LogicalCommand
+                            {
+                                CommandId = contentId,
+                                CommandType = Convert.ToInt32(data),
+                                Order = Commands.OrderByDescending(x => x.Order).FirstOrDefault().Order + 1,
+                                ExecutionStatus = (int)ExecutionStage.Not_Executed,
+                                Configuration = new DeviceConfiguration(),
+                                CommandText = Connect_Camera_Event.Content.ToString()
+                            };
+                            Commands.Add(Cameracommand);
+                            ShouldAdd = true;
+                        }
                         ShouldAdd = true;
                         break;
                     case (int)ElementConstant.Disconnect_Camera_Event:
                         getNewPosition(Disconnect_Camera_Event.Width, Disconnect_Camera_Event.Height, ref NewLeft, ref NewTop);
                         ele = Get_EventStyle(contentId, Convert.ToInt32(data));
-                        ShouldAdd = true;
+                        if(Commands.Count()>0)
+                        {
+                            var Cameracommand = new LogicalCommand
+                            {
+                                CommandId = contentId,
+                                CommandType = Convert.ToInt32(data),
+                                Order = Commands.OrderByDescending(x => x.Order).FirstOrDefault().Order + 1,
+                                ExecutionStatus = (int)ExecutionStage.Not_Executed,
+                                Configuration = new DeviceConfiguration(),
+                                CommandText = Disconnect_Camera_Event.Content.ToString()
+                            };
+                            Commands.Add(Cameracommand);
+                            ShouldAdd = true;
+                        }
+                        
                         break;
                     case (int)ElementConstant.Connect_Weight_Event:
                         getNewPosition(Connect_Weight_Event.Width, Connect_Weight_Event.Height, ref NewLeft, ref NewTop);
