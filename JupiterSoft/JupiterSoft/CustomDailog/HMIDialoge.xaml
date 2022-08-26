@@ -158,8 +158,17 @@
                             <Grid 
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Stretch">
-
-                                <StackPanel 
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <StackPanel Grid.Row="0"
+                                   HorizontalAlignment="Center"
+                                    VerticalAlignment="Stretch">
+                                    <Button Content="Start Process" Click="Button_Click"/>
+                                </StackPanel>
+                               
+                                <StackPanel Grid.Row="1" 
                                     HorizontalAlignment="Stretch"
                                     VerticalAlignment="Stretch">
 
@@ -191,12 +200,12 @@
                                     Orientation="Vertical"
                                     HorizontalAlignment="Stretch"
                                     VerticalAlignment="Stretch">
-                                    <!--<StackPanel 
+                                    <StackPanel 
                                         x:Name="CameraArea"
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Stretch"
                                         Margin="2"
-                                        Visibility="Hidden">
+                                        Visibility="Visible">
                                         <GroupBox 
                                             FontSize="14"
                                             Background="Transparent"
@@ -207,14 +216,20 @@
                                             VerticalAlignment="Stretch"
                                             Padding="5">
                                             <Grid HorizontalAlignment="Stretch" Height="240" VerticalAlignment="Top">
-                                                <controls:VideoViewerWPF Name="videoViewer" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Black"/>
+                                                <controls:VideoViewerWPF
+                                                    Name="videoViewer"
+                                                    HorizontalAlignment="Stretch"
+                                                    VerticalAlignment="Stretch"
+                                                    Background="Black"/>
                                             </Grid>
                                         </GroupBox>
-                                    </StackPanel>-->
+                                    </StackPanel>
                                     <StackPanel 
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Stretch"
-                                        Margin="2">
+                                        Margin="2"
+                                        x:Name="WeightModuleArea"
+                                        Visibility="Hidden">
                                         <GroupBox 
                                             FontSize="14"
                                             Background="Transparent"
@@ -267,7 +282,12 @@
                                         </GroupBox>
 
                                     </StackPanel>
-                                    <StackPanel x:Name="ControlBoardArea">
+                                    <StackPanel
+                                         HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch"
+                                        Margin="2"
+                                        x:Name="ControlBoardArea"
+                                        Visibility="Hidden">
                                         <GroupBox
                                             FontSize="14"
                                             Background="Transparent"

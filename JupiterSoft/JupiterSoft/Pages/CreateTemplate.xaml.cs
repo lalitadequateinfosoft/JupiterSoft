@@ -480,7 +480,21 @@ namespace JupiterSoft.Pages
                     case (int)ElementConstant.Connect_Camera_Event:
                         getNewPosition(Connect_Camera_Event.Width, Connect_Camera_Event.Height, ref NewLeft, ref NewTop);
                         ele = Get_EventStyle(contentId, Convert.ToInt32(data));
-                        if (Commands.Count() > 0)
+                        if (Commands.Count() == 0)
+                        {
+                            var Cameracommand = new LogicalCommand
+                            {
+                                CommandId = contentId,
+                                CommandType = Convert.ToInt32(data),
+                                Order = 1,
+                                ExecutionStatus = (int)ExecutionStage.Not_Executed,
+                                Configuration = new DeviceConfiguration(),
+                                CommandText = Connect_Camera_Event.Content.ToString()
+                            };
+                            Commands.Add(Cameracommand);
+                            ShouldAdd = true;
+                        }
+                        else
                         {
                             var Cameracommand = new LogicalCommand
                             {
@@ -494,14 +508,27 @@ namespace JupiterSoft.Pages
                             Commands.Add(Cameracommand);
                             ShouldAdd = true;
                         }
-                        ShouldAdd = true;
                         break;
                     case (int)ElementConstant.Disconnect_Camera_Event:
                         getNewPosition(Disconnect_Camera_Event.Width, Disconnect_Camera_Event.Height, ref NewLeft, ref NewTop);
                         ele = Get_EventStyle(contentId, Convert.ToInt32(data));
-                        if(Commands.Count()>0)
+                        if (Commands.Count() == 0)
                         {
-                            var Cameracommand = new LogicalCommand
+                            var DiCameracommand = new LogicalCommand
+                            {
+                                CommandId = contentId,
+                                CommandType = Convert.ToInt32(data),
+                                Order = 1,
+                                ExecutionStatus = (int)ExecutionStage.Not_Executed,
+                                Configuration = new DeviceConfiguration(),
+                                CommandText = Disconnect_Camera_Event.Content.ToString()
+                            };
+                            Commands.Add(DiCameracommand);
+                            ShouldAdd = true;
+                        }
+                        else
+                        {
+                            var DiCameracommand = new LogicalCommand
                             {
                                 CommandId = contentId,
                                 CommandType = Convert.ToInt32(data),
@@ -510,10 +537,10 @@ namespace JupiterSoft.Pages
                                 Configuration = new DeviceConfiguration(),
                                 CommandText = Disconnect_Camera_Event.Content.ToString()
                             };
-                            Commands.Add(Cameracommand);
+                            Commands.Add(DiCameracommand);
                             ShouldAdd = true;
                         }
-                        
+
                         break;
                     case (int)ElementConstant.Connect_Weight_Event:
                         getNewPosition(Connect_Weight_Event.Width, Connect_Weight_Event.Height, ref NewLeft, ref NewTop);
@@ -4359,6 +4386,11 @@ namespace JupiterSoft.Pages
         {
             try
             {
+                if(Commands.Count()==0)
+                {
+                    MessageBox.Show("Please add command to execute..");
+                    return;
+                }
                 this.parentWindow.Hide();
                 HMIDialoge dialoge = new HMIDialoge(Commands, deviceInfo);
                 dialoge.ShowDialog();
