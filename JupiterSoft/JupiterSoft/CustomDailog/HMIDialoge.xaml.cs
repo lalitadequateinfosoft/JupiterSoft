@@ -41,7 +41,7 @@ namespace JupiterSoft.CustomDailog
         bool IsComplete = false;
 
 
-
+        private List<RegisterOutputStatus> registerOutputStatuses;
         System.Timers.Timer TimerCheckReceiveData = new System.Timers.Timer();
         internal bool _UpdatePB = true;
         internal bool UseThisPage = true;
@@ -76,6 +76,7 @@ namespace JupiterSoft.CustomDailog
             this.Commands = _Commands;
             this.Commands.ForEach(x => x.ExecutionStatus = (int)ExecutionStage.Not_Executed);
             this.deviceInfo = _deviceInfo;
+            registerOutputStatuses = new List<RegisterOutputStatus>();
 
         }
 
@@ -91,15 +92,17 @@ namespace JupiterSoft.CustomDailog
 
             try
             {
-                var dialog = new Ookii.Dialogs.Wpf.VistaFolderBrowserDialog();
-                if (dialog.ShowDialog().GetValueOrDefault())
-                {
-                    if (!string.IsNullOrEmpty(dialog.SelectedPath))
-                    {
-                        StartVideoCapture(dialog.SelectedPath);
-                    }
+                //var dialog = new Ookii.Dialogs.Wpf.VistaFolderBrowserDialog();
+                //if (dialog.ShowDialog().GetValueOrDefault())
+                //{
+                //    if (!string.IsNullOrEmpty(dialog.SelectedPath))
+                //    {
+                //        StartVideoCapture(dialog.SelectedPath);
+                //    }
 
-                }
+                //}
+
+                StartVideoCapture(_VideoDirectory);
             }
             catch
             {
@@ -112,8 +115,9 @@ namespace JupiterSoft.CustomDailog
             StopVideoCapture();
         }
 
-        private void ConnectionUSB()
+        private bool ConnectionUSB()
         {
+            bool isStarted = false;
             try
             {
 
@@ -129,35 +133,47 @@ namespace JupiterSoft.CustomDailog
                     _connector.Connect(_webCamera.VideoChannel, _drawingImageProvider);
 
                     _webCamera.Start();
-
+                    isStarted = true;
 
 
                     _runningCamera = "USB";
+                    AddOutPut("Camera has started..", (int)OutPutType.INFORMATION, true);
                 }
-                else { MessageBox.Show("No USB Camera found."); }
+                else { 
+                    AddOutPut("No USB Camera found.", (int)OutPutType.INFORMATION);
+                }
             }
             catch (Exception ex)
             {
+                AddOutPut("An error has occurred while stating camera..", (int)OutPutType.ERROR);
             }
+            return isStarted;
         }
 
-        private void DisconnectRunningCamera()
+        private void DisconnectCamera()
         {
             if (!string.IsNullOrEmpty(_runningCamera))
             {
                 if (_runningCamera == "USB")
                 {
-                    _webCamera.Stop();
-                    _webCamera.Dispose();
-                    _drawingImageProvider.Dispose();
-                    _connector.Disconnect(_webCamera.VideoChannel, _drawingImageProvider);
-                    _connector.Dispose();
-                    //videoViewer.Stop();
-                    //videoViewer.Background = Brushes.Black;
+                    DisconnectUSBCamera();
 
+                }
+                else
+                {
+                    DisconnectIPCamera();
                 }
 
             }
+        }
+
+        private void DisconnectUSBCamera()
+        {
+            _webCamera.Stop();
+            _webCamera.Dispose();
+            _drawingImageProvider.Dispose();
+            _connector.Disconnect(_webCamera.VideoChannel, _drawingImageProvider);
+            _connector.Dispose();
         }
         private void _mpeg4Recorder_MultiplexFinished(object sender, VoIPEventArgs<bool> e)
         {
@@ -166,7 +182,7 @@ namespace JupiterSoft.CustomDailog
             _mpeg4Recorder.Dispose();
         }
 
-        private void StartVideoCapture(string path)
+        private string StartVideoCapture(string path)
         {
             var date = DateTime.Now.Year + "y-" + DateTime.Now.Month + "m-" + DateTime.Now.Day + "d-" +
                        DateTime.Now.Hour + "h-" + DateTime.Now.Minute + "m-" + DateTime.Now.Second + "s";
@@ -180,6 +196,8 @@ namespace JupiterSoft.CustomDailog
             _mpeg4Recorder.MultiplexFinished += _mpeg4Recorder_MultiplexFinished;
             _connector.Connect(_webCamera.AudioChannel, _mpeg4Recorder.AudioRecorder);
             _connector.Connect(_webCamera.VideoChannel, _mpeg4Recorder.VideoRecorder);
+
+            return currentpath;
 
         }
         private void StopVideoCapture()
@@ -746,38 +764,40 @@ namespace JupiterSoft.CustomDailog
 
 
                     //set register state.
-                    ModBusInputOutput.I0 = _i0 == 0 ? true : false;
-                    ModBusInputOutput.I1 = _i1 == 0 ? true : false;
-                    ModBusInputOutput.I2 = _i2 == 0 ? true : false;
-                    ModBusInputOutput.I3 = _i3 == 0 ? true : false;
-                    ModBusInputOutput.I4 = _i4 == 0 ? true : false;
-                    ModBusInputOutput.I5 = _i5 == 0 ? true : false;
-                    ModBusInputOutput.I6 = _i6 == 0 ? true : false;
-                    ModBusInputOutput.I7 = _i7 == 0 ? true : false;
-                    ModBusInputOutput.I8 = _i8 == 0 ? true : false;
-                    ModBusInputOutput.I9 = _i9 == 0 ? true : false;
-                    ModBusInputOutput.I10 = _i10 == 0 ? true : false;
-                    ModBusInputOutput.I11 = _i11 == 0 ? true : false;
-                    ModBusInputOutput.I12 = _i12 == 0 ? true : false;
-                    ModBusInputOutput.I13 = _i13 == 0 ? true : false;
-                    ModBusInputOutput.I14 = _i14 == 0 ? true : false;
-                    ModBusInputOutput.I15 = _i15 == 0 ? true : false;
-                    ModBusInputOutput.O16 = _i16 == 0 ? true : false;
-                    ModBusInputOutput.O17 = _i17 == 0 ? true : false;
-                    ModBusInputOutput.O18 = _i18 == 0 ? true : false;
-                    ModBusInputOutput.O19 = _i19 == 0 ? true : false;
-                    ModBusInputOutput.O20 = _i20 == 0 ? true : false;
-                    ModBusInputOutput.O21 = _i21 == 0 ? true : false;
-                    ModBusInputOutput.O22 = _i22 == 0 ? true : false;
-                    ModBusInputOutput.O23 = _i23 == 0 ? true : false;
-                    ModBusInputOutput.O24 = _i24 == 0 ? true : false;
-                    ModBusInputOutput.O25 = _i25 == 0 ? true : false;
-                    ModBusInputOutput.O26 = _i26 == 0 ? true : false;
-                    ModBusInputOutput.O27 = _i27 == 0 ? true : false;
-                    ModBusInputOutput.O28 = _i28 == 0 ? true : false;
-                    ModBusInputOutput.O29 = _i29 == 0 ? true : false;
-                    ModBusInputOutput.O30 = false;
-                    ModBusInputOutput.O31 = false;
+                    registerOutputStatuses.Add(new RegisterOutputStatus {Register=1,RegisterStatus= _i0 });
+                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 2, RegisterStatus = _i1 });
+                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 3, RegisterStatus = _i2 });
+                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 4, RegisterStatus = _i3 });
+                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 5, RegisterStatus = _i4 });
+                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 6, RegisterStatus = _i5 });
+                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 7, RegisterStatus = _i6 });
+                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 8, RegisterStatus = _i7});
+                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 9, RegisterStatus = _i8 });
+                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 10, RegisterStatus = _i9 });
+                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 11, RegisterStatus = _i10 });
+                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 12, RegisterStatus = _i11 });
+                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 13, RegisterStatus = _i12 });
+                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 14, RegisterStatus = _i13 });
+                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 15, RegisterStatus = _i14 });
+                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 16, RegisterStatus = _i15 });
+                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 17, RegisterStatus = _i16 });
+                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 18, RegisterStatus = _i17 });
+                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 19, RegisterStatus = _i18 });
+                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 20, RegisterStatus = _i19 });
+                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 21, RegisterStatus = _i20 });
+                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 22, RegisterStatus = _i21 });
+                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 23, RegisterStatus = _i22 });
+                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 24, RegisterStatus = _i23 });
+                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 25, RegisterStatus = _i24 });
+                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 26, RegisterStatus = _i25 });
+                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 27, RegisterStatus = _i26 });
+                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 28, RegisterStatus = _i27 });
+                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 29, RegisterStatus = _i28 });
+                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 30, RegisterStatus = _i29 });
+                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 31, RegisterStatus = 0 });
+                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 32, RegisterStatus = 0 });
+
+
                 }
 
             }
@@ -864,7 +884,7 @@ namespace JupiterSoft.CustomDailog
             AddOutPut("Serial port is busy..", (int)OutPutType.WARNING, true);
         }
 
-        private void DataReader(Models.DeviceType device)
+        private void DataReader(Models.DeviceType device, string commandId)
         {
             var cDevices = connectedDevices.Where(x => x.DeviceType == device).FirstOrDefault();
 
@@ -913,7 +933,15 @@ namespace JupiterSoft.CustomDailog
                                 {
                                     item.CurrentRequest.MbTgm = recBufParse;
                                     item.CurrentRequest.Status = PortDataStatus.Received;
+
+                                    foreach(var command in Commands.Where(x=>x.CommandId==commandId))
+                                    {
+                                        command.OutPutData = item.CurrentRequest;
+                                    }
+
                                 }
+
+
 
                                 return;
                             }
@@ -959,6 +987,11 @@ namespace JupiterSoft.CustomDailog
                                     {
                                         item.CurrentRequest.MbTgm = mbTgmBytes;
                                         item.CurrentRequest.Status = PortDataStatus.Received;
+
+                                        foreach (var command in Commands.Where(x => x.CommandId == commandId))
+                                        {
+                                            command.OutPutData = item.CurrentRequest;
+                                        }
                                     }
 
                                     return;
@@ -1375,7 +1408,7 @@ namespace JupiterSoft.CustomDailog
                                 while (received == false)
                                 {
                                     var cDevices = connectedDevices.Where(x => x.DeviceType == Models.DeviceType.WeightModule).FirstOrDefault();
-                                    DataReader(Models.DeviceType.WeightModule);
+                                    DataReader(Models.DeviceType.WeightModule, command.CommandId);
                                     if (cDevices.ReceiveBufferQueue.Count > 0)
                                     {
                                         _rec = new RecData();
@@ -1388,7 +1421,7 @@ namespace JupiterSoft.CustomDailog
                                 }
 
                                 AddOutPut("Storing data into " + command.CommandText + "..", (int)OutPutType.INFORMATION);
-                                command.OutPutData = _rec;
+                                //command.OutPutData = _rec;
                                 command.ExecutionStatus = (int)ExecutionStage.Executed;
                                 AddOutPut("Showing weight module response..", (int)OutPutType.INFORMATION);
                                 showWeightModuleResponse(_rec);
@@ -1407,16 +1440,14 @@ namespace JupiterSoft.CustomDailog
                                 AddOutPut("Fetching control card all input/output information", (int)OutPutType.INFORMATION);
                                 ReadAllControCardInputOutput();
                                 command.ExecutionStatus = (int)ExecutionStage.Executing;
-                            }
-                            else if (command.ExecutionStatus == (int)ExecutionStage.Executing)
-                            {
+
                                 AddOutPut("Reading control card all input/output information", (int)OutPutType.INFORMATION);
                                 bool received = false;
                                 RecData _rec = new RecData();
                                 while (received == false)
                                 {
                                     var cDevices = connectedDevices.Where(x => x.DeviceType == Models.DeviceType.WeightModule).FirstOrDefault();
-                                    DataReader(Models.DeviceType.ControlCard);
+                                    DataReader(Models.DeviceType.ControlCard, command.CommandId);
                                     if (cDevices.ReceiveBufferQueue.Count > 0)
                                     {
                                         _rec = new RecData();
@@ -1425,13 +1456,15 @@ namespace JupiterSoft.CustomDailog
                                     }
                                 }
                                 AddOutPut("Storing output..", (int)OutPutType.INFORMATION);
-                                command.OutPutData = _rec;
+                                //command.OutPutData = _rec;
                                 command.ExecutionStatus = (int)ExecutionStage.Executed;
                                 AddOutPut("Showing control card state..", (int)OutPutType.INFORMATION);
                                 ReadControlCardResponse(_rec);
                             }
-
-                            break;
+                            else if (command.ExecutionStatus == (int)ExecutionStage.Executing)
+                            {
+                                command.ExecutionStatus = (int)ExecutionStage.Executed;
+                            }
                         }
 
                         else if (command.CommandType == (int)ElementConstant.Write_Card_Out)
@@ -1452,6 +1485,7 @@ namespace JupiterSoft.CustomDailog
                                 command.ExecutionStatus = (int)ExecutionStage.Executed;
                             }
                         }
+
                         else if (command.CommandType == (int)ElementConstant.End_Scope)
                         {
                             var ifcommand = Commands.Where(x => (x.CommandType == (int)ElementConstant.If_Condition_Start || x.CommandType == (int)ElementConstant.Else_If_Start || x.CommandType == (int)ElementConstant.Else_Start) && x.Order < command.Order).OrderBy(x => x.Order).ToList().FirstOrDefault();
@@ -1487,16 +1521,283 @@ namespace JupiterSoft.CustomDailog
                             {
                                 bool isConditionTrue = false;
                                 command.ExecutionStatus = (int)ExecutionStage.Executing;
-                                if (Convert.ToInt32(command.InputData.ComparisonVariable) == (int)ElementConstant.Read_Weight)
+                                int ComparisonVariableVal = 0;
+                                if (command.InputData.ComparisonVariable.Contains('-'))
                                 {
+                                    var input = command.InputData.ComparisonVariable.Split('-')[0];
+                                    var register = Convert.ToInt32(command.InputData.ComparisonVariable.Split('-')[1]);
+                                    GetControlCardInputOutputState(Commands.Where(x => x.CommandId == input).FirstOrDefault().OutPutData);
+
+                                    ComparisonVariableVal = registerOutputStatuses.Where(x => x.Register == register).FirstOrDefault().RegisterStatus;
+
+                                    if (ComparisonVariableVal == Convert.ToInt32(command.InputData.ComparisonValue))
+                                    {
+                                        isConditionTrue = true;
+                                    }
+
+                                }
+                                else
+                                {
+                                    double weight = getWeightModuleResponse(Commands.Where(x => x.CommandId == command.InputData.ComparisonVariable).FirstOrDefault().OutPutData);
+                                    isConditionTrue = CompareWeightdata(command.InputData.ComparisonCondition, weight, command.InputData.ComparisonValue);
+                                }
+
+                                var endscope = Commands.Where(x => x.ParentCommandId == command.CommandId).FirstOrDefault
+                                   ().Order;
+
+                                if (isConditionTrue)
+                                {
+                                    foreach (var Scopecommand in Commands.Where(x => x.Order > command.Order && x.Order < endscope && x.ExecutionStatus != (int)ExecutionStage.Executed).ToList())
+                                    {
+                                        if (Scopecommand.CommandType == (int)ElementConstant.Connect_ControlCard_Event)
+                                        {
+                                            if (Scopecommand.ExecutionStatus == (int)ExecutionStage.Not_Executed)
+                                            {
+
+                                                Connect_control_card(Scopecommand.Configuration.deviceDetail.PortName, Scopecommand.Configuration.deviceDetail.BaudRate, Scopecommand.Configuration.deviceDetail.DataBit, Scopecommand.Configuration.deviceDetail.StopBit, Scopecommand.Configuration.deviceDetail.Parity);
+                                                Scopecommand.ExecutionStatus = (int)ExecutionStage.Executed;
+
+                                            }
+                                        }
+
+                                        else if (Scopecommand.CommandType == (int)ElementConstant.Disconnect_ControlCard_Event)
+                                        {
+                                            if (Scopecommand.ExecutionStatus == (int)ExecutionStage.Not_Executed)
+                                            {
+                                                AddOutPut("Disconnecting Control Card..", (int)OutPutType.INFORMATION);
+                                                StopPortCommunication(Models.DeviceType.ControlCard);
+                                                Scopecommand.ExecutionStatus = (int)ExecutionStage.Executed;
+                                                AddOutPut("Control card is disconnected..", (int)OutPutType.SUCCESS, true);
+
+                                            }
+
+                                        }
+
+                                        else if (Scopecommand.CommandType == (int)ElementConstant.Connect_Weight_Event)
+                                        {
+                                            if (Scopecommand.ExecutionStatus == (int)ExecutionStage.Not_Executed)
+                                            {
+                                                AddOutPut("Connecting weight module..", (int)OutPutType.INFORMATION);
+                                                ConnectWeight(Scopecommand.Configuration.deviceDetail.PortName, Scopecommand.Configuration.deviceDetail.BaudRate, Scopecommand.Configuration.deviceDetail.DataBit, Scopecommand.Configuration.deviceDetail.StopBit, Scopecommand.Configuration.deviceDetail.Parity);
+                                                Scopecommand.ExecutionStatus = (int)ExecutionStage.Executed;
+
+                                                AddOutPut("weight module is connected..", (int)OutPutType.SUCCESS, true);
+                                                AddOutPut("Waiting for weight module response..", (int)OutPutType.INFORMATION);
+                                                //Thread.Sleep(500);
+                                            }
+                                            else
+                                            {
+                                                AddOutPut("Started Fetching weight module input..", (int)OutPutType.SUCCESS, true);
+                                                Scopecommand.ExecutionStatus = (int)ExecutionStage.Executed;
+                                                AddOutPut("Fetching Stopped..", (int)OutPutType.SUCCESS, true);
+                                            }
+                                        }
+
+                                        else if (Scopecommand.CommandType == (int)ElementConstant.Disconnect_Weight_Event)
+                                        {
+                                            if (Scopecommand.ExecutionStatus == (int)ExecutionStage.Not_Executed)
+                                            {
+                                                AddOutPut("Disconnecting weight module..", (int)OutPutType.WARNING, true);
+                                                StopPortCommunication(Models.DeviceType.WeightModule);
+                                                Scopecommand.ExecutionStatus = (int)ExecutionStage.Executed;
+                                                AddOutPut("Weight module disconnected..", (int)OutPutType.SUCCESS, true);
+
+                                            }
+                                            else
+                                            {
+                                                //OutPutArea.AppendText("\n Executing " + Scopecommand.CommandText + "..");
+                                                Scopecommand.ExecutionStatus = (int)ExecutionStage.Executed;
+                                            }
+                                        }
+
+                                        else if (Scopecommand.CommandType == (int)ElementConstant.Read_Weight)
+                                        {
+                                            if (Scopecommand.ExecutionStatus == (int)ExecutionStage.Not_Executed)
+                                            {
+                                                AddOutPut("Reading data..", (int)OutPutType.INFORMATION);
+                                                bool received = false;
+                                                RecData _rec = new RecData();
+                                                while (received == false)
+                                                {
+                                                    var cDevices = connectedDevices.Where(x => x.DeviceType == Models.DeviceType.WeightModule).FirstOrDefault();
+                                                    DataReader(Models.DeviceType.WeightModule, Scopecommand.CommandId);
+                                                    if (cDevices.ReceiveBufferQueue.Count > 0)
+                                                    {
+                                                        _rec = new RecData();
+                                                        _rec = cDevices.CurrentRequest;
+                                                        if (validateResponse(_rec))
+                                                        {
+                                                            received = true;
+                                                        }
+                                                    }
+                                                }
+
+                                                AddOutPut("Storing data into " + Scopecommand.CommandText + "..", (int)OutPutType.INFORMATION);
+                                                //Scopecommand.OutPutData = _rec;
+                                                Scopecommand.ExecutionStatus = (int)ExecutionStage.Executed;
+                                                AddOutPut("Showing weight module response..", (int)OutPutType.INFORMATION);
+                                                showWeightModuleResponse(_rec);
+
+                                            }
+                                            else
+                                            {
+                                                Scopecommand.ExecutionStatus = (int)ExecutionStage.Executed;
+                                            }
+                                        }
+
+                                        else if (Scopecommand.CommandType == (int)ElementConstant.Read_All_Card_In_Out)
+                                        {
+                                            if (Scopecommand.ExecutionStatus == (int)ExecutionStage.Not_Executed)
+                                            {
+                                                AddOutPut("Fetching control card all input/output information", (int)OutPutType.INFORMATION);
+                                                ReadAllControCardInputOutput();
+                                                Scopecommand.ExecutionStatus = (int)ExecutionStage.Executing;
+
+                                                AddOutPut("Reading control card all input/output information", (int)OutPutType.INFORMATION);
+                                                bool received = false;
+                                                RecData _rec = new RecData();
+                                                while (received == false)
+                                                {
+                                                    var cDevices = connectedDevices.Where(x => x.DeviceType == Models.DeviceType.WeightModule).FirstOrDefault();
+                                                    DataReader(Models.DeviceType.ControlCard, Scopecommand.CommandId);
+                                                    if (cDevices.ReceiveBufferQueue.Count > 0)
+                                                    {
+                                                        _rec = new RecData();
+                                                        _rec = cDevices.CurrentRequest;
+                                                        received = true;
+                                                    }
+                                                }
+                                                AddOutPut("Storing output..", (int)OutPutType.INFORMATION);
+                                                //Scopecommand.OutPutData = _rec;
+                                                Scopecommand.ExecutionStatus = (int)ExecutionStage.Executed;
+                                                AddOutPut("Showing control card state..", (int)OutPutType.INFORMATION);
+                                                ReadControlCardResponse(_rec);
+                                            }
+                                            else if (Scopecommand.ExecutionStatus == (int)ExecutionStage.Executing)
+                                            {
+                                                Scopecommand.ExecutionStatus = (int)ExecutionStage.Executed;
+                                            }
+                                        }
+
+                                        else if (Scopecommand.CommandType == (int)ElementConstant.Write_Card_Out)
+                                        {
+                                            if (Scopecommand.ExecutionStatus == (int)ExecutionStage.Not_Executed)
+                                            {
+                                                var functionScopecommand = (RegisterWriteCommand)Scopecommand.CommandData;
+                                                string ScopecommandText = functionScopecommand.RegisterOutput == 1 ? "ON" : "OFF";
+                                                AddOutPut("Writing control card register " + functionScopecommand.RegisterNumber + " " + ScopecommandText, (int)OutPutType.WARNING, true);
+                                                WriteControCardState(functionScopecommand.RegisterNumber, functionScopecommand.RegisterOutput);
+                                                AddOutPut("Control card register " + functionScopecommand.RegisterNumber + " is " + ScopecommandText, (int)OutPutType.SUCCESS, true);
+                                                Scopecommand.ExecutionStatus = (int)ExecutionStage.Executed;
+                                                WriteControlCardResponse(functionScopecommand.RegisterNumber, functionScopecommand.RegisterOutput);
+                                            }
+                                            else
+                                            {
+                                                //OutPutArea.AppendText("\n Executing " + Scopecommand.CommandText + "..");
+                                                Scopecommand.ExecutionStatus = (int)ExecutionStage.Executed;
+                                            }
+                                        }
+                                        else if (Scopecommand.CommandType == (int)ElementConstant.Connect_Camera_Event)
+                                        {
+                                            AddOutPut("Starting Camera..", (int)OutPutType.INFORMATION, true);
+                                           var isStarted= ConnectionUSB();
+                                            Scopecommand.ExecutionStatus = (int)ExecutionStage.Executed;
+                                            if(isStarted)
+                                            {
+                                                AddOutPut("Camera Recording Starts..", (int)OutPutType.INFORMATION, true);
+                                              var RecordPath=  StartVideoCapture(_FileDirectory);
+                                                AddOutPut("Camera is recording at "+ RecordPath +" ..", (int)OutPutType.INFORMATION, true);
+                                            }
+                                        }
+                                        else if (Scopecommand.CommandType == (int)ElementConstant.Disconnect_Camera_Event)
+                                        {
+                                            AddOutPut("Stoping Camera..", (int)OutPutType.INFORMATION, true);
+                                            DisconnectCamera();
+                                            AddOutPut("Camera Stopped..", (int)OutPutType.SUCCESS, true);
+                                            Scopecommand.ExecutionStatus = (int)ExecutionStage.Executed;
+                                            StopVideoCapture();
+                                        }
+
+                                        else if (Scopecommand.CommandType == (int)ElementConstant.End_Scope)
+                                        {
+                                            var ifScopecommand = Commands.Where(x => (x.CommandType == (int)ElementConstant.If_Condition_Start || x.CommandType == (int)ElementConstant.Else_If_Start || x.CommandType == (int)ElementConstant.Else_Start) && x.Order < Scopecommand.Order).OrderBy(x => x.Order).ToList().FirstOrDefault();
+
+                                            var repeater = Commands.Where(x => x.CommandType == (int)ElementConstant.Repeat_Control && x.Order < Scopecommand.Order).OrderBy(x => x.Order).ToList().FirstOrDefault();
+
+                                            if (ifScopecommand != null)
+                                            {
+                                                foreach (var item in Commands)
+                                                {
+                                                    if (ifScopecommand.CommandId == item.CommandId)
+                                                    {
+                                                        item.ExecutionStatus = (int)ExecutionStage.Executed;
+                                                        Scopecommand.ExecutionStatus = (int)ExecutionStage.Executed;
+                                                        AddOutPut("If Scope Ended..", (int)OutPutType.SUCCESS, true);
+                                                    }
+                                                }
+                                            }
+                                            else if (repeater != null)
+                                            {
+                                                AddOutPut("Repeating again..", (int)OutPutType.SUCCESS, true);
+                                            }
+                                            else
+                                            {
+                                                AddOutPut("Ended..", (int)OutPutType.SUCCESS, true);
+                                            }
+
+                                        }
+
+
+                                    }
+
+                                    var totalcomand = Commands.Where(x => x.Order == (endscope - 1)).FirstOrDefault();
+                                    if (totalcomand.ExecutionStatus == (int)ExecutionStage.Executed)
+                                    {
+                                        command.ExecutionStatus = (int)ExecutionStage.Executed;
+                                        Commands.Where(x => x.Order > command.Order && x.Order < endscope).ToList().ForEach(x => x.ExecutionStatus = (int)ExecutionStage.Executed);
+
+                                    }
+                                    break;
+                                }
+                                else
+                                {
+                                    command.ExecutionStatus = (int)ExecutionStage.Executed;
+                                    Commands.Where(x => x.Order > command.Order && x.Order < endscope).ToList().ForEach(x => x.ExecutionStatus = (int)ExecutionStage.Executed);
 
                                 }
                             }
 
                         }
 
-                        ExecuteProcesses();
+                        else if(command.CommandType == (int)ElementConstant.Repeat_Control)
+                        {
+                            AddOutPut("Repeater loop started..", (int)OutPutType.INFORMATION, true);
+                        }
+                        else if(command.CommandType== (int)ElementConstant.Connect_Camera_Event)
+                        {
+                            AddOutPut("Starting Camera..", (int)OutPutType.INFORMATION, true);
+                            var isStarted = ConnectionUSB();
+                            command.ExecutionStatus = (int)ExecutionStage.Executed;
+                            if (isStarted)
+                            {
+                                AddOutPut("Camera Recording Starts..", (int)OutPutType.INFORMATION, true);
+                                var RecordPath = StartVideoCapture(_FileDirectory);
+                                AddOutPut("Camera is recording at " + RecordPath + " ..", (int)OutPutType.INFORMATION, true);
+                            }
+                        }
+                        else if(command.CommandType == (int)ElementConstant.Disconnect_Camera_Event)
+                        {
+                            AddOutPut("Stoping Camera..", (int)OutPutType.INFORMATION, true);
+                            DisconnectCamera();
+                            AddOutPut("Camera Stopped..", (int)OutPutType.SUCCESS, true);
+                            command.ExecutionStatus = (int)ExecutionStage.Executed;
+                            StopVideoCapture();
+
+                        }
+
+                        
                     }
+                    ExecuteProcesses();
 
                 }
 
@@ -1606,7 +1907,7 @@ namespace JupiterSoft.CustomDailog
             AddOutPut("Control card is connected..", (int)OutPutType.SUCCESS, true);
         }
 
-        private bool CompareWeightdata(int ComparisonCondition, int weightdata, string comparisonValue)
+        private bool CompareWeightdata(int ComparisonCondition, double weightdata, string comparisonValue)
         {
             bool isConditionTrue = false;
             if (ComparisonCondition == (int)ConditionConstant.contains)
@@ -1627,7 +1928,7 @@ namespace JupiterSoft.CustomDailog
             }
             else if (ComparisonCondition == (int)ConditionConstant.is_equal_to)
             {
-                if (weightdata == Convert.ToInt32(comparisonValue))
+                if (weightdata == Convert.ToDouble(comparisonValue))
                 {
                     isConditionTrue = true;
 
@@ -1635,7 +1936,7 @@ namespace JupiterSoft.CustomDailog
             }
             else if (ComparisonCondition == (int)ConditionConstant.is_not_equal_to)
             {
-                if (weightdata != Convert.ToInt32(comparisonValue))
+                if (weightdata != Convert.ToDouble(comparisonValue))
                 {
                     isConditionTrue = true;
 
@@ -1643,7 +1944,7 @@ namespace JupiterSoft.CustomDailog
             }
             else if (ComparisonCondition == (int)ConditionConstant.is_greater_then)
             {
-                if (weightdata > Convert.ToInt32(comparisonValue))
+                if (weightdata > Convert.ToDouble(comparisonValue))
                 {
                     isConditionTrue = true;
 
@@ -1651,7 +1952,7 @@ namespace JupiterSoft.CustomDailog
             }
             else if (ComparisonCondition == (int)ConditionConstant.is_greater_then_or_equal_to)
             {
-                if (weightdata >= Convert.ToInt32(comparisonValue))
+                if (weightdata >= Convert.ToDouble(comparisonValue))
                 {
                     isConditionTrue = true;
 
@@ -1659,7 +1960,7 @@ namespace JupiterSoft.CustomDailog
             }
             else if (ComparisonCondition == (int)ConditionConstant.is_less_then)
             {
-                if (weightdata < Convert.ToInt32(comparisonValue))
+                if (weightdata < Convert.ToDouble(comparisonValue))
                 {
                     isConditionTrue = true;
 
@@ -1667,7 +1968,7 @@ namespace JupiterSoft.CustomDailog
             }
             else if (ComparisonCondition == (int)ConditionConstant.is_less_then_or_equal_to)
             {
-                if (weightdata <= Convert.ToInt32(comparisonValue))
+                if (weightdata <= Convert.ToDouble(comparisonValue))
                 {
                     isConditionTrue = true;
 

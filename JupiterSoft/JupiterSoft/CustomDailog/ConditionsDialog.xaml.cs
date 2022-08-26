@@ -118,7 +118,16 @@ namespace JupiterSoft.CustomDailog
             {
                 //var data = GetControlCardVariableIndex(item);
                 //outPuts.AddRange(data);
-                outPuts.Add(new OutPutModel { OutPutText = item.CommandText, OutPutVal = item.CommandType.ToString()});
+                if(item.CommandType==(int)ElementConstant.Read_Weight || item.CommandType==(int)ElementConstant.Read_Motor_Frequency)
+                {
+                    outPuts.Add(new OutPutModel { OutPutText = item.CommandText, OutPutVal = item.CommandId.ToString() });
+                }
+                else
+                {
+                    var data = GetControlCardVariableIndex(item);
+                    outPuts.AddRange(data);
+                }
+               
             }
 
             ComparisonValue1.ItemsSource = outPuts;
@@ -131,36 +140,36 @@ namespace JupiterSoft.CustomDailog
         {
             List<OutPutModel> outPuts = new List<OutPutModel>();
 
-                    outPuts.Add(new OutPutModel { OutPutText = command.CommandText + "[" + 0 + "]", OutPutVal = command.CommandText + "_" + 3 });
-                    outPuts.Add(new OutPutModel { OutPutText = command.CommandText + "[" + 1 + "]", OutPutVal = command.CommandText + "_" + 5 });
-                    outPuts.Add(new OutPutModel { OutPutText = command.CommandText + "[" + 2 + "]", OutPutVal = command.CommandText + "_" + 7 });
-                    outPuts.Add(new OutPutModel { OutPutText = command.CommandText + "[" + 3 + "]", OutPutVal = command.CommandText + "_" + 9 });
-                    outPuts.Add(new OutPutModel { OutPutText = command.CommandText + "[" + 4 + "]", OutPutVal = command.CommandText + "_" + 11 });
-                    outPuts.Add(new OutPutModel { OutPutText = command.CommandText + "[" + 5 + "]", OutPutVal = command.CommandText + "_" + 13 });
-                    outPuts.Add(new OutPutModel { OutPutText = command.CommandText + "[" + 6 + "]", OutPutVal = command.CommandText + "_" + 15 });
-                    outPuts.Add(new OutPutModel { OutPutText = command.CommandText + "[" + 7 + "]", OutPutVal = command.CommandText + "_" + 17 });
-                    outPuts.Add(new OutPutModel { OutPutText = command.CommandText + "[" + 8 + "]", OutPutVal = command.CommandText + "_" + 19 });
-                    outPuts.Add(new OutPutModel { OutPutText = command.CommandText + "[" + 9 + "]", OutPutVal = command.CommandText + "_" + 21 });
-                    outPuts.Add(new OutPutModel { OutPutText = command.CommandText + "[" + 10 + "]", OutPutVal = command.CommandText + "_" + 23 });
-                    outPuts.Add(new OutPutModel { OutPutText = command.CommandText + "[" + 11 + "]", OutPutVal = command.CommandText + "_" + 25 });
-                    outPuts.Add(new OutPutModel { OutPutText = command.CommandText + "[" + 12 + "]", OutPutVal = command.CommandText + "_" + 27});
-                    outPuts.Add(new OutPutModel { OutPutText = command.CommandText + "[" + 13 + "]", OutPutVal = command.CommandText + "_" + 29 });
-                    outPuts.Add(new OutPutModel { OutPutText = command.CommandText + "[" + 14 + "]", OutPutVal = command.CommandText + "_" + 31 });
-                    outPuts.Add(new OutPutModel { OutPutText = command.CommandText + "[" + 15 + "]", OutPutVal = command.CommandText + "_" + 33 });
-                    outPuts.Add(new OutPutModel { OutPutText = command.CommandText + "[" + 16 + "]", OutPutVal = command.CommandText + "_" + 35 });
-                    outPuts.Add(new OutPutModel { OutPutText = command.CommandText + "[" + 17 + "]", OutPutVal = command.CommandText + "_" + 37 });
-                    outPuts.Add(new OutPutModel { OutPutText = command.CommandText + "[" + 18 + "]", OutPutVal = command.CommandText + "_" + 39 });
-                    outPuts.Add(new OutPutModel { OutPutText = command.CommandText + "[" + 19 + "]", OutPutVal = command.CommandText + "_" + 41 });
-                    outPuts.Add(new OutPutModel { OutPutText = command.CommandText + "[" + 20 + "]", OutPutVal = command.CommandText + "_" + 43 });
-                    outPuts.Add(new OutPutModel { OutPutText = command.CommandText + "[" + 21 + "]", OutPutVal = command.CommandText + "_" + 47 });
-                    outPuts.Add(new OutPutModel { OutPutText = command.CommandText + "[" + 22 + "]", OutPutVal = command.CommandText + "_" + 45 });
-                    outPuts.Add(new OutPutModel { OutPutText = command.CommandText + "[" + 23 + "]", OutPutVal = command.CommandText + "_" + 49 });
-                    outPuts.Add(new OutPutModel { OutPutText = command.CommandText + "[" + 24 + "]", OutPutVal = command.CommandText + "_" + 51 });
-                    outPuts.Add(new OutPutModel { OutPutText = command.CommandText + "[" + 25 + "]", OutPutVal = command.CommandText + "_" + 53 });
-                    outPuts.Add(new OutPutModel { OutPutText = command.CommandText + "[" + 26 + "]", OutPutVal = command.CommandText + "_" + 55 });
-                    outPuts.Add(new OutPutModel { OutPutText = command.CommandText + "[" + 27 + "]", OutPutVal = command.CommandText + "_" + 57 });
-                    outPuts.Add(new OutPutModel { OutPutText = command.CommandText + "[" + 28 + "]", OutPutVal = command.CommandText + "_" + 59 });
-                    outPuts.Add(new OutPutModel { OutPutText = command.CommandText + "[" + 29 + "]", OutPutVal = command.CommandText + "_" + 61 });
+                    outPuts.Add(new OutPutModel { OutPutText = command.CommandText + "[" + 0 + "]", OutPutVal = command.CommandId + "_" + 3 });
+                    outPuts.Add(new OutPutModel { OutPutText = command.CommandText + "[" + 1 + "]", OutPutVal = command.CommandId + "_" + 5 });
+                    outPuts.Add(new OutPutModel { OutPutText = command.CommandText + "[" + 2 + "]", OutPutVal = command.CommandId + "_" + 7 });
+                    outPuts.Add(new OutPutModel { OutPutText = command.CommandText + "[" + 3 + "]", OutPutVal = command.CommandId + "_" + 9 });
+                    outPuts.Add(new OutPutModel { OutPutText = command.CommandText + "[" + 4 + "]", OutPutVal = command.CommandId + "_" + 11 });
+                    outPuts.Add(new OutPutModel { OutPutText = command.CommandText + "[" + 5 + "]", OutPutVal = command.CommandId + "_" + 13 });
+                    outPuts.Add(new OutPutModel { OutPutText = command.CommandText + "[" + 6 + "]", OutPutVal = command.CommandId + "_" + 15 });
+                    outPuts.Add(new OutPutModel { OutPutText = command.CommandText + "[" + 7 + "]", OutPutVal = command.CommandId + "_" + 17 });
+                    outPuts.Add(new OutPutModel { OutPutText = command.CommandText + "[" + 8 + "]", OutPutVal = command.CommandId + "_" + 19 });
+                    outPuts.Add(new OutPutModel { OutPutText = command.CommandText + "[" + 9 + "]", OutPutVal = command.CommandId + "_" + 21 });
+                    outPuts.Add(new OutPutModel { OutPutText = command.CommandText + "[" + 10 + "]", OutPutVal = command.CommandId + "_" + 23 });
+                    outPuts.Add(new OutPutModel { OutPutText = command.CommandText + "[" + 11 + "]", OutPutVal = command.CommandId + "_" + 25 });
+                    outPuts.Add(new OutPutModel { OutPutText = command.CommandText + "[" + 12 + "]", OutPutVal = command.CommandId + "_" + 27});
+                    outPuts.Add(new OutPutModel { OutPutText = command.CommandText + "[" + 13 + "]", OutPutVal = command.CommandId + "_" + 29 });
+                    outPuts.Add(new OutPutModel { OutPutText = command.CommandText + "[" + 14 + "]", OutPutVal = command.CommandId + "_" + 31 });
+                    outPuts.Add(new OutPutModel { OutPutText = command.CommandText + "[" + 15 + "]", OutPutVal = command.CommandId + "_" + 33 });
+                    outPuts.Add(new OutPutModel { OutPutText = command.CommandText + "[" + 16 + "]", OutPutVal = command.CommandId + "_" + 35 });
+                    outPuts.Add(new OutPutModel { OutPutText = command.CommandText + "[" + 17 + "]", OutPutVal = command.CommandId + "_" + 37 });
+                    outPuts.Add(new OutPutModel { OutPutText = command.CommandText + "[" + 18 + "]", OutPutVal = command.CommandId + "_" + 39 });
+                    outPuts.Add(new OutPutModel { OutPutText = command.CommandText + "[" + 19 + "]", OutPutVal = command.CommandId + "_" + 41 });
+                    outPuts.Add(new OutPutModel { OutPutText = command.CommandText + "[" + 20 + "]", OutPutVal = command.CommandId + "_" + 43 });
+                    outPuts.Add(new OutPutModel { OutPutText = command.CommandText + "[" + 21 + "]", OutPutVal = command.CommandId + "_" + 47 });
+                    outPuts.Add(new OutPutModel { OutPutText = command.CommandText + "[" + 22 + "]", OutPutVal = command.CommandId + "_" + 45 });
+                    outPuts.Add(new OutPutModel { OutPutText = command.CommandText + "[" + 23 + "]", OutPutVal = command.CommandId + "_" + 49 });
+                    outPuts.Add(new OutPutModel { OutPutText = command.CommandText + "[" + 24 + "]", OutPutVal = command.CommandId + "_" + 51 });
+                    outPuts.Add(new OutPutModel { OutPutText = command.CommandText + "[" + 25 + "]", OutPutVal = command.CommandId + "_" + 53 });
+                    outPuts.Add(new OutPutModel { OutPutText = command.CommandText + "[" + 26 + "]", OutPutVal = command.CommandId + "_" + 55 });
+                    outPuts.Add(new OutPutModel { OutPutText = command.CommandText + "[" + 27 + "]", OutPutVal = command.CommandId + "_" + 57 });
+                    outPuts.Add(new OutPutModel { OutPutText = command.CommandText + "[" + 28 + "]", OutPutVal = command.CommandId + "_" + 59 });
+                    outPuts.Add(new OutPutModel { OutPutText = command.CommandText + "[" + 29 + "]", OutPutVal = command.CommandId + "_" + 61 });
 
             return outPuts;
         }

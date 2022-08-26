@@ -949,13 +949,12 @@ namespace JupiterSoft.Pages
                         }
                         break;
 
-
                     case (int)ElementConstant.If_Condition_Start:
                         getNewPosition(If_Condition_Start.Width, If_Condition_Start.Height, ref NewLeft, ref NewTop);
                         
                         if (Commands.Count() > 0)
                         {
-                            ConditionsDialog conditions = new ConditionsDialog(Commands.Where(x => x.CommandType == (int)ElementConstant.Read_Weight).ToList());
+                            ConditionsDialog conditions = new ConditionsDialog(Commands.Where(x => x.CommandType == (int)ElementConstant.Read_Weight  || x.CommandType==(int)ElementConstant.Read_All_Card_In_Out || x.CommandType==(int)ElementConstant.Read_Motor_Frequency).ToList());
                             conditions.ShowDialog();
                             if (!conditions.Canceled)
                             {

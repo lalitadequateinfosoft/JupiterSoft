@@ -83,6 +83,7 @@
     </Compile>
     <Compile Include="Models\ConnectedDevices.cs" />
     <Compile Include="Models\ModBusInput.cs" />
+    <Compile Include="Models\RegisterOutputStatus.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Page Include="CustomDailog\ConditionsDialog.xaml">
       <SubType>Designer</SubType>
