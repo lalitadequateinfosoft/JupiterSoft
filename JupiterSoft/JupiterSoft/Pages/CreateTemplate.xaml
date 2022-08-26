@@ -1325,7 +1325,8 @@
                                                             <StackPanel>
                                                                 <ComboBox x:Name="BaudRateWeight" Width="100" BorderBrush="#041124" ui:ControlHelper.CornerRadius="5" Background="White">
                                                                     <ComboBoxItem Content="38400"/>
-                                                                    <ComboBoxItem Content="9600" IsSelected="True"/>
+                                                                    <ComboBoxItem Content="9600" />
+                                                                    <ComboBoxItem Content="115200" IsSelected="True"/>
                                                                 </ComboBox>
                                                             </StackPanel>
                                                         </StackPanel>

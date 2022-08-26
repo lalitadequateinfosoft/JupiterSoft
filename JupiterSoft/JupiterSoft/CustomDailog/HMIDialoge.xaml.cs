@@ -139,7 +139,8 @@ namespace JupiterSoft.CustomDailog
                     _runningCamera = "USB";
                     AddOutPut("Camera has started..", (int)OutPutType.INFORMATION, true);
                 }
-                else { 
+                else
+                {
                     AddOutPut("No USB Camera found.", (int)OutPutType.INFORMATION);
                 }
             }
@@ -305,97 +306,72 @@ namespace JupiterSoft.CustomDailog
             {
                 byte[] bytestToRead = _recData.MbTgm.Skip(readIndex).ToArray();
                 string str = Encoding.Default.GetString(bytestToRead).Replace(System.Environment.NewLine, string.Empty);
-                //string actualdata = Regex.Replace(str, @"[^a-zA-Z0-9\\:_\- ]", string.Empty);
+                
                 string actualdata = Regex.Replace(str, @"[^\t\r\n -~]", "_").RemoveWhitespace().Trim();
                 string[] data = actualdata.Split('_');
-
-                for (int i = 0; i < data.Length; i++)
+                var lastitem = data[data.Length - 1];
+                var outP = lastitem.ToLower().ToString();
+                double weight = 0;
+                if (outP.Contains("kg"))
                 {
-                    if (!string.IsNullOrEmpty(data[i]) || !string.IsNullOrWhiteSpace(data[i]))
-                    {
-                        if (data[i].All(char.IsDigit))
-                        {
-                            _dispathcer.Invoke(new Action(() => { WeightContent.Content = data[i].ToString().Trim(); }));
-                            AddOutPut("Current weight is " + data[i].ToString().Trim(), (int)OutPutType.INFORMATION);
-                            //WeightContent.Content = data[i].ToString().Trim();
-
-                            continue;
-                        }
-
-                        if (data[i].ToLower().Contains("kgg"))
-                        {
-                            StringBuilder builder = new StringBuilder(data[i].ToString().ToLower());
-                            builder.Replace("kgg", "");
-                            //weight = Convert.ToInt32(builder.ToString());
-                            _dispathcer.Invoke(new Action(() => { WeightContent.Content = builder.ToString(); }));
-                            AddOutPut("Current weight is " + builder.ToString(), (int)OutPutType.INFORMATION);
-                        }
-
-
-                        //WeightContent.Content = new String(data[i].Where(Char.IsDigit).ToArray());
-
-                        string unit = new String(data[i].Where(Char.IsLetter).ToArray());
-                        if (unit.ToLower().ToString().Contains(weightUnit.KG.ToString().ToLower()) || unit.ToLower().ToString().Contains(weightUnit.KGG.ToString().ToLower()) || unit.ToLower().ToString().Contains(weightUnit.KGGM.ToString().ToLower()))
-                        {
-                            _dispathcer.Invoke(new Action(() =>
-                            {
-                                if (unit.ToLower().ToString().Contains(weightUnit.KGGM.ToString().ToLower()))
-                                {
-                                    WeightUnitKG.Content = weightUnit.KGGM.ToString().ToLower();
-                                }
-                                else if (unit.ToLower().ToString().Contains(weightUnit.KGG.ToString().ToLower()))
-                                {
-                                    WeightUnitKG.Content = weightUnit.KGG.ToString().ToLower();
-                                }
-                                else
-                                {
-                                    WeightUnitKG.Content = weightUnit.KG.ToString().ToLower();
-                                }
-                                WeightUnitKG.Foreground = Brushes.Red;
-                                WeightUnitLB.Foreground = Brushes.White;
-                                WeightUnitOZ.Foreground = Brushes.White;
-                                WeightUnitPCS.Foreground = Brushes.White;
-                            }));
-
-
-                        }
-                        else if (unit.ToLower().ToString().Contains(weightUnit.LB.ToString().ToLower()))
-                        {
-                            _dispathcer.Invoke(new Action(() =>
-                            {
-                                WeightUnitKG.Foreground = Brushes.White;
-                                WeightUnitLB.Foreground = Brushes.Red;
-                                WeightUnitOZ.Foreground = Brushes.White;
-                                WeightUnitPCS.Foreground = Brushes.White;
-                            }));
-
-                        }
-                        else if (unit.ToLower().ToString().Contains(weightUnit.PCS.ToString().ToLower()))
-                        {
-                            _dispathcer.Invoke(new Action(() =>
-                            {
-                                WeightUnitKG.Foreground = Brushes.White;
-                                WeightUnitLB.Foreground = Brushes.White;
-                                WeightUnitOZ.Foreground = Brushes.White;
-                                WeightUnitPCS.Foreground = Brushes.Red;
-                            }));
-
-                        }
-                        else if (unit.ToLower().ToString().Contains(weightUnit.OZ.ToString().ToLower()))
-                        {
-                            _dispathcer.Invoke(new Action(() =>
-                            {
-                                WeightUnitKG.Foreground = Brushes.White;
-                                WeightUnitLB.Foreground = Brushes.White;
-                                WeightUnitOZ.Foreground = Brushes.Red;
-                                WeightUnitPCS.Foreground = Brushes.White;
-                            }));
-
-
-                        }
-                    }
-
+                    StringBuilder builder = new StringBuilder(outP);
+                    builder.Replace("kg", "");
+                    weight = Convert.ToInt32(builder) - 3067;
+                    weight = Convert.ToDouble(weight / 260.4);
+                    weight = weight * 0.453592;
+                    weight = Math.Round(weight, 2);
+                    _dispathcer.Invoke(new Action(() => { WeightContent.Content = weight.ToString(); }));
+                    WeightUnitKG.Content = weightUnit.KG.ToString().ToLower();
                 }
+                else if (outP.Contains("kgg"))
+                {
+                    StringBuilder builder = new StringBuilder(outP);
+                    builder.Replace("kgg", "");
+                    weight = Convert.ToInt32(builder) - 3067;
+                    weight = Convert.ToDouble(weight / 260.4);
+                    weight = weight * 0.453592;
+                    weight = Math.Round(weight, 2);
+                    _dispathcer.Invoke(new Action(() => { WeightContent.Content = weight.ToString(); }));
+                    WeightUnitKG.Content = weightUnit.KGG.ToString().ToLower();
+                }
+                else if (outP.Contains("kgn"))
+                {
+                    StringBuilder builder = new StringBuilder(outP);
+                    builder.Replace("kgn", "");
+                    weight = Convert.ToInt32(builder) - 3067;
+                    weight = Convert.ToDouble(weight / 260.4);
+                    weight = weight * 0.453592;
+                    weight = Math.Round(weight, 2);
+                    _dispathcer.Invoke(new Action(() => { WeightContent.Content = weight.ToString(); }));
+                    WeightUnitKG.Content = weightUnit.KGN.ToString().ToLower();
+                }
+                else if (outP.Contains("lb"))
+                {
+
+                    Regex re = new Regex(@"([a-zA-Z]+)(\d+)");
+                    Match result = re.Match(outP);
+
+                    string alphaPart = result.Groups[1].Value;
+                    string numberPart = result.Groups[2].Value;
+                    weight = Convert.ToInt32(numberPart) - 3067;
+                    weight = Convert.ToDouble(weight / 260.4);
+                    weight = Math.Round(weight, 2);
+                    _dispathcer.Invoke(new Action(() => { WeightContent.Content = weight.ToString(); }));
+                    WeightUnitKG.Content = weightUnit.LBS.ToString().ToLower();
+                    //weight = weight * 0.453592;
+                }
+                else
+                {
+                    weight = Convert.ToInt32(outP) - 3067;
+                    weight = Convert.ToDouble(weight / 260.4);
+                    weight = weight * 0.453592;
+                    weight = Math.Round(weight, 2);
+                    _dispathcer.Invoke(new Action(() => { WeightContent.Content = weight.ToString(); }));
+                    WeightUnitKG.Content = weightUnit.KG.ToString().ToLower();
+                    //weight = 0;
+                }
+
+                
 
             }
             //TimerCheckReceiveData.Enabled = true;
@@ -764,14 +740,14 @@ namespace JupiterSoft.CustomDailog
 
 
                     //set register state.
-                    registerOutputStatuses.Add(new RegisterOutputStatus {Register=1,RegisterStatus= _i0 });
+                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 1, RegisterStatus = _i0 });
                     registerOutputStatuses.Add(new RegisterOutputStatus { Register = 2, RegisterStatus = _i1 });
                     registerOutputStatuses.Add(new RegisterOutputStatus { Register = 3, RegisterStatus = _i2 });
                     registerOutputStatuses.Add(new RegisterOutputStatus { Register = 4, RegisterStatus = _i3 });
                     registerOutputStatuses.Add(new RegisterOutputStatus { Register = 5, RegisterStatus = _i4 });
                     registerOutputStatuses.Add(new RegisterOutputStatus { Register = 6, RegisterStatus = _i5 });
                     registerOutputStatuses.Add(new RegisterOutputStatus { Register = 7, RegisterStatus = _i6 });
-                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 8, RegisterStatus = _i7});
+                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 8, RegisterStatus = _i7 });
                     registerOutputStatuses.Add(new RegisterOutputStatus { Register = 9, RegisterStatus = _i8 });
                     registerOutputStatuses.Add(new RegisterOutputStatus { Register = 10, RegisterStatus = _i9 });
                     registerOutputStatuses.Add(new RegisterOutputStatus { Register = 11, RegisterStatus = _i10 });
@@ -934,7 +910,7 @@ namespace JupiterSoft.CustomDailog
                                     item.CurrentRequest.MbTgm = recBufParse;
                                     item.CurrentRequest.Status = PortDataStatus.Received;
 
-                                    foreach(var command in Commands.Where(x=>x.CommandId==commandId))
+                                    foreach (var command in Commands.Where(x => x.CommandId == commandId))
                                     {
                                         command.OutPutData = item.CurrentRequest;
                                     }
@@ -1700,13 +1676,13 @@ namespace JupiterSoft.CustomDailog
                                         else if (Scopecommand.CommandType == (int)ElementConstant.Connect_Camera_Event)
                                         {
                                             AddOutPut("Starting Camera..", (int)OutPutType.INFORMATION, true);
-                                           var isStarted= ConnectionUSB();
+                                            var isStarted = ConnectionUSB();
                                             Scopecommand.ExecutionStatus = (int)ExecutionStage.Executed;
-                                            if(isStarted)
+                                            if (isStarted)
                                             {
                                                 AddOutPut("Camera Recording Starts..", (int)OutPutType.INFORMATION, true);
-                                              var RecordPath=  StartVideoCapture(_FileDirectory);
-                                                AddOutPut("Camera is recording at "+ RecordPath +" ..", (int)OutPutType.INFORMATION, true);
+                                                var RecordPath = StartVideoCapture(_FileDirectory);
+                                                AddOutPut("Camera is recording at " + RecordPath + " ..", (int)OutPutType.INFORMATION, true);
                                             }
                                         }
                                         else if (Scopecommand.CommandType == (int)ElementConstant.Disconnect_Camera_Event)
@@ -1769,11 +1745,11 @@ namespace JupiterSoft.CustomDailog
 
                         }
 
-                        else if(command.CommandType == (int)ElementConstant.Repeat_Control)
+                        else if (command.CommandType == (int)ElementConstant.Repeat_Control)
                         {
                             AddOutPut("Repeater loop started..", (int)OutPutType.INFORMATION, true);
                         }
-                        else if(command.CommandType== (int)ElementConstant.Connect_Camera_Event)
+                        else if (command.CommandType == (int)ElementConstant.Connect_Camera_Event)
                         {
                             AddOutPut("Starting Camera..", (int)OutPutType.INFORMATION, true);
                             var isStarted = ConnectionUSB();
@@ -1785,7 +1761,7 @@ namespace JupiterSoft.CustomDailog
                                 AddOutPut("Camera is recording at " + RecordPath + " ..", (int)OutPutType.INFORMATION, true);
                             }
                         }
-                        else if(command.CommandType == (int)ElementConstant.Disconnect_Camera_Event)
+                        else if (command.CommandType == (int)ElementConstant.Disconnect_Camera_Event)
                         {
                             AddOutPut("Stoping Camera..", (int)OutPutType.INFORMATION, true);
                             DisconnectCamera();
@@ -1795,7 +1771,7 @@ namespace JupiterSoft.CustomDailog
 
                         }
 
-                        
+
                     }
                     ExecuteProcesses();
 
@@ -1813,43 +1789,74 @@ namespace JupiterSoft.CustomDailog
             {
                 byte[] bytestToRead = _recData.MbTgm.Skip(readIndex).ToArray();
                 string str = Encoding.Default.GetString(bytestToRead).Replace(System.Environment.NewLine, string.Empty);
-                //string actualdata = Regex.Replace(str, @"[^a-zA-Z0-9\\:_\- ]", string.Empty);
+                
                 string actualdata = Regex.Replace(str, @"[^\t\r\n -~]", "_").RemoveWhitespace().Trim();
                 string[] data = actualdata.Split('_');
 
                 var lastitem = data[data.Length - 1];
                 var outP = lastitem.ToLower().ToString();
-                if (outP.Contains("kgg"))
+
+                Regex re = new Regex(@"([a-zA-Z]+)(\d+)");
+                Match result = re.Match(outP);
+
+                string alphaPart = result.Groups[1].Value;
+                string numberPart = result.Groups[2].Value;
+                weight = Convert.ToInt32(numberPart) - 3067;
+                weight = Convert.ToDouble(weight / 260.4);
+                weight = Math.Round(weight, 2);
+                return weight;
+
+
+                if (outP.Contains("kg"))
+                {
+                    StringBuilder builder = new StringBuilder(outP);
+                    builder.Replace("kg", "");
+                    weight = Convert.ToInt32(builder) - 3067;
+                    weight = Convert.ToDouble(weight / 260.4);
+                    weight = weight * 0.453592;
+                    weight = Math.Round(weight, 2);
+                }
+                else if (outP.Contains("kgg"))
                 {
                     StringBuilder builder = new StringBuilder(outP);
                     builder.Replace("kgg", "");
-                    weight = Convert.ToInt32(builder.ToString());
-                    weight = Math.Round(weight * 2.20462, 2);
+                    weight = Convert.ToInt32(builder) - 3067;
+                    weight = Convert.ToDouble(weight / 260.4);
+                    weight = weight * 0.453592;
+                    weight = Math.Round(weight, 2);
                 }
-               else if (outP.Contains("kgn"))
+                else if (outP.Contains("kgn"))
                 {
                     StringBuilder builder = new StringBuilder(outP);
                     builder.Replace("kgn", "");
-                    weight = Convert.ToInt32(builder.ToString());
-                    weight = Math.Round(weight * 2.20462, 2);
+                    weight = Convert.ToInt32(builder) - 3067;
+                    weight = Convert.ToDouble(weight / 260.4);
+                    weight = weight * 0.453592;
+                    weight = Math.Round(weight, 2);
                 }
                 else if (outP.Contains("lbs"))
                 {
-                    //StringBuilder builder = new StringBuilder(outP);
-                    //builder.Replace("lbs", "");
-                    //weight = Convert.ToInt32(builder.ToString());
-                    //weight = Math.Round(weight * 2.20462, 2);
 
-                    Regex re = new Regex(@"([a-zA-Z]+)(\d+)");
-                    Match result = re.Match(outP);
+                    Regex regex = new Regex(@"([a-zA-Z]+)(\d+)");
+                    Match result1 = regex.Match(outP);
 
-                    string alphaPart = result.Groups[1].Value;
-                    string numberPart = result.Groups[2].Value;
-                    weight = Convert.ToDouble(numberPart);
+                    string alphaPart1 = result.Groups[1].Value;
+                    string numberPart1 = result.Groups[2].Value;
+                    weight = Convert.ToInt32(numberPart1) - 3067;
+                    weight = Convert.ToDouble(weight / 260.4);
+                    weight = Math.Round(weight, 2);
+                    //weight = weight * 0.453592;
                 }
                 else
                 {
-                    weight = 0;
+                    Regex regex = new Regex(@"([a-zA-Z]+)(\d+)");
+                    Match result1 = regex.Match(outP);
+
+                    string alphaPart1 = result.Groups[1].Value;
+                    string numberPart1 = result.Groups[2].Value;
+                    weight = Convert.ToInt32(numberPart1) - 3067;
+                    weight = Convert.ToDouble(weight / 260.4);
+                    weight = Math.Round(weight, 2);
                 }
 
                 //for (int i = 0; i < data.Length; i++)
