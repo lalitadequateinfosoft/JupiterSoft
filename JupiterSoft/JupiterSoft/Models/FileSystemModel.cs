@@ -132,7 +132,9 @@ namespace JupiterSoft.Models
         KG,
         KGG,
         KGGM,
+        KGN,
         LB,
+        LBS,
         OZ,
         PCS
     }

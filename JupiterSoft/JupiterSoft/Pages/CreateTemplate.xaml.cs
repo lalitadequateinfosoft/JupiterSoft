@@ -826,7 +826,7 @@ namespace JupiterSoft.Pages
                                 Order = 1,
                                 ExecutionStatus = (int)ExecutionStage.Not_Executed,
                                 Configuration = new DeviceConfiguration(),
-                               // CommandText = variableDialog3.VariableName.Text
+                                // CommandText = variableDialog3.VariableName.Text
                             };
                             Commands.Add(command);
                         }
@@ -840,7 +840,7 @@ namespace JupiterSoft.Pages
                                 Order = Commands.OrderByDescending(x => x.Order).FirstOrDefault().Order + 1,
                                 ExecutionStatus = (int)ExecutionStage.Not_Executed,
                                 Configuration = new DeviceConfiguration(),
-                               // CommandText = variableDialog3.VariableName.Text
+                                // CommandText = variableDialog3.VariableName.Text
                             };
                             Commands.Add(command);
                         }
@@ -891,7 +891,7 @@ namespace JupiterSoft.Pages
                         getNewPosition(Write_Card_Out.Width, Write_Card_Out.Height, ref NewLeft, ref NewTop);
 
                         RegisterCommand registerCommand = new RegisterCommand();
-                        if(!registerCommand.Canceled)
+                        if (!registerCommand.Canceled)
                         {
                             var functionName = registerCommand.RegisterOutput.ToString().ToLower() == "on" ? "ON" : "OFF" + " Register " + registerCommand.RegisterNumber;
                             ele = Get_FunctionStyle(contentId, Convert.ToInt32(data), functionName);
@@ -905,10 +905,10 @@ namespace JupiterSoft.Pages
                                     Order = 1,
                                     ExecutionStatus = (int)ExecutionStage.Not_Executed,
                                     Configuration = new DeviceConfiguration(),
-                                    CommandData=new RegisterWriteCommand
+                                    CommandData = new RegisterWriteCommand
                                     {
-                                        RegisterNumber= Convert.ToInt32(registerCommand.RegisterNumber),
-                                        RegisterOutput= registerCommand.RegisterOutput.ToString().ToLower()=="on"?1:0
+                                        RegisterNumber = Convert.ToInt32(registerCommand.RegisterNumber),
+                                        RegisterOutput = registerCommand.RegisterOutput.ToString().ToLower() == "on" ? 1 : 0
                                     }
                                     //CommandText = variableDialog5.VariableName.Text
                                 };
@@ -935,7 +935,7 @@ namespace JupiterSoft.Pages
                             }
                             ShouldAdd = true;
                         }
-                        
+
                         break;
 
                     case (int)ElementConstant.Read_Weight:
@@ -979,10 +979,10 @@ namespace JupiterSoft.Pages
 
                     case (int)ElementConstant.If_Condition_Start:
                         getNewPosition(If_Condition_Start.Width, If_Condition_Start.Height, ref NewLeft, ref NewTop);
-                        
+
                         if (Commands.Count() > 0)
                         {
-                            ConditionsDialog conditions = new ConditionsDialog(Commands.Where(x => x.CommandType == (int)ElementConstant.Read_Weight  || x.CommandType==(int)ElementConstant.Read_All_Card_In_Out || x.CommandType==(int)ElementConstant.Read_Motor_Frequency).ToList());
+                            ConditionsDialog conditions = new ConditionsDialog(Commands.Where(x => x.CommandType == (int)ElementConstant.Read_Weight || x.CommandType == (int)ElementConstant.Read_All_Card_In_Out || x.CommandType == (int)ElementConstant.Read_Motor_Frequency).ToList());
                             conditions.ShowDialog();
                             if (!conditions.Canceled)
                             {
@@ -1569,7 +1569,7 @@ namespace JupiterSoft.Pages
                     wrap.Height = Double.NaN;
                     break;
                 case (int)ElementConstant.End_Scope:
-                    wrap = CreateStandarControl(ContentId, evEnum,"End Scope");
+                    wrap = CreateStandarControl(ContentId, evEnum, "End Scope");
                     break;
                 case (int)ElementConstant.Repeat_Control:
                     wrap = CreateStandarControl(ContentId, evEnum, "Repeat Control");
@@ -2734,12 +2734,12 @@ namespace JupiterSoft.Pages
                     Disable_RunTimeButton();
 
                     string deviceId = ComPortWeight.SelectedValue.ToString();
-                    int Baudrate = Convert.ToInt32(BaudRateWeight.SelectedValue.ToString());
-                    int databit = Convert.ToInt32(DataBitWeight.SelectedValue.ToString());
-                    int stopbit = Convert.ToInt32(StopBitWeight.SelectedValue.ToString());
+                    int Baudrate = Convert.ToInt32(BaudRateWeight.SelectionBoxItem.ToString());
+                    int databit = Convert.ToInt32(DataBitWeight.SelectionBoxItem.ToString());
+                    int stopbit = Convert.ToInt32(StopBitWeight.SelectionBoxItem.ToString());
                     int parity = 0;
 
-                    switch (ParityWeight.SelectedValue.ToString().ToLower())
+                    switch (ParityWeight.SelectionBoxItem.ToString().ToLower())
                     {
                         case "even":
                             parity = (int)Parity.Even;
@@ -2785,9 +2785,11 @@ namespace JupiterSoft.Pages
 
                 MessageBox.Show("Please Select COM Port and configuration..");
             }
-            catch
+            catch (Exception ex)
             {
                 Enable_RunTimeButton();
+                TestWeight.IsEnabled = true;
+                StopWeights.IsEnabled = false;
             }
         }
 
@@ -2808,6 +2810,7 @@ namespace JupiterSoft.Pages
 
             if (_recData.MbTgm.Length > 0 && _recData.MbTgm.Length > readIndex)
             {
+                //string result = System.Text.Encoding.UTF8.GetString(_recData.MbTgm);
                 byte[] bytestToRead = _recData.MbTgm.Skip(readIndex).ToArray();
                 string str = Encoding.Default.GetString(bytestToRead).Replace(System.Environment.NewLine, string.Empty);
                 //string actualdata = Regex.Replace(str, @"[^a-zA-Z0-9\\:_\- ]", string.Empty);
@@ -2818,22 +2821,29 @@ namespace JupiterSoft.Pages
                 {
                     if (!string.IsNullOrEmpty(data[i]) || !string.IsNullOrWhiteSpace(data[i]))
                     {
+                        string raw = string.Empty;
                         if (data[i].All(char.IsDigit))
                         {
-                            _dispathcer.Invoke(new Action(() => { WeightContent.Content = data[i].ToString().Trim(); }));
-                            //WeightContent.Content = data[i].ToString().Trim();
+                            raw = data[i].ToString();
 
-                            continue;
+                        }
+                        else
+                        {
+                            raw = new String(data[i].Where(Char.IsDigit).ToArray());
                         }
 
-                        _dispathcer.Invoke(new Action(() => { WeightContent.Content = new String(data[i].Where(Char.IsDigit).ToArray()); }));
-                        //WeightContent.Content = new String(data[i].Where(Char.IsDigit).ToArray());
-
+                        
+                        double weight = 0;
                         string unit = new String(data[i].Where(Char.IsLetter).ToArray());
                         if (unit.ToLower().ToString().Contains(weightUnit.KG.ToString().ToLower()) || unit.ToLower().ToString().Contains(weightUnit.KGG.ToString().ToLower()) || unit.ToLower().ToString().Contains(weightUnit.KGGM.ToString().ToLower()))
                         {
+                            weight = Convert.ToInt32(raw) - 3067;
+                            weight = Convert.ToDouble(weight / 260.4);
+                            weight = Math.Round(weight * 0.453592,2);
+
                             _dispathcer.Invoke(new Action(() =>
                             {
+                                
                                 if (unit.ToLower().ToString().Contains(weightUnit.KGGM.ToString().ToLower()))
                                 {
                                     WeightUnitKG.Content = weightUnit.KGGM.ToString().ToLower();
@@ -2841,6 +2851,10 @@ namespace JupiterSoft.Pages
                                 else if (unit.ToLower().ToString().Contains(weightUnit.KGG.ToString().ToLower()))
                                 {
                                     WeightUnitKG.Content = weightUnit.KGG.ToString().ToLower();
+                                }
+                                else if (unit.ToLower().ToString().Contains(weightUnit.KGN.ToString().ToLower()))
+                                {
+                                    WeightUnitKG.Content = weightUnit.KGN.ToString().ToLower();
                                 }
                                 else
                                 {
@@ -2850,12 +2864,16 @@ namespace JupiterSoft.Pages
                                 WeightUnitLB.Foreground = Brushes.White;
                                 WeightUnitOZ.Foreground = Brushes.White;
                                 WeightUnitPCS.Foreground = Brushes.White;
+                                WeightContent.Content = weight;
                             }));
 
 
                         }
                         else if (unit.ToLower().ToString().Contains(weightUnit.LB.ToString().ToLower()))
                         {
+                            weight = Convert.ToInt32(raw) - 3067;
+                            weight = Convert.ToDouble(weight / 260.4);
+                            weight = Math.Round(weight, 2);
                             _dispathcer.Invoke(new Action(() =>
                             {
                                 WeightUnitKG.Foreground = Brushes.White;
@@ -2863,6 +2881,7 @@ namespace JupiterSoft.Pages
                                 WeightUnitOZ.Foreground = Brushes.White;
                                 WeightUnitPCS.Foreground = Brushes.White;
                             }));
+                            WeightContent.Content = weight;
 
                         }
                         else if (unit.ToLower().ToString().Contains(weightUnit.PCS.ToString().ToLower()))
@@ -2874,6 +2893,7 @@ namespace JupiterSoft.Pages
                                 WeightUnitOZ.Foreground = Brushes.White;
                                 WeightUnitPCS.Foreground = Brushes.Red;
                             }));
+                            WeightContent.Content = raw;
 
                         }
                         else if (unit.ToLower().ToString().Contains(weightUnit.OZ.ToString().ToLower()))
@@ -2886,7 +2906,7 @@ namespace JupiterSoft.Pages
                                 WeightUnitPCS.Foreground = Brushes.White;
                             }));
 
-
+                            WeightContent.Content = raw;
                         }
                     }
 
@@ -3322,7 +3342,7 @@ namespace JupiterSoft.Pages
             MODBUSComnn obj = new MODBUSComnn();
             Common.COMSelected = COMType.MODBUS;
             int[] _val = new int[2] { 0, val };
-            obj.SetMultiSendorValueFM16(1, 0, SerialDevice, reg + 1, 1, "ControlCard", 1, 0, Models.DeviceType.ControlCard, _val, false);   
+            obj.SetMultiSendorValueFM16(1, 0, SerialDevice, reg + 1, 1, "ControlCard", 1, 0, Models.DeviceType.ControlCard, _val, false);
 
         }
 
