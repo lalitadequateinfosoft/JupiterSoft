@@ -121,7 +121,6 @@
                                     <StackPanel Margin="8">
                                         <TextBox 
                                     x:Name="ComparisonValue2"
-                                    Text="Comparison Value"
                                     Width="Auto"
                                     Height="30"/>
                                     </StackPanel>
