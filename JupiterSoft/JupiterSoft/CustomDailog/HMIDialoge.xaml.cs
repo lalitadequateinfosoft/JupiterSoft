@@ -77,23 +77,36 @@ namespace JupiterSoft.CustomDailog
             this.Commands.ForEach(x => x.ExecutionStatus = (int)ExecutionStage.Not_Executed);
             this.deviceInfo = _deviceInfo;
             registerOutputStatuses = new List<RegisterOutputStatus>();
-            //_drawingImageProvider = new DrawingImageProvider();
-            //videoViewer.SetImageProvider(_drawingImageProvider);
+
+            _webCamera = new WebCamera();
+            _drawingImageProvider = new DrawingImageProvider();
+            _connector = new MediaConnector();
+            if (_webCamera != null)
+            {
+                _connector.Connect(_webCamera.VideoChannel, _drawingImageProvider);
+                videoViewer.SetImageProvider(_drawingImageProvider);
+                _webCamera.Start();
+                videoViewer.Start();
+
+                _runningCamera = "USB";
+                AddOutPut("Camera has started..", (int)OutPutType.INFORMATION, true);
+            }
+            //}
 
         }
 
         private void StopProcess_Click(object sender, RoutedEventArgs e)
         {
             DisconnectCamera();
-            if(connectedDevices!=null)
+            if (connectedDevices != null)
             {
-                foreach(var item in connectedDevices)
+                foreach (var item in connectedDevices)
                 {
                     StopPortCommunication(item.DeviceType);
                 }
             }
 
-           
+
             IsClosed = true;
             Close();
         }
@@ -141,17 +154,13 @@ namespace JupiterSoft.CustomDailog
 
                 if (_webCamera != null)
                 {
-                    //_dispathcer.Invoke(new Action(() => {
-
-
-                    //}));
 
                     _webCamera = new WebCamera();
                     _connector.Connect(_webCamera.VideoChannel, _drawingImageProvider);
                     videoViewer.SetImageProvider(_drawingImageProvider);
                     _webCamera.Start();
                     videoViewer.Start();
-                   // _videoSender = _webCamera.VideoChannel;
+                    // _videoSender = _webCamera.VideoChannel;
 
                     isStarted = true;
 
@@ -175,16 +184,7 @@ namespace JupiterSoft.CustomDailog
         {
             if (!string.IsNullOrEmpty(_runningCamera))
             {
-                _dispathcer.Invoke(new Action(() => {
-                    CameraArea.Visibility = Visibility.Hidden;
-                    _webCamera = new WebCamera();
-                    _connector.Connect(_webCamera.VideoChannel, _drawingImageProvider);
-                    videoViewer.SetImageProvider(_drawingImageProvider);
-                    _webCamera.Start();
-                    videoViewer.Start();
-                    _videoSender = _webCamera.VideoChannel;
-                }));
-               // CameraArea.Visibility = Visibility.Hidden;
+                // CameraArea.Visibility = Visibility.Hidden;
                 if (_runningCamera == "USB")
                 {
                     DisconnectUSBCamera();
@@ -200,7 +200,7 @@ namespace JupiterSoft.CustomDailog
 
         private void DisconnectUSBCamera()
         {
-            if(_webCamera.Capturing)
+            if (_webCamera.Capturing)
             {
                 StopVideoCapture();
                 videoViewer.Stop();
@@ -210,9 +210,9 @@ namespace JupiterSoft.CustomDailog
                 _drawingImageProvider.Dispose();
                 _connector.Disconnect(_webCamera.VideoChannel, _drawingImageProvider);
                 _connector.Dispose();
-               
+
             }
-            
+
         }
         private void _mpeg4Recorder_MultiplexFinished(object sender, VoIPEventArgs<bool> e)
         {
@@ -223,13 +223,14 @@ namespace JupiterSoft.CustomDailog
 
         private string StartVideoCapture(string path)
         {
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+
             var date = DateTime.Now.Year + "y-" + DateTime.Now.Month + "m-" + DateTime.Now.Day + "d-" +
                        DateTime.Now.Hour + "h-" + DateTime.Now.Minute + "m-" + DateTime.Now.Second + "s";
-            string currentpath;
-            if (String.IsNullOrEmpty(path))
-                currentpath = date + ".mp4";
-            else
-                currentpath = path + "\\" + date + ".mp4";
+            string currentpath = path + "\\" + date + ".mp4";
 
             _mpeg4Recorder = new MPEG4Recorder(currentpath);
             _mpeg4Recorder.MultiplexFinished += _mpeg4Recorder_MultiplexFinished;
@@ -1226,10 +1227,11 @@ namespace JupiterSoft.CustomDailog
 
                 if (WeightConfig == null)
                 {
-                    _dispathcer.Invoke(new Action(() => {
+                    _dispathcer.Invoke(new Action(() =>
+                    {
                         WeightModuleArea.Visibility = Visibility.Visible;
                     }));
-                    
+
                     WeightConfig = new ConnectedDevices();
                     WeightConfig.RecState = 1;
                     WeightConfig.PortName = Port;
@@ -1370,10 +1372,11 @@ namespace JupiterSoft.CustomDailog
                         {
                             if (command.ExecutionStatus == (int)ExecutionStage.Not_Executed)
                             {
-                                _dispathcer.Invoke(new Action(() => {
+                                _dispathcer.Invoke(new Action(() =>
+                                {
                                     ControlBoardArea.Visibility = Visibility.Hidden;
                                 }));
-                                
+
                                 AddOutPut("Disconnecting Control Card..", (int)OutPutType.INFORMATION);
                                 StopPortCommunication(Models.DeviceType.ControlCard);
                                 command.ExecutionStatus = (int)ExecutionStage.Executed;
@@ -1407,10 +1410,11 @@ namespace JupiterSoft.CustomDailog
                         {
                             if (command.ExecutionStatus == (int)ExecutionStage.Not_Executed)
                             {
-                                _dispathcer.Invoke(new Action(() => {
+                                _dispathcer.Invoke(new Action(() =>
+                                {
                                     WeightModuleArea.Visibility = Visibility.Hidden;
                                 }));
-                               
+
                                 AddOutPut("Disconnecting weight module..", (int)OutPutType.WARNING, true);
                                 StopPortCommunication(Models.DeviceType.WeightModule);
                                 command.ExecutionStatus = (int)ExecutionStage.Executed;
@@ -1726,19 +1730,18 @@ namespace JupiterSoft.CustomDailog
                                         else if (Scopecommand.CommandType == (int)ElementConstant.Connect_Camera_Event)
                                         {
                                             AddOutPut("Starting Camera..", (int)OutPutType.INFORMATION, true);
-                                            var isStarted = ConnectionUSB();
+                                            //var isStarted = ConnectionUSB();
                                             Scopecommand.ExecutionStatus = (int)ExecutionStage.Executed;
-                                            if (isStarted)
-                                            {
-                                                AddOutPut("Camera Recording Starts..", (int)OutPutType.INFORMATION, true);
-                                                var RecordPath = StartVideoCapture(_FileDirectory);
-                                                AddOutPut("Camera is recording at " + RecordPath + " ..", (int)OutPutType.INFORMATION, true);
-                                            }
+
+                                            AddOutPut("Camera Recording Starts..", (int)OutPutType.INFORMATION, true);
+                                            var RecordPath = StartVideoCapture(_FileDirectory);
+                                            AddOutPut("Camera is recording at " + RecordPath + " ..", (int)OutPutType.INFORMATION, true);
+
                                         }
                                         else if (Scopecommand.CommandType == (int)ElementConstant.Disconnect_Camera_Event)
                                         {
                                             AddOutPut("Stoping Camera..", (int)OutPutType.INFORMATION, true);
-                                            DisconnectCamera();
+                                            StopVideoCapture();
                                             AddOutPut("Camera Stopped..", (int)OutPutType.SUCCESS, true);
                                             Scopecommand.ExecutionStatus = (int)ExecutionStage.Executed;
                                             //StopVideoCapture();
@@ -1802,19 +1805,18 @@ namespace JupiterSoft.CustomDailog
                         else if (command.CommandType == (int)ElementConstant.Connect_Camera_Event)
                         {
                             AddOutPut("Starting Camera..", (int)OutPutType.INFORMATION, true);
-                            var isStarted = ConnectionUSB();
+                            // var isStarted = ConnectionUSB();
                             command.ExecutionStatus = (int)ExecutionStage.Executed;
-                            if (isStarted)
-                            {
-                                AddOutPut("Camera Recording Starts..", (int)OutPutType.INFORMATION, true);
-                                var RecordPath = StartVideoCapture(_FileDirectory);
-                                AddOutPut("Camera is recording at " + RecordPath + " ..", (int)OutPutType.INFORMATION, true);
-                            }
+
+                            AddOutPut("Camera Recording Starts..", (int)OutPutType.INFORMATION, true);
+                            var RecordPath = StartVideoCapture(_FileDirectory);
+                            AddOutPut("Camera is recording at " + RecordPath + " ..", (int)OutPutType.INFORMATION, true);
+
                         }
                         else if (command.CommandType == (int)ElementConstant.Disconnect_Camera_Event)
                         {
                             AddOutPut("Stoping Camera..", (int)OutPutType.INFORMATION, true);
-                            DisconnectCamera();
+                            StopVideoCapture();
                             AddOutPut("Camera Stopped..", (int)OutPutType.SUCCESS, true);
                             command.ExecutionStatus = (int)ExecutionStage.Executed;
                             StopVideoCapture();
@@ -1951,10 +1953,11 @@ namespace JupiterSoft.CustomDailog
 
                 if (controlConfig == null)
                 {
-                    _dispathcer.Invoke(new Action(() => {
+                    _dispathcer.Invoke(new Action(() =>
+                    {
                         ControlBoardArea.Visibility = Visibility.Visible;
                     }));
-                    
+
                     AddOutPut("Initializing control card port..", (int)OutPutType.INFORMATION);
                     controlConfig = new ConnectedDevices();
                     controlConfig.RecState = 1;
@@ -2134,16 +2137,13 @@ namespace JupiterSoft.CustomDailog
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
             AddOutPut("Commands Execution started..", (int)OutPutType.INFORMATION);
-            // Task.Delay(100);
-            ConnectionUSB();
-            //ExecuteProcesses();
+            Task.Delay(1000);
+            // ConnectionUSB();
+            ExecuteProcesses();
             AddOutPut("Commands compilation completed..", (int)OutPutType.SUCCESS);
         }
+
+
     }
 }

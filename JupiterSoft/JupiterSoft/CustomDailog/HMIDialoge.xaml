@@ -158,17 +158,10 @@
                             <Grid 
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Stretch">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="*"/>
-                                </Grid.RowDefinitions>
-                                <StackPanel Grid.Row="0"
-                                   HorizontalAlignment="Center"
-                                    VerticalAlignment="Stretch">
-                                    <Button Content="Start Process" Click="Button_Click"/>
-                                </StackPanel>
-                               
-                                <StackPanel Grid.Row="1" 
+
+
+
+                                <StackPanel 
                                     HorizontalAlignment="Stretch"
                                     VerticalAlignment="Stretch">
 
@@ -204,8 +197,7 @@
                                         x:Name="CameraArea"
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Stretch"
-                                        Margin="2"
-                                        Visibility="Visible">
+                                        Margin="2">
                                         <GroupBox 
                                             FontSize="14"
                                             Background="Transparent"
@@ -215,7 +207,7 @@
                                             HorizontalAlignment="Stretch" 
                                             VerticalAlignment="Stretch"
                                             Padding="5">
-                                            <Grid HorizontalAlignment="Stretch" Height="240" VerticalAlignment="Top">
+                                            <Grid HorizontalAlignment="Stretch" Height="240" Width="420" VerticalAlignment="Top">
                                                 <controls:VideoViewerWPF
                                                     Name="videoViewer"
                                                     HorizontalAlignment="Stretch"
