@@ -66,6 +66,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="CameraTest.xaml.cs">
+      <DependentUpon>CameraTest.xaml</DependentUpon>
+    </Compile>
     <Compile Include="CustomDailog\ConditionsDialog.xaml.cs">
       <DependentUpon>ConditionsDialog.xaml</DependentUpon>
     </Compile>
@@ -85,6 +88,10 @@
     <Compile Include="Models\ModBusInput.cs" />
     <Compile Include="Models\RegisterOutputStatus.cs" />
     <Compile Include="Properties\Annotations.cs" />
+    <Page Include="CameraTest.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="CustomDailog\ConditionsDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -206,6 +213,9 @@
     </PackageReference>
     <PackageReference Include="Ookii.Dialogs.Wpf">
       <Version>5.0.1</Version>
+    </PackageReference>
+    <PackageReference Include="WpfWebcamControl">
+      <Version>3.3.1</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>

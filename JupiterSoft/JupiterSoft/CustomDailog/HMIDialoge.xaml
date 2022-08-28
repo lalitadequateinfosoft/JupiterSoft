@@ -158,10 +158,16 @@
                             <Grid 
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Stretch">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <StackPanel Grid.Row="0">
+                                    <Button Content="Start Program" Click="Button_Click" Margin="5" Background="ForestGreen" Foreground="White"/>
+                                </StackPanel>
 
-
-
-                                <StackPanel 
+                                <StackPanel
+                                    Grid.Row="1"
                                     HorizontalAlignment="Stretch"
                                     VerticalAlignment="Stretch">
 

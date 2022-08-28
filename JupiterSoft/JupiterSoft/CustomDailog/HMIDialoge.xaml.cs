@@ -78,21 +78,6 @@ namespace JupiterSoft.CustomDailog
             this.deviceInfo = _deviceInfo;
             registerOutputStatuses = new List<RegisterOutputStatus>();
 
-            _webCamera = new WebCamera();
-            _drawingImageProvider = new DrawingImageProvider();
-            _connector = new MediaConnector();
-            if (_webCamera != null)
-            {
-                _connector.Connect(_webCamera.VideoChannel, _drawingImageProvider);
-                videoViewer.SetImageProvider(_drawingImageProvider);
-                _webCamera.Start();
-                videoViewer.Start();
-
-                _runningCamera = "USB";
-                AddOutPut("Camera has started..", (int)OutPutType.INFORMATION, true);
-            }
-            //}
-
         }
 
         private void StopProcess_Click(object sender, RoutedEventArgs e)
@@ -2137,13 +2122,31 @@ namespace JupiterSoft.CustomDailog
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            AddOutPut("Commands Execution started..", (int)OutPutType.INFORMATION);
-            Task.Delay(1000);
+            //AddOutPut("Commands Execution started..", (int)OutPutType.INFORMATION);
+            //Task.Delay(1000);
             // ConnectionUSB();
-            ExecuteProcesses();
-            AddOutPut("Commands compilation completed..", (int)OutPutType.SUCCESS);
+            //ExecuteProcesses();
+            //AddOutPut("Commands compilation completed..", (int)OutPutType.SUCCESS);
         }
 
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            _webCamera = new WebCamera();
+            _drawingImageProvider = new DrawingImageProvider();
+            _connector = new MediaConnector();
+            if (_webCamera != null)
+            {
+                _connector.Connect(_webCamera.VideoChannel, _drawingImageProvider);
+                videoViewer.SetImageProvider(_drawingImageProvider);
+                _webCamera.Start();
+                videoViewer.Start();
 
+                _runningCamera = "USB";
+                AddOutPut("Camera has started..", (int)OutPutType.INFORMATION, true);
+                AddOutPut("Commands Execution started..", (int)OutPutType.INFORMATION);
+               // ExecuteProcesses();
+                AddOutPut("Commands compilation completed..", (int)OutPutType.SUCCESS);
+            }
+        }
     }
 }

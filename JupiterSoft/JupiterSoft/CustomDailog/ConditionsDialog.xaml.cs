@@ -24,7 +24,6 @@ namespace JupiterSoft.CustomDailog
         public bool Canceled { get; set; }
         private List<ConditionModel> conditions;
         private List<LogicalCommand> Commands;
-        private int readIndex = 0;
 
         public string ConditionTextName { get; set; }
         public string ComparisonVariable { get; set; }
