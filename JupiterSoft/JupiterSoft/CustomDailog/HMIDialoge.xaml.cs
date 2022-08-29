@@ -108,6 +108,10 @@ namespace JupiterSoft.CustomDailog
             AudioDevices = EncoderDevices.FindDevices(EncoderDeviceType.Audio);
             SnapshotDirectory = ApplicationConstant._SnapShotDirectory;
             VideoFileDirectory = _VideoDirectory;
+            if(!Directory.Exists(VideoFileDirectory))
+            {
+                Directory.CreateDirectory(VideoFileDirectory);
+            }
             this.DataContext = this;
         }
 
