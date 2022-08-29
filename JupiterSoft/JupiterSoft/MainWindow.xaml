@@ -8,7 +8,7 @@
         xmlns:local="clr-namespace:JupiterSoft"
         mc:Ignorable="d"
         Title="InteGrids"
-        Icon="EnLogo.png"
+        Icon="icon.ico"
         Height="650" Width="1000"
         ui:TitleBar.Background="White"
         ui:TitleBar.IsIconVisible="True"
@@ -25,7 +25,7 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Grid.Background>
-            <ImageBrush ImageSource="/assets/welcome.jpg"/>
+            <ImageBrush ImageSource="/assets/new-welcome-screen.jpg"/>
         </Grid.Background>
 
         <Grid Grid.Row="0">
@@ -37,11 +37,11 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="0,317,0,0" HorizontalAlignment="Center" Grid.RowSpan="2" Width="500">
-                <Button x:Name="StartNew" Foreground="#FFF" Background="Transparent" Content="START CREATING" Cursor="Hand" VerticalAlignment="Center" HorizontalAlignment="Center"  Margin="0,12,0,0" Style="{StaticResource StartButton}" ToolTip="Start Creating New Template" Click="StartNew_Click" />
+            <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="0,330,0,0" HorizontalAlignment="Center" Grid.RowSpan="2" Width="500">
+                <Button x:Name="StartNew" Foreground="#FFF" Background="Transparent" Content="START CREATING" Cursor="Hand" VerticalAlignment="Center" HorizontalAlignment="Center"  Margin="0,30,0,0" Style="{StaticResource StartButton}" ToolTip="Start Creating New Template" Click="StartNew_Click" />
 
 
-                <Button x:Name="StartSaved" Foreground="#0082ca" Background="Transparent"    Content="RUN THE SAVED PROJECTS" Cursor="Hand" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="15,12,0,0" Style="{StaticResource SavedButton}" ToolTip="Run Saved Template" Click="StartSaved_Click"/>
+                <Button x:Name="StartSaved" Foreground="#0082ca" Background="Transparent"    Content="RUN THE SAVED PROJECTS" Cursor="Hand" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="15,30,0,0" Style="{StaticResource SavedButton}" ToolTip="Run Saved Template" Click="StartSaved_Click"/>
             </StackPanel>
         </Grid>
 

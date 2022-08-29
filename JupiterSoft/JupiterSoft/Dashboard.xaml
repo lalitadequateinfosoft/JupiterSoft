@@ -8,7 +8,7 @@
          xmlns:ui="http://schemas.modernwpf.com/2019"
         ui:WindowHelper.UseModernWindowStyle="True"
         Title="InteGrids"
-        Icon="EnLogo.png"
+        Icon="icon.ico"
         Height="650" Width="1200"
         ui:TitleBar.Background="White"
         ui:TitleBar.IsIconVisible="True"
