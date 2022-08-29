@@ -3265,7 +3265,7 @@
                             <StackPanel Grid.Row="0" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Orientation="Vertical" Cursor="Arrow" Background="#eee" AllowDrop="False">
 
 
-                                <ScrollViewer VerticalScrollBarVisibility="Hidden" Height="500" Cursor="Hand">
+                                <ScrollViewer VerticalScrollBarVisibility="Hidden" MinHeight="500" Cursor="Hand">
                                     <Canvas x:Name="ReceiveDrop" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="700" Cursor="Hand" Width="370" AllowDrop="True" Background="Transparent" Drop="Canvas_Drop" DragOver="Canvas_DragOver" DragLeave="Canvas_DragLeave" DragEnter="ReceiveDrop_DragEnter" PreviewMouseMove="ReceiveDrop_PreviewMouseMove" PreviewMouseUp="ReceiveDrop_PreviewMouseUp">
 
 

@@ -918,32 +918,14 @@ namespace JupiterSoft.Pages
                         getNewPosition(Write_Card_Out.Width, Write_Card_Out.Height, ref NewLeft, ref NewTop);
 
                         RegisterCommand registerCommand = new RegisterCommand();
+                        registerCommand.ShowDialog();
                         if (!registerCommand.Canceled)
                         {
-                            var functionName = registerCommand.RegisterOutput.ToString().ToLower() == "on" ? "ON" : "OFF" + " Register " + registerCommand.RegisterNumber;
+                            var functionName = (registerCommand.RegisterOutput.SelectionBoxItem.ToString().ToLower() == "on" ? "ON" : "OFF") + " Register " + registerCommand.RegisterNumber.Text;
                             ele = Get_FunctionStyle(contentId, Convert.ToInt32(data), functionName);
-                            if (Commands.Count() == 0)
+                            if (Commands.Count() > 0)
                             {
 
-                                var command = new LogicalCommand
-                                {
-                                    CommandId = contentId,
-                                    CommandType = Convert.ToInt32(data),
-                                    Order = 1,
-                                    ExecutionStatus = (int)ExecutionStage.Not_Executed,
-                                    Configuration = new DeviceConfiguration(),
-                                    CommandData = new RegisterWriteCommand
-                                    {
-                                        RegisterNumber = Convert.ToInt32(registerCommand.RegisterNumber),
-                                        RegisterOutput = registerCommand.RegisterOutput.ToString().ToLower() == "on" ? 1 : 0
-                                    }
-                                    //CommandText = variableDialog5.VariableName.Text
-                                };
-                                Commands.Add(command);
-                            }
-                            else
-                            {
-                                //ele = Get_FunctionStyle(contentId, Convert.ToInt32(data), variableDialog5.VariableName.Text);
                                 var command = new LogicalCommand
                                 {
                                     CommandId = contentId,
@@ -953,14 +935,15 @@ namespace JupiterSoft.Pages
                                     Configuration = new DeviceConfiguration(),
                                     CommandData = new RegisterWriteCommand
                                     {
-                                        RegisterNumber = Convert.ToInt32(registerCommand.RegisterNumber),
-                                        RegisterOutput = registerCommand.RegisterOutput.ToString().ToLower() == "on" ? 1 : 0
+                                        RegisterNumber = Convert.ToInt32(registerCommand.RegisterNumber.Text),
+                                        RegisterOutput = registerCommand.RegisterOutput.SelectionBoxItem.ToString().ToLower() == "on" ? 1 : 0
                                     }
                                     //CommandText = variableDialog5.VariableName.Text
                                 };
                                 Commands.Add(command);
+                                ShouldAdd = true;
                             }
-                            ShouldAdd = true;
+                            
                         }
 
                         break;
@@ -1014,6 +997,7 @@ namespace JupiterSoft.Pages
                             if (!conditions.Canceled)
                             {
                                 ConditionDataModel conditionData = new ConditionDataModel();
+                                conditionData.ComaprisonVariableName = Commands.Where(x => x.CommandId == conditions.ComparisonVariable).FirstOrDefault().CommandText;
                                 conditionData.ComparisonVariable = conditions.ComparisonVariable;
                                 conditionData.ComparisonCondition = conditions.ComparisonCondition;
                                 conditionData.ComparisonValue = conditions.ComparisonValue;
@@ -1705,7 +1689,7 @@ namespace JupiterSoft.Pages
                 Background = Brushes.White,
                 Child = new TextBlock
                 {
-                    Text = conditionData.ComparisonVariable,
+                    Text = conditionData.ComaprisonVariableName,
                     HorizontalAlignment = HorizontalAlignment.Center,
                     Background = Brushes.Transparent,
                     Foreground = (Brush)bc.ConvertFrom("#0082ca"),

@@ -74,6 +74,7 @@ namespace JupiterSoft.Models
 
     public class ConditionDataModel
     {
+        public string ComaprisonVariableName { get; set; }
         public string ComparisonVariable { get; set; }
         public int ComparisonCondition { get; set; }
         public string ComparisonValue { get; set; }
