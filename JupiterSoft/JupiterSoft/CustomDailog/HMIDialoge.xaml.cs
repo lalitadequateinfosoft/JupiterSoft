@@ -93,13 +93,14 @@ namespace JupiterSoft.CustomDailog
         public HMIDialoge(List<LogicalCommand> _Commands, DeviceInfo _deviceInfo)
         {
             InitializeComponent();
-            
+
             _dispathcer = Dispatcher.CurrentDispatcher;
             this.SerialDevice = new SerialPort();
             this.Commands = _Commands;
             this.Commands.ForEach(x => x.ExecutionStatus = (int)ExecutionStage.Not_Executed);
             this.deviceInfo = _deviceInfo;
             registerOutputStatuses = new List<RegisterOutputStatus>();
+            connectedDevices = new List<ConnectedDevices>();
 
 
 
@@ -112,12 +113,12 @@ namespace JupiterSoft.CustomDailog
 
         private void StopProcess_Click(object sender, RoutedEventArgs e)
         {
-            if(WebcamViewer.IsRecording)
+            if (WebcamViewer.IsRecording)
             {
                 StopUSBCamRecording();
             }
 
-            if(isCameraRunning)
+            if (isCameraRunning)
             {
                 StopUSBCamera();
             }
@@ -269,10 +270,10 @@ namespace JupiterSoft.CustomDailog
             try
             {
                 // Display webcam video
-                _dispathcer.Invoke(new Action(() => { WebcamViewer.StartPreview(); }));
-                
+                WebcamViewer.StartPreview(); 
 
-                
+
+
                 isCameraRunning = true;
             }
             catch (Microsoft.Expression.Encoder.SystemErrorException ex)
@@ -286,23 +287,29 @@ namespace JupiterSoft.CustomDailog
         {
 
             // Stop the display of webcam video.
-            _dispathcer.Invoke(new Action(() => { WebcamViewer.StopPreview();  }));
-           
+            _dispathcer.Invoke(new Action(() => { WebcamViewer.StopPreview(); }));
+
             isCameraRunning = false;
         }
 
         private void StartUSBCamRecording()
         {
             //Start Capturing Video.
-            _dispathcer.Invoke(new Action(() => { WebcamViewer.StartRecording(); }));
-            
+            if (!WebcamViewer.IsRecording)
+            {
+                _dispathcer.Invoke(new Action(() => { WebcamViewer.StartRecording(); }));
+            }
+
         }
 
         private void StopUSBCamRecording()
         {
             // Stop recording of webcam video to harddisk.
-            _dispathcer.Invoke(new Action(() => { WebcamViewer.StopRecording(); }));
-            
+            if (WebcamViewer.IsRecording)
+            {
+                _dispathcer.Invoke(new Action(() => { WebcamViewer.StopRecording(); }));
+            }
+
         }
         #endregion
         #region network camera
@@ -906,7 +913,7 @@ namespace JupiterSoft.CustomDailog
 
         private void SerialPortCommunications(ref SerialPort serialPort, int TypeofDevice = 0, string port = "", int baudRate = 0, int databit = 0, int stopBit = 0, int parity = 0)
         {
-            if (serialPort == null && TypeofDevice > 0)
+            if (TypeofDevice > 0)
             {
                 try
                 {
@@ -937,8 +944,11 @@ namespace JupiterSoft.CustomDailog
                     serialPort.Encoding = ASCIIEncoding.ASCII;
                     switch (TypeofDevice)
                     {
-                        case (int)Models.DeviceType.ControlCard:
+                        case (int)Models.DeviceType.WeightModule:
                             serialPort.DataReceived += WeightDevice_DataReceived;
+                            break;
+                        case (int)Models.DeviceType.ControlCard:
+                            serialPort.DataReceived += ControlDevice_DataReceived;
                             break;
                     }
 
@@ -990,105 +1000,105 @@ namespace JupiterSoft.CustomDailog
                     }
                     RecData _recData = cDevices.CurrentRequest;
 
-                    if (_reply.CheckCrc(recBufParse, Convert.ToInt32(_reply.length)))  // SB1 Check CRC
+                    //if (_reply.CheckCrc(recBufParse, Convert.ToInt32(_reply.length)))  // SB1 Check CRC
+                    //{
+
+                    if (_recData != null && _reply.sesId == _recData.SessionId)
                     {
-
-                        if (_recData != null && _reply.sesId == _recData.SessionId)
+                        if (device == Models.DeviceType.WeightModule)
                         {
-                            if (device == Models.DeviceType.WeightModule)
-                            {
 
-                                Common.GoodTmgm++;
+                            Common.GoodTmgm++;
+                            foreach (var item in connectedDevices.Where(x => x.DeviceType == device))
+                            {
+                                item.CurrentRequest.MbTgm = recBufParse;
+                                item.CurrentRequest.Status = PortDataStatus.Received;
+
+                                foreach (var command in Commands.Where(x => x.CommandId == commandId))
+                                {
+                                    command.OutPutData = item.CurrentRequest;
+                                }
+
+                            }
+
+
+
+                            return;
+                        }
+
+
+                        //ExtractPayload
+                        Byte[] _payload = new Byte[1000];
+                        Array.Copy(RxSB1, 30, _payload, 0, payLoadSize);
+                        payload = _payload;
+
+                        //Set payloadrs
+                        MbAck = (Byte)payload[0];
+                        MbLength = Util.ByteArrayConvert.ToUInt16(payload, 1);
+                        Reserved = Util.ByteArrayConvert.ToUInt16(payload, 3);
+
+
+                        //extract modbus tgm
+                        Byte[] _MbTgm = new Byte[1000];
+                        Array.Copy(_payload, 5, _MbTgm, 0, MbLength);
+                        mbTgmBytes = _MbTgm;
+
+                        if (Common.COMSelected == COMType.MODBUS)
+                        {
+                            _MbTgmBytes = RxSB1;
+                            MbLength = (ushort)_reply.length;
+                        }
+                        if (_MbTgmBytes != null && MbLength > 0)
+                        {
+                            bool _IsTgmErr = false;
+                            _IsTgmErr = CheckTgmError(_recData, _payload, _MbTgmBytes, MbLength);
+                            if (_IsTgmErr)
+                            {
+                                if (_recData.RqType == RQType.WireLess)
+                                {
+                                    mbTgmBytes = payload;
+                                }
+                                else
+                                {
+                                    mbTgmBytes = _MbTgmBytes;
+                                }
+
                                 foreach (var item in connectedDevices.Where(x => x.DeviceType == device))
                                 {
-                                    item.CurrentRequest.MbTgm = recBufParse;
+                                    item.CurrentRequest.MbTgm = mbTgmBytes;
                                     item.CurrentRequest.Status = PortDataStatus.Received;
 
                                     foreach (var command in Commands.Where(x => x.CommandId == commandId))
                                     {
                                         command.OutPutData = item.CurrentRequest;
                                     }
-
                                 }
-
-
 
                                 return;
-                            }
-
-
-                            //ExtractPayload
-                            Byte[] _payload = new Byte[1000];
-                            Array.Copy(RxSB1, 30, _payload, 0, payLoadSize);
-                            payload = _payload;
-
-                            //Set payloadrs
-                            MbAck = (Byte)payload[0];
-                            MbLength = Util.ByteArrayConvert.ToUInt16(payload, 1);
-                            Reserved = Util.ByteArrayConvert.ToUInt16(payload, 3);
-
-
-                            //extract modbus tgm
-                            Byte[] _MbTgm = new Byte[1000];
-                            Array.Copy(_payload, 5, _MbTgm, 0, MbLength);
-                            mbTgmBytes = _MbTgm;
-
-                            if (Common.COMSelected == COMType.MODBUS)
-                            {
-                                _MbTgmBytes = RxSB1;
-                                MbLength = (ushort)_reply.length;
-                            }
-                            if (_MbTgmBytes != null && MbLength > 0)
-                            {
-                                bool _IsTgmErr = false;
-                                _IsTgmErr = CheckTgmError(_recData, _payload, _MbTgmBytes, MbLength);
-                                if (_IsTgmErr)
-                                {
-                                    if (_recData.RqType == RQType.WireLess)
-                                    {
-                                        mbTgmBytes = payload;
-                                    }
-                                    else
-                                    {
-                                        mbTgmBytes = _MbTgmBytes;
-                                    }
-
-                                    foreach (var item in connectedDevices.Where(x => x.DeviceType == device))
-                                    {
-                                        item.CurrentRequest.MbTgm = mbTgmBytes;
-                                        item.CurrentRequest.Status = PortDataStatus.Received;
-
-                                        foreach (var command in Commands.Where(x => x.CommandId == commandId))
-                                        {
-                                            command.OutPutData = item.CurrentRequest;
-                                        }
-                                    }
-
-                                    return;
-
-                                }
-                            }
-
-                        }
-                        else
-                        {
-                            if (_recData != null)
-                            {
-                                _recData.Status = PortDataStatus.Normal;
-                                if (_recData.SessionId > 0)
-                                {
-                                    foreach (var item in connectedDevices.Where(x => x.DeviceType == device))
-                                    {
-                                        item.CurrentRequest = _recData;
-                                    }
-                                }
 
                             }
                         }
-
-
 
                     }
+                    else
+                    {
+                        if (_recData != null)
+                        {
+                            _recData.Status = PortDataStatus.Normal;
+                            if (_recData.SessionId > 0)
+                            {
+                                foreach (var item in connectedDevices.Where(x => x.DeviceType == device))
+                                {
+                                    item.CurrentRequest = _recData;
+                                }
+                            }
+
+                        }
+                    }
+
+
+
+                    //}
 
                 }
 
@@ -1571,26 +1581,21 @@ namespace JupiterSoft.CustomDailog
                             }
                         }
 
-                        else if (command.CommandType == (int)ElementConstant.End_Scope)
+                        else if (command.CommandType == (int)ElementConstant.Stop_Repeat)
                         {
-                            var ifcommand = Commands.Where(x => (x.CommandType == (int)ElementConstant.If_Condition_Start || x.CommandType == (int)ElementConstant.Else_If_Start || x.CommandType == (int)ElementConstant.Else_Start) && x.Order < command.Order).OrderBy(x => x.Order).ToList().FirstOrDefault();
+                            //var ifcommand = Commands.Where(x => (x.CommandType == (int)ElementConstant.If_Condition_Start || x.CommandType == (int)ElementConstant.Else_If_Start || x.CommandType == (int)ElementConstant.Else_Start) && x.Order < command.Order).OrderBy(x => x.Order).ToList().FirstOrDefault();
 
-                            var repeater = Commands.Where(x => x.CommandType == (int)ElementConstant.Repeat_Control && x.Order < command.Order).OrderBy(x => x.Order).ToList().FirstOrDefault();
+                            var repeater = Commands.Where(x => x.CommandType == (int)ElementConstant.Repeat_Control).OrderBy(x => x.Order).ToList().LastOrDefault();
 
-                            if (ifcommand != null)
+                            if (repeater != null)
                             {
-                                foreach (var item in Commands)
+                                foreach (var item in Commands.Where(x => x.Order > repeater.Order && x.Order < command.Order))
                                 {
-                                    if (ifcommand.CommandId == item.CommandId)
-                                    {
-                                        item.ExecutionStatus = (int)ExecutionStage.Executed;
-                                        command.ExecutionStatus = (int)ExecutionStage.Executed;
-                                        AddOutPut("If Scope Ended..", (int)OutPutType.SUCCESS, true);
-                                    }
+                                    item.ExecutionStatus = (int)ExecutionStage.Not_Executed;
+                                    command.ExecutionStatus = (int)ExecutionStage.Not_Executed;
+                                    AddOutPut("Repeater Scope Ended..", (int)OutPutType.SUCCESS, true);
+
                                 }
-                            }
-                            else if (repeater != null)
-                            {
                                 AddOutPut("Repeating again..", (int)OutPutType.SUCCESS, true);
                             }
                             else
@@ -1795,7 +1800,7 @@ namespace JupiterSoft.CustomDailog
                                         }
                                         else if (Scopecommand.CommandType == (int)ElementConstant.Disconnect_Camera_Event)
                                         {
-                                           // AddOutPut("Stoping Camera..", (int)OutPutType.INFORMATION, true);
+                                            // AddOutPut("Stoping Camera..", (int)OutPutType.INFORMATION, true);
                                             StopUSBCamRecording();
                                             AddOutPut("Camera Recording Stopped..", (int)OutPutType.SUCCESS, true);
                                             Scopecommand.ExecutionStatus = (int)ExecutionStage.Executed;
@@ -1859,7 +1864,7 @@ namespace JupiterSoft.CustomDailog
                         }
                         else if (command.CommandType == (int)ElementConstant.Connect_Camera_Event)
                         {
-                           
+
                             StartUSBCamRecording();
                             command.ExecutionStatus = (int)ExecutionStage.Executed;
                             AddOutPut("Camera Recording Starts..", (int)OutPutType.INFORMATION, true);

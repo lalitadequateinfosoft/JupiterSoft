@@ -2482,7 +2482,7 @@
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="290"/>
-                                <ColumnDefinition Width="380"/>
+                                <ColumnDefinition Width="450"/>
                             </Grid.ColumnDefinitions>
                             <Border BorderBrush="#fff" BorderThickness="1" Grid.Row="0" Grid.Column="0" >
                                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Stretch">
@@ -2759,6 +2759,7 @@
                                             <Button 
                                                 x:Name="Start_Event"
                                                 Style="{StaticResource EventButtonStyle}"
+                                                Visibility="Hidden"
                                                 Content="Start"
                                                 Margin="12,5,0,0"
                                                 HorizontalAlignment="Left"
@@ -2945,6 +2946,7 @@
                                         <StackPanel x:Name="ButtonGridArea3" Grid.Row="2" HorizontalAlignment="Center" Margin="10" MouseEnter="ButtonGrid_MouseEnter" Width="250" MouseLeave="ButtonGrid_MouseLeave">
                                             <Button 
                                                 x:Name="Forever_Control_Start"
+                                                Visibility="Hidden"
                                                 Style="{StaticResource ControlButtonStyle}"
                                                 Content="Forever Control Start"
                                                 Margin="12,5,0,0"
@@ -2986,7 +2988,7 @@
                                             <Button 
                                                 x:Name="Stop_Repeat"
                                                 Style="{StaticResource ControlButtonStyle}"
-                                                Content="Stop Control"
+                                                Content="Repeat Scope End"
                                                 Margin="12,5,0,0"
                                                 HorizontalAlignment="Left"
                                                 VerticalAlignment="Center"
@@ -3023,9 +3025,30 @@
                                                 IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}"
                                                 Tag="{Binding If_Condition_Start,Mode=OneWay}"
                                                     />
+                                            <Button 
+                                                x:Name="End_Scope"
+                                                Style="{StaticResource ControlButtonStyle}"
+                                                Content="End Scope"
+                                                Margin="12,5,0,0"
+                                                HorizontalAlignment="Left"
+                                                VerticalAlignment="Center"
+                                                BorderBrush="#ffdab2"
+                                                Background="#ffa94c"
+                                                BorderThickness="0.5"
+                                                FontSize="12"
+                                                Foreground="#fff"
+                                                FontWeight="Bold"
+                                                FontFamily="Georgia, serif;" 
+                                                Width="200"
+                                                Height="42" 
+                                                PreviewMouseMove="Button_PreviewMouseMove"
+                                                IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}"
+                                                Tag="{Binding End_Scope,Mode=OneWay}"
+                                                    />
 
                                             <Button 
                                                 x:Name="Else_If_Start"
+                                                Visibility="Hidden"
                                                 Style="{StaticResource ControlButtonStyle}"
                                                 Content="Else If Start"
                                                 Margin="12,5,0,0"
@@ -3047,6 +3070,7 @@
 
                                             <Button 
                                                 x:Name="Else_Start"
+                                                Visibility="Hidden"
                                                 Style="{StaticResource ControlButtonStyle}"
                                                 Content="Else Start"
                                                 Margin="12,5,0,0"
@@ -3066,26 +3090,7 @@
                                                 Tag="{Binding Else_Start,Mode=OneWay}"
                                                     />
 
-                                            <Button 
-                                                x:Name="End_Scope"
-                                                Style="{StaticResource ControlButtonStyle}"
-                                                Content="End Scope"
-                                                Margin="12,5,0,0"
-                                                HorizontalAlignment="Left"
-                                                VerticalAlignment="Center"
-                                                BorderBrush="#ffdab2"
-                                                Background="#ffa94c"
-                                                BorderThickness="0.5"
-                                                FontSize="12"
-                                                Foreground="#fff"
-                                                FontWeight="Bold"
-                                                FontFamily="Georgia, serif;" 
-                                                Width="200"
-                                                Height="42" 
-                                                PreviewMouseMove="Button_PreviewMouseMove"
-                                                IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}"
-                                                Tag="{Binding End_Scope,Mode=OneWay}"
-                                                    />
+                                           
 
 
 
@@ -3262,18 +3267,36 @@
                                 </ScrollViewer>
 
                             </Border>
-                            <StackPanel Grid.Row="0" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Orientation="Vertical" Cursor="Arrow" Background="#eee" AllowDrop="False">
-
-
-                                <ScrollViewer VerticalScrollBarVisibility="Hidden" MinHeight="500" Cursor="Hand">
-                                    <Canvas x:Name="ReceiveDrop" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="700" Cursor="Hand" Width="370" AllowDrop="True" Background="Transparent" Drop="Canvas_Drop" DragOver="Canvas_DragOver" DragLeave="Canvas_DragLeave" DragEnter="ReceiveDrop_DragEnter" PreviewMouseMove="ReceiveDrop_PreviewMouseMove" PreviewMouseUp="ReceiveDrop_PreviewMouseUp">
+                            <ScrollViewer 
+                                Grid.Row="0"
+                                Grid.Column="2"
+                                VerticalScrollBarVisibility="Hidden"
+                                Height="500"
+                                Cursor="Hand"
+                                x:Name="CommandBar"
+                                Background="#eee">
+                                    <Canvas 
+                                        x:Name="ReceiveDrop"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch"
+                                        Cursor="Hand"
+                                        Width="370"
+                                        Height="7000"
+                                        AllowDrop="True"
+                                        Background="Transparent"
+                                        Drop="Canvas_Drop"
+                                        DragOver="Canvas_DragOver"
+                                        DragLeave="Canvas_DragLeave"
+                                        DragEnter="ReceiveDrop_DragEnter"
+                                        PreviewMouseMove="ReceiveDrop_PreviewMouseMove"
+                                        PreviewMouseUp="ReceiveDrop_PreviewMouseUp">
 
 
 
                                     </Canvas>
-                                </ScrollViewer>
+                             </ScrollViewer>
 
-                            </StackPanel>
+                           
 
                         </Grid>
                     </Border>

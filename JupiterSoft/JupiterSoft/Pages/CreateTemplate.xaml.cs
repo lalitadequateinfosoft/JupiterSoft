@@ -380,6 +380,8 @@ namespace JupiterSoft.Pages
             var data = e.Data.GetData(typeof(string));
             if (data != null)
             {
+                ReceiveDrop.Height = ReceiveDrop.Height + 100;
+                //CommandBar.Height = CommandBar.Height + 50;
                 Point dropPosition = e.GetPosition(ReceiveDrop);
                 double NewTop = dropPosition.Y;
                 double NewLeft = dropPosition.X;
@@ -1066,10 +1068,10 @@ namespace JupiterSoft.Pages
                                 Order = Commands.OrderByDescending(x => x.Order).FirstOrDefault().Order + 1,
                                 ExecutionStatus = (int)ExecutionStage.Not_Executed,
                                 Configuration = new DeviceConfiguration(),
-                                CommandText = "Repeat Control"
+                                CommandText = Stop_Repeat.Content.ToString()
                             };
                             Commands.Add(command);
-                            //ShouldAdd = true;
+                            ShouldAdd = true;
                         }
                         break;
 
@@ -1077,6 +1079,7 @@ namespace JupiterSoft.Pages
 
                 if (ShouldAdd)
                 {
+                    
                     Canvas.SetLeft(ele, NewLeft);
                     Canvas.SetTop(ele, NewTop);
 
