@@ -23,6 +23,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using Util;
+using Microsoft.Expression.Encoder.Devices;
+using System.Collections.ObjectModel;
 
 namespace JupiterSoft.CustomDailog
 {
@@ -68,9 +70,30 @@ namespace JupiterSoft.CustomDailog
         #endregion
 
         public bool IsClosed { get; set; }
+        public Collection<EncoderDevice> VideoDevices { get; set; }
+        public Collection<EncoderDevice> AudioDevices { get; set; }
+
+        private string _videofiledirectory;
+
+        public string VideoFileDirectory
+        {
+            get
+            {
+                return _videofiledirectory;
+            }
+            set
+            {
+                _videofiledirectory = value;
+            }
+        }
+
+        public string SnapshotDirectory { get; set; }
+        bool isCameraRunning = false;
+
         public HMIDialoge(List<LogicalCommand> _Commands, DeviceInfo _deviceInfo)
         {
             InitializeComponent();
+            
             _dispathcer = Dispatcher.CurrentDispatcher;
             this.SerialDevice = new SerialPort();
             this.Commands = _Commands;
@@ -78,11 +101,27 @@ namespace JupiterSoft.CustomDailog
             this.deviceInfo = _deviceInfo;
             registerOutputStatuses = new List<RegisterOutputStatus>();
 
+
+
+            VideoDevices = EncoderDevices.FindDevices(EncoderDeviceType.Video);
+            AudioDevices = EncoderDevices.FindDevices(EncoderDeviceType.Audio);
+            SnapshotDirectory = ApplicationConstant._SnapShotDirectory;
+            VideoFileDirectory = _VideoDirectory;
+            this.DataContext = this;
         }
 
         private void StopProcess_Click(object sender, RoutedEventArgs e)
         {
-            DisconnectCamera();
+            if(WebcamViewer.IsRecording)
+            {
+                StopUSBCamRecording();
+            }
+
+            if(isCameraRunning)
+            {
+                StopUSBCamera();
+            }
+            //DisconnectCamera();
             if (connectedDevices != null)
             {
                 foreach (var item in connectedDevices)
@@ -102,16 +141,6 @@ namespace JupiterSoft.CustomDailog
 
             try
             {
-                //var dialog = new Ookii.Dialogs.Wpf.VistaFolderBrowserDialog();
-                //if (dialog.ShowDialog().GetValueOrDefault())
-                //{
-                //    if (!string.IsNullOrEmpty(dialog.SelectedPath))
-                //    {
-                //        StartVideoCapture(dialog.SelectedPath);
-                //    }
-
-                //}
-
                 StartVideoCapture(_VideoDirectory);
             }
             catch
@@ -142,9 +171,9 @@ namespace JupiterSoft.CustomDailog
 
                     _webCamera = new WebCamera();
                     _connector.Connect(_webCamera.VideoChannel, _drawingImageProvider);
-                    videoViewer.SetImageProvider(_drawingImageProvider);
+                    //videoViewer.SetImageProvider(_drawingImageProvider);
                     _webCamera.Start();
-                    videoViewer.Start();
+                    //videoViewer.Start();
                     // _videoSender = _webCamera.VideoChannel;
 
                     isStarted = true;
@@ -188,8 +217,8 @@ namespace JupiterSoft.CustomDailog
             if (_webCamera.Capturing)
             {
                 StopVideoCapture();
-                videoViewer.Stop();
-                videoViewer.Background = Brushes.Black;
+                //videoViewer.Stop();
+                //videoViewer.Background = Brushes.Black;
                 _webCamera.Stop();
                 _webCamera.Dispose();
                 _drawingImageProvider.Dispose();
@@ -233,6 +262,47 @@ namespace JupiterSoft.CustomDailog
                 _connector.Disconnect(_webCamera.AudioChannel, _mpeg4Recorder.AudioRecorder);
                 _connector.Disconnect(_webCamera.VideoChannel, _mpeg4Recorder.VideoRecorder);
             }
+        }
+
+        private void StartUSBCamera()
+        {
+            try
+            {
+                // Display webcam video
+                _dispathcer.Invoke(new Action(() => { WebcamViewer.StartPreview(); }));
+                
+
+                
+                isCameraRunning = true;
+            }
+            catch (Microsoft.Expression.Encoder.SystemErrorException ex)
+            {
+                AddOutPut("Camera is in use by another application..", (int)OutPutType.INFORMATION, true);
+                //MessageBox.Show("Device is in use by another application");
+            }
+        }
+
+        private void StopUSBCamera()
+        {
+
+            // Stop the display of webcam video.
+            _dispathcer.Invoke(new Action(() => { WebcamViewer.StopPreview();  }));
+           
+            isCameraRunning = false;
+        }
+
+        private void StartUSBCamRecording()
+        {
+            //Start Capturing Video.
+            _dispathcer.Invoke(new Action(() => { WebcamViewer.StartRecording(); }));
+            
+        }
+
+        private void StopUSBCamRecording()
+        {
+            // Stop recording of webcam video to harddisk.
+            _dispathcer.Invoke(new Action(() => { WebcamViewer.StopRecording(); }));
+            
         }
         #endregion
         #region network camera
@@ -1714,20 +1784,20 @@ namespace JupiterSoft.CustomDailog
                                         }
                                         else if (Scopecommand.CommandType == (int)ElementConstant.Connect_Camera_Event)
                                         {
-                                            AddOutPut("Starting Camera..", (int)OutPutType.INFORMATION, true);
+                                            //AddOutPut("Starting Camera..", (int)OutPutType.INFORMATION, true);
                                             //var isStarted = ConnectionUSB();
                                             Scopecommand.ExecutionStatus = (int)ExecutionStage.Executed;
-
+                                            StartUSBCamRecording();
                                             AddOutPut("Camera Recording Starts..", (int)OutPutType.INFORMATION, true);
-                                            var RecordPath = StartVideoCapture(_FileDirectory);
-                                            AddOutPut("Camera is recording at " + RecordPath + " ..", (int)OutPutType.INFORMATION, true);
+                                            //var RecordPath = StartVideoCapture(_FileDirectory);
+                                            AddOutPut("Camera is recording at " + VideoFileDirectory + " ..", (int)OutPutType.INFORMATION, true);
 
                                         }
                                         else if (Scopecommand.CommandType == (int)ElementConstant.Disconnect_Camera_Event)
                                         {
-                                            AddOutPut("Stoping Camera..", (int)OutPutType.INFORMATION, true);
-                                            StopVideoCapture();
-                                            AddOutPut("Camera Stopped..", (int)OutPutType.SUCCESS, true);
+                                           // AddOutPut("Stoping Camera..", (int)OutPutType.INFORMATION, true);
+                                            StopUSBCamRecording();
+                                            AddOutPut("Camera Recording Stopped..", (int)OutPutType.SUCCESS, true);
                                             Scopecommand.ExecutionStatus = (int)ExecutionStage.Executed;
                                             //StopVideoCapture();
                                         }
@@ -1789,22 +1859,21 @@ namespace JupiterSoft.CustomDailog
                         }
                         else if (command.CommandType == (int)ElementConstant.Connect_Camera_Event)
                         {
-                            AddOutPut("Starting Camera..", (int)OutPutType.INFORMATION, true);
-                            // var isStarted = ConnectionUSB();
+                           
+                            StartUSBCamRecording();
                             command.ExecutionStatus = (int)ExecutionStage.Executed;
-
                             AddOutPut("Camera Recording Starts..", (int)OutPutType.INFORMATION, true);
-                            var RecordPath = StartVideoCapture(_FileDirectory);
-                            AddOutPut("Camera is recording at " + RecordPath + " ..", (int)OutPutType.INFORMATION, true);
+                            //var RecordPath = StartVideoCapture(_FileDirectory);
+                            AddOutPut("Camera is recording at " + VideoFileDirectory + " ..", (int)OutPutType.INFORMATION, true);
 
                         }
                         else if (command.CommandType == (int)ElementConstant.Disconnect_Camera_Event)
                         {
-                            AddOutPut("Stoping Camera..", (int)OutPutType.INFORMATION, true);
-                            StopVideoCapture();
-                            AddOutPut("Camera Stopped..", (int)OutPutType.SUCCESS, true);
+                            //AddOutPut("Stoping Camera..", (int)OutPutType.INFORMATION, true);
+                            StopUSBCamRecording();
+                            AddOutPut("Camera Recording Stopped..", (int)OutPutType.SUCCESS, true);
                             command.ExecutionStatus = (int)ExecutionStage.Executed;
-                            StopVideoCapture();
+
 
                         }
 
@@ -2131,22 +2200,16 @@ namespace JupiterSoft.CustomDailog
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            _webCamera = new WebCamera();
-            _drawingImageProvider = new DrawingImageProvider();
-            _connector = new MediaConnector();
-            if (_webCamera != null)
-            {
-                _connector.Connect(_webCamera.VideoChannel, _drawingImageProvider);
-                videoViewer.SetImageProvider(_drawingImageProvider);
-                _webCamera.Start();
-                videoViewer.Start();
+            var btn = sender as Button;
+            btn.Content = "Execution Started";
+            btn.Background = Brushes.Red;
+            btn.IsEnabled = false;
+            StartUSBCamera();
+            //WebcamViewer.StartPreview();
+            AddOutPut("Commands Execution started..", (int)OutPutType.INFORMATION);
+            ExecuteProcesses();
+            AddOutPut("Commands compilation completed..", (int)OutPutType.SUCCESS);
 
-                _runningCamera = "USB";
-                AddOutPut("Camera has started..", (int)OutPutType.INFORMATION, true);
-                AddOutPut("Commands Execution started..", (int)OutPutType.INFORMATION);
-               // ExecuteProcesses();
-                AddOutPut("Commands compilation completed..", (int)OutPutType.SUCCESS);
-            }
         }
     }
 }

@@ -32,10 +32,6 @@ namespace JupiterSoft
             AudioDevices = EncoderDevices.FindDevices(EncoderDeviceType.Audio);
         }
 
-        
-
-        
-
         private void StartCaptureButton_Click(object sender, RoutedEventArgs e)
         {
             try

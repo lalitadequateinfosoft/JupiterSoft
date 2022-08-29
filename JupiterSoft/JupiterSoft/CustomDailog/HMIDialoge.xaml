@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:JupiterSoft.CustomDailog"
+        xmlns:cam="clr-namespace:WebcamControl;assembly=WebcamControl"
         xmlns:fa="http://schemas.fontawesome.io/icons/"
         xmlns:ui="http://schemas.modernwpf.com/2019"
         xmlns:controls="clr-namespace:Ozeki.Media;assembly=OzekiSDK"
@@ -206,19 +207,52 @@
                                         Margin="2">
                                         <GroupBox 
                                             FontSize="14"
-                                            Background="Transparent"
                                             BorderThickness="3"
                                             BorderBrush="Black"
                                             Header="Live Camera Stream"
                                             HorizontalAlignment="Stretch" 
                                             VerticalAlignment="Stretch"
                                             Padding="5">
-                                            <Grid HorizontalAlignment="Stretch" Height="240" Width="420" VerticalAlignment="Top">
-                                                <controls:VideoViewerWPF
-                                                    Name="videoViewer"
-                                                    HorizontalAlignment="Stretch"
-                                                    VerticalAlignment="Stretch"
-                                                    Background="Black"/>
+                                            <Grid HorizontalAlignment="Stretch" Height="300" Width="400" VerticalAlignment="Top">
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="*"/>
+                                                    <RowDefinition Height="132"/>
+                                                </Grid.RowDefinitions>
+                                                <cam:Webcam 
+                                                    Grid.Row="0"
+                                                    x:Name="WebcamViewer"
+                                                    Margin="10" 
+                    FrameRate="30"
+                    FrameSize="640, 480"                    
+                    ImageDirectory="{Binding SnapshotDirectory}"
+                    VideoDirectory="{Binding VideoFileDirectory}"
+                    VideoDevice="{Binding SelectedItem, ElementName=VidDevices}"
+                    AudioDevice="{Binding SelectedItem, ElementName=AudDevices}"
+                                                            />
+                                                <Grid Grid.Row="1" HorizontalAlignment="Center">
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition/>
+                                                        <RowDefinition/>
+                                                    </Grid.RowDefinitions>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                        <ColumnDefinition/>
+                                                    </Grid.ColumnDefinitions>
+
+                                                    <TextBlock Text="Camera Device" VerticalAlignment="Top" Grid.Column="0" Grid.Row="0" />
+                                                    <ComboBox x:Name="VidDevices" Grid.Column="1" Margin="10,0,0,0"
+                      Width="210"
+                      ItemsSource="{Binding VideoDevices}"
+                      DisplayMemberPath="Name"
+                      SelectedIndex="0"/>
+
+                                                    <TextBlock Text="Audio Device" VerticalAlignment="Top" Grid.Column="0" Grid.Row="1"/>
+                                                    <ComboBox x:Name="AudDevices" Grid.Row="1" Grid.Column="1"
+                      Width="210" Margin="10,0,0,0"
+                      ItemsSource="{Binding AudioDevices}"
+                      DisplayMemberPath="Name"
+                      SelectedIndex="0"/>
+                                                </Grid>
                                             </Grid>
                                         </GroupBox>
                                     </StackPanel>
