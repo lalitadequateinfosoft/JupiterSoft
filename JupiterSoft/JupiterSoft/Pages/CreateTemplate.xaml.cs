@@ -194,10 +194,10 @@ namespace JupiterSoft.Pages
             this.SerialDevice = new SerialPort();
 
             Commands = new List<LogicalCommand>();
-            Commands = runningCommands;
-            ApplicationConstant.runningCommands = new List<LogicalCommand>();
+            //Commands = runningCommands;
+            //ApplicationConstant.runningCommands = new List<LogicalCommand>();
 
-            LoadRunningCommands();
+            //LoadRunningCommands();
         }
 
         #region UI Functions

@@ -26,13 +26,16 @@ using Util;
 using Microsoft.Expression.Encoder.Devices;
 using System.Collections.ObjectModel;
 using System.Timers;
+using System.ComponentModel;
+using JupiterSoft.Annotations;
+using System.Runtime.CompilerServices;
 
 namespace JupiterSoft.CustomDailog
 {
     /// <summary>
     /// Interaction logic for HMIDialoge.xaml
     /// </summary>
-    public partial class HMIDialoge : Window
+    public partial class HMIDialoge : Window, INotifyPropertyChanged
     {
         #region Function Variablle
         const int REC_BUF_SIZE = 10000;
@@ -54,7 +57,16 @@ namespace JupiterSoft.CustomDailog
         string _VideoDirectory = ApplicationConstant._VideoDirectory;
         BrushConverter bc;
         private IIPCamera _camera;
-        private DrawingImageProvider _drawingImageProvider;
+        private DrawingImageProvider drawingImageProvider;
+        public DrawingImageProvider _drawingImageProvider
+        {
+            get => drawingImageProvider;
+            set
+            {
+                OnPropertyChanged(nameof(_drawingImageProvider));
+                drawingImageProvider = value;
+            }
+        }
         private MediaConnector _connector;
         private IWebCamera _webCamera;
         private static string _runningCamera = null;
@@ -91,8 +103,17 @@ namespace JupiterSoft.CustomDailog
         public string SnapshotDirectory { get; set; }
         bool isCameraRunning = false;
         System.Timers.Timer ExecutionTimer = new System.Timers.Timer();
-        bool threadChanged = false;
+        private ObservableCollection<LogViewer> logs;
 
+        public ObservableCollection<LogViewer> Logs
+        {
+            get => logs;
+            set
+            {
+                OnPropertyChanged(nameof(Logs));
+                logs = value;
+            }
+        }
         public HMIDialoge(List<LogicalCommand> _Commands, DeviceInfo _deviceInfo)
         {
             InitializeComponent();
@@ -115,9 +136,13 @@ namespace JupiterSoft.CustomDailog
             {
                 Directory.CreateDirectory(VideoFileDirectory);
             }
-            this.DataContext = this;
+            Logs = new ObservableCollection<LogViewer>();
+            logsdata.ItemsSource = Logs;
             _drawingImageProvider = new DrawingImageProvider();
             _connector = new MediaConnector();
+            this.DataContext = this;
+            
+            
         }
 
         private void StopProcess_Click(object sender, RoutedEventArgs e)
@@ -166,18 +191,21 @@ namespace JupiterSoft.CustomDailog
             try
             {
 
-                _webCamera = new WebCamera();
-                _drawingImageProvider = new DrawingImageProvider();
-                _connector = new MediaConnector();
 
+                _webCamera = new WebCamera();
                 //_webCamera = WebCameraFactory.GetDefaultDevice();
 
                 if (_webCamera != null)
                 {
+
                     _connector.Connect(_webCamera.VideoChannel, _drawingImageProvider);
+
                     videoViewer.SetImageProvider(_drawingImageProvider);
+
                     _webCamera.Start();
+
                     videoViewer.Start();
+
                     _videoSender = _webCamera.VideoChannel;
 
                     isStarted = true;
@@ -769,8 +797,8 @@ namespace JupiterSoft.CustomDailog
                             Toggle27.IsChecked = _i27 == 1 ? true : false;
                             Toggle28.IsChecked = _i28 == 1 ? true : false;
                             Toggle29.IsChecked = _i29 == 1 ? true : false;
-                        //Toggle30.IsChecked = _i30 == 0 ? true : false;
-                    }));
+                            //Toggle30.IsChecked = _i30 == 0 ? true : false;
+                        }));
 
                     }
                 }
@@ -1562,7 +1590,7 @@ namespace JupiterSoft.CustomDailog
                     {
                         var cDevices = connectedDevices.Where(x => x.DeviceType == Models.DeviceType.WeightModule).FirstOrDefault();
                         DataReader(Models.DeviceType.ControlCard, command.CommandId);
-                        if(cDevices.ReceiveBufferQueue!=null)
+                        if (cDevices.ReceiveBufferQueue != null)
                         {
                             if (cDevices.ReceiveBufferQueue.Count > 0)
                             {
@@ -1574,9 +1602,9 @@ namespace JupiterSoft.CustomDailog
                                 ReadControlCardResponse(_rec);
                             }
                         }
-                        
+
                     }
-                    
+
                     Commands.Where(x => x.CommandId == command.CommandId).ToList().ForEach(x => x.ExecutionStatus = (int)ExecutionStage.Executed);
                     return;
                 }
@@ -1638,6 +1666,12 @@ namespace JupiterSoft.CustomDailog
                 }
                 return;
 
+            }
+
+            else if(command.CommandType == (int)ElementConstant.End_Scope)
+            {
+                Commands.Where(x => x.CommandId == command.CommandId).ToList().ForEach(x => x.ExecutionStatus = (int)ExecutionStage.Executed);
+                AddOutPut("End Scope", (int)OutPutType.INFORMATION, true);
             }
 
             else if (command.CommandType == (int)ElementConstant.Repeat_Control)
@@ -1930,47 +1964,31 @@ namespace JupiterSoft.CustomDailog
         #region Output Function
         private void AddOutPut(string Output, int MessageType, bool isBold = false)
         {
-            //Task.Delay(200);
-            try
-            {
-                Paragraph myParagraph = new Paragraph();
-                switch (MessageType)
-                {
-                    case (int)OutPutType.SUCCESS:
-                        myParagraph.Foreground = Brushes.ForestGreen;
-                        break;
-                    case (int)OutPutType.ERROR:
-                        myParagraph.Foreground = Brushes.Red;
-                        break;
-                    case (int)OutPutType.INFORMATION:
-                        myParagraph.Foreground = Brushes.Black;
-                        break;
-                    case (int)OutPutType.WARNING:
-                        myParagraph.Foreground = Brushes.OrangeRed;
-                        break;
-                }
-                if (isBold)
-                {
-                    Bold myBold = new Bold(new Run(Output));
-                    myParagraph.Inlines.Add(myBold);
-                }
-                else
-                {
-                    Run myRun = new Run(Output);
-                    myParagraph.Inlines.Add(myRun);
-                }
-                //_dispathcer.Invoke(new Action(() => { OutPutControl.Blocks.Add(myParagraph); }));
 
-                if (threadChanged)
-                {
-                    _dispathcer.Invoke(new Action(() => { OutPutControl.Blocks.Add(myParagraph); }));
-                }
-                else
-                {
-                    OutPutControl.Blocks.Add(myParagraph);
-                }
+
+
+            string Message = string.Empty;
+            switch (MessageType)
+            {
+                case (int)OutPutType.SUCCESS:
+                    Message = OutPutType.SUCCESS.ToString();
+                    break;
+                case (int)OutPutType.ERROR:
+                    Message = OutPutType.ERROR.ToString();
+                    break;
+                case (int)OutPutType.INFORMATION:
+                    Message = OutPutType.INFORMATION.ToString();
+                    break;
+                case (int)OutPutType.WARNING:
+                    Message = OutPutType.WARNING.ToString();
+                    break;
             }
-            catch (Exception ex) { return; }
+
+            App.Current.Dispatcher.Invoke((Action)delegate // <--- HERE
+            {
+                Logs.Add(new LogViewer { Output = Output, MessageType = Message });
+            });
+
 
         }
         #endregion
@@ -1983,23 +2001,7 @@ namespace JupiterSoft.CustomDailog
             btn.Background = Brushes.Red;
             btn.IsEnabled = false;
 
-            //this._webCamera = new WebCamera();
-
-
-            //_webCamera = WebCameraFactory.GetDefaultDevice();
-
-            //if (this._webCamera != null)
-            //{
-
-            //    this._connector.Connect(this._webCamera.VideoChannel, this._drawingImageProvider);
-            //    this._webCamera.Start();
-            //    this.videoViewer.SetImageProvider(this._drawingImageProvider);
-            //    this.videoViewer.Start();
-            //    this._videoSender = this._webCamera.VideoChannel;
-
-            //    _runningCamera = "USB";
-            //    AddOutPut("Camera has started..", (int)OutPutType.INFORMATION, true);
-            //}
+            ConnectionUSB();
 
             Commands.ForEach(x => x.ExecutionStatus = (int)ExecutionStage.Not_Executed);
 
@@ -2043,5 +2045,16 @@ namespace JupiterSoft.CustomDailog
 
             return Commands.Where(x => x.ExecutionStatus != (int)ExecutionStage.Executed).OrderBy(x => x.Order).ToList().FirstOrDefault().CommandId;
         }
+
+        #region property changed event
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+        #endregion
     }
 }
