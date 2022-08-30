@@ -193,8 +193,8 @@
                         Margin="2,0,1,0">
                         <ScrollViewer 
                             VerticalScrollBarVisibility="Auto"
-                            x:Name="OutPutContentArea">
-                            <Grid 
+                            x:Name="OutPutContentArea" Height="800">
+                            <Grid Height="1200"
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Stretch"
                                 Background="Transparent">

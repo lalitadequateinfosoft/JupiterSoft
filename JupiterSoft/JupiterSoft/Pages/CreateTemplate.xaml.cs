@@ -2165,7 +2165,7 @@ namespace JupiterSoft.Pages
 
                         case (int)ElementConstant.Write_Card_Out:
 
-                            var registerWriteCommand = (RegisterWriteCommand)item.CommandData;
+                            RegisterWriteCommand registerWriteCommand = JsonConvert.DeserializeObject<RegisterWriteCommand>(item.CommandData.ToString());
                             var functionName = (registerWriteCommand.RegisterOutput == 1 ? "ON" : "OFF") + " Register " + registerWriteCommand.RegisterNumber;
                             ele = Get_FunctionStyle(contentId, item.ContentType, functionName);
 
@@ -2384,7 +2384,7 @@ namespace JupiterSoft.Pages
 
                     case (int)ElementConstant.Write_Card_Out:
 
-                        var registerWriteCommand = (RegisterWriteCommand)item.CommandData;
+                        var registerWriteCommand = JsonConvert.DeserializeObject<RegisterWriteCommand>(item.CommandData.ToString()); 
                         var functionName = (registerWriteCommand.RegisterOutput == 1 ? "ON" : "OFF") + " Register " + registerWriteCommand.RegisterNumber;
                         ele = Get_FunctionStyle(contentId, item.CommandType, functionName);
                         ShouldAdd = true;
