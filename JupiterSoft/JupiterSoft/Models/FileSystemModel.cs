@@ -21,8 +21,12 @@ namespace JupiterSoft.Models
         public string ContentId { get; set; }
         public int ContentType { get; set; }
         public string ContentText { get; set; }
-        public string ContentValue { get; set; }
         public int ContentOrder { get; set; }
+        public object CommandData { get; set; }
+        public string ParentCommandId { get; set; }
+        public DeviceConfiguration Configuration { get; set; }
+        public ConditionDataModel InputData { get; set; }
+        
         public double ContentLeftPosition { get; set; }
         public double ContentTopPosition { get; set; }
     }
@@ -64,6 +68,8 @@ namespace JupiterSoft.Models
         public string CommandText { get; set; }
         public object CommandData { get; set; }
         public string ParentCommandId { get; set; }
+        public double ContentLeftPosition { get; set; }
+        public double ContentTopPosition { get; set; }
     }
 
     public class RegisterWriteCommand

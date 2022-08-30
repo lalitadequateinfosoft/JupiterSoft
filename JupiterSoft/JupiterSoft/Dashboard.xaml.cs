@@ -47,6 +47,17 @@ namespace JupiterSoft
             this.frame.Content = ChildPage;
         }
 
+        public Dashboard(List<LogicalCommand> runningCommands)
+        {
+            InitializeComponent();
+            this.DataContext = MyCommand;
+            MyCommand.InputGestures.Add(new KeyGesture(Key.S, ModifierKeys.Control));
+            ChildPage = new CreateTemplate(runningCommands);
+            this.frame.Content = null;
+            ChildPage.ParentWindow = this;
+            this.frame.Content = ChildPage;
+        }
+
         public void MyCommandExecuted(object sender, ExecutedRoutedEventArgs e)
         {
             ChildPage.SaveInitiated();

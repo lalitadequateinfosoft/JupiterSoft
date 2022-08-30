@@ -25,6 +25,7 @@ using System.Windows.Threading;
 using Util;
 using Microsoft.Expression.Encoder.Devices;
 using System.Collections.ObjectModel;
+using System.Timers;
 
 namespace JupiterSoft.CustomDailog
 {
@@ -89,6 +90,7 @@ namespace JupiterSoft.CustomDailog
 
         public string SnapshotDirectory { get; set; }
         bool isCameraRunning = false;
+        System.Timers.Timer ExecutionTimer = new System.Timers.Timer();
 
         public HMIDialoge(List<LogicalCommand> _Commands, DeviceInfo _deviceInfo)
         {
@@ -117,30 +119,22 @@ namespace JupiterSoft.CustomDailog
 
         private void StopProcess_Click(object sender, RoutedEventArgs e)
         {
-            if (WebcamViewer.IsRecording)
-            {
-                StopUSBCamRecording();
-            }
-
-            if (isCameraRunning)
-            {
-                StopUSBCamera();
-            }
-            //DisconnectCamera();
+           
+            DisconnectCamera();
             if (connectedDevices != null)
             {
-                if(connectedDevices.Count()>0)
+                if (connectedDevices.Count() > 0)
                 {
                     foreach (var item in connectedDevices)
                     {
                         StopPortCommunication(item.DeviceType);
                     }
                 }
-                
+
             }
 
-
-            IsClosed = true;
+            Dashboard dashboard = new Dashboard(ApplicationConstant.runningCommands);
+            dashboard.Show();
             Close();
         }
 
@@ -180,10 +174,10 @@ namespace JupiterSoft.CustomDailog
 
                     _webCamera = new WebCamera();
                     _connector.Connect(_webCamera.VideoChannel, _drawingImageProvider);
-                    //videoViewer.SetImageProvider(_drawingImageProvider);
+                    videoViewer.SetImageProvider(_drawingImageProvider);
                     _webCamera.Start();
-                    //videoViewer.Start();
-                    // _videoSender = _webCamera.VideoChannel;
+                    videoViewer.Start();
+                    _videoSender = _webCamera.VideoChannel;
 
                     isStarted = true;
 
@@ -226,8 +220,8 @@ namespace JupiterSoft.CustomDailog
             if (_webCamera.Capturing)
             {
                 StopVideoCapture();
-                //videoViewer.Stop();
-                //videoViewer.Background = Brushes.Black;
+               videoViewer.Stop();
+                videoViewer.Background = Brushes.Black;
                 _webCamera.Stop();
                 _webCamera.Dispose();
                 _drawingImageProvider.Dispose();
@@ -278,7 +272,7 @@ namespace JupiterSoft.CustomDailog
             try
             {
                 // Display webcam video
-                WebcamViewer.StartPreview();
+                //WebcamViewer.StartPreview();
 
 
 
@@ -295,7 +289,7 @@ namespace JupiterSoft.CustomDailog
         {
 
             // Stop the display of webcam video.
-            _dispathcer.Invoke(new Action(() => { WebcamViewer.StopPreview(); }));
+           // _dispathcer.Invoke(new Action(() => { WebcamViewer.StopPreview(); }));
 
             isCameraRunning = false;
         }
@@ -303,20 +297,20 @@ namespace JupiterSoft.CustomDailog
         private void StartUSBCamRecording()
         {
             //Start Capturing Video.
-            if (!WebcamViewer.IsRecording)
-            {
-                _dispathcer.Invoke(new Action(() => { WebcamViewer.StartRecording(); }));
-            }
+            //if (!WebcamViewer.IsRecording)
+            //{
+            //    _dispathcer.Invoke(new Action(() => { WebcamViewer.StartRecording(); }));
+            //}
 
         }
 
         private void StopUSBCamRecording()
         {
             // Stop recording of webcam video to harddisk.
-            if (WebcamViewer.IsRecording)
-            {
-                _dispathcer.Invoke(new Action(() => { WebcamViewer.StopRecording(); }));
-            }
+            //if (WebcamViewer.IsRecording)
+            //{
+            //    _dispathcer.Invoke(new Action(() => { WebcamViewer.StopRecording(); }));
+            //}
 
         }
         #endregion
@@ -1445,487 +1439,223 @@ namespace JupiterSoft.CustomDailog
 
         }
 
-        public void ExecuteProcesses()
+        public void ExecuteProcesses(string commandId)
         {
-            if (Commands != null && Commands.Count() > 0)
+            var command = Commands.Where(x => x.CommandId == commandId).FirstOrDefault();
+
+
+            if (command.CommandType == (int)ElementConstant.Connect_ControlCard_Event)
             {
-                if (Commands.Where(x => x.ExecutionStatus != (int)ExecutionStage.Executed).ToList().Count() > 0)
+                if (command.ExecutionStatus == (int)ExecutionStage.Not_Executed)
                 {
 
-                    foreach (var command in Commands.Where(x => x.ExecutionStatus != (int)ExecutionStage.Executed).OrderBy(x => x.Order).ToList())
+                    Connect_control_card(command.Configuration.deviceDetail.PortName, command.Configuration.deviceDetail.BaudRate, command.Configuration.deviceDetail.DataBit, command.Configuration.deviceDetail.StopBit, command.Configuration.deviceDetail.Parity);
+                    command.ExecutionStatus = (int)ExecutionStage.Executed;
+                    Commands.Where(x => x.CommandId == command.CommandId).ToList().ForEach(x => x.ExecutionStatus = (int)ExecutionStage.Executed);
+                    return;
+
+                }
+            }
+
+            else if (command.CommandType == (int)ElementConstant.Disconnect_ControlCard_Event)
+            {
+                if (command.ExecutionStatus == (int)ExecutionStage.Not_Executed)
+                {
+                    _dispathcer.Invoke(new Action(() =>
                     {
-                        if (command.CommandType == (int)ElementConstant.Connect_ControlCard_Event)
-                        {
-                            if (command.ExecutionStatus == (int)ExecutionStage.Not_Executed)
-                            {
+                        ControlBoardArea.Visibility = Visibility.Hidden;
+                    }));
 
-                                Connect_control_card(command.Configuration.deviceDetail.PortName, command.Configuration.deviceDetail.BaudRate, command.Configuration.deviceDetail.DataBit, command.Configuration.deviceDetail.StopBit, command.Configuration.deviceDetail.Parity);
-                                command.ExecutionStatus = (int)ExecutionStage.Executed;
-
-                            }
-                        }
-
-                        else if (command.CommandType == (int)ElementConstant.Disconnect_ControlCard_Event)
-                        {
-                            if (command.ExecutionStatus == (int)ExecutionStage.Not_Executed)
-                            {
-                                _dispathcer.Invoke(new Action(() =>
-                                {
-                                    ControlBoardArea.Visibility = Visibility.Hidden;
-                                }));
-
-                                //AddOutPut("Disconnecting Control Card..", (int)OutPutType.INFORMATION);
-                                StopPortCommunication(Models.DeviceType.ControlCard);
-                                command.ExecutionStatus = (int)ExecutionStage.Executed;
-                                //AddOutPut("Control card is disconnected..", (int)OutPutType.SUCCESS, true);
-
-                            }
-
-                        }
-
-                        else if (command.CommandType == (int)ElementConstant.Connect_Weight_Event)
-                        {
-                            if (command.ExecutionStatus == (int)ExecutionStage.Not_Executed)
-                            {
-                                //AddOutPut("Connecting weight module..", (int)OutPutType.INFORMATION);
-                                ConnectWeight(command.Configuration.deviceDetail.PortName, command.Configuration.deviceDetail.BaudRate, command.Configuration.deviceDetail.DataBit, command.Configuration.deviceDetail.StopBit, command.Configuration.deviceDetail.Parity);
-                                command.ExecutionStatus = (int)ExecutionStage.Executed;
-
-                                //AddOutPut("weight module is connected..", (int)OutPutType.SUCCESS, true);
-                                //AddOutPut("Waiting for weight module response..", (int)OutPutType.INFORMATION);
-                                //Thread.Sleep(500);
-                            }
-                            else
-                            {
-                                //AddOutPut("Started Fetching weight module input..", (int)OutPutType.SUCCESS, true);
-                                command.ExecutionStatus = (int)ExecutionStage.Executed;
-                                //AddOutPut("Fetching Stopped..", (int)OutPutType.SUCCESS, true);
-                            }
-                        }
-
-                        else if (command.CommandType == (int)ElementConstant.Disconnect_Weight_Event)
-                        {
-                            if (command.ExecutionStatus == (int)ExecutionStage.Not_Executed)
-                            {
-                                _dispathcer.Invoke(new Action(() =>
-                                {
-                                    WeightModuleArea.Visibility = Visibility.Hidden;
-                                }));
-
-                                //AddOutPut("Disconnecting weight module..", (int)OutPutType.WARNING, true);
-                                StopPortCommunication(Models.DeviceType.WeightModule);
-                                command.ExecutionStatus = (int)ExecutionStage.Executed;
-                                //AddOutPut("Weight module disconnected..", (int)OutPutType.SUCCESS, true);
-
-                            }
-                            else
-                            {
-                                //OutPutArea.AppendText("\n Executing " + command.CommandText + "..");
-                                command.ExecutionStatus = (int)ExecutionStage.Executed;
-                            }
-                        }
-
-                        else if (command.CommandType == (int)ElementConstant.Read_Weight)
-                        {
-                            if (command.ExecutionStatus == (int)ExecutionStage.Not_Executed)
-                            {
-                               // AddOutPut("Reading data..", (int)OutPutType.INFORMATION);
-                                bool received = false;
-                                RecData _rec = new RecData();
-                                while (received == false)
-                                {
-                                    var cDevices = connectedDevices.Where(x => x.DeviceType == Models.DeviceType.WeightModule).FirstOrDefault();
-                                    DataReader(Models.DeviceType.WeightModule, command.CommandId);
-                                    if (cDevices.CurrentRequest.MbTgm != null)
-                                    {
-                                        if (cDevices.CurrentRequest.MbTgm.Length > 0)
-                                        {
-                                            _rec = new RecData();
-                                            _rec = cDevices.CurrentRequest;
-                                            if (validateResponse(_rec))
-                                            {
-                                                received = true;
-                                            }
-                                        }
-                                    }
-                                }
-
-                                //AddOutPut("Storing data into " + command.CommandText + "..", (int)OutPutType.INFORMATION);
-                                //command.OutPutData = _rec;
-                                command.ExecutionStatus = (int)ExecutionStage.Executed;
-                                //AddOutPut("Showing weight module response..", (int)OutPutType.INFORMATION);
-                                showWeightModuleResponse(_rec);
-
-                            }
-                            else
-                            {
-                                command.ExecutionStatus = (int)ExecutionStage.Executed;
-                            }
-                        }
-
-                        else if (command.CommandType == (int)ElementConstant.Read_All_Card_In_Out)
-                        {
-                            if (command.ExecutionStatus == (int)ExecutionStage.Not_Executed)
-                            {
-                                AddOutPut("Fetching control card all input/output information", (int)OutPutType.INFORMATION);
-                                ReadAllControCardInputOutput();
-                                command.ExecutionStatus = (int)ExecutionStage.Executing;
-
-                                AddOutPut("Reading control card all input/output information", (int)OutPutType.INFORMATION);
-                                bool received = false;
-                                RecData _rec = new RecData();
-                                while (received == false)
-                                {
-                                    var cDevices = connectedDevices.Where(x => x.DeviceType == Models.DeviceType.WeightModule).FirstOrDefault();
-                                    DataReader(Models.DeviceType.ControlCard, command.CommandId);
-                                    if (cDevices.ReceiveBufferQueue.Count > 0)
-                                    {
-                                        _rec = new RecData();
-                                        _rec = cDevices.CurrentRequest;
-                                        received = true;
-                                    }
-                                }
-                                AddOutPut("Storing output..", (int)OutPutType.INFORMATION);
-                                //command.OutPutData = _rec;
-                                command.ExecutionStatus = (int)ExecutionStage.Executed;
-                                AddOutPut("Showing control card state..", (int)OutPutType.INFORMATION);
-                                ReadControlCardResponse(_rec);
-                            }
-                            else if (command.ExecutionStatus == (int)ExecutionStage.Executing)
-                            {
-                                command.ExecutionStatus = (int)ExecutionStage.Executed;
-                            }
-                        }
-
-                        else if (command.CommandType == (int)ElementConstant.Write_Card_Out)
-                        {
-                            if (command.ExecutionStatus == (int)ExecutionStage.Not_Executed)
-                            {
-                                var functioncommand = (RegisterWriteCommand)command.CommandData;
-                                string commandText = functioncommand.RegisterOutput == 1 ? "ON" : "OFF";
-                                AddOutPut("Writing control card register " + functioncommand.RegisterNumber + " " + commandText, (int)OutPutType.WARNING, true);
-                                WriteControCardState(functioncommand.RegisterNumber, functioncommand.RegisterOutput);
-                                AddOutPut("Control card register " + functioncommand.RegisterNumber + " is " + commandText, (int)OutPutType.SUCCESS, true);
-                                command.ExecutionStatus = (int)ExecutionStage.Executed;
-                                WriteControlCardResponse(functioncommand.RegisterNumber, functioncommand.RegisterOutput);
-                            }
-                            else
-                            {
-                                //OutPutArea.AppendText("\n Executing " + command.CommandText + "..");
-                                command.ExecutionStatus = (int)ExecutionStage.Executed;
-                            }
-                        }
-
-                        else if (command.CommandType == (int)ElementConstant.Stop_Repeat)
-                        {
-                            //var ifcommand = Commands.Where(x => (x.CommandType == (int)ElementConstant.If_Condition_Start || x.CommandType == (int)ElementConstant.Else_If_Start || x.CommandType == (int)ElementConstant.Else_Start) && x.Order < command.Order).OrderBy(x => x.Order).ToList().FirstOrDefault();
-
-                            var repeater = Commands.Where(x => x.CommandType == (int)ElementConstant.Repeat_Control).OrderBy(x => x.Order).ToList().LastOrDefault();
-
-                            if (repeater != null)
-                            {
-                                foreach (var item in Commands.Where(x => x.Order > repeater.Order && x.Order < command.Order))
-                                {
-                                    item.ExecutionStatus = (int)ExecutionStage.Not_Executed;
-                                    command.ExecutionStatus = (int)ExecutionStage.Not_Executed;
-                                    AddOutPut("Repeater Scope Ended..", (int)OutPutType.SUCCESS, true);
-
-                                }
-                                AddOutPut("Repeating again..", (int)OutPutType.SUCCESS, true);
-                            }
-                            else
-                            {
-                                AddOutPut("Ended..", (int)OutPutType.SUCCESS, true);
-                            }
-                            Task.Delay(200);
-                        }
-
-                        else if (command.CommandType == (int)ElementConstant.If_Condition_Start)
-                        {
-                            if (command.ExecutionStatus == (int)ExecutionStage.Not_Executed || command.ExecutionStatus == (int)ExecutionStage.Executing)
-                            {
-                                bool isConditionTrue = false;
-                                command.ExecutionStatus = (int)ExecutionStage.Executing;
-                                int ComparisonVariableVal = 0;
-                                if (command.InputData.ComparisonVariable.Contains('-'))
-                                {
-                                    var input = command.InputData.ComparisonVariable.Split('-')[0];
-                                    var register = Convert.ToInt32(command.InputData.ComparisonVariable.Split('-')[1]);
-                                    GetControlCardInputOutputState(Commands.Where(x => x.CommandId == input).FirstOrDefault().OutPutData);
-
-                                    ComparisonVariableVal = registerOutputStatuses.Where(x => x.Register == register).FirstOrDefault().RegisterStatus;
-
-                                    if (ComparisonVariableVal == Convert.ToInt32(command.InputData.ComparisonValue))
-                                    {
-                                        isConditionTrue = true;
-                                    }
-
-                                }
-                                else
-                                {
-                                    double weight = getWeightModuleResponse(Commands.Where(x => x.CommandId == command.InputData.ComparisonVariable).FirstOrDefault().OutPutData);
-                                    isConditionTrue = CompareWeightdata(command.InputData.ComparisonCondition, weight, command.InputData.ComparisonValue);
-                                }
-
-                                var endscope = Commands.Where(x => x.ParentCommandId == command.CommandId).FirstOrDefault
-                                   ().Order;
-
-                                if (isConditionTrue)
-                                {
-                                    foreach (var Scopecommand in Commands.Where(x => x.Order > command.Order && x.Order < endscope && x.ExecutionStatus != (int)ExecutionStage.Executed).ToList())
-                                    {
-                                        if (Scopecommand.CommandType == (int)ElementConstant.Connect_ControlCard_Event)
-                                        {
-                                            if (Scopecommand.ExecutionStatus == (int)ExecutionStage.Not_Executed)
-                                            {
-
-                                                Connect_control_card(Scopecommand.Configuration.deviceDetail.PortName, Scopecommand.Configuration.deviceDetail.BaudRate, Scopecommand.Configuration.deviceDetail.DataBit, Scopecommand.Configuration.deviceDetail.StopBit, Scopecommand.Configuration.deviceDetail.Parity);
-                                                Scopecommand.ExecutionStatus = (int)ExecutionStage.Executed;
-
-                                            }
-                                        }
-
-                                        else if (Scopecommand.CommandType == (int)ElementConstant.Disconnect_ControlCard_Event)
-                                        {
-                                            if (Scopecommand.ExecutionStatus == (int)ExecutionStage.Not_Executed)
-                                            {
-                                                AddOutPut("Disconnecting Control Card..", (int)OutPutType.INFORMATION);
-                                                StopPortCommunication(Models.DeviceType.ControlCard);
-                                                Scopecommand.ExecutionStatus = (int)ExecutionStage.Executed;
-                                                AddOutPut("Control card is disconnected..", (int)OutPutType.SUCCESS, true);
-
-                                            }
-
-                                        }
-
-                                        else if (Scopecommand.CommandType == (int)ElementConstant.Connect_Weight_Event)
-                                        {
-                                            if (Scopecommand.ExecutionStatus == (int)ExecutionStage.Not_Executed)
-                                            {
-                                                AddOutPut("Connecting weight module..", (int)OutPutType.INFORMATION);
-                                                ConnectWeight(Scopecommand.Configuration.deviceDetail.PortName, Scopecommand.Configuration.deviceDetail.BaudRate, Scopecommand.Configuration.deviceDetail.DataBit, Scopecommand.Configuration.deviceDetail.StopBit, Scopecommand.Configuration.deviceDetail.Parity);
-                                                Scopecommand.ExecutionStatus = (int)ExecutionStage.Executed;
-
-                                                AddOutPut("weight module is connected..", (int)OutPutType.SUCCESS, true);
-                                                AddOutPut("Waiting for weight module response..", (int)OutPutType.INFORMATION);
-                                                //Thread.Sleep(500);
-                                            }
-                                            else
-                                            {
-                                                AddOutPut("Started Fetching weight module input..", (int)OutPutType.SUCCESS, true);
-                                                Scopecommand.ExecutionStatus = (int)ExecutionStage.Executed;
-                                                AddOutPut("Fetching Stopped..", (int)OutPutType.SUCCESS, true);
-                                            }
-                                        }
-
-                                        else if (Scopecommand.CommandType == (int)ElementConstant.Disconnect_Weight_Event)
-                                        {
-                                            if (Scopecommand.ExecutionStatus == (int)ExecutionStage.Not_Executed)
-                                            {
-                                                AddOutPut("Disconnecting weight module..", (int)OutPutType.WARNING, true);
-                                                StopPortCommunication(Models.DeviceType.WeightModule);
-                                                Scopecommand.ExecutionStatus = (int)ExecutionStage.Executed;
-                                                AddOutPut("Weight module disconnected..", (int)OutPutType.SUCCESS, true);
-
-                                            }
-                                            else
-                                            {
-                                                //OutPutArea.AppendText("\n Executing " + Scopecommand.CommandText + "..");
-                                                Scopecommand.ExecutionStatus = (int)ExecutionStage.Executed;
-                                            }
-                                        }
-
-                                        else if (Scopecommand.CommandType == (int)ElementConstant.Read_Weight)
-                                        {
-                                            if (Scopecommand.ExecutionStatus == (int)ExecutionStage.Not_Executed)
-                                            {
-                                                AddOutPut("Reading data..", (int)OutPutType.INFORMATION);
-                                                bool received = false;
-                                                RecData _rec = new RecData();
-                                                while (received == false)
-                                                {
-                                                    var cDevices = connectedDevices.Where(x => x.DeviceType == Models.DeviceType.WeightModule).FirstOrDefault();
-                                                    DataReader(Models.DeviceType.WeightModule, Scopecommand.CommandId);
-                                                    if (cDevices.ReceiveBufferQueue.Count > 0)
-                                                    {
-                                                        _rec = new RecData();
-                                                        _rec = cDevices.CurrentRequest;
-                                                        if (validateResponse(_rec))
-                                                        {
-                                                            received = true;
-                                                        }
-                                                    }
-                                                }
-
-                                                AddOutPut("Storing data into " + Scopecommand.CommandText + "..", (int)OutPutType.INFORMATION);
-                                                //Scopecommand.OutPutData = _rec;
-                                                Scopecommand.ExecutionStatus = (int)ExecutionStage.Executed;
-                                                AddOutPut("Showing weight module response..", (int)OutPutType.INFORMATION);
-                                                showWeightModuleResponse(_rec);
-
-                                            }
-                                            else
-                                            {
-                                                Scopecommand.ExecutionStatus = (int)ExecutionStage.Executed;
-                                            }
-                                        }
-
-                                        else if (Scopecommand.CommandType == (int)ElementConstant.Read_All_Card_In_Out)
-                                        {
-                                            if (Scopecommand.ExecutionStatus == (int)ExecutionStage.Not_Executed)
-                                            {
-                                                AddOutPut("Fetching control card all input/output information", (int)OutPutType.INFORMATION);
-                                                ReadAllControCardInputOutput();
-                                                Scopecommand.ExecutionStatus = (int)ExecutionStage.Executing;
-
-                                                AddOutPut("Reading control card all input/output information", (int)OutPutType.INFORMATION);
-                                                bool received = false;
-                                                RecData _rec = new RecData();
-                                                while (received == false)
-                                                {
-                                                    var cDevices = connectedDevices.Where(x => x.DeviceType == Models.DeviceType.WeightModule).FirstOrDefault();
-                                                    DataReader(Models.DeviceType.ControlCard, Scopecommand.CommandId);
-                                                    if (cDevices.ReceiveBufferQueue.Count > 0)
-                                                    {
-                                                        _rec = new RecData();
-                                                        _rec = cDevices.CurrentRequest;
-                                                        received = true;
-                                                    }
-                                                }
-                                                AddOutPut("Storing output..", (int)OutPutType.INFORMATION);
-                                                //Scopecommand.OutPutData = _rec;
-                                                Scopecommand.ExecutionStatus = (int)ExecutionStage.Executed;
-                                                AddOutPut("Showing control card state..", (int)OutPutType.INFORMATION);
-                                                ReadControlCardResponse(_rec);
-                                            }
-                                            else if (Scopecommand.ExecutionStatus == (int)ExecutionStage.Executing)
-                                            {
-                                                Scopecommand.ExecutionStatus = (int)ExecutionStage.Executed;
-                                            }
-                                        }
-
-                                        else if (Scopecommand.CommandType == (int)ElementConstant.Write_Card_Out)
-                                        {
-                                            if (Scopecommand.ExecutionStatus == (int)ExecutionStage.Not_Executed)
-                                            {
-                                                var functionScopecommand = (RegisterWriteCommand)Scopecommand.CommandData;
-                                                string ScopecommandText = functionScopecommand.RegisterOutput == 1 ? "ON" : "OFF";
-                                                AddOutPut("Writing control card register " + functionScopecommand.RegisterNumber + " " + ScopecommandText, (int)OutPutType.WARNING, true);
-                                                WriteControCardState(functionScopecommand.RegisterNumber, functionScopecommand.RegisterOutput);
-                                                AddOutPut("Control card register " + functionScopecommand.RegisterNumber + " is " + ScopecommandText, (int)OutPutType.SUCCESS, true);
-                                                Scopecommand.ExecutionStatus = (int)ExecutionStage.Executed;
-                                                WriteControlCardResponse(functionScopecommand.RegisterNumber, functionScopecommand.RegisterOutput);
-                                            }
-                                            else
-                                            {
-                                                //OutPutArea.AppendText("\n Executing " + Scopecommand.CommandText + "..");
-                                                Scopecommand.ExecutionStatus = (int)ExecutionStage.Executed;
-                                            }
-                                        }
-                                        else if (Scopecommand.CommandType == (int)ElementConstant.Connect_Camera_Event)
-                                        {
-                                            //AddOutPut("Starting Camera..", (int)OutPutType.INFORMATION, true);
-                                            //var isStarted = ConnectionUSB();
-                                            Scopecommand.ExecutionStatus = (int)ExecutionStage.Executed;
-                                            StartUSBCamRecording();
-                                            AddOutPut("Camera Recording Starts..", (int)OutPutType.INFORMATION, true);
-                                            //var RecordPath = StartVideoCapture(_FileDirectory);
-                                            AddOutPut("Camera is recording at " + VideoFileDirectory + " ..", (int)OutPutType.INFORMATION, true);
-
-                                        }
-                                        else if (Scopecommand.CommandType == (int)ElementConstant.Disconnect_Camera_Event)
-                                        {
-                                            // AddOutPut("Stoping Camera..", (int)OutPutType.INFORMATION, true);
-                                            StopUSBCamRecording();
-                                            AddOutPut("Camera Recording Stopped..", (int)OutPutType.SUCCESS, true);
-                                            Scopecommand.ExecutionStatus = (int)ExecutionStage.Executed;
-                                            //StopVideoCapture();
-                                        }
-
-                                        else if (Scopecommand.CommandType == (int)ElementConstant.End_Scope)
-                                        {
-                                            var ifScopecommand = Commands.Where(x => (x.CommandType == (int)ElementConstant.If_Condition_Start || x.CommandType == (int)ElementConstant.Else_If_Start || x.CommandType == (int)ElementConstant.Else_Start) && x.Order < Scopecommand.Order).OrderBy(x => x.Order).ToList().FirstOrDefault();
-
-                                            var repeater = Commands.Where(x => x.CommandType == (int)ElementConstant.Repeat_Control && x.Order < Scopecommand.Order).OrderBy(x => x.Order).ToList().FirstOrDefault();
-
-                                            if (ifScopecommand != null)
-                                            {
-                                                foreach (var item in Commands)
-                                                {
-                                                    if (ifScopecommand.CommandId == item.CommandId)
-                                                    {
-                                                        item.ExecutionStatus = (int)ExecutionStage.Executed;
-                                                        Scopecommand.ExecutionStatus = (int)ExecutionStage.Executed;
-                                                        AddOutPut("If Scope Ended..", (int)OutPutType.SUCCESS, true);
-                                                    }
-                                                }
-                                            }
-                                            else if (repeater != null)
-                                            {
-                                                AddOutPut("Repeating again..", (int)OutPutType.SUCCESS, true);
-                                            }
-                                            else
-                                            {
-                                                AddOutPut("Ended..", (int)OutPutType.SUCCESS, true);
-                                            }
-
-                                        }
-
-
-                                    }
-
-                                    var totalcomand = Commands.Where(x => x.Order == (endscope - 1)).FirstOrDefault();
-                                    if (totalcomand.ExecutionStatus == (int)ExecutionStage.Executed)
-                                    {
-                                        command.ExecutionStatus = (int)ExecutionStage.Executed;
-                                        Commands.Where(x => x.Order > command.Order && x.Order < endscope).ToList().ForEach(x => x.ExecutionStatus = (int)ExecutionStage.Executed);
-
-                                    }
-                                    break;
-                                }
-                                else
-                                {
-                                    command.ExecutionStatus = (int)ExecutionStage.Executed;
-                                    Commands.Where(x => x.Order > command.Order && x.Order < endscope).ToList().ForEach(x => x.ExecutionStatus = (int)ExecutionStage.Executed);
-
-                                }
-                            }
-
-                        }
-
-                        else if (command.CommandType == (int)ElementConstant.Repeat_Control)
-                        {
-                            //Task.Delay(2000);
-                           // AddOutPut("Repeater loop started..", (int)OutPutType.INFORMATION, true);
-                        }
-                        else if (command.CommandType == (int)ElementConstant.Connect_Camera_Event)
-                        {
-
-                            StartUSBCamRecording();
-                            command.ExecutionStatus = (int)ExecutionStage.Executed;
-                            //AddOutPut("Camera Recording Starts..", (int)OutPutType.INFORMATION, true);
-                            //var RecordPath = StartVideoCapture(_FileDirectory);
-                           // AddOutPut("Camera is recording at " + VideoFileDirectory + " ..", (int)OutPutType.INFORMATION, true);
-
-                        }
-                        else if (command.CommandType == (int)ElementConstant.Disconnect_Camera_Event)
-                        {
-                            //AddOutPut("Stoping Camera..", (int)OutPutType.INFORMATION, true);
-                            StopUSBCamRecording();
-                            AddOutPut("Camera Recording Stopped..", (int)OutPutType.SUCCESS, true);
-                            command.ExecutionStatus = (int)ExecutionStage.Executed;
-
-
-                        }
-
-
-                    }
-                    //ExecuteProcesses();
+                    AddOutPut("Disconnecting Control Card..", (int)OutPutType.INFORMATION);
+                    StopPortCommunication(Models.DeviceType.ControlCard);
+                    AddOutPut("Control card is disconnected..", (int)OutPutType.SUCCESS, true);
+                    Commands.Where(x => x.CommandId == command.CommandId).ToList().ForEach(x => x.ExecutionStatus = (int)ExecutionStage.Executed);
+                    return;
 
                 }
 
+            }
+
+            else if (command.CommandType == (int)ElementConstant.Connect_Weight_Event)
+            {
+                if (command.ExecutionStatus == (int)ExecutionStage.Not_Executed)
+                {
+                    AddOutPut("Connecting weight module..", (int)OutPutType.INFORMATION);
+                    ConnectWeight(command.Configuration.deviceDetail.PortName, command.Configuration.deviceDetail.BaudRate, command.Configuration.deviceDetail.DataBit, command.Configuration.deviceDetail.StopBit, command.Configuration.deviceDetail.Parity);
+                    command.ExecutionStatus = (int)ExecutionStage.Executed;
+
+                    AddOutPut("weight module is connected..", (int)OutPutType.SUCCESS, true);
+                    Commands.Where(x => x.CommandId == command.CommandId).ToList().ForEach(x => x.ExecutionStatus = (int)ExecutionStage.Executed);
+                    return;
+                }
+            }
+
+            else if (command.CommandType == (int)ElementConstant.Disconnect_Weight_Event)
+            {
+                if (command.ExecutionStatus == (int)ExecutionStage.Not_Executed)
+                {
+                    _dispathcer.Invoke(new Action(() =>
+                    {
+                        WeightModuleArea.Visibility = Visibility.Hidden;
+                    }));
+
+                    AddOutPut("Disconnecting weight module..", (int)OutPutType.WARNING, true);
+                    StopPortCommunication(Models.DeviceType.WeightModule);
+                    AddOutPut("Weight module disconnected..", (int)OutPutType.SUCCESS, true);
+                    Commands.Where(x => x.CommandId == command.CommandId).ToList().ForEach(x => x.ExecutionStatus = (int)ExecutionStage.Executed);
+                    return;
+                }
+            }
+
+            else if (command.CommandType == (int)ElementConstant.Read_Weight)
+            {
+                if (command.ExecutionStatus == (int)ExecutionStage.Not_Executed)
+                {
+                     AddOutPut("Reading weight..", (int)OutPutType.INFORMATION);
+                    bool received = false;
+                    RecData _rec = new RecData();
+                    while (received == false)
+                    {
+                        var cDevices = connectedDevices.Where(x => x.DeviceType == Models.DeviceType.WeightModule).FirstOrDefault();
+                        DataReader(Models.DeviceType.WeightModule, command.CommandId);
+                        if (cDevices.CurrentRequest.MbTgm != null)
+                        {
+                            if (cDevices.CurrentRequest.MbTgm.Length > 0)
+                            {
+                                _rec = new RecData();
+                                _rec = cDevices.CurrentRequest;
+                                if (validateResponse(_rec))
+                                {
+                                    received = true;
+                                }
+                            }
+                        }
+                    }
+
+                    AddOutPut("Storing data into " + command.CommandText + "..", (int)OutPutType.INFORMATION);
+                    command.OutPutData = _rec;
+                    AddOutPut("Showing weight module response..", (int)OutPutType.INFORMATION);
+                    showWeightModuleResponse(_rec);
+                    Commands.Where(x => x.CommandId == command.CommandId).ToList().ForEach(x => x.ExecutionStatus = (int)ExecutionStage.Executed);
+                    return;
+
+                }
+            }
+
+            else if (command.CommandType == (int)ElementConstant.Read_All_Card_In_Out)
+            {
+                if (command.ExecutionStatus == (int)ExecutionStage.Not_Executed)
+                {
+                    AddOutPut("Fetching control card all input/output information", (int)OutPutType.INFORMATION);
+                    ReadAllControCardInputOutput();
+                    command.ExecutionStatus = (int)ExecutionStage.Executing;
+
+                    AddOutPut("Reading control card all input/output information", (int)OutPutType.INFORMATION);
+                    bool received = false;
+                    RecData _rec = new RecData();
+                    while (received == false)
+                    {
+                        var cDevices = connectedDevices.Where(x => x.DeviceType == Models.DeviceType.WeightModule).FirstOrDefault();
+                        DataReader(Models.DeviceType.ControlCard, command.CommandId);
+                        if (cDevices.ReceiveBufferQueue.Count > 0)
+                        {
+                            _rec = new RecData();
+                            _rec = cDevices.CurrentRequest;
+                            received = true;
+                        }
+                    }
+                    AddOutPut("Storing output..", (int)OutPutType.INFORMATION);
+                    AddOutPut("Showing control card state..", (int)OutPutType.INFORMATION);
+                    ReadControlCardResponse(_rec);
+                    Commands.Where(x => x.CommandId == command.CommandId).ToList().ForEach(x => x.ExecutionStatus = (int)ExecutionStage.Executed);
+                    return;
+                }
+            }
+
+            else if (command.CommandType == (int)ElementConstant.Write_Card_Out)
+            {
+                if (command.ExecutionStatus == (int)ExecutionStage.Not_Executed)
+                {
+                    var functioncommand = (RegisterWriteCommand)command.CommandData;
+                    string commandText = functioncommand.RegisterOutput == 1 ? "ON" : "OFF";
+                    AddOutPut("Writing control card register " + functioncommand.RegisterNumber + " " + commandText, (int)OutPutType.WARNING, true);
+                    WriteControCardState(functioncommand.RegisterNumber, functioncommand.RegisterOutput);
+                    AddOutPut("Control card register " + functioncommand.RegisterNumber + " is " + commandText, (int)OutPutType.SUCCESS, true);
+                    WriteControlCardResponse(functioncommand.RegisterNumber, functioncommand.RegisterOutput);
+                    Commands.Where(x => x.CommandId == command.CommandId).ToList().ForEach(x => x.ExecutionStatus = (int)ExecutionStage.Executed);
+                    return;
+                }
+            }
+
+            else if (command.CommandType == (int)ElementConstant.If_Condition_Start)
+            {
+
+                bool isConditionTrue = false;
+                command.ExecutionStatus = (int)ExecutionStage.Executing;
+                int ComparisonVariableVal = 0;
+                if (command.InputData.ComparisonVariable.Contains('-'))
+                {
+                    var input = command.InputData.ComparisonVariable.Split('-')[0];
+                    var register = Convert.ToInt32(command.InputData.ComparisonVariable.Split('-')[1]);
+                    GetControlCardInputOutputState(Commands.Where(x => x.CommandId == input).FirstOrDefault().OutPutData);
+
+                    ComparisonVariableVal = registerOutputStatuses.Where(x => x.Register == register).FirstOrDefault().RegisterStatus;
+
+                    if (ComparisonVariableVal == Convert.ToInt32(command.InputData.ComparisonValue))
+                    {
+                        isConditionTrue = true;
+                    }
+
+                }
+                else
+                {
+                    double weight = getWeightModuleResponse(Commands.Where(x => x.CommandId == command.InputData.ComparisonVariable).FirstOrDefault().OutPutData);
+                    isConditionTrue = CompareWeightdata(command.InputData.ComparisonCondition, weight, command.InputData.ComparisonValue);
+                }
+
+                var endscope = Commands.Where(x => x.CommandType == (int)ElementConstant.End_Scope && x.Order > command.Order).OrderBy(x => x.Order).ToList().FirstOrDefault();
+
+                if (isConditionTrue)
+                {
+                    AddOutPut("If condition ("+ command.CommandText +") is true..", (int)OutPutType.SUCCESS, true);
+                    Commands.Where(x => x.CommandId == command.CommandId).ToList().ForEach(x => x.ExecutionStatus = (int)ExecutionStage.Executed);
+                }
+                else
+                {
+                    AddOutPut("If condition (" + command.CommandText + ") is false..", (int)OutPutType.SUCCESS, true);
+                    Commands.Where(x => x.Order >= command.Order && x.Order <= endscope.Order).ToList().ForEach(x => x.ExecutionStatus = (int)ExecutionStage.Executed);
+
+                }
+                return;
 
             }
+
+            else if (command.CommandType == (int)ElementConstant.Repeat_Control)
+            {
+               
+                 AddOutPut("Repeater loop started..", (int)OutPutType.INFORMATION, true);
+                Commands.Where(x => x.CommandId == command.CommandId).ToList().ForEach(x => x.ExecutionStatus = (int)ExecutionStage.Executed);
+                return;
+            }
+            else if (command.CommandType == (int)ElementConstant.Connect_Camera_Event)
+            {
+                AddOutPut("Camera Recording Starts..", (int)OutPutType.INFORMATION, true);
+                var RecordPath = StartVideoCapture(_FileDirectory);
+                AddOutPut("Camera is recording at " + RecordPath + " ..", (int)OutPutType.INFORMATION, true);
+                Commands.Where(x => x.CommandId == command.CommandId).ToList().ForEach(x => x.ExecutionStatus = (int)ExecutionStage.Executed);
+                return;
+            }
+            else if (command.CommandType == (int)ElementConstant.Disconnect_Camera_Event)
+            {
+                AddOutPut("Stoping Camera..", (int)OutPutType.INFORMATION, true);
+                StopUSBCamRecording();
+                AddOutPut("Camera Recording Stopped..", (int)OutPutType.SUCCESS, true);
+                Commands.Where(x => x.CommandId == command.CommandId).ToList().ForEach(x => x.ExecutionStatus = (int)ExecutionStage.Executed);
+            }
+
+
+
+
         }
 
         double getWeightModuleResponse(RecData _recData)
@@ -2194,7 +1924,6 @@ namespace JupiterSoft.CustomDailog
 
 
         #endregion
-
         #region Output Function
         private void AddOutPut(string Output, int MessageType, bool isBold = false)
         {
@@ -2228,21 +1957,13 @@ namespace JupiterSoft.CustomDailog
                     myParagraph.Inlines.Add(myRun);
                 }
                 _dispathcer.Invoke(new Action(() => { OutPutControl.Blocks.Add(myParagraph); }));
-               // OutPutControl.Blocks.Add(myParagraph);
+                // OutPutControl.Blocks.Add(myParagraph);
             }
             catch (Exception ex) { return; }
 
         }
         #endregion
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            //AddOutPut("Commands Execution started..", (int)OutPutType.INFORMATION);
-            //Task.Delay(1000);
-            // ConnectionUSB();
-            //ExecuteProcesses();
-            //AddOutPut("Commands compilation completed..", (int)OutPutType.SUCCESS);
-        }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
@@ -2250,12 +1971,50 @@ namespace JupiterSoft.CustomDailog
             btn.Content = "Execution Started";
             btn.Background = Brushes.Red;
             btn.IsEnabled = false;
-           //StartUSBCamera();
-            //WebcamViewer.StartPreview();
-            //AddOutPut("Commands Execution started..", (int)OutPutType.INFORMATION);
-            ExecuteProcesses();
-            //AddOutPut("Commands compilation completed..", (int)OutPutType.SUCCESS);
 
+            ConnectionUSB();
+            Commands.ForEach(x => x.ExecutionStatus = (int)ExecutionStage.Not_Executed);
+
+            ExecutionTimer.Elapsed += ExecutionTimer_Elapsed;
+            ExecutionTimer.Interval = 2000;
+            ExecutionTimer.Enabled = true;
+
+            AddOutPut("Commands Execution started..", (int)OutPutType.INFORMATION);
+        }
+
+        private void ExecutionTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            var currentCommand = getCommandInWaiting();
+            if (currentCommand.ToLower() != "na")
+            {
+                ExecuteProcesses(currentCommand);
+            }
+            else
+            {
+                ExecutionTimer.Elapsed -= ExecutionTimer_Elapsed;
+                ExecutionTimer.Enabled = false;
+            }
+
+        }
+
+        public string getCommandInWaiting()
+        {
+            var queCommand = Commands.Where(x => x.ExecutionStatus != (int)ExecutionStage.Executed).OrderBy(x => x.Order).ToList();
+            if (queCommand != null && queCommand.Count > 0)
+            {
+                if (queCommand.FirstOrDefault().CommandType == (int)ElementConstant.Stop_Repeat)
+                {
+                    var ParentScope = Commands.Where(x => x.CommandType == (int)ElementConstant.Repeat_Control && x.Order < queCommand.FirstOrDefault().Order).OrderBy(x => x.Order).ToList().LastOrDefault();
+                    Commands.Where(x => x.Order >= ParentScope.Order && x.Order < queCommand.FirstOrDefault().Order).ToList().ForEach(x => x.ExecutionStatus = (int)ExecutionStage.Not_Executed);
+                }
+            }
+            else
+            {
+                AddOutPut("Commands Execution completed..", (int)OutPutType.SUCCESS);
+                return "NA";
+            }
+
+            return Commands.Where(x => x.ExecutionStatus != (int)ExecutionStage.Executed).OrderBy(x => x.Order).ToList().FirstOrDefault().CommandId;
         }
     }
 }

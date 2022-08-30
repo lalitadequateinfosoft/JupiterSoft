@@ -159,12 +159,45 @@ namespace JupiterSoft.Pages
             ConnectedDevices();
             LoadSystemSound();
 
+            _dispathcer = Dispatcher.CurrentDispatcher;
+            this.SerialDevice = new SerialPort();
+
             Commands = new List<LogicalCommand>();
 
             //Saved project.
             _CurrentFile = _filename;
             this.ProjectName.Content = System.IO.Path.GetFileName(_filename).Split('.')[0];
             LoadFile();
+        }
+
+        public CreateTemplate(List<LogicalCommand> runningCommands)
+        {
+            bc = new BrushConverter();
+            userCommandLogic = new CommandExecutionModel();
+            this.UElement = ElementOp.GetElementModel();
+            InitializeComponent();
+
+            this.DataContext = this.UElement;
+            this.CanvasWidth = ReceiveDrop.Width;
+            this.CanvasHeight = ReceiveDrop.Height;
+            this.isloaded = true;
+
+
+            devices = new List<DiscoveredDeviceInfo>();
+            DeviceModels = new List<DeviceModel>();
+
+            deviceInfo = DeviceInformation.GetConnectedDevices();
+            ConnectedDevices();
+            LoadSystemSound();
+
+            _dispathcer = Dispatcher.CurrentDispatcher;
+            this.SerialDevice = new SerialPort();
+
+            Commands = new List<LogicalCommand>();
+            Commands = runningCommands;
+            ApplicationConstant.runningCommands = new List<LogicalCommand>();
+
+            LoadRunningCommands();
         }
 
         #region UI Functions
@@ -945,7 +978,7 @@ namespace JupiterSoft.Pages
                                 Commands.Add(command);
                                 ShouldAdd = true;
                             }
-                            
+
                         }
 
                         break;
@@ -1079,7 +1112,10 @@ namespace JupiterSoft.Pages
 
                 if (ShouldAdd)
                 {
-                    
+
+                    ele.Tag = contentId;
+                    Commands.Where(x => x.CommandId == contentId).ToList().ForEach(x => x.ContentLeftPosition = NewLeft);
+                    Commands.Where(x => x.CommandId == contentId).ToList().ForEach(x => x.ContentTopPosition = NewTop);
                     Canvas.SetLeft(ele, NewLeft);
                     Canvas.SetTop(ele, NewTop);
 
@@ -1589,7 +1625,7 @@ namespace JupiterSoft.Pages
                     wrap = CreateStandarControl(ContentId, evEnum, "Repeat Control");
                     break;
                 case (int)ElementConstant.Stop_Repeat:
-                    wrap = CreateStandarControl(ContentId, evEnum, "Stop Control");
+                    wrap = CreateStandarControl(ContentId, evEnum, "Repeat Scope End");
                     break;
             }
             return wrap;
@@ -1857,19 +1893,26 @@ namespace JupiterSoft.Pages
             int Order = 1;
             foreach (var item in contentElement)
             {
-                var child = item.Children.OfType<Button>().FirstOrDefault();
-                Point margin = item.TransformToAncestor(ReceiveDrop)
-                  .Transform(new Point(0, 0));
-                fileContent.Add(new FileContentModel
+                if (!string.IsNullOrEmpty(item.Tag.ToString()))
                 {
-                    ContentId = Guid.NewGuid().ToString("N"),
-                    ContentType = Convert.ToInt32(child.Tag),
-                    ContentText = child.Content != null ? child.Content.ToString() : null,
-                    ContentOrder = Order,
-                    ContentLeftPosition = margin.X,
-                    ContentTopPosition = margin.Y
-                });
-                Order++;
+                    Point margin = item.TransformToAncestor(ReceiveDrop)
+                  .Transform(new Point(0, 0));
+                    fileContent.Add(new FileContentModel
+                    {
+                        ContentId = Commands.Where(x => x.CommandId == item.Tag.ToString()).FirstOrDefault().CommandId,
+                        ContentType = Commands.Where(x => x.CommandId == item.Tag.ToString()).FirstOrDefault().CommandType,
+                        ContentText = Commands.Where(x => x.CommandId == item.Tag.ToString()).FirstOrDefault().CommandText,
+                        ContentOrder = Commands.Where(x => x.CommandId == item.Tag.ToString()).FirstOrDefault().Order,
+                        ContentLeftPosition = margin.X,
+                        ContentTopPosition = margin.Y,
+                        CommandData = Commands.Where(x => x.CommandId == item.Tag.ToString()).FirstOrDefault().CommandData,
+                        ParentCommandId = Commands.Where(x => x.CommandId == item.Tag.ToString()).FirstOrDefault().ParentCommandId,
+                        Configuration = Commands.Where(x => x.CommandId == item.Tag.ToString()).FirstOrDefault().Configuration,
+                        InputData = Commands.Where(x => x.CommandId == item.Tag.ToString()).FirstOrDefault().InputData,
+                    });
+                    Order++;
+                }
+
             }
 
             fileSystem.fileContents = fileContent;
@@ -1891,11 +1934,12 @@ namespace JupiterSoft.Pages
             {
                 string json = r.ReadToEnd();
                 FileSystemModel items = JsonConvert.DeserializeObject<FileSystemModel>(json);
-
+                bool ShouldAdd = false;
                 foreach (var item in items.fileContents.OrderBy(x => x.ContentOrder))
                 {
+                    ReceiveDrop.Height = ReceiveDrop.Height + 100;
                     WrapPanel ele = new WrapPanel();
-                    string contentId = Guid.NewGuid().ToString("N");
+                    string contentId = item.ContentId;
                     switch (Convert.ToInt32(item.ContentType))
                     {
                         case (int)ElementConstant.Ten_Steps_Move:
@@ -1918,24 +1962,466 @@ namespace JupiterSoft.Pages
                             break;
                         case (int)ElementConstant.Connect_Motor_Event:
                             ele = Get_EventStyle(contentId, Convert.ToInt32(item.ContentType));
+                            var command = new LogicalCommand
+                            {
+                                CommandId = contentId,
+                                CommandType = Convert.ToInt32(item.ContentType),
+                                Order = item.ContentOrder,
+                                ExecutionStatus = (int)ExecutionStage.Not_Executed,
+                                Configuration = item.Configuration,
+                                InputData = item.InputData,
+                                CommandText = "Motor Drive"
+                            };
+                            Commands.Add(command);
+                            ShouldAdd = true;
+
                             break;
                         case (int)ElementConstant.Disconnect_Motor_Event:
                             ele = Get_EventStyle(contentId, Convert.ToInt32(item.ContentType));
+                            ShouldAdd = true;
+                            break;
+                        case (int)ElementConstant.Connect_Camera_Event:
+                            ele = Get_EventStyle(contentId, Convert.ToInt32(item.ContentType));
+                            var Cameracommand = new LogicalCommand
+                            {
+                                CommandId = contentId,
+                                CommandType = Convert.ToInt32(item.ContentType),
+                                Order = item.ContentOrder,
+                                ExecutionStatus = (int)ExecutionStage.Not_Executed,
+                                Configuration = new DeviceConfiguration(),
+                                CommandText = Connect_Camera_Event.Content.ToString()
+                            };
+                            Commands.Add(Cameracommand);
+                            ShouldAdd = true;
+
+                            break;
+                        case (int)ElementConstant.Disconnect_Camera_Event:
+                            ele = Get_EventStyle(contentId, Convert.ToInt32(item.ContentType));
+
+                            var DiCameracommand = new LogicalCommand
+                            {
+                                CommandId = contentId,
+                                CommandType = Convert.ToInt32(item.ContentType),
+                                Order = item.ContentOrder,
+                                ExecutionStatus = (int)ExecutionStage.Not_Executed,
+                                Configuration = new DeviceConfiguration(),
+                                CommandText = Disconnect_Camera_Event.Content.ToString()
+                            };
+                            Commands.Add(DiCameracommand);
+                            ShouldAdd = true;
                             break;
                         case (int)ElementConstant.Connect_Weight_Event:
                             ele = Get_EventStyle(contentId, Convert.ToInt32(item.ContentType));
+
+                            var Weightcommand = new LogicalCommand
+                            {
+                                CommandId = contentId,
+                                CommandType = Convert.ToInt32(item.ContentType),
+                                Order = item.ContentOrder,
+                                ExecutionStatus = (int)ExecutionStage.Not_Executed,
+                                Configuration = item.Configuration,
+                                CommandText = "Connect Weight"
+                            };
+                            Commands.Add(Weightcommand);
+
+                            ShouldAdd = true;
+
                             break;
                         case (int)ElementConstant.Disconnect_Weight_Event:
-                            ele = Get_EventStyle(contentId, Convert.ToInt32(item.ContentType));
+                            ele = Get_EventStyle(contentId, item.ContentType);
+
+                            var dWeightcommand = new LogicalCommand
+                            {
+                                CommandId = contentId,
+                                CommandType = item.ContentType,
+                                Order = item.ContentOrder,
+                                ExecutionStatus = (int)ExecutionStage.Not_Executed,
+                                Configuration = new DeviceConfiguration(),
+                                CommandText = "Connect Weight"
+                            };
+                            Commands.Add(dWeightcommand);
+
+                            ShouldAdd = true;
+                            break;
+                        case (int)ElementConstant.Connect_ControlCard_Event:
+                            ele = Get_EventStyle(contentId, item.ContentType);
+
+                            var Controlcommand = new LogicalCommand
+                            {
+                                CommandId = contentId,
+                                CommandType = item.ContentType,
+                                Order = item.ContentOrder,
+                                ExecutionStatus = (int)ExecutionStage.Not_Executed,
+                                Configuration = item.Configuration,
+                                CommandText = "Connect Control Card"
+                            };
+                            Commands.Add(Controlcommand);
+                            ShouldAdd = true;
+                            break;
+                        case (int)ElementConstant.Disconnect_ControlCard_Event:
+                            ele = Get_EventStyle(contentId, item.ContentType);
+
+                            var DControlcommand = new LogicalCommand
+                            {
+                                CommandId = contentId,
+                                CommandType = item.ContentType,
+                                Order = item.ContentOrder,
+                                ExecutionStatus = (int)ExecutionStage.Not_Executed,
+                                Configuration = new DeviceConfiguration(),
+                                CommandText = "Disconnect Control Card"
+                            };
+                            Commands.Add(DControlcommand);
+
+                            ShouldAdd = true;
                             break;
                         case (int)ElementConstant.Read_Motor_Frequency:
-                            ele = Get_EventStyle(contentId, Convert.ToInt32(item.ContentType));
+                            ele = Get_FunctionStyle(contentId, item.ContentType, item.ContentText);
+                            var readMotorcommand = new LogicalCommand
+                            {
+                                CommandId = contentId,
+                                CommandType = item.ContentType,
+                                Order = item.ContentOrder,
+                                ExecutionStatus = (int)ExecutionStage.Not_Executed,
+                                Configuration = new DeviceConfiguration(),
+                                CommandText = item.ContentText
+                            };
+                            Commands.Add(readMotorcommand);
+
+                            ShouldAdd = true;
+
                             break;
+
                         case (int)ElementConstant.Change_Motor_Frequency:
-                            ele = Get_EventStyle(contentId, Convert.ToInt32(item.ContentType));
+
+                            ele = Get_FunctionStyle(contentId, item.ContentType, item.ContentText);
+                            var changemotorcommand = new LogicalCommand
+                            {
+                                CommandId = contentId,
+                                CommandType = item.ContentType,
+                                Order = item.ContentOrder,
+                                ExecutionStatus = (int)ExecutionStage.Not_Executed,
+                                Configuration = new DeviceConfiguration(),
+                                CommandText = item.ContentText
+                            };
+                            Commands.Add(changemotorcommand);
+
+                            ShouldAdd = true;
+
                             break;
+                        case (int)ElementConstant.Turn_ON_Motor:
+                            ele = Get_FunctionStyle(contentId, item.ContentType, "");
+
+
+                            ele = Get_FunctionStyle(contentId, item.ContentType, item.ContentText);
+                            var turnMotorcommand = new LogicalCommand
+                            {
+                                CommandId = contentId,
+                                CommandType = item.ContentType,
+                                Order = item.ContentOrder,
+                                ExecutionStatus = (int)ExecutionStage.Not_Executed,
+                                Configuration = new DeviceConfiguration(),
+                                CommandText = item.ContentText
+                            };
+                            Commands.Add(turnMotorcommand);
+
+                            ShouldAdd = true;
+
+                            break;
+
+                        case (int)ElementConstant.Turn_OFF_Motor:
+                            ele = Get_FunctionStyle(contentId, item.ContentType, "");
+                            var motorOffcommand = new LogicalCommand
+                            {
+                                CommandId = contentId,
+                                CommandType = item.ContentType,
+                                Order = item.ContentOrder,
+                                ExecutionStatus = (int)ExecutionStage.Not_Executed,
+                                Configuration = new DeviceConfiguration()
+                                // CommandText = variableDialog3.VariableName.Text
+                            };
+                            Commands.Add(motorOffcommand);
+
+                            ShouldAdd = true;
+
+                            break;
+
+                        case (int)ElementConstant.Read_All_Card_In_Out:
+
+                            ele = Get_FunctionStyle(contentId, item.ContentType, item.ContentText);
+                            var ReadCardcommand = new LogicalCommand
+                            {
+                                CommandId = contentId,
+                                CommandType = item.ContentType,
+                                Order = item.ContentOrder,
+                                ExecutionStatus = (int)ExecutionStage.Not_Executed,
+                                Configuration = new DeviceConfiguration(),
+                                CommandText = item.ContentText
+                            };
+                            Commands.Add(ReadCardcommand);
+
+                            ShouldAdd = true;
+
+                            break;
+
+                        case (int)ElementConstant.Write_Card_Out:
+
+                            var registerWriteCommand = (RegisterWriteCommand)item.CommandData;
+                            var functionName = (registerWriteCommand.RegisterOutput == 1 ? "ON" : "OFF") + " Register " + registerWriteCommand.RegisterNumber;
+                            ele = Get_FunctionStyle(contentId, item.ContentType, functionName);
+
+
+                            var writeCardcommand = new LogicalCommand
+                            {
+                                CommandId = contentId,
+                                CommandType = item.ContentType,
+                                Order = item.ContentOrder,
+                                ExecutionStatus = (int)ExecutionStage.Not_Executed,
+                                Configuration = new DeviceConfiguration(),
+                                CommandData = item.CommandData
+                            };
+                            Commands.Add(writeCardcommand);
+                            ShouldAdd = true;
+
+                            break;
+
+                        case (int)ElementConstant.Read_Weight:
+                            ele = Get_FunctionStyle(contentId, item.ContentType, item.ContentText);
+                            var ReadWtcommand = new LogicalCommand
+                            {
+                                CommandId = contentId,
+                                CommandType = item.ContentType,
+                                Order = item.ContentOrder,
+                                ExecutionStatus = (int)ExecutionStage.Not_Executed,
+                                Configuration = new DeviceConfiguration(),
+                                CommandText = item.ContentText
+                            };
+                            Commands.Add(ReadWtcommand);
+
+                            ShouldAdd = true;
+
+                            break;
+
+                        case (int)ElementConstant.If_Condition_Start:
+                            ConditionDataModel conditionData = item.InputData;
+                            ele = Get_ControlStyle(contentId, item.ContentType, conditionData, item.ContentText);
+                            var ifcommand = new LogicalCommand
+                            {
+                                CommandId = contentId,
+                                CommandType = item.ContentType,
+                                Order = item.ContentOrder,
+                                ExecutionStatus = (int)ExecutionStage.Not_Executed,
+                                Configuration = new DeviceConfiguration(),
+                                CommandText = item.ContentText,
+                                InputData = conditionData
+                            };
+                            Commands.Add(ifcommand);
+                            ShouldAdd = true;
+
+                            break;
+                        case (int)ElementConstant.End_Scope:
+                            ele = Get_ControlStyle(contentId, item.ContentType, new ConditionDataModel(), "");
+
+                            var Endcommand = new LogicalCommand
+                            {
+                                CommandId = contentId,
+                                CommandType = item.ContentType,
+                                Order = item.ContentOrder,
+                                ExecutionStatus = (int)ExecutionStage.Not_Executed,
+                                Configuration = new DeviceConfiguration(),
+                                CommandText = "End Scope",
+                                ParentCommandId = item.ParentCommandId
+                            };
+                            Commands.Add(Endcommand);
+                            ShouldAdd = true;
+
+                            break;
+                        case (int)ElementConstant.Repeat_Control:
+                            ele = Get_ControlStyle(contentId, item.ContentType, new ConditionDataModel(), "");
+
+                            var repeatcommand = new LogicalCommand
+                            {
+                                CommandId = contentId,
+                                CommandType = item.ContentType,
+                                Order = item.ContentOrder,
+                                ExecutionStatus = (int)ExecutionStage.Not_Executed,
+                                Configuration = new DeviceConfiguration(),
+                                CommandText = "Repeat Control"
+                            };
+                            Commands.Add(repeatcommand);
+                            ShouldAdd = true;
+
+                            break;
+                        case (int)ElementConstant.Stop_Repeat:
+                            ele = Get_ControlStyle(contentId, item.ContentType, new ConditionDataModel(), "");
+                            var Stopcommand = new LogicalCommand
+                            {
+                                CommandId = contentId,
+                                CommandType = item.ContentType,
+                                Order = item.ContentOrder,
+                                ExecutionStatus = (int)ExecutionStage.Not_Executed,
+                                Configuration = new DeviceConfiguration(),
+                                CommandText = Stop_Repeat.Content.ToString()
+                            };
+                            Commands.Add(Stopcommand);
+                            ShouldAdd = true;
+                            break;
+
                     }
 
+                    if (ShouldAdd)
+                    {
+                        Canvas.SetLeft(ele, item.ContentLeftPosition);
+                        Canvas.SetTop(ele, item.ContentTopPosition);
+                        ReceiveDrop.Children.Add(ele);
+                    }
+                }
+            }
+        }
+
+        private void LoadRunningCommands()
+        {
+            foreach (var item in Commands)
+            {
+                bool ShouldAdd = false;
+                ReceiveDrop.Height = ReceiveDrop.Height + 100;
+                WrapPanel ele = new WrapPanel();
+                string contentId = item.CommandId;
+                switch (Convert.ToInt32(item.CommandType))
+                {
+                    case (int)ElementConstant.Ten_Steps_Move:
+                        ele = Get_Ten_Steps_Move(contentId);
+                        break;
+                    case (int)ElementConstant.Turn_Fiften_Degree_Right_Move:
+                        ele = Get_Turn_Fiften_Degree_Right_Move(contentId);
+                        break;
+                    case (int)ElementConstant.Turn_Fiften_Degree_Left_Move:
+                        ele = Get_Turn_Fiften_Degree_Left_Move(contentId);
+                        break;
+                    case (int)ElementConstant.Pointer_State_Move:
+                        ele = Get_Pointer_State_Move(contentId);
+                        break;
+                    case (int)ElementConstant.Rotation_Style_Move:
+                        ele = Get_Rotation_Style_Move(contentId);
+                        break;
+                    case (int)ElementConstant.Start_Event:
+                        ele = Get_EventStyle(contentId, Convert.ToInt32(item.CommandType));
+                        break;
+                    case (int)ElementConstant.Connect_Motor_Event:
+                        ele = Get_EventStyle(contentId, Convert.ToInt32(item.CommandType));
+                        ShouldAdd = true;
+
+                        break;
+                    case (int)ElementConstant.Disconnect_Motor_Event:
+                        ele = Get_EventStyle(contentId, Convert.ToInt32(item.CommandType));
+                        ShouldAdd = true;
+                        break;
+                    case (int)ElementConstant.Connect_Camera_Event:
+                        ele = Get_EventStyle(contentId, Convert.ToInt32(item.CommandType));
+                        ShouldAdd = true;
+
+                        break;
+                    case (int)ElementConstant.Disconnect_Camera_Event:
+                        ele = Get_EventStyle(contentId, Convert.ToInt32(item.CommandType));
+
+                        ShouldAdd = true;
+                        break;
+                    case (int)ElementConstant.Connect_Weight_Event:
+                        ele = Get_EventStyle(contentId, item.CommandType);
+
+                        ShouldAdd = true;
+
+                        break;
+                    case (int)ElementConstant.Disconnect_Weight_Event:
+                        ele = Get_EventStyle(contentId, item.CommandType);
+
+                        ShouldAdd = true;
+                        break;
+                    case (int)ElementConstant.Connect_ControlCard_Event:
+                        ele = Get_EventStyle(contentId, item.CommandType);
+                        ShouldAdd = true;
+                        break;
+                    case (int)ElementConstant.Disconnect_ControlCard_Event:
+                        ele = Get_EventStyle(contentId, item.CommandType);
+                        ShouldAdd = true;
+                        break;
+                    case (int)ElementConstant.Read_Motor_Frequency:
+                        ele = Get_FunctionStyle(contentId, item.CommandType, item.CommandText);
+
+                        ShouldAdd = true;
+
+                        break;
+
+                    case (int)ElementConstant.Change_Motor_Frequency:
+
+                        ele = Get_FunctionStyle(contentId, item.CommandType, item.CommandText);
+
+                        ShouldAdd = true;
+
+                        break;
+                    case (int)ElementConstant.Turn_ON_Motor:
+
+
+                        ele = Get_FunctionStyle(contentId, item.CommandType, item.CommandText);
+
+                        ShouldAdd = true;
+
+                        break;
+
+                    case (int)ElementConstant.Turn_OFF_Motor:
+                        ele = Get_FunctionStyle(contentId, item.CommandType, "");
+
+                        ShouldAdd = true;
+
+                        break;
+
+                    case (int)ElementConstant.Read_All_Card_In_Out:
+
+                        ele = Get_FunctionStyle(contentId, item.CommandType, item.CommandText);
+
+                        ShouldAdd = true;
+
+                        break;
+
+                    case (int)ElementConstant.Write_Card_Out:
+
+                        var registerWriteCommand = (RegisterWriteCommand)item.CommandData;
+                        var functionName = (registerWriteCommand.RegisterOutput == 1 ? "ON" : "OFF") + " Register " + registerWriteCommand.RegisterNumber;
+                        ele = Get_FunctionStyle(contentId, item.CommandType, functionName);
+                        ShouldAdd = true;
+
+                        break;
+
+                    case (int)ElementConstant.Read_Weight:
+                        ele = Get_FunctionStyle(contentId, item.CommandType, item.CommandText);
+                        ShouldAdd = true;
+
+                        break;
+
+                    case (int)ElementConstant.If_Condition_Start:
+                        ConditionDataModel conditionData = item.InputData;
+                        ele = Get_ControlStyle(contentId, item.CommandType, conditionData, item.CommandText);
+                        ShouldAdd = true;
+
+                        break;
+                    case (int)ElementConstant.End_Scope:
+                        ele = Get_ControlStyle(contentId, item.CommandType, new ConditionDataModel(), "");
+                        ShouldAdd = true;
+
+                        break;
+                    case (int)ElementConstant.Repeat_Control:
+                        ele = Get_ControlStyle(contentId, item.CommandType, new ConditionDataModel(), "");
+                        ShouldAdd = true;
+
+                        break;
+                    case (int)ElementConstant.Stop_Repeat:
+                        ele = Get_ControlStyle(contentId, item.CommandType, new ConditionDataModel(), "");
+                        ShouldAdd = true;
+                        break;
+
+                }
+
+                if (ShouldAdd)
+                {
                     Canvas.SetLeft(ele, item.ContentLeftPosition);
                     Canvas.SetTop(ele, item.ContentTopPosition);
                     ReceiveDrop.Children.Add(ele);
@@ -2846,18 +3332,18 @@ namespace JupiterSoft.Pages
                             raw = new String(data[i].Where(Char.IsDigit).ToArray());
                         }
 
-                        
+
                         double weight = 0;
                         string unit = new String(data[i].Where(Char.IsLetter).ToArray());
                         if (unit.ToLower().ToString().Contains(weightUnit.KG.ToString().ToLower()) || unit.ToLower().ToString().Contains(weightUnit.KGG.ToString().ToLower()) || unit.ToLower().ToString().Contains(weightUnit.KGGM.ToString().ToLower()))
                         {
                             weight = Convert.ToInt32(raw) - 3067;
                             weight = Convert.ToDouble(weight / 260.4);
-                            weight = Math.Round(weight * 0.453592,2);
+                            weight = Math.Round(weight * 0.453592, 2);
 
                             _dispathcer.Invoke(new Action(() =>
                             {
-                                
+
                                 if (unit.ToLower().ToString().Contains(weightUnit.KGGM.ToString().ToLower()))
                                 {
                                     WeightUnitKG.Content = weightUnit.KGGM.ToString().ToLower();
@@ -4373,19 +4859,16 @@ namespace JupiterSoft.Pages
         {
             try
             {
-                if(Commands.Count()==0)
+                if (Commands.Count() == 0)
                 {
                     MessageBox.Show("Please add command to execute..");
                     return;
                 }
-                this.parentWindow.Hide();
+
+                ApplicationConstant.runningCommands = Commands;
                 HMIDialoge dialoge = new HMIDialoge(Commands, deviceInfo);
                 dialoge.Show();
-                if (dialoge.IsClosed)
-                {
-                    this.parentWindow.Show();
-                    MessageBox.Show("Execution Stopped");
-                }
+                this.parentWindow.Close();
             }
             catch (Exception ex)
             {

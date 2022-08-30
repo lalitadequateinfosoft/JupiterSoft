@@ -16,6 +16,7 @@ namespace JupiterSoft.Models
         public static readonly string _FileDirectory = @"C:\JupiterFiles";
         public static readonly string _VideoDirectory = @"C:\JupiterFiles\VideoFiles";
         public static readonly string _SnapShotDirectory = @"C:\JupiterFiles\Snapshots";
+        public static List<LogicalCommand> runningCommands=new List<LogicalCommand>();
         public static string CheckIPValid(string strIP)
         {
             if (string.IsNullOrEmpty(strIP)) return null;
