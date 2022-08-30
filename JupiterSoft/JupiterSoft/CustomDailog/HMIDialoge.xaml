@@ -21,7 +21,6 @@
         VerticalAlignment="Center"
         Background="Transparent"
         ResizeMode="NoResize"
-        Loaded="Window_Loaded"
        
        >
     <Window.Resources>
