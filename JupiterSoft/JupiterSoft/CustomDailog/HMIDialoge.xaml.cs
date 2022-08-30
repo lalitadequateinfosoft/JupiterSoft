@@ -115,11 +115,13 @@ namespace JupiterSoft.CustomDailog
                 Directory.CreateDirectory(VideoFileDirectory);
             }
             this.DataContext = this;
+            _drawingImageProvider = new DrawingImageProvider();
+            _connector = new MediaConnector();
         }
 
         private void StopProcess_Click(object sender, RoutedEventArgs e)
         {
-           
+
             DisconnectCamera();
             if (connectedDevices != null)
             {
@@ -167,12 +169,10 @@ namespace JupiterSoft.CustomDailog
                 _drawingImageProvider = new DrawingImageProvider();
                 _connector = new MediaConnector();
 
-                _webCamera = WebCameraFactory.GetDefaultDevice();
+                //_webCamera = WebCameraFactory.GetDefaultDevice();
 
                 if (_webCamera != null)
                 {
-
-                    _webCamera = new WebCamera();
                     _connector.Connect(_webCamera.VideoChannel, _drawingImageProvider);
                     videoViewer.SetImageProvider(_drawingImageProvider);
                     _webCamera.Start();
@@ -220,7 +220,7 @@ namespace JupiterSoft.CustomDailog
             if (_webCamera.Capturing)
             {
                 StopVideoCapture();
-               videoViewer.Stop();
+                videoViewer.Stop();
                 videoViewer.Background = Brushes.Black;
                 _webCamera.Stop();
                 _webCamera.Dispose();
@@ -289,7 +289,7 @@ namespace JupiterSoft.CustomDailog
         {
 
             // Stop the display of webcam video.
-           // _dispathcer.Invoke(new Action(() => { WebcamViewer.StopPreview(); }));
+            // _dispathcer.Invoke(new Action(() => { WebcamViewer.StopPreview(); }));
 
             isCameraRunning = false;
         }
@@ -1511,7 +1511,7 @@ namespace JupiterSoft.CustomDailog
             {
                 if (command.ExecutionStatus == (int)ExecutionStage.Not_Executed)
                 {
-                     AddOutPut("Reading weight..", (int)OutPutType.INFORMATION);
+                    AddOutPut("Reading weight..", (int)OutPutType.INFORMATION);
                     bool received = false;
                     RecData _rec = new RecData();
                     while (received == false)
@@ -1617,7 +1617,7 @@ namespace JupiterSoft.CustomDailog
 
                 if (isConditionTrue)
                 {
-                    AddOutPut("If condition ("+ command.CommandText +") is true..", (int)OutPutType.SUCCESS, true);
+                    AddOutPut("If condition (" + command.CommandText + ") is true..", (int)OutPutType.SUCCESS, true);
                     Commands.Where(x => x.CommandId == command.CommandId).ToList().ForEach(x => x.ExecutionStatus = (int)ExecutionStage.Executed);
                 }
                 else
@@ -1632,8 +1632,8 @@ namespace JupiterSoft.CustomDailog
 
             else if (command.CommandType == (int)ElementConstant.Repeat_Control)
             {
-               
-                 AddOutPut("Repeater loop started..", (int)OutPutType.INFORMATION, true);
+
+                AddOutPut("Repeater loop started..", (int)OutPutType.INFORMATION, true);
                 Commands.Where(x => x.CommandId == command.CommandId).ToList().ForEach(x => x.ExecutionStatus = (int)ExecutionStage.Executed);
                 return;
             }
@@ -1957,7 +1957,7 @@ namespace JupiterSoft.CustomDailog
                     myParagraph.Inlines.Add(myRun);
                 }
                 //_dispathcer.Invoke(new Action(() => { OutPutControl.Blocks.Add(myParagraph); }));
-                 OutPutControl.Blocks.Add(myParagraph);
+                OutPutControl.Blocks.Add(myParagraph);
             }
             catch (Exception ex) { return; }
 
@@ -1972,7 +1972,24 @@ namespace JupiterSoft.CustomDailog
             btn.Background = Brushes.Red;
             btn.IsEnabled = false;
 
-            ConnectionUSB();
+           this._webCamera = new WebCamera();
+
+
+            //_webCamera = WebCameraFactory.GetDefaultDevice();
+
+            if (this._webCamera != null)
+            {
+
+                this._connector.Connect(this._webCamera.VideoChannel, this._drawingImageProvider);
+                this._webCamera.Start();
+                this.videoViewer.SetImageProvider(this._drawingImageProvider);
+                this.videoViewer.Start();
+                this._videoSender = this._webCamera.VideoChannel;
+
+                _runningCamera = "USB";
+                AddOutPut("Camera has started..", (int)OutPutType.INFORMATION, true);
+            }
+
             Commands.ForEach(x => x.ExecutionStatus = (int)ExecutionStage.Not_Executed);
 
             ExecutionTimer.Elapsed += ExecutionTimer_Elapsed;

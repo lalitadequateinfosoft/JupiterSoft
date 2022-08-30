@@ -207,7 +207,12 @@
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Stretch"
                                         Margin="2">
-                                        <GroupBox 
+                                        <GroupBox Header="Live Camera Stream" HorizontalAlignment="Stretch" Margin="10" VerticalAlignment="Top" Height="250">
+                                            <Grid HorizontalAlignment="Stretch" Height="240" VerticalAlignment="Top">
+                                                <controls:VideoViewerWPF Name="videoViewer" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Black"/>
+                                            </Grid>
+                                        </GroupBox>
+                                        <!--<GroupBox 
                                             FontSize="14"
                                             BorderThickness="3"
                                             BorderBrush="Black"
@@ -246,7 +251,7 @@
                       SelectedIndex="0" IsEnabled="False"/>
                                                 </Grid>
                                             </Grid>
-                                        </GroupBox>
+                                        </GroupBox>-->
                                     </StackPanel>
                                     <StackPanel 
                                         HorizontalAlignment="Stretch"
