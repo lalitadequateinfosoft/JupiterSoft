@@ -108,7 +108,7 @@ namespace JupiterSoft.CustomDailog
             AudioDevices = EncoderDevices.FindDevices(EncoderDeviceType.Audio);
             SnapshotDirectory = ApplicationConstant._SnapShotDirectory;
             VideoFileDirectory = _VideoDirectory;
-            if(!Directory.Exists(VideoFileDirectory))
+            if (!Directory.Exists(VideoFileDirectory))
             {
                 Directory.CreateDirectory(VideoFileDirectory);
             }
@@ -129,10 +129,14 @@ namespace JupiterSoft.CustomDailog
             //DisconnectCamera();
             if (connectedDevices != null)
             {
-                foreach (var item in connectedDevices)
+                if(connectedDevices.Count()>0)
                 {
-                    StopPortCommunication(item.DeviceType);
+                    foreach (var item in connectedDevices)
+                    {
+                        StopPortCommunication(item.DeviceType);
+                    }
                 }
+                
             }
 
 
@@ -274,7 +278,7 @@ namespace JupiterSoft.CustomDailog
             try
             {
                 // Display webcam video
-                WebcamViewer.StartPreview(); 
+                WebcamViewer.StartPreview();
 
 
 
@@ -419,36 +423,45 @@ namespace JupiterSoft.CustomDailog
                 double weight = 0;
                 if (outP.Contains("kg"))
                 {
-                    StringBuilder builder = new StringBuilder(outP);
-                    builder.Replace("kg", "");
-                    weight = Convert.ToInt32(builder) - 3067;
-                    weight = Convert.ToDouble(weight / 260.4);
-                    weight = weight * 0.453592;
-                    weight = Math.Round(weight, 2);
-                    _dispathcer.Invoke(new Action(() => { WeightContent.Content = weight.ToString(); }));
-                    WeightUnitKG.Content = weightUnit.KG.ToString().ToLower();
-                }
-                else if (outP.Contains("kgg"))
-                {
-                    StringBuilder builder = new StringBuilder(outP);
-                    builder.Replace("kgg", "");
-                    weight = Convert.ToInt32(builder) - 3067;
-                    weight = Convert.ToDouble(weight / 260.4);
-                    weight = weight * 0.453592;
-                    weight = Math.Round(weight, 2);
-                    _dispathcer.Invoke(new Action(() => { WeightContent.Content = weight.ToString(); }));
-                    WeightUnitKG.Content = weightUnit.KGG.ToString().ToLower();
-                }
-                else if (outP.Contains("kgn"))
-                {
-                    StringBuilder builder = new StringBuilder(outP);
-                    builder.Replace("kgn", "");
-                    weight = Convert.ToInt32(builder) - 3067;
-                    weight = Convert.ToDouble(weight / 260.4);
-                    weight = weight * 0.453592;
-                    weight = Math.Round(weight, 2);
-                    _dispathcer.Invoke(new Action(() => { WeightContent.Content = weight.ToString(); }));
-                    WeightUnitKG.Content = weightUnit.KGN.ToString().ToLower();
+                    if (outP.Contains("kgg"))
+                    {
+                        string builder = outP.Replace("kgg", "");
+                        weight = Convert.ToInt32(builder) - 3067;
+                        weight = Convert.ToDouble(weight / 260.4);
+                        weight = weight * 0.453592;
+                        weight = Math.Round(weight, 2);
+                        _dispathcer.Invoke(new Action(() => { WeightContent.Content = weight.ToString(); }));
+                        WeightUnitKG.Content = weightUnit.KGG.ToString().ToLower();
+                    }
+                    else if (outP.Contains("kgn"))
+                    {
+                        string builder = outP.Replace("kgn", "");
+                        weight = Convert.ToInt32(builder) - 3067;
+                        weight = Convert.ToDouble(weight / 260.4);
+                        weight = weight * 0.453592;
+                        weight = Math.Round(weight, 2);
+                        _dispathcer.Invoke(new Action(() =>
+                        {
+                            WeightContent.Content = weight.ToString();
+                            WeightUnitKG.Content = weightUnit.KGN.ToString().ToLower();
+                        }));
+
+                    }
+                    else
+                    {
+                        string builder = outP.Replace("kg", "");
+                        weight = Convert.ToInt32(builder) - 3067;
+                        weight = Convert.ToDouble(weight / 260.4);
+                        weight = weight * 0.453592;
+                        weight = Math.Round(weight, 2);
+                        _dispathcer.Invoke(new Action(() =>
+                        {
+                            WeightContent.Content = weight.ToString();
+                            WeightUnitKG.Content = weightUnit.KG.ToString().ToLower();
+                        }));
+
+                    }
+
                 }
                 else if (outP.Contains("lb"))
                 {
@@ -461,8 +474,12 @@ namespace JupiterSoft.CustomDailog
                     weight = Convert.ToInt32(numberPart) - 3067;
                     weight = Convert.ToDouble(weight / 260.4);
                     weight = Math.Round(weight, 2);
-                    _dispathcer.Invoke(new Action(() => { WeightContent.Content = weight.ToString(); }));
-                    WeightUnitKG.Content = weightUnit.LBS.ToString().ToLower();
+                    _dispathcer.Invoke(new Action(() =>
+                    {
+                        WeightContent.Content = weight.ToString();
+                        WeightUnitKG.Content = weightUnit.LBS.ToString().ToLower();
+                    }));
+
                     //weight = weight * 0.453592;
                 }
                 else
@@ -471,8 +488,12 @@ namespace JupiterSoft.CustomDailog
                     weight = Convert.ToDouble(weight / 260.4);
                     weight = weight * 0.453592;
                     weight = Math.Round(weight, 2);
-                    _dispathcer.Invoke(new Action(() => { WeightContent.Content = weight.ToString(); }));
-                    WeightUnitKG.Content = weightUnit.KG.ToString().ToLower();
+                    _dispathcer.Invoke(new Action(() =>
+                    {
+                        WeightContent.Content = weight.ToString();
+                        WeightUnitKG.Content = weightUnit.KG.ToString().ToLower();
+                    }));
+
                     //weight = 0;
                 }
 
@@ -485,24 +506,31 @@ namespace JupiterSoft.CustomDailog
         bool validateResponse(RecData _recData)
         {
             bool isvalide = false;
-            if (_recData.MbTgm.Length > 0 && _recData.MbTgm.Length > readIndex)
+            try
             {
-                byte[] bytestToRead = _recData.MbTgm.Skip(readIndex).ToArray();
-                string str = Encoding.Default.GetString(bytestToRead).Replace(System.Environment.NewLine, string.Empty);
-                //string actualdata = Regex.Replace(str, @"[^a-zA-Z0-9\\:_\- ]", string.Empty);
-                string actualdata = Regex.Replace(str, @"[^\t\r\n -~]", "_").RemoveWhitespace().Trim();
-                string[] data = actualdata.Split('_');
 
-                for (int i = 0; i < data.Length; i++)
+
+                if (_recData.MbTgm.Length > 0 && _recData.MbTgm.Length > readIndex)
                 {
-                    if (!string.IsNullOrEmpty(data[i]) || !string.IsNullOrWhiteSpace(data[i]))
+                    byte[] bytestToRead = _recData.MbTgm.Skip(readIndex).ToArray();
+                    string str = Encoding.Default.GetString(bytestToRead).Replace(System.Environment.NewLine, string.Empty);
+                    //string actualdata = Regex.Replace(str, @"[^a-zA-Z0-9\\:_\- ]", string.Empty);
+                    string actualdata = Regex.Replace(str, @"[^\t\r\n -~]", "_").RemoveWhitespace().Trim();
+                    string[] data = actualdata.Split('_');
+
+                    for (int i = 0; i < data.Length; i++)
                     {
-                        isvalide = true;
+                        if (!string.IsNullOrEmpty(data[i]) || !string.IsNullOrWhiteSpace(data[i]))
+                        {
+                            isvalide = true;
+                        }
+
                     }
 
                 }
 
             }
+            catch { }
             return isvalide;
         }
 
@@ -1007,7 +1035,7 @@ namespace JupiterSoft.CustomDailog
                     //if (_reply.CheckCrc(recBufParse, Convert.ToInt32(_reply.length)))  // SB1 Check CRC
                     //{
 
-                    if (_recData != null && _reply.sesId == _recData.SessionId)
+                    if (_recData != null)
                     {
                         if (device == Models.DeviceType.WeightModule)
                         {
@@ -1131,11 +1159,11 @@ namespace JupiterSoft.CustomDailog
                         tom.RecState = 1;
                         recBuf = new byte[tom.SerialDevice.BytesToRead];
                         tom.SerialDevice.Read(recBuf, 0, recBuf.Length);
-                        recBuf = new byte[REC_BUF_SIZE];
                         tom.ReceiveBufferQueue = new Queue<byte[]>();
                         tom.ReceiveBufferQueue.Enqueue(recBuf);
                         tom.LastResponseReceived = DateTime.Now;
                         tom.IsComplete = true;
+                        recBuf = new byte[REC_BUF_SIZE];
                     }
                     break;
             }
@@ -1446,10 +1474,10 @@ namespace JupiterSoft.CustomDailog
                                     ControlBoardArea.Visibility = Visibility.Hidden;
                                 }));
 
-                                AddOutPut("Disconnecting Control Card..", (int)OutPutType.INFORMATION);
+                                //AddOutPut("Disconnecting Control Card..", (int)OutPutType.INFORMATION);
                                 StopPortCommunication(Models.DeviceType.ControlCard);
                                 command.ExecutionStatus = (int)ExecutionStage.Executed;
-                                AddOutPut("Control card is disconnected..", (int)OutPutType.SUCCESS, true);
+                                //AddOutPut("Control card is disconnected..", (int)OutPutType.SUCCESS, true);
 
                             }
 
@@ -1459,19 +1487,19 @@ namespace JupiterSoft.CustomDailog
                         {
                             if (command.ExecutionStatus == (int)ExecutionStage.Not_Executed)
                             {
-                                AddOutPut("Connecting weight module..", (int)OutPutType.INFORMATION);
+                                //AddOutPut("Connecting weight module..", (int)OutPutType.INFORMATION);
                                 ConnectWeight(command.Configuration.deviceDetail.PortName, command.Configuration.deviceDetail.BaudRate, command.Configuration.deviceDetail.DataBit, command.Configuration.deviceDetail.StopBit, command.Configuration.deviceDetail.Parity);
                                 command.ExecutionStatus = (int)ExecutionStage.Executed;
 
-                                AddOutPut("weight module is connected..", (int)OutPutType.SUCCESS, true);
-                                AddOutPut("Waiting for weight module response..", (int)OutPutType.INFORMATION);
+                                //AddOutPut("weight module is connected..", (int)OutPutType.SUCCESS, true);
+                                //AddOutPut("Waiting for weight module response..", (int)OutPutType.INFORMATION);
                                 //Thread.Sleep(500);
                             }
                             else
                             {
-                                AddOutPut("Started Fetching weight module input..", (int)OutPutType.SUCCESS, true);
+                                //AddOutPut("Started Fetching weight module input..", (int)OutPutType.SUCCESS, true);
                                 command.ExecutionStatus = (int)ExecutionStage.Executed;
-                                AddOutPut("Fetching Stopped..", (int)OutPutType.SUCCESS, true);
+                                //AddOutPut("Fetching Stopped..", (int)OutPutType.SUCCESS, true);
                             }
                         }
 
@@ -1484,10 +1512,10 @@ namespace JupiterSoft.CustomDailog
                                     WeightModuleArea.Visibility = Visibility.Hidden;
                                 }));
 
-                                AddOutPut("Disconnecting weight module..", (int)OutPutType.WARNING, true);
+                                //AddOutPut("Disconnecting weight module..", (int)OutPutType.WARNING, true);
                                 StopPortCommunication(Models.DeviceType.WeightModule);
                                 command.ExecutionStatus = (int)ExecutionStage.Executed;
-                                AddOutPut("Weight module disconnected..", (int)OutPutType.SUCCESS, true);
+                                //AddOutPut("Weight module disconnected..", (int)OutPutType.SUCCESS, true);
 
                             }
                             else
@@ -1501,28 +1529,31 @@ namespace JupiterSoft.CustomDailog
                         {
                             if (command.ExecutionStatus == (int)ExecutionStage.Not_Executed)
                             {
-                                AddOutPut("Reading data..", (int)OutPutType.INFORMATION);
+                               // AddOutPut("Reading data..", (int)OutPutType.INFORMATION);
                                 bool received = false;
                                 RecData _rec = new RecData();
                                 while (received == false)
                                 {
                                     var cDevices = connectedDevices.Where(x => x.DeviceType == Models.DeviceType.WeightModule).FirstOrDefault();
                                     DataReader(Models.DeviceType.WeightModule, command.CommandId);
-                                    if (cDevices.ReceiveBufferQueue.Count > 0)
+                                    if (cDevices.CurrentRequest.MbTgm != null)
                                     {
-                                        _rec = new RecData();
-                                        _rec = cDevices.CurrentRequest;
-                                        if (validateResponse(_rec))
+                                        if (cDevices.CurrentRequest.MbTgm.Length > 0)
                                         {
-                                            received = true;
+                                            _rec = new RecData();
+                                            _rec = cDevices.CurrentRequest;
+                                            if (validateResponse(_rec))
+                                            {
+                                                received = true;
+                                            }
                                         }
                                     }
                                 }
 
-                                AddOutPut("Storing data into " + command.CommandText + "..", (int)OutPutType.INFORMATION);
+                                //AddOutPut("Storing data into " + command.CommandText + "..", (int)OutPutType.INFORMATION);
                                 //command.OutPutData = _rec;
                                 command.ExecutionStatus = (int)ExecutionStage.Executed;
-                                AddOutPut("Showing weight module response..", (int)OutPutType.INFORMATION);
+                                //AddOutPut("Showing weight module response..", (int)OutPutType.INFORMATION);
                                 showWeightModuleResponse(_rec);
 
                             }
@@ -1606,7 +1637,7 @@ namespace JupiterSoft.CustomDailog
                             {
                                 AddOutPut("Ended..", (int)OutPutType.SUCCESS, true);
                             }
-
+                            Task.Delay(200);
                         }
 
                         else if (command.CommandType == (int)ElementConstant.If_Condition_Start)
@@ -1864,16 +1895,17 @@ namespace JupiterSoft.CustomDailog
 
                         else if (command.CommandType == (int)ElementConstant.Repeat_Control)
                         {
-                            AddOutPut("Repeater loop started..", (int)OutPutType.INFORMATION, true);
+                            //Task.Delay(2000);
+                           // AddOutPut("Repeater loop started..", (int)OutPutType.INFORMATION, true);
                         }
                         else if (command.CommandType == (int)ElementConstant.Connect_Camera_Event)
                         {
 
                             StartUSBCamRecording();
                             command.ExecutionStatus = (int)ExecutionStage.Executed;
-                            AddOutPut("Camera Recording Starts..", (int)OutPutType.INFORMATION, true);
+                            //AddOutPut("Camera Recording Starts..", (int)OutPutType.INFORMATION, true);
                             //var RecordPath = StartVideoCapture(_FileDirectory);
-                            AddOutPut("Camera is recording at " + VideoFileDirectory + " ..", (int)OutPutType.INFORMATION, true);
+                           // AddOutPut("Camera is recording at " + VideoFileDirectory + " ..", (int)OutPutType.INFORMATION, true);
 
                         }
                         else if (command.CommandType == (int)ElementConstant.Disconnect_Camera_Event)
@@ -1888,7 +1920,7 @@ namespace JupiterSoft.CustomDailog
 
 
                     }
-                    ExecuteProcesses();
+                    //ExecuteProcesses();
 
                 }
 
@@ -2166,34 +2198,39 @@ namespace JupiterSoft.CustomDailog
         #region Output Function
         private void AddOutPut(string Output, int MessageType, bool isBold = false)
         {
-            Paragraph myParagraph = new Paragraph();
-            switch (MessageType)
+            //Task.Delay(200);
+            try
             {
-                case (int)OutPutType.SUCCESS:
-                    myParagraph.Foreground = Brushes.ForestGreen;
-                    break;
-                case (int)OutPutType.ERROR:
-                    myParagraph.Foreground = Brushes.Red;
-                    break;
-                case (int)OutPutType.INFORMATION:
-                    myParagraph.Foreground = Brushes.Black;
-                    break;
-                case (int)OutPutType.WARNING:
-                    myParagraph.Foreground = Brushes.OrangeRed;
-                    break;
+                Paragraph myParagraph = new Paragraph();
+                switch (MessageType)
+                {
+                    case (int)OutPutType.SUCCESS:
+                        myParagraph.Foreground = Brushes.ForestGreen;
+                        break;
+                    case (int)OutPutType.ERROR:
+                        myParagraph.Foreground = Brushes.Red;
+                        break;
+                    case (int)OutPutType.INFORMATION:
+                        myParagraph.Foreground = Brushes.Black;
+                        break;
+                    case (int)OutPutType.WARNING:
+                        myParagraph.Foreground = Brushes.OrangeRed;
+                        break;
+                }
+                if (isBold)
+                {
+                    Bold myBold = new Bold(new Run(Output));
+                    myParagraph.Inlines.Add(myBold);
+                }
+                else
+                {
+                    Run myRun = new Run(Output);
+                    myParagraph.Inlines.Add(myRun);
+                }
+                _dispathcer.Invoke(new Action(() => { OutPutControl.Blocks.Add(myParagraph); }));
+               // OutPutControl.Blocks.Add(myParagraph);
             }
-            if (isBold)
-            {
-                Bold myBold = new Bold(new Run(Output));
-                myParagraph.Inlines.Add(myBold);
-            }
-            else
-            {
-                Run myRun = new Run(Output);
-                myParagraph.Inlines.Add(myRun);
-            }
-
-            _dispathcer.Invoke(new Action(() => { OutPutControl.Blocks.Add(myParagraph); }));
+            catch (Exception ex) { return; }
 
         }
         #endregion
@@ -2213,11 +2250,11 @@ namespace JupiterSoft.CustomDailog
             btn.Content = "Execution Started";
             btn.Background = Brushes.Red;
             btn.IsEnabled = false;
-            StartUSBCamera();
+           //StartUSBCamera();
             //WebcamViewer.StartPreview();
-            AddOutPut("Commands Execution started..", (int)OutPutType.INFORMATION);
+            //AddOutPut("Commands Execution started..", (int)OutPutType.INFORMATION);
             ExecuteProcesses();
-            AddOutPut("Commands compilation completed..", (int)OutPutType.SUCCESS);
+            //AddOutPut("Commands compilation completed..", (int)OutPutType.SUCCESS);
 
         }
     }

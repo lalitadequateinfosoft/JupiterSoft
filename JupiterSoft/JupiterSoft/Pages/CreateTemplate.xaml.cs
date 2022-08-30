@@ -4380,7 +4380,7 @@ namespace JupiterSoft.Pages
                 }
                 this.parentWindow.Hide();
                 HMIDialoge dialoge = new HMIDialoge(Commands, deviceInfo);
-                dialoge.ShowDialog();
+                dialoge.Show();
                 if (dialoge.IsClosed)
                 {
                     this.parentWindow.Show();
