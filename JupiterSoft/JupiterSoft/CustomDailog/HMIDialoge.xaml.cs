@@ -1640,7 +1640,7 @@ namespace JupiterSoft.CustomDailog
             else if (command.CommandType == (int)ElementConstant.Connect_Camera_Event)
             {
                 AddOutPut("Camera Recording Starts..", (int)OutPutType.INFORMATION, true);
-                var RecordPath = StartVideoCapture(_FileDirectory);
+                var RecordPath = StartVideoCapture(_VideoDirectory);
                 AddOutPut("Camera is recording at " + RecordPath + " ..", (int)OutPutType.INFORMATION, true);
                 Commands.Where(x => x.CommandId == command.CommandId).ToList().ForEach(x => x.ExecutionStatus = (int)ExecutionStage.Executed);
                 return;
@@ -1956,8 +1956,8 @@ namespace JupiterSoft.CustomDailog
                     Run myRun = new Run(Output);
                     myParagraph.Inlines.Add(myRun);
                 }
-                _dispathcer.Invoke(new Action(() => { OutPutControl.Blocks.Add(myParagraph); }));
-                // OutPutControl.Blocks.Add(myParagraph);
+                //_dispathcer.Invoke(new Action(() => { OutPutControl.Blocks.Add(myParagraph); }));
+                 OutPutControl.Blocks.Add(myParagraph);
             }
             catch (Exception ex) { return; }
 
@@ -1976,7 +1976,7 @@ namespace JupiterSoft.CustomDailog
             Commands.ForEach(x => x.ExecutionStatus = (int)ExecutionStage.Not_Executed);
 
             ExecutionTimer.Elapsed += ExecutionTimer_Elapsed;
-            ExecutionTimer.Interval = 2000;
+            ExecutionTimer.Interval = 1000;
             ExecutionTimer.Enabled = true;
 
             AddOutPut("Commands Execution started..", (int)OutPutType.INFORMATION);
