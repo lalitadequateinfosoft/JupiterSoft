@@ -1568,7 +1568,8 @@ namespace JupiterSoft.Pages
             {
                 if (command.ExecutionStatus == (int)ExecutionStage.Not_Executed)
                 {
-                    RegisterWriteCommand functioncommand = JsonConvert.DeserializeObject<RegisterWriteCommand>(command.CommandData.ToString());
+                    //RegisterWriteCommand functioncommand = JsonConvert.DeserializeObject<RegisterWriteCommand>(command.CommandData.ToString());
+                    RegisterWriteCommand functioncommand = (RegisterWriteCommand)(object)command.CommandData;
                     string commandText = functioncommand.RegisterOutput == 1 ? "ON" : "OFF";
                     AddOutPut("Writing control card register " + functioncommand.RegisterNumber + " " + commandText, (int)OutPutType.WARNING, true);
                     WriteControCardState(functioncommand.RegisterNumber, functioncommand.RegisterOutput);
