@@ -1639,10 +1639,18 @@ namespace JupiterSoft.Pages
             }
             else if (command.CommandType == (int)ElementConstant.Connect_Camera_Event)
             {
-                AddOutPut("Camera Recording Starts..", (int)OutPutType.INFORMATION, true);
-                var RecordPath = StartVideoCapture(_VideoDirectory);
-                AddOutPut("Camera is recording at " + RecordPath + " ..", (int)OutPutType.INFORMATION, true);
-                Commands.Where(x => x.CommandId == command.CommandId).ToList().ForEach(x => x.ExecutionStatus = (int)ExecutionStage.Executed);
+                if (_webCamera.Capturing)
+                {
+                    AddOutPut("Camera Recording Starts..", (int)OutPutType.INFORMATION, true);
+                    var RecordPath = StartVideoCapture(_VideoDirectory);
+                    AddOutPut("Camera is recording at " + RecordPath + " ..", (int)OutPutType.INFORMATION, true);
+                    Commands.Where(x => x.CommandId == command.CommandId).ToList().ForEach(x => x.ExecutionStatus = (int)ExecutionStage.Executed);
+                }
+                else
+                {
+                    AddOutPut("Camera is not found..", (int)OutPutType.ERROR, true);
+                }
+                    
                 return;
             }
             else if (command.CommandType == (int)ElementConstant.Disconnect_Camera_Event)
