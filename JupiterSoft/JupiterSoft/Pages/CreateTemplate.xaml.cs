@@ -2148,7 +2148,7 @@ namespace JupiterSoft.Pages
                                 Order = item.ContentOrder,
                                 ExecutionStatus = (int)ExecutionStage.Not_Executed,
                                 Configuration = new DeviceConfiguration(),
-                                CommandData = item.CommandData
+                                CommandData = registerWriteCommand
                             };
                             Commands.Add(writeCardcommand);
                             ShouldAdd = true;
