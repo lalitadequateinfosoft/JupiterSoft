@@ -103,6 +103,9 @@
     <Compile Include="Models\LogViewer.cs" />
     <Compile Include="Models\ModBusInput.cs" />
     <Compile Include="Models\RegisterOutputStatus.cs" />
+    <Compile Include="Pages\HMIPage.xaml.cs">
+      <DependentUpon>HMIPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Properties\Annotations.cs" />
     <Page Include="CameraTest.xaml">
       <SubType>Designer</SubType>
@@ -156,6 +159,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Pages\CreateTemplate.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\HMIPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

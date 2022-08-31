@@ -170,35 +170,6 @@ namespace JupiterSoft.Pages
             LoadFile();
         }
 
-        public CreateTemplate(List<LogicalCommand> runningCommands)
-        {
-            bc = new BrushConverter();
-            userCommandLogic = new CommandExecutionModel();
-            this.UElement = ElementOp.GetElementModel();
-            InitializeComponent();
-
-            this.DataContext = this.UElement;
-            this.CanvasWidth = ReceiveDrop.Width;
-            this.CanvasHeight = ReceiveDrop.Height;
-            this.isloaded = true;
-
-
-            devices = new List<DiscoveredDeviceInfo>();
-            DeviceModels = new List<DeviceModel>();
-
-            deviceInfo = DeviceInformation.GetConnectedDevices();
-            ConnectedDevices();
-            LoadSystemSound();
-
-            _dispathcer = Dispatcher.CurrentDispatcher;
-            this.SerialDevice = new SerialPort();
-
-            Commands = new List<LogicalCommand>();
-            //Commands = runningCommands;
-            //ApplicationConstant.runningCommands = new List<LogicalCommand>();
-
-            //LoadRunningCommands();
-        }
 
         #region UI Functions
         private void ButtonGrid_MouseEnter(object sender, MouseEventArgs e)
@@ -4865,10 +4836,15 @@ namespace JupiterSoft.Pages
                     return;
                 }
 
-                ApplicationConstant.runningCommands = Commands;
-                HMIDialoge dialoge = new HMIDialoge(Commands, deviceInfo);
-                dialoge.Show();
-                this.parentWindow.Close();
+                //ApplicationConstant.runningCommands = Commands;
+                //HMIDialoge dialoge = new HMIDialoge(Commands, deviceInfo);
+                //dialoge.Show();
+                //this.parentWindow.Close();
+
+               HMIPage ChildPage = new HMIPage(Commands, deviceInfo);
+                this.parentWindow.frame.Content = null;
+                ChildPage.ParentWindow = this.parentWindow;
+                this.parentWindow.frame.Content = ChildPage;
             }
             catch (Exception ex)
             {

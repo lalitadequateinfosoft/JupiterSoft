@@ -28,14 +28,13 @@ using System.Timers;
 using System.ComponentModel;
 using JupiterSoft.Annotations;
 using System.Runtime.CompilerServices;
-using JupiterSoft.Pages;
 
-namespace JupiterSoft.CustomDailog
+namespace JupiterSoft.Pages
 {
     /// <summary>
-    /// Interaction logic for HMIDialoge.xaml
+    /// Interaction logic for HMIPage.xaml
     /// </summary>
-    public partial class HMIDialoge : Window, INotifyPropertyChanged
+    public partial class HMIPage : Page,INotifyPropertyChanged
     {
         #region Function Variablle
         const int REC_BUF_SIZE = 10000;
@@ -83,6 +82,7 @@ namespace JupiterSoft.CustomDailog
         #endregion
 
         public bool IsClosed { get; set; }
+       
 
         private string _videofiledirectory;
 
@@ -112,20 +112,24 @@ namespace JupiterSoft.CustomDailog
                 logs = value;
             }
         }
-        public HMIDialoge(List<LogicalCommand> _Commands, DeviceInfo _deviceInfo)
+
+        Dashboard parentWindow;
+        public Dashboard ParentWindow
+        {
+            get { return parentWindow; }
+            set { parentWindow = value; }
+        }
+        public HMIPage(List<LogicalCommand> _Commands, DeviceInfo _deviceInfo)
         {
             InitializeComponent();
-
             _dispathcer = Dispatcher.CurrentDispatcher;
-           // this.SerialDevice = new SerialPort();
+            // this.SerialDevice = new SerialPort();
             this.Commands = _Commands;
             this.Commands.ForEach(x => x.ExecutionStatus = (int)ExecutionStage.Not_Executed);
             this.deviceInfo = _deviceInfo;
             registerOutputStatuses = new List<RegisterOutputStatus>();
             connectedDevices = new List<ConnectedDevices>();
-
-
-
+           
             SnapshotDirectory = ApplicationConstant._SnapShotDirectory;
             VideoFileDirectory = _VideoDirectory;
             if (!Directory.Exists(VideoFileDirectory))
@@ -137,12 +141,18 @@ namespace JupiterSoft.CustomDailog
             _drawingImageProvider = new DrawingImageProvider();
             _connector = new MediaConnector();
             this.DataContext = this;
-            
-            
         }
+
+
 
         private void StopProcess_Click(object sender, RoutedEventArgs e)
         {
+            if(ExecutionTimer.Enabled)
+            {
+                ExecutionTimer.Elapsed -= ExecutionTimer_Elapsed;
+                ExecutionTimer.Enabled = false;
+            }
+
 
             DisconnectCamera();
             if (connectedDevices != null)
@@ -157,33 +167,14 @@ namespace JupiterSoft.CustomDailog
 
             }
 
-            
-            //CreateTemplate ChildPage = new CreateTemplate();
-            //this.parentWindow.frame.Content = null;
-            //ChildPage.ParentWindow = this.parentWindow;
-            //this.parentWindow.Content = ChildPage;
-            //dashboard.Show();
-            Close();
+            CreateTemplate ChildPage = new CreateTemplate();
+            this.parentWindow.frame.Content = null;
+            ChildPage.ParentWindow = this.parentWindow;
+            this.parentWindow.frame.Content = ChildPage;
         }
 
         #region Camera Function
-        private void StartCameraRecording()
-        {
-
-            try
-            {
-                StartVideoCapture(_VideoDirectory);
-            }
-            catch
-            {
-                StartVideoCapture(_VideoDirectory);
-            }
-        }
-
-        private void StopCameraRecording()
-        {
-            StopVideoCapture();
-        }
+       
 
         private bool ConnectionUSB()
         {
@@ -228,10 +219,7 @@ namespace JupiterSoft.CustomDailog
             return isStarted;
         }
 
-        //private void _webCamera_StateChanged(object sender, EventArgs e)
-        //{
-        //    AddOutPut("Camera running..", (int)OutPutType.ERROR);
-        //}
+       
 
         private void DisconnectCamera()
         {
@@ -303,64 +291,21 @@ namespace JupiterSoft.CustomDailog
             }
         }
 
-        private void StartUSBCamera()
-        {
-            try
-            {
-                // Display webcam video
-                //WebcamViewer.StartPreview();
+        
 
-
-
-                isCameraRunning = true;
-            }
-            catch (Microsoft.Expression.Encoder.SystemErrorException ex)
-            {
-                AddOutPut("Camera is in use by another application..", (int)OutPutType.INFORMATION, true);
-                //MessageBox.Show("Device is in use by another application");
-            }
-        }
-
-        private void StopUSBCamera()
-        {
-
-            // Stop the display of webcam video.
-            // _dispathcer.Invoke(new Action(() => { WebcamViewer.StopPreview(); }));
-
-            isCameraRunning = false;
-        }
-
-        private void StartUSBCamRecording()
-        {
-            //Start Capturing Video.
-            //if (!WebcamViewer.IsRecording)
-            //{
-            //    _dispathcer.Invoke(new Action(() => { WebcamViewer.StartRecording(); }));
-            //}
-
-        }
-
-        private void StopUSBCamRecording()
-        {
-            // Stop recording of webcam video to harddisk.
-            //if (WebcamViewer.IsRecording)
-            //{
-            //    _dispathcer.Invoke(new Action(() => { WebcamViewer.StopRecording(); }));
-            //}
-
-        }
+        
         #endregion
         #region network camera
         private void ConnectIPCamera(string URL, string username, string password)
         {
-            drawingImageProvider = new DrawingImageProvider();
-            _connector = new MediaConnector();
+            
             try
             {
                 _camera = IPCameraFactory.GetCamera(URL, username, password);
                 _connector.Connect(_camera.VideoChannel, drawingImageProvider);
+                videoViewer.SetImageProvider(drawingImageProvider);
                 _camera.Start();
-
+                videoViewer.Start();
             }
             catch
             {
@@ -369,6 +314,8 @@ namespace JupiterSoft.CustomDailog
 
         private void DisconnectIPCamera()
         {
+            videoViewer.Stop();
+            videoViewer.Background = Brushes.Black;
             _camera.Stop();
             _camera.Dispose();
             drawingImageProvider.Dispose();
@@ -1675,7 +1622,7 @@ namespace JupiterSoft.CustomDailog
 
             }
 
-            else if(command.CommandType == (int)ElementConstant.End_Scope)
+            else if (command.CommandType == (int)ElementConstant.End_Scope)
             {
                 Commands.Where(x => x.CommandId == command.CommandId).ToList().ForEach(x => x.ExecutionStatus = (int)ExecutionStage.Executed);
                 AddOutPut("End Scope", (int)OutPutType.INFORMATION, true);
@@ -1699,14 +1646,10 @@ namespace JupiterSoft.CustomDailog
             else if (command.CommandType == (int)ElementConstant.Disconnect_Camera_Event)
             {
                 AddOutPut("Stoping Camera..", (int)OutPutType.INFORMATION, true);
-                StopUSBCamRecording();
+                StopVideoCapture();
                 AddOutPut("Camera Recording Stopped..", (int)OutPutType.SUCCESS, true);
                 Commands.Where(x => x.CommandId == command.CommandId).ToList().ForEach(x => x.ExecutionStatus = (int)ExecutionStage.Executed);
             }
-
-
-
-
         }
 
         double getWeightModuleResponse(RecData _recData)
@@ -1972,8 +1915,6 @@ namespace JupiterSoft.CustomDailog
         private void AddOutPut(string Output, int MessageType, bool isBold = false)
         {
 
-
-
             string Message = string.Empty;
             switch (MessageType)
             {
@@ -2010,12 +1951,12 @@ namespace JupiterSoft.CustomDailog
 
             ConnectionUSB();
 
-            //Commands.ForEach(x => x.ExecutionStatus = (int)ExecutionStage.Not_Executed);
+            Commands.ForEach(x => x.ExecutionStatus = (int)ExecutionStage.Not_Executed);
 
-            //AddOutPut("Commands Execution started..", (int)OutPutType.INFORMATION);
-            //ExecutionTimer.Elapsed += ExecutionTimer_Elapsed;
-            //ExecutionTimer.Interval = 3000;
-            //ExecutionTimer.Enabled = true;
+            AddOutPut("Commands Execution started..", (int)OutPutType.INFORMATION);
+            ExecutionTimer.Elapsed += ExecutionTimer_Elapsed;
+            ExecutionTimer.Interval = 3000;
+            ExecutionTimer.Enabled = true;
         }
 
         private void ExecutionTimer_Elapsed(object sender, ElapsedEventArgs e)
