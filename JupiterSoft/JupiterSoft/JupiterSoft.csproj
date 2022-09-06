@@ -16,6 +16,7 @@
     <Deterministic>true</Deterministic>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -28,7 +29,6 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -236,6 +236,9 @@
     </PackageReference>
     <PackageReference Include="Ookii.Dialogs.Wpf">
       <Version>5.0.1</Version>
+    </PackageReference>
+    <PackageReference Include="ozeki.voip.sip.client">
+      <Version>11.2.4</Version>
     </PackageReference>
     <PackageReference Include="WpfWebcamControl">
       <Version>3.3.1</Version>
