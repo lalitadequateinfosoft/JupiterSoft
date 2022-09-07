@@ -72,10 +72,35 @@ namespace JupiterSoft
                     FiledataGrid.ItemsSource = null;
                     FiledataGrid.ItemsSource = FileData.ToList();
                     FiledataGrid.Visibility = Visibility.Visible;
+                    Filepopup.IsOpen = true;
                 }
-                else { FileMessage.Visibility = Visibility.Visible; }
+                else
+                {
+                    // Configure open file dialog box
+                    var dialog = new Microsoft.Win32.OpenFileDialog();
+                    dialog.Title = "Select your project";
+                    dialog.DefaultExt = ".json"; // Default file extension
+                    dialog.Filter = "InteGrids Files (*.json)|*.json"; // Filter files by extension
 
-                Filepopup.IsOpen = true;
+                    // Show open file dialog box
+                    bool? result = dialog.ShowDialog();
+
+                    // Process open file dialog box results
+                    if (result == true)
+                    {
+                        // Open document
+                        string filename = dialog.FileName;
+                        ChildPage = new CreateTemplate(filename);
+                        this.frame.Content = null;
+                        ChildPage.ParentWindow = this;
+                        this.frame.Content = ChildPage;
+                    }
+                   
+                    
+                }
+                //else { FileMessage.Visibility = Visibility.Visible; }
+
+                
             }
             else if (item.Tag.ToString().ToLower() == "close")
             {

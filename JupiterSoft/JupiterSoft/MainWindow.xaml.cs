@@ -52,10 +52,25 @@ namespace JupiterSoft
             try
             {
                 StartSaved.IsEnabled = false;
+                // Configure open file dialog box
+                var dialog = new Microsoft.Win32.OpenFileDialog();
+                dialog.Title = "Select your project";
+                dialog.DefaultExt = ".json"; // Default file extension
+                dialog.Filter = "InteGrids Files (*.json)|*.json"; // Filter files by extension
 
-                var dashForm = new Dashboard();
-                dashForm.Show();
-                this.Close();
+                // Show open file dialog box
+                bool? result = dialog.ShowDialog();
+
+                // Process open file dialog box results
+                if (result == true)
+                {
+                    // Open document
+                    var dashForm = new Dashboard(dialog.FileName);
+                    dashForm.Show();
+                    this.Close();
+                }
+
+               
             }
             catch
             {

@@ -1828,7 +1828,7 @@ namespace JupiterSoft.Pages
                     saveFileDialog1.Title = "Save Your File";
                     saveFileDialog1.CheckPathExists = true;
                     saveFileDialog1.DefaultExt = "json";
-                    saveFileDialog1.Filter = "Jupiter Files (*.json)|*.json";
+                    saveFileDialog1.Filter = "InteGrids Files (*.json)|*.json";
                     saveFileDialog1.FilterIndex = 1;
                     if (saveFileDialog1.ShowDialog() == true)
                     {
@@ -2247,6 +2247,8 @@ namespace JupiterSoft.Pages
                     }
                 }
             }
+
+            CodeArea.IsSelected = true;
         }
 
         private void LoadRunningCommands()

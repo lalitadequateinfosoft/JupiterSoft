@@ -2468,7 +2468,7 @@
                         </Grid>
                     </Border>
                 </TabItem>
-                <TabItem Style="{StaticResource TabItemStyle}">
+                <TabItem Style="{StaticResource TabItemStyle}" x:Name="CodeArea">
                     <TabItem.Header>
                         <StackPanel Orientation="Horizontal" >
                             <TextBlock Text="Code" Foreground="#fff" />
