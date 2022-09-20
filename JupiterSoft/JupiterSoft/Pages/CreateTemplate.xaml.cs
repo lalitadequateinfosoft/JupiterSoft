@@ -3396,17 +3396,37 @@ namespace JupiterSoft.Pages
         {
             try
             {
-                if (!string.IsNullOrEmpty(ComPortControl.SelectedValue.ToString()) && ComPortWeight.SelectedValue.ToString() != "0")
+                if (!string.IsNullOrEmpty(ComPortControl.SelectedValue.ToString()) && ComPortControl.SelectedValue.ToString() != "0")
                 {
                     TestControlCard.IsEnabled = false;
                     StopControlCard.IsEnabled = true;
                     Disable_RunTimeButton();
 
                     string deviceId = ComPortControl.SelectedValue.ToString();
-                    int Baudrate = Convert.ToInt32(BaudRateControlCard.SelectedValue.ToString());
-                    int databit = Convert.ToInt32(DataBitControlCard.SelectedValue.ToString());
-                    int stopbit = Convert.ToInt32(StopBitControlCard.SelectedValue.ToString());
-                    int parity = Convert.ToInt32(ParityControlCard.SelectedValue.ToString());
+                    int Baudrate = Convert.ToInt32(BaudRateControlCard.SelectionBoxItem.ToString());
+                    int databit = Convert.ToInt32(DataBitControlCard.SelectionBoxItem.ToString());
+                    int stopbit = Convert.ToInt32(StopBitControlCard.SelectionBoxItem.ToString());
+                    int parity = 0;
+
+                    switch(ParityControlCard.SelectionBoxItem.ToString().ToLower())
+                    {
+                        case "none":
+                            parity = (int)Parity.None;
+                            break;
+                        case "odd":
+                            parity = (int)Parity.Odd;
+                            break;
+                        case "even":
+                            parity = (int)Parity.Even;
+                            break;
+                        case "mark":
+                            parity = (int)Parity.Mark;
+                            break;
+                        case "space":
+                            parity = (int)Parity.Space;
+                            break;
+
+                    }
 
                     var suctom = deviceInfo.CustomDeviceInfos.Where(x => x.DeviceID == deviceId).FirstOrDefault();
                     string Port = suctom.PortName;

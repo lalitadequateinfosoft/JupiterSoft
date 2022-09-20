@@ -143,6 +143,7 @@ namespace JupiterSoft.Pages
             this.DataContext = this;
         }
 
+        private bool executionRunning = false;
 
 
         private void StopProcess_Click(object sender, RoutedEventArgs e)
@@ -151,6 +152,7 @@ namespace JupiterSoft.Pages
             {
                 ExecutionTimer.Elapsed -= ExecutionTimer_Elapsed;
                 ExecutionTimer.Enabled = false;
+                executionRunning = false;
             }
 
 
@@ -979,6 +981,7 @@ namespace JupiterSoft.Pages
 
         private void DataReader(Models.DeviceType device, string commandId)
         {
+            if (executionRunning == false) return;
             var cDevices = connectedDevices.Where(x => x.DeviceType == device).FirstOrDefault();
 
             SB1Request _SB1Request = new SB1Request();
@@ -1428,6 +1431,7 @@ namespace JupiterSoft.Pages
 
         public void ExecuteProcesses(string commandId)
         {
+            if (executionRunning == false) return;
             var command = Commands.Where(x => x.CommandId == commandId).FirstOrDefault();
 
 
@@ -1542,7 +1546,7 @@ namespace JupiterSoft.Pages
                     RecData _rec = new RecData();
                     while (received == false)
                     {
-                        var cDevices = connectedDevices.Where(x => x.DeviceType == Models.DeviceType.WeightModule).FirstOrDefault();
+                        var cDevices = connectedDevices.Where(x => x.DeviceType == Models.DeviceType.ControlCard).FirstOrDefault();
                         DataReader(Models.DeviceType.ControlCard, command.CommandId);
                         if (cDevices.ReceiveBufferQueue != null)
                         {
@@ -1918,8 +1922,6 @@ namespace JupiterSoft.Pages
         }
 
 
-
-
         #endregion
         #region Output Function
         private void AddOutPut(string Output, int MessageType, bool isBold = false)
@@ -1967,6 +1969,7 @@ namespace JupiterSoft.Pages
             ExecutionTimer.Elapsed += ExecutionTimer_Elapsed;
             ExecutionTimer.Interval = 3000;
             ExecutionTimer.Enabled = true;
+            executionRunning = true;
         }
 
         private void ExecutionTimer_Elapsed(object sender, ElapsedEventArgs e)
