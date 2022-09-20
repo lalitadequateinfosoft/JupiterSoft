@@ -3531,6 +3531,7 @@ namespace JupiterSoft.Pages
                 }
             }
 
+            TestReadAllInputOutput();
 
             // ReadAllControCardInputOutput();
         }
@@ -3605,7 +3606,7 @@ namespace JupiterSoft.Pages
 
                     }
 
-                    if (_i1 == 1)
+                    if (_i11 == 1)
                     {
                         _dispathcer.Invoke(new Action(() => { ReadInput1.Source = new BitmapImage(new Uri(@"/assets/CtrlOn.png", UriKind.Relative)); }));
 
@@ -3776,20 +3777,20 @@ namespace JupiterSoft.Pages
 
                     _dispathcer.Invoke(new Action(() =>
                     {
-                        Toggle16.IsChecked = _i16 == 0 ? false : true;
-                        Toggle17.IsChecked = _i17 == 0 ? false : true;
-                        Toggle18.IsChecked = _i18 == 0 ? false : true;
-                        Toggle19.IsChecked = _i19 == 0 ? false : true;
-                        Toggle20.IsChecked = _i20 == 0 ? false : true;
-                        Toggle21.IsChecked = _i21 == 0 ? false : true;
-                        Toggle22.IsChecked = _i22 == 0 ? false : true;
-                        Toggle23.IsChecked = _i23 == 0 ? false : true;
-                        Toggle24.IsChecked = _i24 == 0 ? false : true;
-                        Toggle25.IsChecked = _i25 == 0 ? false : true;
-                        Toggle26.IsChecked = _i26 == 0 ? false : true;
-                        Toggle27.IsChecked = _i27 == 0 ? false : true;
-                        Toggle28.IsChecked = _i28 == 0 ? false : true;
-                        Toggle29.IsChecked = _i29 == 0 ? false : true;
+                        Toggle16.IsChecked = _i16 == 0 ? true : false;
+                        Toggle17.IsChecked = _i17 == 0 ? true : false;
+                        Toggle18.IsChecked = _i18 == 0 ? true : false;
+                        Toggle19.IsChecked = _i19 == 0 ? true : false;
+                        Toggle20.IsChecked = _i20 == 0 ? true : false;
+                        Toggle21.IsChecked = _i21 == 0 ? true : false;
+                        Toggle22.IsChecked = _i22 == 0 ? true : false;
+                        Toggle23.IsChecked = _i23 == 0 ? true : false;
+                        Toggle24.IsChecked = _i24 == 0 ? true : false;
+                        Toggle25.IsChecked = _i25 == 0 ? true : false;
+                        Toggle26.IsChecked = _i26 == 0 ? true : false;
+                        Toggle27.IsChecked = _i27 == 0 ? true : false;
+                        Toggle28.IsChecked = _i28 == 0 ? true : false;
+                        Toggle29.IsChecked = _i29 == 0 ? true : false;
                         //Toggle30.IsChecked = _i30 == 0 ? true : false;
                     }));
 

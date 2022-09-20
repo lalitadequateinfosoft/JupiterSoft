@@ -557,7 +557,7 @@ namespace JupiterSoft.Pages
                         int _i29 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 61);
 
 
-                        if (_i0 == 0)
+                        if (_i0 == 1)
                         {
                             _dispathcer.Invoke(new Action(() => { ReadInput0.Source = new BitmapImage(new Uri(@"/assets/CtrlOn.png", UriKind.Relative)); }));
 
@@ -568,7 +568,7 @@ namespace JupiterSoft.Pages
 
                         }
 
-                        if (_i1 == 0)
+                        if (_i1 == 1)
                         {
                             _dispathcer.Invoke(new Action(() => { ReadInput1.Source = new BitmapImage(new Uri(@"/assets/CtrlOn.png", UriKind.Relative)); }));
 
@@ -580,7 +580,7 @@ namespace JupiterSoft.Pages
                         }
 
 
-                        if (_i2 == 0)
+                        if (_i2 == 1)
                         {
                             _dispathcer.Invoke(new Action(() => { ReadInput2.Source = new BitmapImage(new Uri(@"/assets/CtrlOn.png", UriKind.Relative)); }));
 
@@ -591,7 +591,7 @@ namespace JupiterSoft.Pages
 
                         }
 
-                        if (_i3 == 0)
+                        if (_i3 == 1)
                         {
                             _dispathcer.Invoke(new Action(() => { ReadInput3.Source = new BitmapImage(new Uri(@"/assets/CtrlOn.png", UriKind.Relative)); }));
 
@@ -602,7 +602,7 @@ namespace JupiterSoft.Pages
 
                         }
 
-                        if (_i4 == 0)
+                        if (_i4 == 1)
                         {
                             _dispathcer.Invoke(new Action(() => { ReadInput4.Source = new BitmapImage(new Uri(@"/assets/CtrlOn.png", UriKind.Relative)); }));
 
@@ -613,7 +613,7 @@ namespace JupiterSoft.Pages
 
                         }
 
-                        if (_i5 == 0)
+                        if (_i5 == 1)
                         {
                             _dispathcer.Invoke(new Action(() => { ReadInput5.Source = new BitmapImage(new Uri(@"/assets/CtrlOn.png", UriKind.Relative)); }));
 
@@ -624,7 +624,7 @@ namespace JupiterSoft.Pages
 
                         }
 
-                        if (_i6 == 0)
+                        if (_i6 == 1)
                         {
                             _dispathcer.Invoke(new Action(() => { ReadInput6.Source = new BitmapImage(new Uri(@"/assets/CtrlOn.png", UriKind.Relative)); }));
 
@@ -635,7 +635,7 @@ namespace JupiterSoft.Pages
 
                         }
 
-                        if (_i7 == 0)
+                        if (_i7 == 1)
                         {
                             _dispathcer.Invoke(new Action(() => { ReadInput7.Source = new BitmapImage(new Uri(@"/assets/CtrlOn.png", UriKind.Relative)); }));
 
@@ -646,7 +646,7 @@ namespace JupiterSoft.Pages
 
                         }
 
-                        if (_i8 == 0)
+                        if (_i8 == 1)
                         {
                             _dispathcer.Invoke(new Action(() => { ReadInput8.Source = new BitmapImage(new Uri(@"/assets/CtrlOn.png", UriKind.Relative)); }));
 
@@ -657,7 +657,7 @@ namespace JupiterSoft.Pages
 
                         }
 
-                        if (_i9 == 0)
+                        if (_i9 == 1)
                         {
                             _dispathcer.Invoke(new Action(() => { ReadInput9.Source = new BitmapImage(new Uri(@"/assets/CtrlOn.png", UriKind.Relative)); }));
 
@@ -668,7 +668,7 @@ namespace JupiterSoft.Pages
 
                         }
 
-                        if (_i10 == 0)
+                        if (_i10 == 1)
                         {
                             _dispathcer.Invoke(new Action(() => { ReadInput10.Source = new BitmapImage(new Uri(@"/assets/CtrlOn.png", UriKind.Relative)); }));
 
@@ -679,7 +679,7 @@ namespace JupiterSoft.Pages
 
                         }
 
-                        if (_i11 == 0)
+                        if (_i11 == 1)
                         {
                             _dispathcer.Invoke(new Action(() => { ReadInput11.Source = new BitmapImage(new Uri(@"/assets/CtrlOn.png", UriKind.Relative)); }));
 
@@ -690,7 +690,7 @@ namespace JupiterSoft.Pages
 
                         }
 
-                        if (_i12 == 0)
+                        if (_i12 == 1)
                         {
                             _dispathcer.Invoke(new Action(() => { ReadInput12.Source = new BitmapImage(new Uri(@"/assets/CtrlOn.png", UriKind.Relative)); }));
 
@@ -701,7 +701,7 @@ namespace JupiterSoft.Pages
 
                         }
 
-                        if (_i13 == 0)
+                        if (_i13 == 1)
                         {
                             _dispathcer.Invoke(new Action(() => { ReadInput13.Source = new BitmapImage(new Uri(@"/assets/CtrlOn.png", UriKind.Relative)); }));
 
@@ -712,7 +712,7 @@ namespace JupiterSoft.Pages
 
                         }
 
-                        if (_i14 == 0)
+                        if (_i14 == 1)
                         {
                             _dispathcer.Invoke(new Action(() => { ReadInput14.Source = new BitmapImage(new Uri(@"/assets/CtrlOn.png", UriKind.Relative)); }));
 
@@ -723,7 +723,7 @@ namespace JupiterSoft.Pages
 
                         }
 
-                        if (_i15 == 0)
+                        if (_i15 == 1)
                         {
                             _dispathcer.Invoke(new Action(() => { ReadInput15.Source = new BitmapImage(new Uri(@"/assets/CtrlOn.png", UriKind.Relative)); }));
 
@@ -739,20 +739,20 @@ namespace JupiterSoft.Pages
 
                         _dispathcer.Invoke(new Action(() =>
                         {
-                            Toggle16.IsChecked = _i16 == 1 ? true : false;
-                            Toggle17.IsChecked = _i17 == 1 ? true : false;
-                            Toggle18.IsChecked = _i18 == 1 ? true : false;
-                            Toggle19.IsChecked = _i19 == 1 ? true : false;
-                            Toggle20.IsChecked = _i20 == 1 ? true : false;
-                            Toggle21.IsChecked = _i21 == 1 ? true : false;
-                            Toggle22.IsChecked = _i22 == 1 ? true : false;
-                            Toggle23.IsChecked = _i23 == 1 ? true : false;
-                            Toggle24.IsChecked = _i24 == 1 ? true : false;
-                            Toggle25.IsChecked = _i25 == 1 ? true : false;
-                            Toggle26.IsChecked = _i26 == 1 ? true : false;
-                            Toggle27.IsChecked = _i27 == 1 ? true : false;
-                            Toggle28.IsChecked = _i28 == 1 ? true : false;
-                            Toggle29.IsChecked = _i29 == 1 ? true : false;
+                            Toggle16.IsChecked = _i16 == 0 ? true : false;
+                            Toggle17.IsChecked = _i17 == 0 ? true : false;
+                            Toggle18.IsChecked = _i18 == 0 ? true : false;
+                            Toggle19.IsChecked = _i19 == 0 ? true : false;
+                            Toggle20.IsChecked = _i20 == 0 ? true : false;
+                            Toggle21.IsChecked = _i21 == 0 ? true : false;
+                            Toggle22.IsChecked = _i22 == 0 ? true : false;
+                            Toggle23.IsChecked = _i23 == 0 ? true : false;
+                            Toggle24.IsChecked = _i24 == 0 ? true : false;
+                            Toggle25.IsChecked = _i25 == 0 ? true : false;
+                            Toggle26.IsChecked = _i26 == 0 ? true : false;
+                            Toggle27.IsChecked = _i27 == 0 ? true : false;
+                            Toggle28.IsChecked = _i28 == 0 ? true : false;
+                            Toggle29.IsChecked = _i29 == 0 ? true : false;
                             //Toggle30.IsChecked = _i30 == 0 ? true : false;
                         }));
 
@@ -981,7 +981,7 @@ namespace JupiterSoft.Pages
 
         private void DataReader(Models.DeviceType device, string commandId)
         {
-            if (executionRunning == false) return;
+            //if (executionRunning == false) return;
             var cDevices = connectedDevices.Where(x => x.DeviceType == device).FirstOrDefault();
 
             SB1Request _SB1Request = new SB1Request();
@@ -1083,6 +1083,7 @@ namespace JupiterSoft.Pages
                                 {
                                     item.CurrentRequest.MbTgm = mbTgmBytes;
                                     item.CurrentRequest.Status = PortDataStatus.Received;
+                                    item.ReceiveBufferQueue.Enqueue(recBufParse);
 
                                     foreach (var command in Commands.Where(x => x.CommandId == commandId).ToList())
                                     {
@@ -1343,14 +1344,14 @@ namespace JupiterSoft.Pages
 
         private void ReadAllControCardInputOutput()
         {
-            var ControlConfig = connectedDevices.Where(x => x.DeviceType == Models.DeviceType.WeightModule).FirstOrDefault();
+            var ControlConfig = connectedDevices.Where(x => x.DeviceType == Models.DeviceType.ControlCard).FirstOrDefault();
             if (ControlConfig == null)
             {
                 AddOutPut("Control Card is not connected..", (int)OutPutType.ERROR);
                 return;
             }
 
-            foreach (var item in connectedDevices.Where(x => x.DeviceType == Models.DeviceType.WeightModule))
+            foreach (var item in connectedDevices.Where(x => x.DeviceType == Models.DeviceType.ControlCard))
             {
                 item.RecState = 1;
                 RecData _recData = new RecData();
@@ -1362,8 +1363,9 @@ namespace JupiterSoft.Pages
                 _recData.Status = PortDataStatus.Requested;
                 item.CurrentRequest = _recData;
                 item.IsComplete = false;
-
+                Common.COMSelected = COMType.MODBUS;
                 MODBUSComnn obj = new MODBUSComnn();
+                
                 obj.GetMultiSendorValueFM3(1, 0, item.SerialDevice, 0, 30, "ControlCard", 1, 0, Models.DeviceType.ControlCard);
                 break;
             }
@@ -1431,7 +1433,7 @@ namespace JupiterSoft.Pages
 
         public void ExecuteProcesses(string commandId)
         {
-            if (executionRunning == false) return;
+            //if (executionRunning == false) return;
             var command = Commands.Where(x => x.CommandId == commandId).FirstOrDefault();
 
 
@@ -1505,7 +1507,7 @@ namespace JupiterSoft.Pages
                     AddOutPut("Reading weight..", (int)OutPutType.INFORMATION);
                     bool received = false;
                     RecData _rec = new RecData();
-                    while (received == false && executionRunning == true)
+                    while (received == false )
                     {
                         var cDevices = connectedDevices.Where(x => x.DeviceType == Models.DeviceType.WeightModule).FirstOrDefault();
                         DataReader(Models.DeviceType.WeightModule, command.CommandId);
@@ -1544,7 +1546,7 @@ namespace JupiterSoft.Pages
                     AddOutPut("Reading control card all input/output information", (int)OutPutType.INFORMATION);
                     bool received = false;
                     RecData _rec = new RecData();
-                    while (received == false && executionRunning==true)
+                    while (received == false)
                     {
                         var cDevices = connectedDevices.Where(x => x.DeviceType == Models.DeviceType.ControlCard).FirstOrDefault();
                         DataReader(Models.DeviceType.ControlCard, command.CommandId);
@@ -1663,6 +1665,12 @@ namespace JupiterSoft.Pages
                 StopVideoCapture();
                 AddOutPut("Camera Recording Stopped..", (int)OutPutType.SUCCESS, true);
                 Commands.Where(x => x.CommandId == command.CommandId).ToList().ForEach(x => x.ExecutionStatus = (int)ExecutionStage.Executed);
+            }
+
+            else if(command.CommandType==(int)ElementConstant.Stop_Repeat)
+            {
+                var repeat = Commands.Where(x => x.CommandType == (int)ElementConstant.Repeat_Control).FirstOrDefault();
+                Commands.Where(x => x.Order >= repeat.Order).ToList().ForEach(x => x.ExecutionStatus = (int)ExecutionStage.Not_Executed);
             }
         }
 
@@ -1802,9 +1810,48 @@ namespace JupiterSoft.Pages
                     controlConfig.CurrentRequest = _recData;
                     controlConfig.DeviceType = Models.DeviceType.ControlCard;
                     controlConfig.RecState = 0;
-                    SerialPort WeightDevice = new SerialPort();
-                    SerialPortCommunications(ref WeightDevice, (int)Models.DeviceType.ControlCard, Port, Baudrate, databit, stopbit, parity);
-                    controlConfig.SerialDevice = WeightDevice;
+                    SerialPort ControlCard = new SerialPort(Port);
+
+                    try
+                    {
+                        //WeightDevice = new SerialPort(Port);
+                        ControlCard.BaudRate = Baudrate;
+                        ControlCard.DataBits = databit;
+                        ControlCard.StopBits = stopbit == 0 ? StopBits.None : (stopbit == 1 ? StopBits.One : (stopbit == 2 ? StopBits.Two : StopBits.OnePointFive));
+                        switch (parity)
+                        {
+                            case (int)Parity.None:
+                                ControlCard.Parity = Parity.None;
+                                break;
+                            case (int)Parity.Odd:
+                                ControlCard.Parity = Parity.Odd;
+                                break;
+                            case (int)Parity.Even:
+                                ControlCard.Parity = Parity.Even;
+                                break;
+                            case (int)Parity.Mark:
+                                ControlCard.Parity = Parity.Mark;
+                                break;
+                            case (int)Parity.Space:
+                                ControlCard.Parity = Parity.Space;
+                                break;
+                        }
+
+                        ControlCard.Handshake = Handshake.None;
+                        ControlCard.Encoding = ASCIIEncoding.ASCII;
+
+                        ControlCard.DataReceived += ControlCard_DataReceived; ;
+
+
+
+                        ControlCard.Open();
+                    }
+                    catch (Exception ex)
+                    {
+                        AddOutPut("An error has occured : " + ex.Message.ToString(), (int)OutPutType.ERROR, true);
+                    }
+                   // SerialPortCommunications(ref WeightDevice, (int)Models.DeviceType.ControlCard, Port, Baudrate, databit, stopbit, parity);
+                    controlConfig.SerialDevice = ControlCard;
                     AddOutPut("Connecting control card..", (int)OutPutType.INFORMATION);
                     connectedDevices.Add(controlConfig);
                 }
@@ -1816,6 +1863,55 @@ namespace JupiterSoft.Pages
             }
 
             AddOutPut("Control card is connected..", (int)OutPutType.SUCCESS, true);
+        }
+
+        private void ControlCard_DataReceived(object sender, SerialDataReceivedEventArgs e)
+        {
+            var controlDevie = connectedDevices.Where(x => x.DeviceType == Models.DeviceType.ControlCard).FirstOrDefault();
+
+            if (controlDevie == null)
+            {
+                return;
+            }
+            switch (controlDevie.RecState)
+            {
+                case 0:
+                    break;
+                case 1:
+
+                    foreach (var item in connectedDevices.Where(x => x.DeviceType == Models.DeviceType.ControlCard).ToList())
+                    {
+                        int i = 0;
+                        item.RecIdx = 0;
+                        item.RecState = 2;
+
+
+                        while (item.SerialDevice.BytesToRead > 0)
+                        {
+                            byte[] rec = new byte[1];
+                            item.RecIdx += item.SerialDevice.Read(rec, 0, 1);
+                            recBuf[i] = rec[0];
+                            i++;
+                        }
+                        if (item.RecIdx > 3)
+                        {
+                            TotalReceiveSize = (uint)recBuf[2] + 5;
+                        }
+                        if (TotalReceiveSize > item.RecIdx)
+                        {
+                            item.IsComplete = false;
+                        }
+                        else
+                        {
+                            item.IsComplete = true;
+                            item.ReceiveBufferQueue = new Queue<byte[]>();
+                            item.ReceiveBufferQueue.Enqueue(recBuf);
+                            recBuf = new byte[REC_BUF_SIZE];
+                        }
+                        item.LastResponseReceived = DateTime.Now;
+                    }
+                    break;
+            }
         }
 
         private bool CompareWeightdata(int ComparisonCondition, double weightdata, string comparisonValue)
@@ -1966,6 +2062,11 @@ namespace JupiterSoft.Pages
             Commands.ForEach(x => x.ExecutionStatus = (int)ExecutionStage.Not_Executed);
 
             AddOutPut("Commands Execution started..", (int)OutPutType.INFORMATION);
+
+            //foreach(var item in Commands.OrderBy(x=>x.Order))
+            //{
+            //    ExecuteProcesses(item.CommandId);
+            //}
             ExecutionTimer.Elapsed += ExecutionTimer_Elapsed;
             ExecutionTimer.Interval = 3000;
             ExecutionTimer.Enabled = true;
@@ -1989,20 +2090,20 @@ namespace JupiterSoft.Pages
 
         public string getCommandInWaiting()
         {
-            var queCommand = Commands.Where(x => x.ExecutionStatus != (int)ExecutionStage.Executed).OrderBy(x => x.Order).ToList();
-            if (queCommand != null && queCommand.Count > 0)
-            {
-                if (queCommand.FirstOrDefault().CommandType == (int)ElementConstant.Stop_Repeat)
-                {
-                    var ParentScope = Commands.Where(x => x.CommandType == (int)ElementConstant.Repeat_Control && x.Order < queCommand.FirstOrDefault().Order).OrderBy(x => x.Order).ToList().LastOrDefault();
-                    Commands.Where(x => x.Order >= ParentScope.Order && x.Order < queCommand.FirstOrDefault().Order).ToList().ForEach(x => x.ExecutionStatus = (int)ExecutionStage.Not_Executed);
-                }
-            }
-            else
-            {
-                AddOutPut("Commands Execution completed..", (int)OutPutType.SUCCESS);
-                return "NA";
-            }
+            //var queCommand = Commands.Where(x => x.ExecutionStatus != (int)ExecutionStage.Executed).OrderBy(x => x.Order).ToList();
+            //if (queCommand != null && queCommand.Count > 0)
+            //{
+            //    if (queCommand.FirstOrDefault().CommandType == (int)ElementConstant.Stop_Repeat)
+            //    {
+            //        var ParentScope = Commands.Where(x => x.CommandType == (int)ElementConstant.Repeat_Control && x.Order < queCommand.FirstOrDefault().Order).OrderBy(x => x.Order).ToList().LastOrDefault();
+            //        Commands.Where(x => x.Order >= ParentScope.Order && x.Order < queCommand.FirstOrDefault().Order).ToList().ForEach(x => x.ExecutionStatus = (int)ExecutionStage.Not_Executed);
+            //    }
+            //}
+            //else
+            //{
+            //    AddOutPut("Commands Execution completed..", (int)OutPutType.SUCCESS);
+            //    return "NA";
+            //}
 
             return Commands.Where(x => x.ExecutionStatus != (int)ExecutionStage.Executed).OrderBy(x => x.Order).ToList().FirstOrDefault().CommandId;
         }

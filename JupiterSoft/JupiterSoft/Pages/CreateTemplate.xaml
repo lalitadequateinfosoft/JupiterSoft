@@ -1880,7 +1880,7 @@
                                                     </Grid.ColumnDefinitions>
                                                     <ToggleButton 
                                                         x:Name="Toggle16"
-                                                        Content="1"
+                                                        Content="16"
                                                         Grid.Column="0"
                                                         Style="{StaticResource ToggleButtonStyle1}"
                                                         HorizontalAlignment="Center"
@@ -1893,7 +1893,7 @@
                                                         IsEnabled="False"/>
                                                     <ToggleButton
                                                         x:Name="Toggle17"
-                                                        Content="2"
+                                                        Content="17"
                                                         Grid.Column="1"
                                                         Style="{StaticResource ToggleButtonStyle1}"
                                                         HorizontalAlignment="Center"
@@ -1905,7 +1905,7 @@
                                                         IsEnabled="False"/>
                                                     <ToggleButton
                                                         x:Name="Toggle18"
-                                                        Content="3"
+                                                        Content="18"
                                                         Grid.Column="2"
                                                         Style="{StaticResource ToggleButtonStyle1}"
                                                         HorizontalAlignment="Center"
@@ -1917,7 +1917,7 @@
                                                         IsEnabled="False"/>
                                                     <ToggleButton
                                                         x:Name="Toggle19"
-                                                        Content="4"
+                                                        Content="19"
                                                         Grid.Column="3"
                                                         Style="{StaticResource ToggleButtonStyle1}"
                                                         HorizontalAlignment="Center"
@@ -1929,7 +1929,7 @@
                                                         IsEnabled="False"/>
                                                     <ToggleButton
                                                         x:Name="Toggle20"
-                                                        Content="5" Grid.Column="4"
+                                                        Content="20" Grid.Column="4"
                                                         Style="{StaticResource ToggleButtonStyle1}"
                                                         HorizontalAlignment="Center"
                                                         VerticalAlignment="Center"
@@ -1940,7 +1940,7 @@
                                                         IsEnabled="False"/>
                                                     <ToggleButton 
                                                         x:Name="Toggle21"
-                                                        Content="6" Grid.Column="5"
+                                                        Content="21" Grid.Column="5"
                                                         Style="{StaticResource ToggleButtonStyle1}"
                                                         HorizontalAlignment="Center"
                                                         VerticalAlignment="Center"
@@ -1952,7 +1952,7 @@
 
                                                     <ToggleButton
                                                         x:Name="Toggle22"
-                                                        Content="7"
+                                                        Content="22"
                                                         Grid.Column="6"
                                                         Style="{StaticResource ToggleButtonStyle1}"
                                                         HorizontalAlignment="Center"
@@ -1965,7 +1965,7 @@
 
                                                     <ToggleButton
                                                         x:Name="Toggle23"
-                                                        Content="8"
+                                                        Content="23"
                                                         Grid.Column="7"
                                                         Style="{StaticResource ToggleButtonStyle1}"
                                                         HorizontalAlignment="Center"
@@ -1978,7 +1978,7 @@
 
                                                     <ToggleButton 
                                                         x:Name="Toggle24"
-                                                        Content="9"
+                                                        Content="24"
                                                         Grid.Column="8"
                                                         Style="{StaticResource ToggleButtonStyle1}"
                                                         HorizontalAlignment="Center"
@@ -1991,7 +1991,7 @@
 
                                                     <ToggleButton 
                                                         x:Name="Toggle25"
-                                                        Content="10"
+                                                        Content="25"
                                                         Grid.Column="9"
                                                         Style="{StaticResource ToggleButtonStyle1}"
                                                         HorizontalAlignment="Center"
@@ -2004,7 +2004,7 @@
 
                                                     <ToggleButton
                                                         x:Name="Toggle26"
-                                                        Content="11"
+                                                        Content="26"
                                                         Grid.Column="10"
                                                         Style="{StaticResource ToggleButtonStyle1}"
                                                         HorizontalAlignment="Center"
@@ -2017,7 +2017,7 @@
 
                                                     <ToggleButton 
                                                         x:Name="Toggle27"
-                                                        Content="12"
+                                                        Content="27"
                                                         Grid.Column="11"
                                                         Style="{StaticResource ToggleButtonStyle1}"
                                                         HorizontalAlignment="Center"
@@ -2030,7 +2030,7 @@
 
                                                     <ToggleButton
                                                         x:Name="Toggle28"
-                                                        Content="13"
+                                                        Content="28"
                                                         Grid.Column="12"
                                                         Style="{StaticResource ToggleButtonStyle1}"
                                                         HorizontalAlignment="Center"
@@ -2043,7 +2043,7 @@
 
                                                     <ToggleButton
                                                         x:Name="Toggle29"
-                                                        Content="14"
+                                                        Content="29"
                                                         Grid.Column="13"
                                                         Style="{StaticResource ToggleButtonStyle1}"
                                                         HorizontalAlignment="Center"
@@ -2056,7 +2056,7 @@
 
                                                     <ToggleButton
                                                         x:Name="Toggle30"
-                                                        Content="15"
+                                                        Content="30"
                                                         Grid.Column="14"
                                                         Style="{StaticResource ToggleButtonStyle1}"
                                                         HorizontalAlignment="Center"
@@ -2069,7 +2069,7 @@
 
                                                     <ToggleButton
                                                         x:Name="Toggle31"
-                                                        Content="16"
+                                                        Content="31"
                                                         Grid.Column="15"
                                                         Style="{StaticResource ToggleButtonStyle1}"
                                                         HorizontalAlignment="Center"
