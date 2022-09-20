@@ -518,22 +518,22 @@
                                                     BorderThickness="1">
                                                 <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                                     <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="28"/>
-                                                        <ColumnDefinition Width="28"/>
-                                                        <ColumnDefinition Width="28"/>
-                                                        <ColumnDefinition Width="28"/>
-                                                        <ColumnDefinition Width="28"/>
-                                                        <ColumnDefinition Width="28"/>
-                                                        <ColumnDefinition Width="28"/>
-                                                        <ColumnDefinition Width="28"/>
-                                                        <ColumnDefinition Width="28"/>
-                                                        <ColumnDefinition Width="28"/>
-                                                        <ColumnDefinition Width="28"/>
-                                                        <ColumnDefinition Width="28"/>
-                                                        <ColumnDefinition Width="28"/>
-                                                        <ColumnDefinition Width="28"/>
-                                                        <ColumnDefinition Width="28"/>
-                                                        <ColumnDefinition Width="28"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition  Width="*"/>
+                                                        <ColumnDefinition  Width="*"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="*"/>
                                                     </Grid.ColumnDefinitions>
 
 
@@ -836,22 +836,22 @@
                                                     Grid.Row="3"
                                                     Background="White">
                                                 <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="28"/>
-                                                    <ColumnDefinition Width="28"/>
-                                                    <ColumnDefinition Width="28"/>
-                                                    <ColumnDefinition Width="28"/>
-                                                    <ColumnDefinition Width="28"/>
-                                                    <ColumnDefinition Width="28"/>
-                                                    <ColumnDefinition Width="28"/>
-                                                    <ColumnDefinition Width="28"/>
-                                                    <ColumnDefinition Width="28"/>
-                                                    <ColumnDefinition Width="28"/>
-                                                    <ColumnDefinition Width="28"/>
-                                                    <ColumnDefinition Width="28"/>
-                                                    <ColumnDefinition Width="28"/>
-                                                    <ColumnDefinition Width="28"/>
-                                                    <ColumnDefinition Width="28"/>
-                                                    <ColumnDefinition Width="28"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="*"/>
                                                 </Grid.ColumnDefinitions>
                                                 <Image x:Name="ReadInput0" Grid.Column="0" Stretch="Fill" />
                                                 <Image x:Name="ReadInput1" Grid.Column="1" Stretch="Fill"  />

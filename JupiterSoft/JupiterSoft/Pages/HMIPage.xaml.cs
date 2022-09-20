@@ -1505,7 +1505,7 @@ namespace JupiterSoft.Pages
                     AddOutPut("Reading weight..", (int)OutPutType.INFORMATION);
                     bool received = false;
                     RecData _rec = new RecData();
-                    while (received == false)
+                    while (received == false && executionRunning == true)
                     {
                         var cDevices = connectedDevices.Where(x => x.DeviceType == Models.DeviceType.WeightModule).FirstOrDefault();
                         DataReader(Models.DeviceType.WeightModule, command.CommandId);
@@ -1544,7 +1544,7 @@ namespace JupiterSoft.Pages
                     AddOutPut("Reading control card all input/output information", (int)OutPutType.INFORMATION);
                     bool received = false;
                     RecData _rec = new RecData();
-                    while (received == false)
+                    while (received == false && executionRunning==true)
                     {
                         var cDevices = connectedDevices.Where(x => x.DeviceType == Models.DeviceType.ControlCard).FirstOrDefault();
                         DataReader(Models.DeviceType.ControlCard, command.CommandId);
