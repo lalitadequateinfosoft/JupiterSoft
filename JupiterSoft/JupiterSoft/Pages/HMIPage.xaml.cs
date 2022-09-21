@@ -119,9 +119,13 @@ namespace JupiterSoft.Pages
             get { return parentWindow; }
             set { parentWindow = value; }
         }
-        public HMIPage(List<LogicalCommand> _Commands, DeviceInfo _deviceInfo)
+
+        private bool executionRunning = false;
+        public HMIPage(List<LogicalCommand> _Commands, DeviceInfo _deviceInfo, Dashboard dashboard)
         {
             InitializeComponent();
+            this.parentWindow = dashboard;
+            this.ParentWindow = dashboard;
             _dispathcer = Dispatcher.CurrentDispatcher;
             // this.SerialDevice = new SerialPort();
             this.Commands = _Commands;
@@ -142,13 +146,30 @@ namespace JupiterSoft.Pages
             _connector = new MediaConnector();
             this.DataContext = this;
 
+            this.ParentWindow.Closing += ParentWindow_Closing;
 
+            //this.parentWindow.Closing 
         }
 
-        private bool executionRunning = false;
+        private void ParentWindow_Closing(object sender, CancelEventArgs e)
+        {
+            DisconnectCamera();
+            if (connectedDevices != null)
+            {
+                if (connectedDevices.Count() > 0)
+                {
+                    foreach (var item in connectedDevices.ToList())
+                    {
+                        StopPortCommunication(item.DeviceType);
+                    }
+
+                    connectedDevices = new List<ConnectedDevices>();
+                }
+
+            }
+        }
 
 
-       
 
         #region Camera Function
 
@@ -528,7 +549,7 @@ namespace JupiterSoft.Pages
                     weight = Math.Round(weight, 2);
                 }
 
-                
+
 
             }
             return weight; //TimerCheckReceiveData.Enabled = true;
@@ -1960,17 +1981,16 @@ namespace JupiterSoft.Pages
 
             else if (command.CommandType == (int)ElementConstant.Stop_Repeat)
             {
-                if (command.ExecutionStatus == (int)ExecutionStage.Not_Executed)
-                {
-                    Commands.Where(x => x.CommandId == command.CommandId).ToList().ForEach(x => x.ExecutionStatus = (int)ExecutionStage.Executing);
-                    var repeat = Commands.Where(x => x.CommandType == (int)ElementConstant.Repeat_Control).FirstOrDefault();
-                    Commands.Where(x => x.Order > repeat.Order && x.Order <= command.Order).ToList().ForEach(x => x.ExecutionStatus = (int)ExecutionStage.Not_Executed);
-                    return;
-                }
+
+                Commands.Where(x => x.CommandId == command.CommandId).ToList().ForEach(x => x.ExecutionStatus = (int)ExecutionStage.Executing);
+                var repeat = Commands.Where(x => x.CommandType == (int)ElementConstant.Repeat_Control).FirstOrDefault();
+                Commands.Where(x => x.Order > repeat.Order && x.Order <= command.Order).ToList().ForEach(x => x.ExecutionStatus = (int)ExecutionStage.Not_Executed);
+                return;
+
             }
         }
 
-        
+
 
         private void Connect_control_card(string Port, int Baudrate, int databit, int stopbit, int parity)
         {
@@ -2236,6 +2256,7 @@ namespace JupiterSoft.Pages
                     {
                         StopPortCommunication(item.DeviceType);
                     }
+                    connectedDevices = new List<ConnectedDevices>();
                 }
 
             }
@@ -2296,8 +2317,6 @@ namespace JupiterSoft.Pages
         }
 
         #endregion
-
-
 
         #region property changed event
 

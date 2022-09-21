@@ -4864,7 +4864,7 @@ namespace JupiterSoft.Pages
                 //dialoge.Show();
                 //this.parentWindow.Close();
 
-               HMIPage ChildPage = new HMIPage(Commands, deviceInfo);
+               HMIPage ChildPage = new HMIPage(Commands, deviceInfo, this.parentWindow);
                 this.parentWindow.frame.Content = null;
                 ChildPage.ParentWindow = this.parentWindow;
                 this.parentWindow.frame.Content = ChildPage;
