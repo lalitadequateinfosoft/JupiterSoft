@@ -141,39 +141,14 @@ namespace JupiterSoft.Pages
             _drawingImageProvider = new DrawingImageProvider();
             _connector = new MediaConnector();
             this.DataContext = this;
+
+
         }
 
         private bool executionRunning = false;
 
 
-        private void StopProcess_Click(object sender, RoutedEventArgs e)
-        {
-            if (ExecutionTimer.Enabled)
-            {
-                ExecutionTimer.Elapsed -= ExecutionTimer_Elapsed;
-                ExecutionTimer.Enabled = false;
-                executionRunning = false;
-            }
-
-
-            DisconnectCamera();
-            if (connectedDevices != null)
-            {
-                if (connectedDevices.Count() > 0)
-                {
-                    foreach (var item in connectedDevices.ToList())
-                    {
-                        StopPortCommunication(item.DeviceType);
-                    }
-                }
-
-            }
-
-            CreateTemplate ChildPage = new CreateTemplate();
-            this.parentWindow.frame.Content = null;
-            ChildPage.ParentWindow = this.parentWindow;
-            this.parentWindow.frame.Content = ChildPage;
-        }
+       
 
         #region Camera Function
 
@@ -323,6 +298,7 @@ namespace JupiterSoft.Pages
             _connector.Dispose();
         }
         #endregion
+
         #region Camera Streaming
 
         private void StreamUSBCamera_Click(string ipAddress, string Port)
@@ -384,6 +360,7 @@ namespace JupiterSoft.Pages
         }
 
         #endregion
+
         #region UI Interactive Function Weight Module for Test environment
         void showWeightModuleResponse(RecData _recData)
         {
@@ -478,6 +455,83 @@ namespace JupiterSoft.Pages
 
             }
             //TimerCheckReceiveData.Enabled = true;
+        }
+
+        double getWeightModuleResponse(RecData _recData)
+        {
+            double weight = 0;
+
+            if (_recData.MbTgm.Length > 0 && _recData.MbTgm.Length > readIndex)
+            {
+                byte[] bytestToRead = _recData.MbTgm.Skip(readIndex).ToArray();
+                string str = Encoding.Default.GetString(bytestToRead).Replace(System.Environment.NewLine, string.Empty);
+
+                string actualdata = Regex.Replace(str, @"[^\t\r\n -~]", "_").RemoveWhitespace().Trim();
+                string[] data = actualdata.Split('_');
+
+                var lastitem = data[data.Length - 1];
+                var outP = lastitem.ToLower().ToString();
+
+
+
+
+                if (outP.Contains("kg"))
+                {
+                    if (outP.Contains("kgg"))
+                    {
+                        string builder = outP.Replace("kgg", "");
+                        weight = Convert.ToInt32(builder) - 3067;
+                        weight = Convert.ToDouble(weight / 260.4);
+                        weight = weight * 0.453592;
+                        weight = Math.Round(weight, 2);
+                    }
+                    else if (outP.Contains("kgn"))
+                    {
+                        string builder = outP.Replace("kgn", "");
+                        weight = Convert.ToInt32(builder) - 3067;
+                        weight = Convert.ToDouble(weight / 260.4);
+                        weight = weight * 0.453592;
+                        weight = Math.Round(weight, 2);
+                    }
+                    else
+                    {
+                        string builder = outP.Replace("kg", "");
+                        weight = Convert.ToInt32(builder) - 3067;
+                        weight = Convert.ToDouble(weight / 260.4);
+                        weight = weight * 0.453592;
+                        weight = Math.Round(weight, 2);
+                    }
+
+                }
+                else if (outP.Contains("lbs"))
+                {
+
+                    Regex regex = new Regex(@"([a-zA-Z]+)(\d+)");
+                    Match result = regex.Match(outP);
+
+                    string alphaPart1 = result.Groups[1].Value;
+                    string numberPart1 = result.Groups[2].Value;
+                    weight = Convert.ToInt32(numberPart1) - 3067;
+                    weight = Convert.ToDouble(weight / 260.4);
+                    weight = Math.Round(weight, 2);
+                    //weight = weight * 0.453592;
+                }
+                else
+                {
+                    Regex regex = new Regex(@"([a-zA-Z]+)(\d+)");
+                    Match result = regex.Match(outP);
+
+                    string alphaPart1 = result.Groups[1].Value;
+                    string numberPart1 = result.Groups[2].Value;
+                    weight = Convert.ToInt32(numberPart1) - 3067;
+                    weight = Convert.ToDouble(weight / 260.4);
+                    weight = Math.Round(weight, 2);
+                }
+
+                
+
+            }
+            return weight; //TimerCheckReceiveData.Enabled = true;
         }
 
         bool validateResponse(RecData _recData)
@@ -1106,6 +1160,7 @@ namespace JupiterSoft.Pages
             }
         }
         #endregion
+
         #region Custom Operation
         private void StopPortCommunication(Models.DeviceType device)
         {
@@ -1909,115 +1964,13 @@ namespace JupiterSoft.Pages
                 {
                     Commands.Where(x => x.CommandId == command.CommandId).ToList().ForEach(x => x.ExecutionStatus = (int)ExecutionStage.Executing);
                     var repeat = Commands.Where(x => x.CommandType == (int)ElementConstant.Repeat_Control).FirstOrDefault();
-                Commands.Where(x => x.Order >= repeat.Order && x.Order < command.Order).ToList().ForEach(x => x.ExecutionStatus = (int)ExecutionStage.Not_Executed);
+                    Commands.Where(x => x.Order > repeat.Order && x.Order <= command.Order).ToList().ForEach(x => x.ExecutionStatus = (int)ExecutionStage.Not_Executed);
                     return;
                 }
             }
         }
 
-        double getWeightModuleResponse(RecData _recData)
-        {
-            double weight = 0;
-
-            if (_recData.MbTgm.Length > 0 && _recData.MbTgm.Length > readIndex)
-            {
-                byte[] bytestToRead = _recData.MbTgm.Skip(readIndex).ToArray();
-                string str = Encoding.Default.GetString(bytestToRead).Replace(System.Environment.NewLine, string.Empty);
-
-                string actualdata = Regex.Replace(str, @"[^\t\r\n -~]", "_").RemoveWhitespace().Trim();
-                string[] data = actualdata.Split('_');
-
-                var lastitem = data[data.Length - 1];
-                var outP = lastitem.ToLower().ToString();
-
-
-
-
-                if (outP.Contains("kg"))
-                {
-                    if (outP.Contains("kgg"))
-                    {
-                        string builder = outP.Replace("kgg", "");
-                        weight = Convert.ToInt32(builder) - 3067;
-                        weight = Convert.ToDouble(weight / 260.4);
-                        weight = weight * 0.453592;
-                        weight = Math.Round(weight, 2);
-                    }
-                    else if (outP.Contains("kgn"))
-                    {
-                        string builder = outP.Replace("kgn", "");
-                        weight = Convert.ToInt32(builder) - 3067;
-                        weight = Convert.ToDouble(weight / 260.4);
-                        weight = weight * 0.453592;
-                        weight = Math.Round(weight, 2);
-                    }
-                    else
-                    {
-                        string builder = outP.Replace("kg", "");
-                        weight = Convert.ToInt32(builder) - 3067;
-                        weight = Convert.ToDouble(weight / 260.4);
-                        weight = weight * 0.453592;
-                        weight = Math.Round(weight, 2);
-                    }
-
-                }
-                else if (outP.Contains("lbs"))
-                {
-
-                    Regex regex = new Regex(@"([a-zA-Z]+)(\d+)");
-                    Match result = regex.Match(outP);
-
-                    string alphaPart1 = result.Groups[1].Value;
-                    string numberPart1 = result.Groups[2].Value;
-                    weight = Convert.ToInt32(numberPart1) - 3067;
-                    weight = Convert.ToDouble(weight / 260.4);
-                    weight = Math.Round(weight, 2);
-                    //weight = weight * 0.453592;
-                }
-                else
-                {
-                    Regex regex = new Regex(@"([a-zA-Z]+)(\d+)");
-                    Match result = regex.Match(outP);
-
-                    string alphaPart1 = result.Groups[1].Value;
-                    string numberPart1 = result.Groups[2].Value;
-                    weight = Convert.ToInt32(numberPart1) - 3067;
-                    weight = Convert.ToDouble(weight / 260.4);
-                    weight = Math.Round(weight, 2);
-                }
-
-                //for (int i = 0; i < data.Length; i++)
-                //{
-                //    if (!string.IsNullOrEmpty(data[i]) || !string.IsNullOrWhiteSpace(data[i]))
-                //    {
-                //        if (data[i].All(char.IsDigit))
-                //        {
-                //            weight = Convert.ToInt32(data[i].ToString().Trim());
-
-                //            continue;
-                //        }
-
-                //        try
-                //        {
-                //            var outP = data[i].ToLower().ToString();
-                //            if (outP.Contains("kgg"))
-                //            {
-                //                StringBuilder builder = new StringBuilder(outP);
-                //                builder.Replace("kgg", "");
-                //                weight = Convert.ToInt32(builder.ToString());
-                //            }
-                //        }
-                //        catch (Exception ex)
-                //        {
-
-                //        }
-                //    }
-
-                //}
-
-            }
-            return weight; //TimerCheckReceiveData.Enabled = true;
-        }
+        
 
         private void Connect_control_card(string Port, int Baudrate, int databit, int stopbit, int parity)
         {
@@ -2052,7 +2005,7 @@ namespace JupiterSoft.Pages
                     controlConfig.DeviceType = Models.DeviceType.ControlCard;
                     controlConfig.RecState = 0;
                     SerialPort ControlCard = new SerialPort();
-                     SerialPortCommunications(ref ControlCard, (int)Models.DeviceType.ControlCard, Port, Baudrate, databit, stopbit, parity);
+                    SerialPortCommunications(ref ControlCard, (int)Models.DeviceType.ControlCard, Port, Baudrate, databit, stopbit, parity);
                     controlConfig.SerialDevice = ControlCard;
                     AddOutPut("Connecting control card..", (int)OutPutType.INFORMATION);
                     connectedDevices.Add(controlConfig);
@@ -2221,6 +2174,7 @@ namespace JupiterSoft.Pages
 
 
         #endregion
+
         #region Output Function
         private void AddOutPut(string Output, int MessageType, bool isBold = false)
         {
@@ -2251,6 +2205,7 @@ namespace JupiterSoft.Pages
         }
         #endregion
 
+        #region Processing
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
@@ -2262,6 +2217,35 @@ namespace JupiterSoft.Pages
             StartExecution();
         }
 
+        private void StopProcess_Click(object sender, RoutedEventArgs e)
+        {
+            if (ExecutionTimer.Enabled)
+            {
+                ExecutionTimer.Elapsed -= ExecutionTimer_Elapsed;
+                ExecutionTimer.Enabled = false;
+                executionRunning = false;
+            }
+
+
+            DisconnectCamera();
+            if (connectedDevices != null)
+            {
+                if (connectedDevices.Count() > 0)
+                {
+                    foreach (var item in connectedDevices.ToList())
+                    {
+                        StopPortCommunication(item.DeviceType);
+                    }
+                }
+
+            }
+
+            CreateTemplate ChildPage = new CreateTemplate();
+            this.parentWindow.frame.Content = null;
+            ChildPage.ParentWindow = this.parentWindow;
+            this.parentWindow.frame.Content = ChildPage;
+        }
+
         private void StartExecution()
         {
             ConnectionUSB();
@@ -2269,20 +2253,23 @@ namespace JupiterSoft.Pages
             Commands.ForEach(x => x.ExecutionStatus = (int)ExecutionStage.Not_Executed);
             executionRunning = true;
             AddOutPut("Commands Execution started..", (int)OutPutType.INFORMATION);
-
-            foreach(var currentCommand in Commands.OrderBy(x=>x.Order).ToList())
+            bool repeater = false;
+            foreach (var currentCommand in Commands.OrderBy(x => x.Order).ToList())
             {
-                if(currentCommand.CommandType==(int)ElementConstant.Repeat_Control)
+                if (currentCommand.CommandType == (int)ElementConstant.Repeat_Control)
                 {
+                    repeater = true;
                     break;
                 }
                 ExecuteProcesses(currentCommand.CommandId);
             }
 
-
-            ExecutionTimer.Elapsed += ExecutionTimer_Elapsed;
-            ExecutionTimer.Interval = 3000;
-            ExecutionTimer.Enabled = true;
+            if (repeater)
+            {
+                ExecutionTimer.Elapsed += ExecutionTimer_Elapsed;
+                ExecutionTimer.Interval = 3000;
+                ExecutionTimer.Enabled = true;
+            }
         }
 
         private void ExecutionTimer_Elapsed(object sender, ElapsedEventArgs e)
@@ -2303,8 +2290,14 @@ namespace JupiterSoft.Pages
 
         public string getCommandInWaiting()
         {
-            return Commands.Where(x => x.ExecutionStatus == (int)ExecutionStage.Not_Executed).OrderBy(x => x.Order).ToList().FirstOrDefault().CommandId;
+            var unprocessedCommand = Commands.Where(x => x.ExecutionStatus == (int)ExecutionStage.Not_Executed).OrderBy(x => x.Order).ToList();
+
+            return unprocessedCommand != null && unprocessedCommand.Count() > 0 ? unprocessedCommand.FirstOrDefault().CommandId : "na";
         }
+
+        #endregion
+
+
 
         #region property changed event
 

@@ -1594,7 +1594,7 @@ namespace JupiterSoft.CustomDailog
                             {
                                 _rec = new RecData();
                                 _rec = cDevices.CurrentRequest;
-                                received = true;
+                                
                                 AddOutPut("Storing output..", (int)OutPutType.INFORMATION);
                                 AddOutPut("Showing control card state..", (int)OutPutType.INFORMATION);
                                 ReadControlCardResponse(_rec);

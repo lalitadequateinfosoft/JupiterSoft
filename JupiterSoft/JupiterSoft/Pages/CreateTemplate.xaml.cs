@@ -3606,7 +3606,7 @@ namespace JupiterSoft.Pages
 
                     }
 
-                    if (_i11 == 1)
+                    if (_i1 == 1)
                     {
                         _dispathcer.Invoke(new Action(() => { ReadInput1.Source = new BitmapImage(new Uri(@"/assets/CtrlOn.png", UriKind.Relative)); }));
 
@@ -3724,7 +3724,7 @@ namespace JupiterSoft.Pages
                     }
                     else
                     {
-                        _dispathcer.Invoke(new Action(() => { ReadInput0.Source = new BitmapImage(new Uri(@"/assets/CtrlOff.png", UriKind.Relative)); }));
+                        _dispathcer.Invoke(new Action(() => { ReadInput11.Source = new BitmapImage(new Uri(@"/assets/CtrlOff.png", UriKind.Relative)); }));
 
                     }
 
