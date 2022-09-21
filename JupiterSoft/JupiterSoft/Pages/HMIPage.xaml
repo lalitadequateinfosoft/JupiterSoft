@@ -76,39 +76,37 @@
         </ResourceDictionary>
     </Page.Resources>
 
-   
-            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-                
-                <Grid Grid.Row="0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
 
-                    <Border 
+    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Border 
                         Grid.Column="0"
                         BorderBrush="#bbbbbb"
                         BorderThickness="0,0,1,0"
                         Margin="2,0,1,0">
-                        <ScrollViewer 
-                            x:Name="OutPutArea"
-                            VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
 
-                            <Grid 
+
+                <Grid 
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Stretch">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="*"/>
-                                </Grid.RowDefinitions>
-                                <Grid 
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid 
                                     Grid.Row="0">
-                                    <TextBlock 
+                        <TextBlock 
                                         Text="Execution Mode"
                                         Foreground="#007acc"
                                         FontWeight="Bold"
@@ -116,15 +114,15 @@
                                         VerticalAlignment="Center"
                                         Padding="10,5,5,5"/>
 
-                                </Grid>
-                                <Grid 
+                    </Grid>
+                    <Grid 
                                     Grid.Row="1">
-                                    <StackPanel Orientation="Horizontal">
-                                        <StackPanel>
-                                            <Button Content="Start Program" Click="Button_Click" Margin="5" Background="ForestGreen" Foreground="White"/>
-                                        </StackPanel>
-                                        <StackPanel>
-                                            <Button 
+                        <StackPanel Orientation="Horizontal">
+                            <StackPanel>
+                                <Button Content="Start Program" Click="Button_Click" Margin="5" Background="ForestGreen" Foreground="White"/>
+                            </StackPanel>
+                            <StackPanel>
+                                <Button 
                             ToolTip="Stop Program"
                             Content="Stop Program"
                             x:Name="StopProcess"
@@ -132,38 +130,42 @@
                             Foreground="White"
                             Margin="4"
                             Click="StopProcess_Click"/>
-                                        </StackPanel>
-                                    </StackPanel>
-                                </Grid>
-                                <Grid
+                            </StackPanel>
+                        </StackPanel>
+                    </Grid>
+                    <Grid
                                     Grid.Row="2"
                                     HorizontalAlignment="Stretch"
                                     VerticalAlignment="Stretch">
-
-                                    <ListView 
+                        <ScrollViewer 
+                            x:Name="OutPutArea"
+                            VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                            <ListView 
                                     x:Name="logsdata"
                                     Margin="5,5,5,5"
                                     ItemsSource="{Binding logs}">
-                                        <ListView.View>
-                                            <GridView x:Name="grdNames">
-                                                <GridViewColumn Width="200" Header="Output"  DisplayMemberBinding="{Binding Output}"/>
-                                                <GridViewColumn Width="Auto" Header="MessageType"  DisplayMemberBinding="{Binding MessageType}"/>
-                                            </GridView>
-                                        </ListView.View>
-                                    </ListView>
-                                </Grid>
-                            </Grid>
+                                <ListView.View>
+                                    <GridView x:Name="grdNames">
+                                        <GridViewColumn Width="350" Header="Output"  DisplayMemberBinding="{Binding Output}"/>
+                                        <GridViewColumn Width="80" Header="Message"  DisplayMemberBinding="{Binding MessageType}"/>
+                                    </GridView>
+                                </ListView.View>
+                            </ListView>
                         </ScrollViewer>
-                    </Border>
-                    <Border 
+
+                    </Grid>
+                </Grid>
+
+            </Border>
+            <Border 
                         Grid.Column="1"
                         Margin="2,0,1,0">
-                        <Grid>
-                            <ScrollViewer 
+                <Grid>
+                    <ScrollViewer 
                             VerticalScrollBarVisibility="Auto"
                                 VerticalAlignment="Stretch"
                             x:Name="OutPutContentArea">
-                                <Grid 
+                        <Grid 
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Stretch"
                                 Background="Transparent">
@@ -171,34 +173,41 @@
                                 <RowDefinition Height="*"/>
                                 <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
-                                    <Grid Grid.Row="0"
+                            <Grid Grid.Row="0"
                                     HorizontalAlignment="Stretch"
                                     VerticalAlignment="Stretch">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
-                                        <Grid
+                                <Grid
                                             Grid.Column="0"
                                         x:Name="CameraArea"
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Stretch"
                                         Margin="5,5,5,5">
-                                            <GroupBox Header="Live Camera Stream" HorizontalAlignment="Stretch" Margin="5">
-                                                <Grid HorizontalAlignment="Stretch" Height="200" VerticalAlignment="Top">
-                                                    <controls:VideoViewerWPF Name="videoViewer" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-                                                </Grid>
-                                            </GroupBox>
-
-                                        </Grid>
-                                        <Grid
+                                    <Border BorderBrush="Black" BorderThickness="1">
+                                        
+                                        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="*"/>
+                                            </Grid.RowDefinitions>
+                                            <Label Grid.Row="0" Content="Live Camera Stream" HorizontalAlignment="Stretch" Margin="5" />
+                                                <controls:VideoViewerWPF Grid.Row="1" Name="videoViewer" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                                            </Grid>
+                                        
+                                    </Border>
+                                </Grid>
+                                <Grid
                                             Grid.Column="1"
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Stretch"
                                         Margin="5,5,5,5"
                                         x:Name="WeightModuleArea"
                                         Visibility="Visible">
-                                            <GroupBox 
+                                    <Border BorderThickness="1" BorderBrush="Black">
+                                        <GroupBox 
                                             FontSize="14"
                                             Background="Transparent"
                                             BorderThickness="3"
@@ -207,50 +216,51 @@
                                             VerticalAlignment="Stretch"
                                             Header="Weight Module"
                                             Padding="5">
-                                                <Border 
+                                            <Border 
                                             Padding="10"
                                             CornerRadius="10"
                                             Background="#242726">
-                                                    <Grid>
-                                                        <Border CornerRadius="4" Background="#66797c" Padding="15,8,15,8">
-                                                            <Grid>
-                                                                <Border BorderBrush="#fff" BorderThickness="2" Background="#66797c" Padding="5" CornerRadius="20">
-                                                                    <Grid>
-                                                                        <Border CornerRadius="20" Background="#1f2121">
-                                                                            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10">
-                                                                                <Grid.ColumnDefinitions>
-                                                                                    <ColumnDefinition Width="*"/>
-                                                                                    <ColumnDefinition Width="Auto"/>
-                                                                                </Grid.ColumnDefinitions>
-                                                                                <Border Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="#2e1511" CornerRadius="5">
-                                                                                    <Label HorizontalContentAlignment="Center" x:Name="WeightContent" Content="888888" Style="{StaticResource ni7segfamily}" Foreground="#af1708" Width="Auto" Height="Auto" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="40" FontStyle="Italic"/>
-                                                                                </Border>
-                                                                                <Grid Grid.Column="1" Width="30">
-                                                                                    <Grid.RowDefinitions>
-                                                                                        <RowDefinition Height="*"/>
-                                                                                        <RowDefinition Height="*"/>
-                                                                                        <RowDefinition Height="*"/>
-                                                                                        <RowDefinition Height="*"/>
-                                                                                    </Grid.RowDefinitions>
-                                                                                    <Label x:Name="WeightUnitKG" Grid.Row="0" Margin="2" Content="kg" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="White"/>
-                                                                                    <Label x:Name="WeightUnitLB" Grid.Row="1" Margin="2" Content="lb" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="White"/>
-                                                                                    <Label x:Name="WeightUnitOZ" Grid.Row="2" Margin="2" Content="oz" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="White"/>
-                                                                                    <Label x:Name="WeightUnitPCS" Grid.Row="3" Margin="2" Content="PCS" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="White"/>
-                                                                                </Grid>
+                                                <Grid>
+                                                    <Border CornerRadius="4" Background="#66797c" Padding="15,8,15,8" >
+                                                        <Grid>
+                                                            <Border BorderBrush="#fff" BorderThickness="2" Background="#66797c" Padding="5" CornerRadius="20">
+                                                                <Grid>
+                                                                    <Border CornerRadius="20" Background="#1f2121">
+                                                                        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10">
+                                                                            <Grid.ColumnDefinitions>
+                                                                                <ColumnDefinition Width="*"/>
+                                                                                <ColumnDefinition Width="Auto"/>
+                                                                            </Grid.ColumnDefinitions>
+                                                                            <Border Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="#2e1511" CornerRadius="5">
+                                                                                <Label HorizontalContentAlignment="Center" x:Name="WeightContent" Content="888888" Style="{StaticResource ni7segfamily}" Foreground="#af1708" Width="Auto" Height="Auto" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="40" FontStyle="Italic"/>
+                                                                            </Border>
+                                                                            <Grid Grid.Column="1" Width="30">
+                                                                                <Grid.RowDefinitions>
+                                                                                    <RowDefinition Height="*"/>
+                                                                                    <RowDefinition Height="*"/>
+                                                                                    <RowDefinition Height="*"/>
+                                                                                    <RowDefinition Height="*"/>
+                                                                                </Grid.RowDefinitions>
+                                                                                <Label x:Name="WeightUnitKG" Grid.Row="0" Margin="2" Content="kg" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="White"/>
+                                                                                <Label x:Name="WeightUnitLB" Grid.Row="1" Margin="2" Content="lb" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="White"/>
+                                                                                <Label x:Name="WeightUnitOZ" Grid.Row="2" Margin="2" Content="oz" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="White"/>
+                                                                                <Label x:Name="WeightUnitPCS" Grid.Row="3" Margin="2" Content="PCS" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="White"/>
                                                                             </Grid>
-                                                                        </Border>
-                                                                    </Grid>
-                                                                </Border>
-                                                            </Grid>
+                                                                        </Grid>
+                                                                    </Border>
+                                                                </Grid>
+                                                            </Border>
+                                                        </Grid>
 
-                                                        </Border>
-                                                    </Grid>
+                                                    </Border>
+                                                </Grid>
 
-                                                </Border>
-                                            </GroupBox>
+                                            </Border>
+                                        </GroupBox>
+                                    </Border>
 
-                                        </Grid>
-                                    </Grid>
+                                </Grid>
+                            </Grid>
                             <Grid Grid.Row="1">
                                 <Grid
                                          HorizontalAlignment="Stretch"
@@ -258,6 +268,7 @@
                                         Margin="5,5,5,5"
                                         x:Name="ControlBoardArea"
                                         Visibility="Visible">
+                                    
                                     <GroupBox
                                             FontSize="14"
                                             Background="Transparent"
@@ -874,27 +885,27 @@
                                     </GroupBox>
                                 </Grid>
                             </Grid>
-                                </Grid>
-                            </ScrollViewer>
                         </Grid>
-
-
-                    </Border>
+                    </ScrollViewer>
                 </Grid>
-                <Border
+
+
+            </Border>
+        </Grid>
+        <Border
                     Grid.Row="1"
                     BorderThickness="0,1,0,0"
                     BorderBrush="#007acc"
                     Background="#007acc"
                     CornerRadius="0,0,6,6"
                     Padding="4">
-                    <Label Content="Processing.."
+            <Label Content="Processing.."
                            Foreground="White"
                            FontSize="12"
                            VerticalAlignment="Center"
                            HorizontalAlignment="Stretch"
                            />
-                </Border>
-            </Grid>
-       
+        </Border>
+    </Grid>
+
 </Page>

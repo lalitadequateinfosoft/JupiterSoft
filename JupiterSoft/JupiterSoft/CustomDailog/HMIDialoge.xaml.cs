@@ -156,13 +156,6 @@ namespace JupiterSoft.CustomDailog
                 }
 
             }
-
-            
-            //CreateTemplate ChildPage = new CreateTemplate();
-            //this.parentWindow.frame.Content = null;
-            //ChildPage.ParentWindow = this.parentWindow;
-            //this.parentWindow.Content = ChildPage;
-            //dashboard.Show();
             Close();
         }
 
@@ -1501,10 +1494,10 @@ namespace JupiterSoft.CustomDailog
             {
                 if (command.ExecutionStatus == (int)ExecutionStage.Not_Executed)
                 {
-                    _dispathcer.Invoke(new Action(() =>
-                    {
-                        ControlBoardArea.Visibility = Visibility.Hidden;
-                    }));
+                    //_dispathcer.Invoke(new Action(() =>
+                    //{
+                    //    ControlBoardArea.Visibility = Visibility.Hidden;
+                    //}));
 
                     AddOutPut("Disconnecting Control Card..", (int)OutPutType.INFORMATION);
                     StopPortCommunication(Models.DeviceType.ControlCard);
@@ -1591,10 +1584,8 @@ namespace JupiterSoft.CustomDailog
                     command.ExecutionStatus = (int)ExecutionStage.Executing;
 
                     AddOutPut("Reading control card all input/output information", (int)OutPutType.INFORMATION);
-                    bool received = false;
                     RecData _rec = new RecData();
-                    while (received == false)
-                    {
+                   
                         var cDevices = connectedDevices.Where(x => x.DeviceType == Models.DeviceType.WeightModule).FirstOrDefault();
                         DataReader(Models.DeviceType.ControlCard, command.CommandId);
                         if (cDevices.ReceiveBufferQueue != null)
@@ -1609,8 +1600,6 @@ namespace JupiterSoft.CustomDailog
                                 ReadControlCardResponse(_rec);
                             }
                         }
-
-                    }
 
                     Commands.Where(x => x.CommandId == command.CommandId).ToList().ForEach(x => x.ExecutionStatus = (int)ExecutionStage.Executed);
                     return;
@@ -2010,12 +1999,12 @@ namespace JupiterSoft.CustomDailog
 
             ConnectionUSB();
 
-            //Commands.ForEach(x => x.ExecutionStatus = (int)ExecutionStage.Not_Executed);
+            Commands.ForEach(x => x.ExecutionStatus = (int)ExecutionStage.Not_Executed);
 
-            //AddOutPut("Commands Execution started..", (int)OutPutType.INFORMATION);
-            //ExecutionTimer.Elapsed += ExecutionTimer_Elapsed;
-            //ExecutionTimer.Interval = 3000;
-            //ExecutionTimer.Enabled = true;
+            AddOutPut("Commands Execution started..", (int)OutPutType.INFORMATION);
+            ExecutionTimer.Elapsed += ExecutionTimer_Elapsed;
+            ExecutionTimer.Interval = 3000;
+            ExecutionTimer.Enabled = true;
         }
 
         private void ExecutionTimer_Elapsed(object sender, ElapsedEventArgs e)
