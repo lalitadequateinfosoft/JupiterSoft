@@ -271,38 +271,7 @@
 
 
 
-            <Style x:Key="BlueMovePointer" TargetType="Button">
-                <Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate TargetType="{x:Type Button}">
-                            <Grid>
-                                <Path Stroke="{TemplateBinding BorderBrush}" StrokeThickness="2" StrokeStartLineCap="Square" StrokeEndLineCap="Square" StrokeLineJoin="Round" Fill="{TemplateBinding Background}" Data="M 0,0 H10,10 L15,10 H15,15 L16,10 h14,0 L35,0 h0,164.5 h0,0 V32,32 H35,35 L30,41 H15 L10,32 H0,0 V0,0 Z" />
-
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="92"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-
-                                    <Label Grid.Column="0" Content="pointer-towards" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,-5,0,0" FontSize="{TemplateBinding FontSize}" FontWeight="{TemplateBinding FontWeight}" Foreground="{TemplateBinding Foreground}"/>
-
-
-                                    <ComboBox Grid.Column="1"  HorizontalAlignment="Center" VerticalAlignment="Center" Width="102" Height="25" Margin="0,-10,0,0" Background="#0082ca" Foreground="#fff" BorderBrush="#01598a" BorderThickness="1" Style="{DynamicResource BlueMoveComboBoxStyle}" FontSize="9" FontWeight="Normal">
-                                        <ComboBoxItem Content="mouse-pointer" IsSelected="True"></ComboBoxItem>
-                                        <ComboBoxItem Content="Right"></ComboBoxItem>
-
-                                    </ComboBox>
-
-
-                                </Grid>
-
-
-                            </Grid>
-
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-            </Style>
+            
             <Style x:Key="BlueMoveComboBoxStyle" TargetType="{x:Type ComboBox}">
                 <Setter Property="OverridesDefaultStyle" Value="True"/>
                 <Setter Property="Padding" Value="{DynamicResource ComboBoxPadding}"/>
@@ -743,40 +712,7 @@
                 </Setter>
             </Style>
 
-            <Style x:Key="BlueMoveRotation" TargetType="Button">
-                <Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate TargetType="{x:Type Button}">
-                            <Grid>
-                                <Path Stroke="{TemplateBinding BorderBrush}" StrokeThickness="2" StrokeStartLineCap="Square" StrokeEndLineCap="Square" StrokeLineJoin="Round" Fill="{TemplateBinding Background}" Data="M 0,0 H10,10 L15,10 H15,15 L16,10 h14,0 L35,0 h0,139 h0,0 V32,32 H35,35 L30,41 H15 L10,32 H0,0 V0,0 Z" />
-
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="92"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-
-                                    <Label Grid.Column="0" Content="pointer-towards" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,-5,0,0" FontSize="{TemplateBinding FontSize}" FontWeight="{TemplateBinding FontWeight}" Foreground="{TemplateBinding Foreground}"/>
-
-
-                                    <ComboBox Grid.Column="1"  HorizontalAlignment="Center" VerticalAlignment="Center" Width="75" Height="25" Margin="0,-10,0,0" Background="#0082ca" Foreground="#fff" BorderBrush="#01598a" BorderThickness="1" Style="{DynamicResource BlueMoveComboBoxStyle}" FontSize="9" FontWeight="Normal">
-                                        <ComboBoxItem Content="left-right" IsSelected="True"></ComboBoxItem>
-                                        <ComboBoxItem Content="right-left"></ComboBoxItem>
-                                        <ComboBoxItem Content="top-bottom"></ComboBoxItem>
-                                        <ComboBoxItem Content="bottom-top"></ComboBoxItem>
-
-                                    </ComboBox>
-
-
-                                </Grid>
-
-
-                            </Grid>
-
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-            </Style>
+            
 
             <!--Event Button Style Area-->
             <Style x:Key="EventButtonStyle" TargetType="Button">
@@ -2703,48 +2639,6 @@
                                                 IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}"
                                                 Tag="{Binding Turn_Fiften_Degree_Left_Move,Mode=OneWay}"/>
 
-
-                                            <Button 
-                                                x:Name="Pointer_State_Move"
-                                                Margin="12,5,0,0"
-                                                HorizontalAlignment="Left"
-                                                VerticalAlignment="Center"
-                                                BorderBrush="#2a6a8e"
-                                                Background="#0082ca"
-                                                BorderThickness="2"
-                                                FontSize="10"
-                                                Foreground="#fff"
-                                                FontWeight="Bold"
-                                                FontFamily="Georgia, serif;"
-                                                Width="200"
-                                                Height="42" 
-                                                Style="{StaticResource BlueMovePointer}" 
-                                                PreviewMouseMove="Button_PreviewMouseMove"
-                                                IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}"
-                                                Tag="{Binding Pointer_State_Move,Mode=OneWay}"
-                                                />
-
-                                            <Button 
-                                                x:Name="Rotation_Style_Move"
-                                                Margin="12,5,0,0"
-                                                HorizontalAlignment="Left"
-                                                VerticalAlignment="Center"
-                                                BorderBrush="#2a6a8e"
-                                                Background="#0082ca"
-                                                BorderThickness="2"
-                                                FontSize="10"
-                                                Foreground="#fff"
-                                                FontWeight="Bold"
-                                                FontFamily="Georgia, serif;"
-                                                Width="175"
-                                                Height="42"
-                                                Style="{StaticResource BlueMoveRotation}"
-                                                PreviewMouseMove="Button_PreviewMouseMove"
-                                                IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}"
-                                                Tag="{Binding Rotation_Style_Move,Mode=OneWay}"
-                                                />
-
-
                                         </StackPanel>
 
                                         <StackPanel 
@@ -2945,6 +2839,26 @@
 
                                         <StackPanel x:Name="ButtonGridArea3" Grid.Row="2" HorizontalAlignment="Center" Margin="10" MouseEnter="ButtonGrid_MouseEnter" Width="250" MouseLeave="ButtonGrid_MouseLeave">
                                             <Button 
+                                                x:Name="Delay"
+                                                Style="{StaticResource ControlButtonStyle}"
+                                                Content="Delay"
+                                                Margin="12,5,0,0"
+                                                HorizontalAlignment="Left"
+                                                VerticalAlignment="Center"
+                                                BorderBrush="#ffdab2"
+                                                Background="#ffa94c"
+                                                BorderThickness="0.5"
+                                                FontSize="12"
+                                                Foreground="#fff"
+                                                FontWeight="Bold"
+                                                FontFamily="Georgia, serif;" 
+                                                Width="200"
+                                                Height="42" 
+                                                PreviewMouseMove="Button_PreviewMouseMove"
+                                                IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}"
+                                                Tag="{Binding Delay,Mode=OneWay}"
+                                                    />
+                                            <Button 
                                                 x:Name="Forever_Control_Start"
                                                 Visibility="Hidden"
                                                 Style="{StaticResource ControlButtonStyle}"
@@ -3101,7 +3015,7 @@
                                             <Button 
                                                 x:Name="Read_Motor_Frequency"
                                                 Style="{StaticResource FunctionButtonStyle}"
-                                                Content="Read Motor Frequency"
+                                                Content="Read Frequency"
                                                 Margin="12,5,0,0"
                                                 HorizontalAlignment="Left"
                                                 VerticalAlignment="Center"
@@ -3122,7 +3036,7 @@
                                             <Button 
                                                 x:Name="Change_Motor_Frequency"
                                                 Style="{StaticResource FunctionButtonStyle}"
-                                                Content="Change Motor Frequency"
+                                                Content="Set Frequency"
                                                 Margin="12,5,0,0"
                                                 HorizontalAlignment="Left"
                                                 VerticalAlignment="Center"
@@ -3139,7 +3053,7 @@
                                                 IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}"
                                                 Tag="{Binding Change_Motor_Frequency,Mode=OneWay}"
                                                     />
-                                            <Button 
+                                            <!--<Button 
                                                 x:Name="Turn_ON_Motor"
                                                 Style="{StaticResource FunctionButtonStyle}"
                                                 Content="Turn On Motor"
@@ -3158,8 +3072,8 @@
                                                 PreviewMouseMove="Button_PreviewMouseMove"
                                                 IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}"
                                                 Tag="{Binding Turn_ON_Motor,Mode=OneWay}"
-                                                    />
-                                            <Button 
+                                                    />-->
+                                            <!--<Button 
                                                 x:Name="Turn_OFF_Motor"
                                                 Style="{StaticResource FunctionButtonStyle}"
                                                 Content="Turn Off Motor"
@@ -3178,7 +3092,7 @@
                                                 PreviewMouseMove="Button_PreviewMouseMove"
                                                 IsHitTestVisible="{Binding IsChildHitTestVisible, ElementName=root}"
                                                 Tag="{Binding Turn_OFF_Motor,Mode=OneWay}"
-                                                    />
+                                                    />-->
                                             <Button 
                                                 x:Name="Read_All_Card_In_Out"
                                                 Style="{StaticResource FunctionButtonStyle}"

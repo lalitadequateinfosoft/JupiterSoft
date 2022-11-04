@@ -111,6 +111,12 @@ namespace JupiterSoft.Models
         public string AccessPassword { get; set; }
     }
 
+    public class FrequencyModel
+    {
+        public int Frequency { get; set; }
+        public int Register { get; set; }
+    }
+
     public enum CameraType
     {
         USB,

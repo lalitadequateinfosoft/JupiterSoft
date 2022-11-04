@@ -405,14 +405,6 @@ namespace JupiterSoft.Pages
                         getNewPosition(Turn_Fiften_Degree_Left_Move.Width, Turn_Fiften_Degree_Left_Move.Height, ref NewLeft, ref NewTop);
                         ele = Get_Turn_Fiften_Degree_Left_Move(contentId);
                         break;
-                    case (int)ElementConstant.Pointer_State_Move:
-                        getNewPosition(Pointer_State_Move.Width, Pointer_State_Move.Height, ref NewLeft, ref NewTop);
-                        ele = Get_Pointer_State_Move(contentId);
-                        break;
-                    case (int)ElementConstant.Rotation_Style_Move:
-                        getNewPosition(Rotation_Style_Move.Width, Rotation_Style_Move.Height, ref NewLeft, ref NewTop);
-                        ele = Get_Rotation_Style_Move(contentId);
-                        break;
                     case (int)ElementConstant.Start_Event:
                         getNewPosition(Start_Event.Width, Start_Event.Height, ref NewLeft, ref NewTop);
                         ele = Get_EventStyle(contentId, Convert.ToInt32(data));
@@ -733,13 +725,9 @@ namespace JupiterSoft.Pages
                     case (int)ElementConstant.Read_Motor_Frequency:
                         getNewPosition(Read_Motor_Frequency.Width, Read_Motor_Frequency.Height, ref NewLeft, ref NewTop);
 
-                        NameVariableDialog variableDialog = new NameVariableDialog("Set Fucntion Name");
-                        variableDialog.ShowDialog();
-                        if (!variableDialog.Canceled)
-                        {
                             if (Commands.Count() == 0)
                             {
-                                ele = Get_FunctionStyle(contentId, Convert.ToInt32(data), variableDialog.VariableName.Text);
+                                ele = Get_FunctionStyle(contentId, Convert.ToInt32(data), Read_Motor_Frequency.Content.ToString());
                                 var command = new LogicalCommand
                                 {
                                     CommandId = contentId,
@@ -747,13 +735,13 @@ namespace JupiterSoft.Pages
                                     Order = 1,
                                     ExecutionStatus = (int)ExecutionStage.Not_Executed,
                                     Configuration = new DeviceConfiguration(),
-                                    CommandText = variableDialog.VariableName.Text
+                                    CommandText = Read_Motor_Frequency.Content.ToString()
                                 };
                                 Commands.Add(command);
                             }
                             else
                             {
-                                ele = Get_FunctionStyle(contentId, Convert.ToInt32(data), variableDialog.VariableName.Text);
+                                ele = Get_FunctionStyle(contentId, Convert.ToInt32(data), Read_Motor_Frequency.Content.ToString());
                                 var command = new LogicalCommand
                                 {
                                     CommandId = contentId,
@@ -761,24 +749,24 @@ namespace JupiterSoft.Pages
                                     Order = Commands.OrderByDescending(x => x.Order).FirstOrDefault().Order + 1,
                                     ExecutionStatus = (int)ExecutionStage.Not_Executed,
                                     Configuration = new DeviceConfiguration(),
-                                    CommandText = variableDialog.VariableName.Text
+                                    CommandText = Read_Motor_Frequency.Content.ToString()
                                 };
                                 Commands.Add(command);
                             }
                             ShouldAdd = true;
-                        }
+                        
                         break;
 
                     case (int)ElementConstant.Change_Motor_Frequency:
                         getNewPosition(Change_Motor_Frequency.Width, Change_Motor_Frequency.Height, ref NewLeft, ref NewTop);
 
-                        NameVariableDialog variableDialog1 = new NameVariableDialog("Set Fucntion Name");
+                        FrequencyDialog variableDialog1 = new FrequencyDialog();
                         variableDialog1.ShowDialog();
                         if (!variableDialog1.Canceled)
                         {
                             if (Commands.Count() == 0)
                             {
-                                ele = Get_FunctionStyle(contentId, Convert.ToInt32(data), variableDialog1.VariableName.Text);
+                                ele = Get_FunctionStyle(contentId, Convert.ToInt32(data), Change_Motor_Frequency.Content.ToString()+" To "+ variableDialog1.VariableName.Text.ToString());
                                 var command = new LogicalCommand
                                 {
                                     CommandId = contentId,
@@ -786,13 +774,14 @@ namespace JupiterSoft.Pages
                                     Order = 1,
                                     ExecutionStatus = (int)ExecutionStage.Not_Executed,
                                     Configuration = new DeviceConfiguration(),
-                                    CommandText = variableDialog1.VariableName.Text
+                                    CommandText = Change_Motor_Frequency.Content.ToString(),
+                                    CommandData = new FrequencyModel { Frequency = Convert.ToInt32(variableDialog1.VariableName.Text.ToString()), Register = Convert.ToInt32(variableDialog1.registerInput.Text) }
                                 };
                                 Commands.Add(command);
                             }
                             else
                             {
-                                ele = Get_FunctionStyle(contentId, Convert.ToInt32(data), variableDialog1.VariableName.Text);
+                                ele = Get_FunctionStyle(contentId, Convert.ToInt32(data), Change_Motor_Frequency.Content.ToString() + " To " + variableDialog1.VariableName.Text.ToString());
                                 var command = new LogicalCommand
                                 {
                                     CommandId = contentId,
@@ -800,86 +789,87 @@ namespace JupiterSoft.Pages
                                     Order = Commands.OrderByDescending(x => x.Order).FirstOrDefault().Order + 1,
                                     ExecutionStatus = (int)ExecutionStage.Not_Executed,
                                     Configuration = new DeviceConfiguration(),
-                                    CommandText = variableDialog1.VariableName.Text
+                                    CommandText = Change_Motor_Frequency.Content.ToString(),
+                                    CommandData = new FrequencyModel { Frequency = Convert.ToInt32(variableDialog1.VariableName.Text.ToString()), Register = Convert.ToInt32(variableDialog1.registerInput.Text) }
                                 };
                                 Commands.Add(command);
                             }
                             ShouldAdd = true;
                         }
                         break;
-                    case (int)ElementConstant.Turn_ON_Motor:
-                        getNewPosition(Turn_ON_Motor.Width, Turn_ON_Motor.Height, ref NewLeft, ref NewTop);
-                        ele = Get_FunctionStyle(contentId, Convert.ToInt32(data), "");
-                        NameVariableDialog variableDialog2 = new NameVariableDialog("Set Fucntion Name");
-                        variableDialog2.ShowDialog();
+                    //case (int)ElementConstant.Turn_ON_Motor:
+                    //    getNewPosition(Turn_ON_Motor.Width, Turn_ON_Motor.Height, ref NewLeft, ref NewTop);
+                    //    ele = Get_FunctionStyle(contentId, Convert.ToInt32(data), "");
+                    //    NameVariableDialog variableDialog2 = new NameVariableDialog("Set Fucntion Name");
+                    //    variableDialog2.ShowDialog();
 
-                        if (Commands.Count() == 0)
-                        {
+                    //    if (Commands.Count() == 0)
+                    //    {
 
-                            var command = new LogicalCommand
-                            {
-                                CommandId = contentId,
-                                CommandType = Convert.ToInt32(data),
-                                Order = 1,
-                                ExecutionStatus = (int)ExecutionStage.Not_Executed,
-                                Configuration = new DeviceConfiguration(),
-                                CommandText = variableDialog2.VariableName.Text
-                            };
-                            Commands.Add(command);
-                        }
-                        else
-                        {
-                            ele = Get_FunctionStyle(contentId, Convert.ToInt32(data), variableDialog2.VariableName.Text);
-                            var command = new LogicalCommand
-                            {
-                                CommandId = contentId,
-                                CommandType = Convert.ToInt32(data),
-                                Order = Commands.OrderByDescending(x => x.Order).FirstOrDefault().Order + 1,
-                                ExecutionStatus = (int)ExecutionStage.Not_Executed,
-                                Configuration = new DeviceConfiguration(),
-                                CommandText = variableDialog2.VariableName.Text
-                            };
-                            Commands.Add(command);
-                        }
-                        ShouldAdd = true;
+                    //        var command = new LogicalCommand
+                    //        {
+                    //            CommandId = contentId,
+                    //            CommandType = Convert.ToInt32(data),
+                    //            Order = 1,
+                    //            ExecutionStatus = (int)ExecutionStage.Not_Executed,
+                    //            Configuration = new DeviceConfiguration(),
+                    //            CommandText = variableDialog2.VariableName.Text
+                    //        };
+                    //        Commands.Add(command);
+                    //    }
+                    //    else
+                    //    {
+                    //        ele = Get_FunctionStyle(contentId, Convert.ToInt32(data), variableDialog2.VariableName.Text);
+                    //        var command = new LogicalCommand
+                    //        {
+                    //            CommandId = contentId,
+                    //            CommandType = Convert.ToInt32(data),
+                    //            Order = Commands.OrderByDescending(x => x.Order).FirstOrDefault().Order + 1,
+                    //            ExecutionStatus = (int)ExecutionStage.Not_Executed,
+                    //            Configuration = new DeviceConfiguration(),
+                    //            CommandText = variableDialog2.VariableName.Text
+                    //        };
+                    //        Commands.Add(command);
+                    //    }
+                    //    ShouldAdd = true;
 
-                        break;
+                    //    break;
 
-                    case (int)ElementConstant.Turn_OFF_Motor:
-                        getNewPosition(Turn_OFF_Motor.Width, Turn_OFF_Motor.Height, ref NewLeft, ref NewTop);
-                        ele = Get_FunctionStyle(contentId, Convert.ToInt32(data), "");
+                    //case (int)ElementConstant.Turn_OFF_Motor:
+                    //    getNewPosition(Turn_OFF_Motor.Width, Turn_OFF_Motor.Height, ref NewLeft, ref NewTop);
+                    //    ele = Get_FunctionStyle(contentId, Convert.ToInt32(data), "");
 
-                        if (Commands.Count() == 0)
-                        {
+                    //    if (Commands.Count() == 0)
+                    //    {
 
-                            var command = new LogicalCommand
-                            {
-                                CommandId = contentId,
-                                CommandType = Convert.ToInt32(data),
-                                Order = 1,
-                                ExecutionStatus = (int)ExecutionStage.Not_Executed,
-                                Configuration = new DeviceConfiguration(),
-                                // CommandText = variableDialog3.VariableName.Text
-                            };
-                            Commands.Add(command);
-                        }
-                        else
-                        {
-                            //ele = Get_FunctionStyle(contentId, Convert.ToInt32(data), variableDialog3.VariableName.Text);
-                            var command = new LogicalCommand
-                            {
-                                CommandId = contentId,
-                                CommandType = Convert.ToInt32(data),
-                                Order = Commands.OrderByDescending(x => x.Order).FirstOrDefault().Order + 1,
-                                ExecutionStatus = (int)ExecutionStage.Not_Executed,
-                                Configuration = new DeviceConfiguration(),
-                                // CommandText = variableDialog3.VariableName.Text
-                            };
-                            Commands.Add(command);
-                        }
-                        ShouldAdd = true;
+                    //        var command = new LogicalCommand
+                    //        {
+                    //            CommandId = contentId,
+                    //            CommandType = Convert.ToInt32(data),
+                    //            Order = 1,
+                    //            ExecutionStatus = (int)ExecutionStage.Not_Executed,
+                    //            Configuration = new DeviceConfiguration(),
+                    //            // CommandText = variableDialog3.VariableName.Text
+                    //        };
+                    //        Commands.Add(command);
+                    //    }
+                    //    else
+                    //    {
+                    //        //ele = Get_FunctionStyle(contentId, Convert.ToInt32(data), variableDialog3.VariableName.Text);
+                    //        var command = new LogicalCommand
+                    //        {
+                    //            CommandId = contentId,
+                    //            CommandType = Convert.ToInt32(data),
+                    //            Order = Commands.OrderByDescending(x => x.Order).FirstOrDefault().Order + 1,
+                    //            ExecutionStatus = (int)ExecutionStage.Not_Executed,
+                    //            Configuration = new DeviceConfiguration(),
+                    //            // CommandText = variableDialog3.VariableName.Text
+                    //        };
+                    //        Commands.Add(command);
+                    //    }
+                    //    ShouldAdd = true;
 
-                        break;
+                    //    break;
 
                     case (int)ElementConstant.Read_All_Card_In_Out:
                         getNewPosition(Read_All_Card_In_Out.Width, Read_All_Card_In_Out.Height, ref NewLeft, ref NewTop);
@@ -1509,10 +1499,10 @@ namespace JupiterSoft.Pages
             switch (evEnum)
             {
                 case (int)ElementConstant.Read_Motor_Frequency:
-                    content = "Read_Motor Frequency";
+                    content = "Read Frequency";
                     break;
                 case (int)ElementConstant.Change_Motor_Frequency:
-                    content = "Change Motor Frequency";
+                    content = "Set Frequency To";
                     break;
                 case (int)ElementConstant.Turn_ON_Motor:
                     content = "Turn ON Motor";

@@ -34,7 +34,7 @@ namespace JupiterSoft.Models
         public int Stop_Camera_recording_Event { get; set; }
 
         //Control
-        public int Wait_One_Second_Control { get; set; }
+        public int Delay { get; set; }
         public int Repeat_Ten_Control { get; set; }
         public int Repeat_Control { get; set; }
         public int Stop_Repeat { get; set; }
@@ -133,7 +133,7 @@ namespace JupiterSoft.Models
 
 
                 //Control Enum
-                Wait_One_Second_Control = (int)ElementConstant.Wait_One_Second_Control,
+                Delay = (int)ElementConstant.Delay,
                 Repeat_Control=(int)ElementConstant.Repeat_Control,
                 Stop_Repeat= (int)ElementConstant.Stop_Repeat,
                 Repeat_Ten_Control = (int)ElementConstant.Repeat_Ten_Control,
@@ -191,7 +191,9 @@ namespace JupiterSoft.Models
                 Clear_Sound_Effect_Sound = (int)ElementConstant.Clear_Sound_Effect_Sound,
                 Change_Volume_by_Number_Sound = (int)ElementConstant.Change_Volume_by_Number_Sound,
                 Set_Volume_To_Percent_Sound = (int)ElementConstant.Set_Volume_To_Percent_Sound,
-                Volume_Sound = (int)ElementConstant.Volume_Sound
+                Volume_Sound = (int)ElementConstant.Volume_Sound,
+
+                
             };
             return elementOp;
         }

@@ -33,7 +33,7 @@ namespace JupiterSoft
         Stop_Camera_recording_Event,
 
         //Control Enum
-        Wait_One_Second_Control,
+        Delay,
         Repeat_Ten_Control,
         Repeat_Control,
         Stop_Repeat,

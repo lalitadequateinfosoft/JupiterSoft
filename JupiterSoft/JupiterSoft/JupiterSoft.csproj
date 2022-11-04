@@ -87,6 +87,9 @@
     <Compile Include="CustomDailog\ConditionsDialog.xaml.cs">
       <DependentUpon>ConditionsDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="CustomDailog\FrequencyDialog.xaml.cs">
+      <DependentUpon>FrequencyDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="CustomDailog\HMIDialoge.xaml.cs">
       <DependentUpon>HMIDialoge.xaml</DependentUpon>
     </Compile>
@@ -116,6 +119,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="CustomDailog\ConfigurationDailog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CustomDailog\FrequencyDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
