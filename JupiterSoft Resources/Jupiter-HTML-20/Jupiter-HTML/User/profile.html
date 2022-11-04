@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title>InteGrids - Affordable automation for every business</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+
+  <!-- Favicons -->
+  <link href="assets/img/favicon.png" rel="icon">
+
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/vendor/dataTables/css/jquery.dataTables.min.css" rel="stylesheet">
+
+  <!-- Template Main CSS File -->
+  <link href="assets/css/style.css" rel="stylesheet">
+
+  <!-- Font -->
+  <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" />
+</head>
+
+<body>
+
+  <!-- ======= Header ======= -->
+  <header id="header" class="header fixed-top d-flex align-items-center">
+
+    <div class="d-flex align-items-center justify-content-between">
+      <a href="#/" class="logo d-flex align-items-center">
+        <img src="assets/img/logo.png" alt="">
+      </a>
+      <i class="bi bi-list toggle-sidebar-btn"></i>
+    </div><!-- End Logo -->
+
+    <nav class="header-nav ms-auto">
+
+      <ul class="d-flex align-items-center">
+
+
+
+        <li class="nav-item dropdown pe-3">
+
+          <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+            <img src="assets/img/profile-img.jpg" alt="Profile" class="rounded-circle">
+            <span class="d-none d-md-block dropdown-toggle ps-2">K. Anderson</span>
+          </a><!-- End Profile Iamge Icon -->
+
+          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+
+            <li>
+              <a class="dropdown-item d-flex align-items-center" href="profile.html">
+                <i class="far fa-user-alt"></i>
+                <span>My Profile</span>
+              </a>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+            <li>
+              <a class="dropdown-item d-flex align-items-center" href="../index.html">
+                <i class="far fa-sign-out-alt"></i>
+                <span>Sign Out</span>
+              </a>
+            </li>
+
+          </ul><!-- End Profile Dropdown Items -->
+        </li><!-- End Profile Nav -->
+
+      </ul>
+    </nav><!-- End Icons Navigation -->
+
+  </header><!-- End Header -->
+
+  <!-- ======= Sidebar ======= -->
+  <aside id="sidebar" class="sidebar">
+
+    <ul class="sidebar-nav" id="sidebar-nav">
+
+      <li class="nav-heading">MY ACCOUNT</li>
+
+      <li class="nav-item">
+        <a class="nav-link" href="profile.html">
+          <i class="far fa-user"></i>
+          <span>Profile</span>
+        </a>
+      </li><!-- End Blank Page Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="change-password.html">
+          <i class="far fa-key"></i>
+          <span>Change Password</span>
+        </a>
+      </li><!-- End Blank Page Nav -->
+
+      <li class="nav-heading">ACTIVITIES</li>
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="plan.html">
+          <i class="far fa-hands-usd"></i>
+          <span>Selected Plan</span>
+        </a>
+      </li><!-- End Blank Page Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="transaction.html">
+          <i class="far fa-receipt"></i>
+          <span>Transaction History</span>
+        </a>
+      </li><!-- End Blank Page Nav -->
+
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="../index.html">
+          <i class="far fa-sign-out-alt"></i>
+          <span>Logout</span>
+        </a>
+      </li><!-- End Blank Page Nav -->
+
+    </ul>
+
+  </aside><!-- End Sidebar-->
+
+  <main id="main" class="main">
+
+    <div class="pagetitle">
+      <div class="d-flex">
+        <div class="mr-auto">
+          <h1>Profile</h1>
+          <nav>
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+              <li class="breadcrumb-item active">Profile</li>
+            </ol>
+          </nav>
+        </div>
+        <div class="ml-auto">
+          <!-- <a href="#/" class="btn btn-primary btn-custom" data-bs-toggle="modal" data-bs-target="#invitemodal"></i>Add New</a> -->
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header text-black-title p">
+        <h5 class="card-title mb-0 ">Profile information</h5>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas gravida felis justo,</p>
+      </div>
+
+      <div class="card-body py-3">
+        <form>
+
+          <h4 class="form-row-title">Profile Image</h4>
+          <div class="row">
+            <div class="col-sm-12 mb-3">
+              <div class="profile-img">
+                <img src="assets/img/profile-img.jpg">
+              </div>
+              <a href="#profile-img-upload" data-bs-toggle="modal" class="btn btn-primary width-150 mt-3">Edit</a>
+            </div>
+            <!-- close -->
+          </div>
+
+          <h4 class="form-row-title">Your INFORMATION</h4>
+
+          <div class="row">
+            <div class="col-sm-6 mb-3">
+              <label class="form-label">Name</label>
+              <input type="text" class="form-control">
+            </div>
+            <!-- close -->
+            <div class="col-sm-6 mb-3">
+              <label class="form-label">Email ID</label>
+              <input type="text" class="form-control">
+            </div>
+            <!-- close -->
+          </div>
+
+          <div class="row">
+            <div class="col-sm-6 mb-3">
+              <label class="form-label">Phone No.</label>
+              <input type="text" class="form-control">
+            </div>
+            <!-- close -->
+
+          </div>
+
+          <div class="row">
+            <div class="col-sm-12 mb-3">
+              <label class="form-label">Address</label>
+              <input type="text" class="form-control">
+            </div>
+            <!-- close -->
+
+            <div class="col-sm-4 mb-3">
+              <label class="form-label">State</label>
+              <input type="text" class="form-control">
+            </div>
+            <!-- close -->
+
+            <div class="col-sm-4 mb-3">
+              <label class="form-label">City</label>
+              <input type="text" class="form-control">
+            </div>
+            <!-- close -->
+
+            <div class="col-sm-4 mb-3">
+              <label class="form-label">Zipcode</label>
+              <input type="text" class="form-control">
+            </div>
+            <!-- close -->
+          </div>
+
+
+
+          <button type="button" class="btn btn-primary">Submit</button>
+
+        </form>
+      </div>
+    </div>
+
+  </main><!-- End #main -->
+
+
+  <!-- Modal -->
+  <div class="modal fade modal-ui" id="profile-img-upload" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+
+        <div class="modal-body">
+          <div class="file-upload">
+            <input type="file" name="">
+            <i class="fad fa-file-upload"></i>
+            <p>Upload file here...</p>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Submit</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Vendor JS Files -->
+  <script src="assets/js/jquery-3.5.1.js"></script>
+  <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/vendor/dataTables/js/jquery.dataTables.min.js"></script>
+
+  <!-- Template Main JS File -->
+  <script src="assets/js/main.js"></script>
+  
+  <script type="text/javascript">
+    $(document).ready(function () {
+      $('#example').DataTable();
+    });
+  </script>
+
+</body>
+
+</html>
