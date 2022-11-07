@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:fa="http://schemas.fontawesome.io/icons/"
+        xmlns:controls="clr-namespace:Ozeki.Media;assembly=OzekiSDK"
         xmlns:local="clr-namespace:JupiterSoft"
         mc:Ignorable="d"
         xmlns:ui="http://schemas.modernwpf.com/2019"
@@ -170,6 +171,520 @@
 		Style="{StaticResource TitleBarCloseButtonStyle}">
                 <fa:FontAwesome Icon="Close" FontSize="10" FontWeight="Normal" />
             </Button>
+        </Grid>
+        <Grid Grid.Row="1" Background="#eeeeee">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0" Margin="20">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid Grid.Column="0">
+                    <Label x:Name="ProjectName" FontSize="18" FontWeight="Bold" Content="Check Weigher" HorizontalAlignment="Left"/>
+                </Grid>
+               
+                <Grid Grid.Column="1">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <StackPanel Margin="5,0,5,0">
+                            <Button x:Name="Pause" Background="#a8a8a8" Foreground="White" Width="100" Content="PAUSE"/>
+                        </StackPanel>
+                        <StackPanel Margin="5,0,5,0">
+                            <Button x:Name="Reset" Background="#ff2a2a" Foreground="White" Width="100" Content="RESET"/>
+                        </StackPanel>
+                        <StackPanel Margin="5,0,5,0">
+                            <Button x:Name="Run" Background="#0082ca" Foreground="White" Width="100" Content="RUN"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+            </Grid>
+            <Grid Grid.Row="1" Margin="20">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid Grid.Column="0">
+                    <StackPanel Orientation="Vertical">
+                        <StackPanel>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <Grid Grid.Row="0" Margin="0,5,0,5">
+                                    <Label x:Name="WeightLabel" Content="WEIGHT" FontSize="10" FontWeight="Bold"/>
+                                </Grid>
+                                <Border Grid.Row="1"
+                                        BorderBrush="#eee"
+                                        Height="120"
+                                        BorderThickness="1"
+                                        Background="White"
+                                        Padding="20,10,20,10">
+                                    <Grid Background="Transparent">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="1*"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="2*"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid Grid.Column="0">
+                                            <Image Source="/assets/weight-scale.png" Width="80" Height="80" />
+                                        </Grid>
+                                        <Grid Grid.Column="1" Margin="5,0,5,0">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="*"/>
+                                            </Grid.RowDefinitions>
+                                            <Label Grid.Row="0" Content="WEIGHT" FontSize="10" FontWeight="Bold"/>
+                                            <Border Grid.Row="1"
+                                                    BorderBrush="#b9b9b9"
+                                                    BorderThickness="1"
+                                                    Background="#dbdbdb"
+                                                    Margin="0,10,0,10">
+                                                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                    <Label x:Name="weight" Content="150" FontSize="22" FontWeight="Bold" Foreground="#4a4a4a" HorizontalContentAlignment="Center"/>
+                                                </StackPanel>
+                                            </Border>
+                                        </Grid>
+                                        <Grid Grid.Column="2" Margin="5,0,5,0">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="*"/>
+                                            </Grid.RowDefinitions>
+                                            <Label Grid.Row="0" Content="Range" FontSize="10" FontWeight="Bold"/>
+                                            <Grid Grid.Row="1">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                </Grid.ColumnDefinitions>
+                                                <Border Grid.Column="0"
+                                                    BorderBrush="#b9b9b9"
+                                                    BorderThickness="1"
+                                                    Background="#dbdbdb"
+                                                    Margin="0,10,0,10">
+                                                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                        <TextBox x:Name="minrange"
+                                                             BorderBrush="Transparent"
+                                                             Background="Transparent"
+                                                             Text="10"
+                                                             FontSize="22"
+                                                             FontWeight="Bold"
+                                                             Foreground="#4a4a4a"
+                                                             HorizontalContentAlignment="Center"/>
+                                                    </StackPanel>
+                                                </Border>
+                                                <Border Grid.Column="1"
+                                                    BorderBrush="#b9b9b9"
+                                                    BorderThickness="1"
+                                                    Background="#dbdbdb"
+                                                    Margin="2,10,2,10">
+                                                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                        <TextBox x:Name="maxrange"
+                                                             BorderBrush="Transparent"
+                                                             Background="Transparent"
+                                                             Text="10.2"
+                                                             FontSize="22"
+                                                             FontWeight="Bold"
+                                                             Foreground="#4a4a4a"
+                                                             HorizontalContentAlignment="Center"/>
+                                                    </StackPanel>
+                                                </Border>
+                                            </Grid>
+                                            
+                                        </Grid>
+                                        <Grid Grid.Column="3" Margin="5,0,5,0">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="*"/>
+                                            </Grid.RowDefinitions>
+                                            <Label Grid.Row="0" Content="UNIT" FontSize="10" FontWeight="Bold"/>
+                                            <Border Grid.Row="1"
+                                                    BorderBrush="#b9b9b9"
+                                                    BorderThickness="1"
+                                                    Background="#dbdbdb"
+                                                    Margin="0,10,0,10">
+                                                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                    <ComboBox x:Name="unit"
+                                                              BorderBrush="Transparent"
+                                                              BorderThickness="1"
+                                                              FontSize="22"
+                                                              FontWeight="Bold"
+                                                              Foreground="#4a4a4a"
+                                                              IsEditable="False"
+                                                              Background="Transparent">
+                                                        <ComboBoxItem Content="lbs" IsSelected="True"/>
+                                                        <ComboBoxItem Content="kg"/>
+                                                        <ComboBoxItem Content="oz"/>
+                                                        <ComboBoxItem Content="pcs"/>
+                                                    </ComboBox>
+                                                </StackPanel>
+                                            </Border> 
+                                        </Grid>
+                                        <Grid Grid.Column="4" Margin="8,18,5,10">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                            </Grid.RowDefinitions>
+                                            <Button Grid.Row="0"
+                                                    x:Name="Wedit"
+                                                    FontSize="12"
+                                                    FontWeight="Bold"
+                                                    Content="EDIT"
+                                                    Background="#636363"
+                                                    Foreground="White"
+                                                    Width="80"
+                                                    IsEnabled="True"/>
+                                            <Button Grid.Row="1"
+                                                    x:Name="Wsave"
+                                                    FontSize="12"
+                                                    FontWeight="Bold"
+                                                    Content="SAVE"
+                                                    Background="#0082ca"
+                                                    Foreground="White"
+                                                    Width="80"
+                                                    IsEnabled="False"/>
+                                        </Grid>
+                                    </Grid>
+                                </Border>
+                            </Grid>
+                        </StackPanel>
+                        <StackPanel>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <Grid Grid.Row="0" Margin="0,5,0,5">
+                                    <Label x:Name="MotorDriveLabel" Content="MOTOR DRIVE" FontSize="10" FontWeight="Bold"/>
+                                </Grid>
+                                <Border Grid.Row="1"
+                                        BorderBrush="#eee"
+                                        Height="120"
+                                        BorderThickness="1"
+                                        Background="White"
+                                        Padding="20,10,20,10">
+                                    <Grid Background="Transparent">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="1*"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid Grid.Column="0">
+                                            <Image Source="/assets/conveyor.png" Width="80" Height="80" />
+                                        </Grid>
+                                        <Grid Grid.Column="1" Margin="5,0,5,0">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="*"/>
+                                            </Grid.RowDefinitions>
+                                            <Label Grid.Row="0" Content="COUNT" FontSize="10" FontWeight="Bold"/>
+                                            <Border Grid.Row="1"
+                                                    BorderBrush="#b9b9b9"
+                                                    BorderThickness="1"
+                                                    Background="#dbdbdb"
+                                                    Margin="0,10,0,10">
+                                                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                    <Label x:Name="MotorCount" Content="0" FontSize="22" FontWeight="Bold" Foreground="#4a4a4a" HorizontalContentAlignment="Center"/>
+                                                </StackPanel>
+                                            </Border>
+                                        </Grid>
+                                        <Grid Grid.Column="2" Margin="5,0,5,0">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="*"/>
+                                            </Grid.RowDefinitions>
+                                            <Label Grid.Row="0" Content="SPEED(m/s)" FontSize="10" FontWeight="Bold"/>
+                                            <Border Grid.Row="1"
+                                                    BorderBrush="#b9b9b9"
+                                                    BorderThickness="1"
+                                                    Background="#dbdbdb"
+                                                    Margin="0,10,0,10">
+                                                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                    <TextBox x:Name="frequency"
+                                                             Text="10"
+                                                             HorizontalAlignment="Center"
+                                                             HorizontalContentAlignment="Center"
+                                                             FontSize="22"
+                                                             FontWeight="Bold"
+                                                             Foreground="#4a4a4a"
+                                                             BorderBrush="Transparent" Background="Transparent"/>
+                                                </StackPanel>
+                                            </Border>
+                                        </Grid>
+                                        <Grid Grid.Column="3" Margin="8,18,5,10">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                            </Grid.RowDefinitions>
+                                            <Button Grid.Row="0"
+                                                    x:Name="Medit"
+                                                    FontSize="12"
+                                                    FontWeight="Bold"
+                                                    Content="EDIT"
+                                                    Background="#636363"
+                                                    Foreground="White"
+                                                    Width="80"
+                                                    IsEnabled="True"/>
+                                            <Button Grid.Row="1"
+                                                    x:Name="Msave"
+                                                    FontSize="12"
+                                                    FontWeight="Bold"
+                                                    Content="SAVE"
+                                                    Background="#0082ca"
+                                                    Foreground="White"
+                                                    Width="80"
+                                                    IsEnabled="False"/>
+                                        </Grid>
+                                        <Grid Grid.Column="4">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                            </Grid.RowDefinitions>
+                                            <Grid Grid.Row="0">
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="*"/>
+                                                </Grid.RowDefinitions>
+                                                <Label Grid.Row="0" Content="ON" HorizontalContentAlignment="Center" FontSize="10" FontWeight="Bold" Foreground="#636363"/>
+                                                <Ellipse x:Name="MotorOn" 
+                                                    HorizontalAlignment="Center"
+                                                    Grid.Row="1"
+    Width="38"
+    Height="38"
+    Stroke="#bae8fe"
+    StrokeThickness="4"
+    Canvas.Left="135"
+    Canvas.Top="100"
+      Fill="#0082ca"                                              />
+                                            </Grid>
+                                            <Grid Grid.Row="1">
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="*"/>
+                                                </Grid.RowDefinitions>
+                                                <Label Grid.Row="0" Content="OFF" HorizontalContentAlignment="Center" FontSize="10" FontWeight="Bold" Foreground="#636363"/>
+                                                <Ellipse x:Name="MotorOff" 
+                                                    HorizontalAlignment="Center"
+                                                    Grid.Row="1"
+    Width="38"
+    Height="38"
+    Stroke="#ffb3b4"
+    StrokeThickness="4"
+    Canvas.Left="135"
+    Canvas.Top="100"
+      Fill="#ff2524"                                              />
+                                            </Grid>
+                                        </Grid>
+                                    </Grid>
+                                </Border>
+                            </Grid>
+                        </StackPanel>
+                        <StackPanel>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <Grid Grid.Row="0" Margin="0,5,0,5">
+                                    <Label x:Name="pushingArmLabel" Content="PUSHING ARM" FontSize="10" FontWeight="Bold"/>
+                                </Grid>
+                                <Border Grid.Row="1"
+                                        BorderBrush="#eee"
+                                        Height="120"
+                                        BorderThickness="1"
+                                        Background="White"
+                                        Padding="20,10,20,10">
+                                    <Grid Background="Transparent">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="1*"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid Grid.Column="0">
+                                            <Image Source="/assets/robotic-arm.png" Width="80" Height="80" />
+                                        </Grid>
+                                        <Grid Grid.Column="1" Margin="5,0,5,0">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="*"/>
+                                            </Grid.RowDefinitions>
+                                            <Label Grid.Row="0" Content="COUNT" FontSize="10" FontWeight="Bold"/>
+                                            <Border Grid.Row="1"
+                                                    BorderBrush="#b9b9b9"
+                                                    BorderThickness="1"
+                                                    Background="#dbdbdb"
+                                                    Margin="0,10,0,10">
+                                                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                    <Label x:Name="PushCount" Content="0" FontSize="22" FontWeight="Bold" Foreground="#4a4a4a" HorizontalContentAlignment="Center"/>
+                                                </StackPanel>
+                                            </Border>
+                                        </Grid>
+                                        <Grid Grid.Column="2" Margin="5,0,5,0">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="*"/>
+                                            </Grid.RowDefinitions>
+                                            <Label Grid.Row="0" Content="TUNING TIME(m/s)" FontSize="10" FontWeight="Bold"/>
+                                            <Border Grid.Row="1"
+                                                    BorderBrush="#b9b9b9"
+                                                    BorderThickness="1"
+                                                    Background="#dbdbdb"
+                                                    Margin="0,10,0,10">
+                                                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                    <TextBox x:Name="TuningTime"
+                                                             Text="0.5"
+                                                             HorizontalAlignment="Center"
+                                                             HorizontalContentAlignment="Center"
+                                                             FontSize="22"
+                                                             FontWeight="Bold"
+                                                             Foreground="#4a4a4a"
+                                                             BorderBrush="Transparent" Background="Transparent"/>
+                                                </StackPanel>
+                                            </Border>
+                                        </Grid>
+                                        <Grid Grid.Column="3" Margin="8,18,5,10">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                            </Grid.RowDefinitions>
+                                            <Button Grid.Row="0"
+                                                    x:Name="Pedit"
+                                                    FontSize="12"
+                                                    FontWeight="Bold"
+                                                    Content="EDIT"
+                                                    Background="#636363"
+                                                    Foreground="White"
+                                                    Width="80"
+                                                    IsEnabled="True"/>
+                                            <Button Grid.Row="1"
+                                                    x:Name="Psave"
+                                                    FontSize="12"
+                                                    FontWeight="Bold"
+                                                    Content="SAVE"
+                                                    Background="#0082ca"
+                                                    Foreground="White"
+                                                    Width="80"
+                                                    IsEnabled="False"/>
+                                        </Grid>
+                                        <Grid Grid.Column="4">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                            </Grid.RowDefinitions>
+                                            <Grid Grid.Row="0">
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="*"/>
+                                                </Grid.RowDefinitions>
+                                                <Label Grid.Row="0" Content="ON" HorizontalContentAlignment="Center" FontSize="10" FontWeight="Bold" Foreground="#636363"/>
+                                                <Ellipse x:Name="PushingOn" 
+                                                    HorizontalAlignment="Center"
+                                                    Grid.Row="1"
+    Width="38"
+    Height="38"
+    Stroke="#bae8fe"
+    StrokeThickness="4"
+    Canvas.Left="135"
+    Canvas.Top="100"
+      Fill="#0082ca"                                              />
+                                            </Grid>
+                                            <Grid Grid.Row="1">
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="*"/>
+                                                </Grid.RowDefinitions>
+                                                <Label Grid.Row="0" Content="OFF" HorizontalContentAlignment="Center" FontSize="10" FontWeight="Bold" Foreground="#636363"/>
+                                                <Ellipse x:Name="PushingOff" 
+                                                    HorizontalAlignment="Center"
+                                                    Grid.Row="1"
+    Width="38"
+    Height="38"
+    Stroke="#ffb3b4"
+    StrokeThickness="4"
+    Canvas.Left="135"
+    Canvas.Top="100"
+      Fill="#ff2524"                                              />
+                                            </Grid>
+                                        </Grid>
+                                    </Grid>
+                                </Border>
+                            </Grid>
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+                <Grid Grid.Column="1" Margin="10,0,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Row="0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Label Grid.Row="0" x:Name="CameraLabel" Content="CAMERA" FontSize="10" FontWeight="Bold"/>
+                        <Border Grid.Row="1" BorderBrush="#b3b3b3" BorderThickness="2" Background="#d6d6d6" Padding="20">
+                            <controls:VideoViewerWPF
+                                 Name="videoViewer" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                        </Border>
+                    </Grid>
+                    <Grid Grid.Row="1" Margin="0,10,0,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Label Grid.Row="0" x:Name="SensorLabel" Content="SENSOR(PHOTO EYE)" FontSize="10" FontWeight="Bold"/>
+                        <Grid Grid.Row="1">
+                            <StackPanel Orientation="Horizontal" Margin="0,10,0,10">
+                                <StackPanel>
+                                    <Label Content="ON" FontSize="12" FontWeight="Bold" Foreground="#444444"/>
+                                    <Border BorderBrush="#b3b3b3"
+                                            BorderThickness="2"
+                                            Background="#f6f6f6"
+                                            Width="100" Height="100">
+                                        <Ellipse x:Name="SensorOn" 
+                                                    HorizontalAlignment="Center"
+                                                    Grid.Row="1"
+                                                    Width="50"
+                                                    Height="50"
+                                                    Stroke="#bae8fe"
+                                                    StrokeThickness="4"
+                                                    Canvas.Left="135"
+                                                    Canvas.Top="100"
+                                                    Fill="#0082ca" />
+                                    </Border>
+                                </StackPanel>
+                                <StackPanel Margin="10,0,0,0">
+                                    <Label Content="OFF" FontSize="12" FontWeight="Bold" Foreground="#444444"/>
+                                    <Border BorderBrush="#b3b3b3"
+                                            BorderThickness="2"
+                                            Background="#f6f6f6"
+                                            Width="100" Height="100">
+                                        <Ellipse x:Name="SensorOff" 
+                                                    HorizontalAlignment="Center"
+                                                    Grid.Row="1"
+                                                    Width="50"
+                                                    Height="50"
+                                                    Stroke="#bae8fe"
+                                                    StrokeThickness="4"
+                                                    Canvas.Left="135"
+                                                    Canvas.Top="100"
+                                                    Fill="#0082ca" />
+                                    </Border>
+                                </StackPanel>
+                            </StackPanel>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </Grid>
+            
         </Grid>
     </Grid>
 
