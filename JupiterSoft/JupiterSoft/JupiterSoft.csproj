@@ -84,6 +84,9 @@
     <Compile Include="CameraTest.xaml.cs">
       <DependentUpon>CameraTest.xaml</DependentUpon>
     </Compile>
+    <Compile Include="CheckWeigher.xaml.cs">
+      <DependentUpon>CheckWeigher.xaml</DependentUpon>
+    </Compile>
     <Compile Include="CustomDailog\ConditionsDialog.xaml.cs">
       <DependentUpon>ConditionsDialog.xaml</DependentUpon>
     </Compile>
@@ -111,6 +114,10 @@
     </Compile>
     <Compile Include="Properties\Annotations.cs" />
     <Page Include="CameraTest.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CheckWeigher.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
