@@ -228,6 +228,14 @@ namespace JupiterSoft.Models
         Otherfault
     }
 
+    public enum Module_Device_Type
+    {
+        MotorDrive,
+        Sensor,
+        PushingArm,
+        Weight
+    }
+
     public class SB1Handler
     {
         public enum SB1_STATE

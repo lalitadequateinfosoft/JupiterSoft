@@ -87,6 +87,9 @@
     <Compile Include="CheckWeigher.xaml.cs">
       <DependentUpon>CheckWeigher.xaml</DependentUpon>
     </Compile>
+    <Compile Include="CustomDailog\CalibrationDailog.xaml.cs">
+      <DependentUpon>CalibrationDailog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="CustomDailog\ConditionsDialog.xaml.cs">
       <DependentUpon>ConditionsDialog.xaml</DependentUpon>
     </Compile>
@@ -102,22 +105,36 @@
     <Compile Include="CustomDailog\NumberInputDialog.xaml.cs">
       <DependentUpon>NumberInputDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="CustomDailog\RangeAndUnit.xaml.cs">
+      <DependentUpon>RangeAndUnit.xaml</DependentUpon>
+    </Compile>
     <Compile Include="CustomDailog\RegisterCommand.xaml.cs">
       <DependentUpon>RegisterCommand.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Models\CalibrationModel.cs" />
     <Compile Include="Models\ConnectedDevices.cs" />
+    <Compile Include="Models\FunctionModel.cs" />
     <Compile Include="Models\LogViewer.cs" />
+    <Compile Include="Models\ModbusConfiguration.cs" />
     <Compile Include="Models\ModBusInput.cs" />
+    <Compile Include="Models\RegisterConfiguration.cs" />
     <Compile Include="Models\RegisterOutputStatus.cs" />
+    <Compile Include="Models\UartDeviceConfiguration.cs" />
     <Compile Include="Pages\HMIPage.xaml.cs">
       <DependentUpon>HMIPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\Annotations.cs" />
+    <Compile Include="ViewModel\CalibrationViewModel.cs" />
+    <Compile Include="ViewModel\CheckWeigherViewModel.cs" />
     <Page Include="CameraTest.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="CheckWeigher.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CustomDailog\CalibrationDailog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -142,6 +159,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="CustomDailog\NumberInputDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CustomDailog\RangeAndUnit.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -304,6 +325,9 @@
     <Resource Include="assets\logojupiter.png" />
     <Resource Include="EnLogo.png" />
     <Resource Include="assets\new-welcome-screen.jpg" />
+    <Resource Include="assets\conveyor.png" />
+    <Resource Include="assets\robotic-arm.png" />
+    <Resource Include="assets\weight-scale.png" />
     <Content Include="fonts\font.css" />
     <Resource Include="fonts\ni7seg-bg.png" />
     <Resource Include="fonts\ni7seg-thumb.png" />

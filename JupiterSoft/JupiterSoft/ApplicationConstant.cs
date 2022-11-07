@@ -109,4 +109,12 @@ namespace JupiterSoft
         ends_with,
         does_not_ends_with
     }
+
+    public enum functionConstant
+    {
+        Add=1,
+        Subtract=2,
+        Multiply=3,
+        Divide=4
+    }
 }

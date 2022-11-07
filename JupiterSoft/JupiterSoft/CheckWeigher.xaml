@@ -189,13 +189,31 @@
                 <Grid Grid.Column="1">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                         <StackPanel Margin="5,0,5,0">
-                            <Button x:Name="Pause" Background="#a8a8a8" Foreground="White" Width="100" Content="PAUSE"/>
+                            <Button x:Name="Pause"
+                                    Background="#a8a8a8"
+                                    Foreground="White"
+                                    Width="100"
+                                    Content="PAUSE"
+                                    IsEnabled="{Binding IsPaused}"
+                                    Click="Pause_Click"/>
                         </StackPanel>
                         <StackPanel Margin="5,0,5,0">
-                            <Button x:Name="Reset" Background="#ff2a2a" Foreground="White" Width="100" Content="RESET"/>
+                            <Button x:Name="Reset"
+                                    Background="#ff2a2a"
+                                    Foreground="White"
+                                    Width="100"
+                                    Content="RESET"
+                                    IsEnabled="{Binding IsRunning}"
+                                    Click="Reset_Click"/>
                         </StackPanel>
                         <StackPanel Margin="5,0,5,0">
-                            <Button x:Name="Run" Background="#0082ca" Foreground="White" Width="100" Content="RUN"/>
+                            <Button x:Name="Run"
+                                    Background="#0082ca"
+                                    Foreground="White"
+                                    Width="100"
+                                    Content="RUN"
+                                    IsEnabled="{Binding IsRunning}"
+                                    Click="Run_Click"/>
                         </StackPanel>
                     </StackPanel>
                 </Grid>
@@ -207,7 +225,7 @@
                 </Grid.ColumnDefinitions>
                 <Grid Grid.Column="0">
                     <StackPanel Orientation="Vertical">
-                        <StackPanel>
+                        <StackPanel Height="190">
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
@@ -245,7 +263,7 @@
                                                     Background="#dbdbdb"
                                                     Margin="0,10,0,10">
                                                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                                                    <Label x:Name="weight" Content="150" FontSize="22" FontWeight="Bold" Foreground="#4a4a4a" HorizontalContentAlignment="Center"/>
+                                                    <Label x:Name="OutPutweight" Content="0" FontSize="22" FontWeight="Bold" Foreground="#4a4a4a" HorizontalContentAlignment="Center"/>
                                                 </StackPanel>
                                             </Border>
                                         </Grid>
@@ -269,11 +287,12 @@
                                                         <TextBox x:Name="minrange"
                                                              BorderBrush="Transparent"
                                                              Background="Transparent"
-                                                             Text="10"
+                                                             Text="0"
                                                              FontSize="22"
                                                              FontWeight="Bold"
                                                              Foreground="#4a4a4a"
-                                                             HorizontalContentAlignment="Center"/>
+                                                             HorizontalContentAlignment="Center"
+                                                                 IsEnabled="{Binding IsWeightSaveEnabled}"/>
                                                     </StackPanel>
                                                 </Border>
                                                 <Border Grid.Column="1"
@@ -285,11 +304,12 @@
                                                         <TextBox x:Name="maxrange"
                                                              BorderBrush="Transparent"
                                                              Background="Transparent"
-                                                             Text="10.2"
+                                                             Text="0"
                                                              FontSize="22"
                                                              FontWeight="Bold"
                                                              Foreground="#4a4a4a"
-                                                             HorizontalContentAlignment="Center"/>
+                                                             HorizontalContentAlignment="Center"
+                                                                 IsEnabled="{Binding IsWeightSaveEnabled}"/>
                                                     </StackPanel>
                                                 </Border>
                                             </Grid>
@@ -313,8 +333,9 @@
                                                               FontSize="22"
                                                               FontWeight="Bold"
                                                               Foreground="#4a4a4a"
-                                                              IsEditable="False"
-                                                              Background="Transparent">
+                                                              IsEnabled="{Binding IsWeightSaveEnabled}"
+                                                              Background="Transparent"
+                                                              SelectedValuePath="Content">
                                                         <ComboBoxItem Content="lbs" IsSelected="True"/>
                                                         <ComboBoxItem Content="kg"/>
                                                         <ComboBoxItem Content="oz"/>
@@ -336,7 +357,7 @@
                                                     Background="#636363"
                                                     Foreground="White"
                                                     Width="80"
-                                                    IsEnabled="True"/>
+                                                    IsEnabled="{Binding IsWeightEditEnabled}"/>
                                             <Button Grid.Row="1"
                                                     x:Name="Wsave"
                                                     FontSize="12"
@@ -345,13 +366,13 @@
                                                     Background="#0082ca"
                                                     Foreground="White"
                                                     Width="80"
-                                                    IsEnabled="False"/>
+                                                    IsEnabled="{Binding IsWeightSaveEnabled}"/>
                                         </Grid>
                                     </Grid>
                                 </Border>
                             </Grid>
                         </StackPanel>
-                        <StackPanel>
+                        <StackPanel Height="190">
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
@@ -406,13 +427,15 @@
                                                     Margin="0,10,0,10">
                                                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                                                     <TextBox x:Name="frequency"
-                                                             Text="10"
+                                                             Text="0"
                                                              HorizontalAlignment="Center"
                                                              HorizontalContentAlignment="Center"
                                                              FontSize="22"
                                                              FontWeight="Bold"
                                                              Foreground="#4a4a4a"
-                                                             BorderBrush="Transparent" Background="Transparent"/>
+                                                             BorderBrush="Transparent"
+                                                             Background="Transparent"
+                                                             IsEnabled="{Binding IsMotorSaveEnabled}"/>
                                                 </StackPanel>
                                             </Border>
                                         </Grid>
@@ -429,7 +452,7 @@
                                                     Background="#636363"
                                                     Foreground="White"
                                                     Width="80"
-                                                    IsEnabled="True"/>
+                                                    IsEnabled="{Binding IsMotorEditEnabled}"/>
                                             <Button Grid.Row="1"
                                                     x:Name="Msave"
                                                     FontSize="12"
@@ -438,7 +461,7 @@
                                                     Background="#0082ca"
                                                     Foreground="White"
                                                     Width="80"
-                                                    IsEnabled="False"/>
+                                                    IsEnabled="{Binding IsMotorSaveEnabled}"/>
                                         </Grid>
                                         <Grid Grid.Column="4">
                                             <Grid.RowDefinitions>
@@ -484,7 +507,7 @@
                                 </Border>
                             </Grid>
                         </StackPanel>
-                        <StackPanel>
+                        <StackPanel Height="190">
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
@@ -539,13 +562,15 @@
                                                     Margin="0,10,0,10">
                                                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                                                     <TextBox x:Name="TuningTime"
-                                                             Text="0.5"
+                                                             Text="0"
                                                              HorizontalAlignment="Center"
                                                              HorizontalContentAlignment="Center"
                                                              FontSize="22"
                                                              FontWeight="Bold"
                                                              Foreground="#4a4a4a"
-                                                             BorderBrush="Transparent" Background="Transparent"/>
+                                                             BorderBrush="Transparent"
+                                                             Background="Transparent"
+                                                             IsEnabled="{Binding IsPushingSaveEnabled}"/>
                                                 </StackPanel>
                                             </Border>
                                         </Grid>
@@ -562,7 +587,7 @@
                                                     Background="#636363"
                                                     Foreground="White"
                                                     Width="80"
-                                                    IsEnabled="True"/>
+                                                    IsEnabled="{Binding IsPushingEditEnabled}"/>
                                             <Button Grid.Row="1"
                                                     x:Name="Psave"
                                                     FontSize="12"
@@ -571,7 +596,7 @@
                                                     Background="#0082ca"
                                                     Foreground="White"
                                                     Width="80"
-                                                    IsEnabled="False"/>
+                                                    IsEnabled="{Binding IsPushingSaveEnabled}"/>
                                         </Grid>
                                         <Grid Grid.Column="4">
                                             <Grid.RowDefinitions>
@@ -619,9 +644,9 @@
                         </StackPanel>
                     </StackPanel>
                 </Grid>
-                <Grid Grid.Column="1" Margin="10,0,0,0">
+                <Grid Grid.Column="1" Margin="10,10,0,0">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="2*"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
                     <Grid Grid.Row="0">
@@ -630,7 +655,11 @@
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
                         <Label Grid.Row="0" x:Name="CameraLabel" Content="CAMERA" FontSize="10" FontWeight="Bold"/>
-                        <Border Grid.Row="1" BorderBrush="#b3b3b3" BorderThickness="2" Background="#d6d6d6" Padding="20">
+                        <Border Grid.Row="1"
+                                BorderBrush="#b3b3b3"
+                                BorderThickness="2"
+                                Background="#d6d6d6"
+                                Padding="10">
                             <controls:VideoViewerWPF
                                  Name="videoViewer" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
                         </Border>
