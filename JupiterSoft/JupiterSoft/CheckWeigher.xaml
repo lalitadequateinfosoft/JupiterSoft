@@ -435,8 +435,7 @@
                                                              FontWeight="Bold"
                                                              Foreground="#4a4a4a"
                                                              BorderBrush="Transparent"
-                                                             Background="Transparent"
-                                                             IsEnabled="{Binding IsMotorSaveEnabled}"/>
+                                                             Background="Transparent"/>
                                                 </StackPanel>
                                             </Border>
                                         </Grid>
@@ -571,7 +570,7 @@
                                                              Foreground="#4a4a4a"
                                                              BorderBrush="Transparent"
                                                              Background="Transparent"
-                                                             IsEnabled="{Binding IsPushingSaveEnabled}"/>
+                                                             />
                                                 </StackPanel>
                                             </Border>
                                         </Grid>
