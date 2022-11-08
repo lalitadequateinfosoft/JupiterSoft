@@ -28,7 +28,7 @@ namespace JupiterSoft.CustomDailog
             calibrationViewModel = new CalibrationViewModel();
             calibrations = new List<CalibrationModel>();
             InitializeComponent();
-            DataContext = calibrationViewModel;
+            DataContext = this;
         }
 
         private void AddCalibration_Click(object sender, RoutedEventArgs e)

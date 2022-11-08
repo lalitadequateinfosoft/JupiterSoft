@@ -13,5 +13,6 @@ namespace JupiterSoft.Models
         public int RegisterNo { get; set; }
         public decimal Frequency { get; set; }
         public int Count { get; set; }
+        public List<DateTime> ObjectIntervals { get; set; }
     }
 }

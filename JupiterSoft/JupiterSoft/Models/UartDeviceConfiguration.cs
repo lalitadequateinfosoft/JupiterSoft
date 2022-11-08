@@ -34,7 +34,7 @@ namespace JupiterSoft.Models
         }
 
         public decimal Weight { get; set; }
-
+        public int count { get; set; }
         public decimal minRange { get; set; }
         public decimal maxRange { get; set; }
         public string selectedUnit { get; set; }

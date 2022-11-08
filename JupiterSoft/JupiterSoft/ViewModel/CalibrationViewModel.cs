@@ -20,8 +20,8 @@ namespace JupiterSoft.ViewModel
             get => logs;
             set
             {
-                OnPropertyChanged(nameof(Logs));
                 logs = value;
+                OnPropertyChanged(nameof(Logs));
             }
         }
 
@@ -31,8 +31,9 @@ namespace JupiterSoft.ViewModel
             get => _functionModels;
             set
             {
-                OnPropertyChanged(nameof(FunctionModels));
+                
                 _functionModels = value;
+                OnPropertyChanged(nameof(FunctionModels));
             }
         }
 
@@ -43,8 +44,8 @@ namespace JupiterSoft.ViewModel
             get => _Itemist;
             set
             {
-                OnPropertyChanged(nameof(Itemist));
                 _Itemist = value;
+                OnPropertyChanged(nameof(Itemist));
             }
         }
 
@@ -65,18 +66,20 @@ namespace JupiterSoft.ViewModel
             {
                 var newitem = new CalibrationModel();
                 newitem.id = Itemist.OrderByDescending(x=>x.id).FirstOrDefault().id+1;
-                newitem.OutPutCom = "Output " + newitem.id;
+                newitem.OutPutCom = "STEP " + newitem.id;
                 newitem.mVal = 0;
                 newitem.command = 0;
+                newitem.CommandText ="";
                 Itemist.Add(newitem);
             }
             else
             {
                 var newitem = new CalibrationModel();
                 newitem.id = 1;
-                newitem.OutPutCom = "Output " + 1;
+                newitem.OutPutCom = "STEP " + 1;
                 newitem.mVal = 0;
                 newitem.command = 0;
+                newitem.CommandText = "";
                 Itemist.Add(newitem);
             }
 
@@ -85,7 +88,7 @@ namespace JupiterSoft.ViewModel
 
         public void removeCalibration(int id)
         {
-            foreach(var item in Itemist)
+            foreach(var item in Itemist.ToList())
             {
                 if(item.id==id)
                 {
@@ -104,6 +107,21 @@ namespace JupiterSoft.ViewModel
         public void updateCalibrationCommand(int id, int command)
         {
             Itemist.Where(x => x.id == id).ToList().ForEach(x => x.command = command);
+            switch(command)
+            {
+                case (int)functionConstant.Add:
+                    Itemist.Where(x => x.id == id).ToList().ForEach(x => x.CommandText = functionConstant.Add.ToString());
+                    break;
+                case (int)functionConstant.Subtract:
+                    Itemist.Where(x => x.id == id).ToList().ForEach(x => x.CommandText = functionConstant.Subtract.ToString());
+                    break;
+                case (int)functionConstant.Multiply:
+                    Itemist.Where(x => x.id == id).ToList().ForEach(x => x.CommandText = functionConstant.Multiply.ToString());
+                    break;
+                case (int)functionConstant.Divide:
+                    Itemist.Where(x => x.id == id).ToList().ForEach(x => x.CommandText = functionConstant.Divide.ToString());
+                    break;
+            }
             loadItem();
         }
 
@@ -116,10 +134,14 @@ namespace JupiterSoft.ViewModel
                 foreach (var item in Itemist.OrderBy(x=>x.id))
                 {
                     item.id = order;
-                    item.OutPutCom = "Output " + order;
+                    item.OutPutCom = "STEP " + order;
                     Logs.Add(item);
                     order++;
                 }
+            }
+            else
+            {
+                Logs = new ObservableCollection<CalibrationModel>();
             }
         }
 

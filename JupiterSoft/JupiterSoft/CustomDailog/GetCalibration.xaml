@@ -1,4 +1,4 @@
-﻿<Window x:Class="JupiterSoft.CustomDailog.CalibrationDailog"
+﻿<Window x:Class="JupiterSoft.CustomDailog.GetCalibration"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -42,7 +42,7 @@
                             BorderThickness="1"
                             CornerRadius="5,5,0,0"
                             Padding="15">
-                    <Label x:Name="HeaderTitle" Content="Set Comparison Range and Unit" Foreground="White"/>
+                    <Label x:Name="HeaderTitle" Content="Set Calibration Factors" Foreground="White"/>
                 </Border>
                 <ScrollViewer Grid.Row="1" 
                             x:Name="OutPutArea"
@@ -65,7 +65,7 @@
                                     VerticalAlignment="Stretch">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
                             <Grid Grid.Row="0" Margin="5,5,5,5">
                                 <Grid.ColumnDefinitions>
@@ -74,63 +74,97 @@
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
-                                <Label Content="OUTPUT"
+                                <Label Content="STEP"
                                        Grid.Column="0"
-                                       HorizontalAlignment="Center"
-                                       VerticalAlignment="Stretch" BorderBrush="#eee" BorderThickness="1"/>
+                                       HorizontalAlignment="Stretch"
+                                       VerticalAlignment="Stretch"
+                                       HorizontalContentAlignment="Center" BorderBrush="#686868" BorderThickness="1"/>
                                 <Label Content="OPERATION"
                                        Grid.Column="1"
-                                       HorizontalAlignment="Center"
-                                       VerticalAlignment="Stretch" BorderBrush="#eee" BorderThickness="1"/>
+                                       HorizontalAlignment="Stretch"
+                                       HorizontalContentAlignment="Center"
+                                       VerticalAlignment="Stretch" BorderBrush="#686868" BorderThickness="1"/>
                                 <Label Content="FACTOR"
                                        Grid.Column="2"
-                                       HorizontalAlignment="Center"
-                                       VerticalAlignment="Stretch" BorderBrush="#eee" BorderThickness="1"/>
+                                       HorizontalAlignment="Stretch"
+                                       HorizontalContentAlignment="Center"
+                                       VerticalAlignment="Stretch" BorderBrush="#686868" BorderThickness="1"/>
                                 <Label Content="ACTION"
                                        Grid.Column="3"
-                                       HorizontalAlignment="Center"
-                                       VerticalAlignment="Stretch" BorderBrush="#eee" BorderThickness="1"/>
+                                       HorizontalAlignment="Stretch"
+                                       HorizontalContentAlignment="Center"
+                                       VerticalAlignment="Stretch" BorderBrush="#686868" BorderThickness="1"/>
                             </Grid>
                             <ListView Grid.Row="1"
                                     x:Name="logsdata"
-                                    Margin="5,5,5,5"
-                                    ItemsSource="{Binding Logs}">
+                                    ItemsSource="{Binding Logs}"
+                                      HorizontalAlignment="Stretch"
+                                      VerticalAlignment="Stretch"
+                                      Padding="0"
+                                      Margin="0"
+                                      SelectionMode="Extended">
+                                <ListView.ItemContainerStyle>
+                                    <Style TargetType="{x:Type ListViewItem}">
+                                        <Setter Property="Focusable" Value="False"/>
+                                    </Style>
+                                </ListView.ItemContainerStyle>
                                 <ListView.ItemTemplate>
                                     <DataTemplate>
-                                        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0">
                                             <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="192"/>
+                                                <ColumnDefinition Width="192"/>
+                                                <ColumnDefinition Width="192"/>
+                                                <ColumnDefinition Width="192"/>
                                             </Grid.ColumnDefinitions>
-                                            <Border Grid.Column="0" BorderBrush="#eee" BorderThickness="1">
+                                           
                                                 <Label Content="{Binding Path=OutPutCom}"
-                                                       HorizontalAlignment="Center"
-                                                         VerticalAlignment="Stretch"/>
-                                            </Border>
-                                            <Border Grid.Column="1" BorderBrush="#eee" BorderThickness="1">
+                                                       Grid.Column="0"
+                                                       BorderBrush="#686868"
+                                                       BorderThickness="1" 
+                                                       HorizontalAlignment="Stretch" 
+                                                       VerticalAlignment="Stretch"
+                                                       HorizontalContentAlignment="Center"/>
+                                           
+                                           
                                                 <ComboBox SelectedValuePath="Content"
                                                           Tag="{Binding Path=id}"
-                                                          HorizontalAlignment="Center"
-                                                         VerticalAlignment="Stretch"
-                                                          SelectionChanged="ComboBox_SelectionChanged">
+                                                          SelectionChanged="ComboBox_SelectionChanged"
+                                                          Grid.Column="1"
+                                                          BorderBrush="#686868"
+                                                          BorderThickness="1"
+                                                          HorizontalAlignment="Stretch"
+                                                          VerticalAlignment="Stretch"
+                                                          HorizontalContentAlignment="Center"
+                                                          SelectedValue="{Binding Path=CommandText}">
                                                     <ComboBoxItem Content="Add"/>
                                                     <ComboBoxItem Content="Subtract"/>
                                                     <ComboBoxItem Content="Multiply"/>
                                                     <ComboBoxItem Content="Divide"/>
                                                 </ComboBox>
-                                            </Border>
-                                            <Border Grid.Column="2" BorderBrush="#eee" BorderThickness="1">
+                                         
+                                            
                                                 <TextBox Tag="{Binding Path=id}"
                                                          TextChanged="TextBox_TextChanged"
                                                          Text="{Binding Path=mVal,Mode=TwoWay}"
-                                                         HorizontalAlignment="Center"
-                                                         VerticalAlignment="Stretch"/>
-                                            </Border>
-                                            <Border Grid.Column="3" BorderBrush="#eee" BorderThickness="1">
-                                                <Button Click="Remove_Click" Content="REMOVE" Tag="{Binding Path=id}"/>
-                                            </Border>
+                                                          Grid.Column="2"
+                                                         BorderBrush="#686868"
+                                                         BorderThickness="1"
+                                                         HorizontalAlignment="Stretch"
+                                                         VerticalAlignment="Stretch"
+                                                         HorizontalContentAlignment="Center"/>
+                                            
+                                           
+                                                <Button  Click="Remove_Click"
+                                                         Content="REMOVE"
+                                                         Tag="{Binding Path=id}"
+                                                         Grid.Column="3"
+                                                         BorderBrush="#686868"
+                                                         BorderThickness="1"
+                                                         HorizontalAlignment="Stretch"
+                                                         VerticalAlignment="Stretch"
+                                                         HorizontalContentAlignment="Center"/>
+                                            
                                         </Grid>
                                     </DataTemplate>
                                 </ListView.ItemTemplate>

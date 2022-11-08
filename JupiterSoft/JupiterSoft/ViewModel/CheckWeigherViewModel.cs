@@ -187,11 +187,11 @@ namespace JupiterSoft.ViewModel
             IsWeightConfigured = false;
 
             IsMotorConfigured = false;
-            IsMotorEditEnabled = true;
+            IsMotorEditEnabled = false;
             IsMotorSaveEnabled = false;
 
             IsPushingConfigured = false;
-            IsPushingEditEnabled = true;
+            IsPushingEditEnabled = false;
             IsPushingSaveEnabled = false;
 
             IsPhotoConfigured = false;

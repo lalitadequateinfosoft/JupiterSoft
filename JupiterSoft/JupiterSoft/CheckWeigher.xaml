@@ -336,10 +336,10 @@
                                                               IsEnabled="{Binding IsWeightSaveEnabled}"
                                                               Background="Transparent"
                                                               SelectedValuePath="Content">
-                                                        <ComboBoxItem Content="lbs" IsSelected="True"/>
-                                                        <ComboBoxItem Content="kg"/>
-                                                        <ComboBoxItem Content="oz"/>
-                                                        <ComboBoxItem Content="pcs"/>
+                                                        <ComboBoxItem Content="LBS" IsSelected="True"/>
+                                                        <ComboBoxItem Content="KG"/>
+                                                        <ComboBoxItem Content="OZ"/>
+                                                        <ComboBoxItem Content="PCS"/>
                                                     </ComboBox>
                                                 </StackPanel>
                                             </Border> 
@@ -357,7 +357,8 @@
                                                     Background="#636363"
                                                     Foreground="White"
                                                     Width="80"
-                                                    IsEnabled="{Binding IsWeightEditEnabled}"/>
+                                                    IsEnabled="{Binding IsWeightEditEnabled}"
+                                                    Click="Wedit_Click"/>
                                             <Button Grid.Row="1"
                                                     x:Name="Wsave"
                                                     FontSize="12"
@@ -366,7 +367,7 @@
                                                     Background="#0082ca"
                                                     Foreground="White"
                                                     Width="80"
-                                                    IsEnabled="{Binding IsWeightSaveEnabled}"/>
+                                                    IsEnabled="{Binding IsWeightSaveEnabled}" Click="Wsave_Click"/>
                                         </Grid>
                                     </Grid>
                                 </Border>
@@ -479,11 +480,11 @@
                                                     Grid.Row="1"
     Width="38"
     Height="38"
-    Stroke="#bae8fe"
+    Stroke="LightBlue"
     StrokeThickness="4"
     Canvas.Left="135"
     Canvas.Top="100"
-      Fill="#0082ca"                                              />
+      Fill="DodgerBlue"                                              />
                                             </Grid>
                                             <Grid Grid.Row="1">
                                                 <Grid.RowDefinitions>
@@ -496,11 +497,11 @@
                                                     Grid.Row="1"
     Width="38"
     Height="38"
-    Stroke="#ffb3b4"
+    Stroke="LightCoral"
     StrokeThickness="4"
     Canvas.Left="135"
     Canvas.Top="100"
-      Fill="#ff2524"                                              />
+      Fill="Red"                                              />
                                             </Grid>
                                         </Grid>
                                     </Grid>

@@ -86,11 +86,11 @@
                                           Width="450"
                                           Height="40"
                                           Background="White">
-                                    <ComboBoxItem Content="select unit" IsSelected="True"/>
-                                    <ComboBoxItem Content="lbs"/>
-                                    <ComboBoxItem Content="kg"/>
-                                    <ComboBoxItem Content="oz"/>
-                                    <ComboBoxItem Content="pcs"/>
+                                    <ComboBoxItem Content="SELECT UNIT" IsSelected="True"/>
+                                    <ComboBoxItem Content="LBS"/>
+                                    <ComboBoxItem Content="KG"/>
+                                    <ComboBoxItem Content="OZ"/>
+                                    <ComboBoxItem Content="PCS"/>
                                 </ComboBox>
                             </StackPanel>
                         </StackPanel>

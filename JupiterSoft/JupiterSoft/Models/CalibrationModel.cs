@@ -12,5 +12,6 @@ namespace JupiterSoft.Models
         public string OutPutCom { get; set; }
         public decimal mVal { get; set; }
         public int command { get; set; }
+        public string CommandText { get; set; }
     }
 }

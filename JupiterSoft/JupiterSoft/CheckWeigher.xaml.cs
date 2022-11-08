@@ -25,6 +25,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using Util;
+using System.Timers;
 
 namespace JupiterSoft
 {
@@ -57,6 +59,7 @@ namespace JupiterSoft
         #endregion
 
         #region Device Variables
+        private List<RegisterOutputStatus> registerOutputStatuses;
         ModbusConfiguration modbus;
         UartDeviceConfiguration weight;
         ModbusConfiguration MotorDrive;
@@ -73,6 +76,8 @@ namespace JupiterSoft
         private int readIndex = 0;
         #endregion
 
+        System.Timers.Timer ExecutionTimer = new System.Timers.Timer();
+        System.Timers.Timer PushingTimer = new System.Timers.Timer();
         CheckWeigherViewModel weigherViewModel;
         private string _videofiledirectory;
 
@@ -91,6 +96,7 @@ namespace JupiterSoft
         private List<DiscoveredDeviceInfo> devices;
         private List<DeviceModel> DeviceModels;
         private DeviceInfo deviceInfo;
+        private static readonly Regex _regex = new Regex("[^0-9.-]+");
         public CheckWeigher()
         {
             weigherViewModel = new CheckWeigherViewModel();
@@ -112,7 +118,7 @@ namespace JupiterSoft
 
             devices = new List<DiscoveredDeviceInfo>();
             DeviceModels = new List<DeviceModel>();
-
+            registerOutputStatuses = new List<RegisterOutputStatus>();
             deviceInfo = DeviceInformation.GetConnectedDevices();
 
         }
@@ -120,8 +126,7 @@ namespace JupiterSoft
 
         private void LoadSytem()
         {
-            //Camera
-            ConnectionUSB();
+
             if (this.DataContext is CheckWeigherViewModel model)
             {
                 if (!weight.IsConfigured)
@@ -147,12 +152,12 @@ namespace JupiterSoft
                             weight.selectedUnit = range.unit.SelectionBoxItem.ToString();
                             unit.SelectedValue = weight.selectedUnit;
 
-                            //CalibrationDailog calibration = new CalibrationDailog();
-                            //calibration.ShowDialog();
-                            //if(!calibration.Canceled)
-                            //{
-                            //    weight.calibrations = calibration.calibrations;
-                            //}
+                            GetCalibration calibration = new GetCalibration();
+                            calibration.ShowDialog();
+                            if (!calibration.Canceled)
+                            {
+                                weight.calibrations = calibration.calibrations;
+                            }
                         }
 
                         weight.IsConfigured = true;
@@ -422,20 +427,87 @@ namespace JupiterSoft
         {
             StopPortCommunication((int)Models.Module_Device_Type.Weight);
             StopPortCommunication((int)Models.Module_Device_Type.MotorDrive);
+            DisconnectCamera();
+            StopTimer();
+            EnableWindowControl();
         }
 
         #endregion
 
         #region Command Logics
-        private void ExecuteLogic()
+
+        private void StartTimer()
         {
-            Connect_control_card(modbus.PortName, modbus.BaudRate, modbus.DataBit, modbus.StopBit, modbus.Parity);
-            ConnectWeight(weight.PortName, weight.BaudRate, weight.DataBit, weight.StopBit, weight.Parity);
+            ExecutionTimer.Elapsed += ExecutionTimer_Elapsed;
+            ExecutionTimer.Interval = 2000;
+            ExecutionTimer.Enabled = true;
+        }
+        private void StopTimer()
+        {
+            ExecutionTimer.Interval = 0;
+            ExecutionTimer.Elapsed -= ExecutionTimer_Elapsed;
+            ExecutionTimer.Enabled = false;
         }
 
-        double getWeightModuleResponse(RecData _recData)
+        private void ExecutionTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            double weight = 0;
+            ReadAllControCardInputOutput();
+        }
+
+        private void ExecuteLogic()
+        {
+            //Camera
+            DisableWindowControl();
+            ConnectionUSB();
+            StartVideoCapture(_VideoDirectory);
+            Connect_control_card(modbus.PortName, modbus.BaudRate, modbus.DataBit, modbus.StopBit, modbus.Parity);
+            ConnectWeight(weight.PortName, weight.BaudRate, weight.DataBit, weight.StopBit, weight.Parity);
+            StartTimer();
+        }
+
+        public void DisableWindowControl()
+        {
+            if (this.DataContext is CheckWeigherViewModel model)
+            {
+                model.IsWeightEditEnabled = false;
+                model.IsWeightSaveEnabled = false;
+
+
+                model.IsMotorEditEnabled = false;
+                model.IsMotorSaveEnabled = false;
+
+
+                model.IsPushingEditEnabled = false;
+                model.IsPushingSaveEnabled = false;
+
+                model.IsPaused = false;
+                model.IsRunning = false;
+            }
+
+        }
+        public void EnableWindowControl()
+        {
+            if (this.DataContext is CheckWeigherViewModel model)
+            {
+                model.IsWeightEditEnabled = true;
+                model.IsWeightSaveEnabled = false;
+
+
+                model.IsMotorEditEnabled = true;
+                model.IsMotorSaveEnabled = false;
+
+
+                model.IsPushingEditEnabled = true;
+                model.IsPushingSaveEnabled = false;
+
+                model.IsPaused = false;
+                model.IsRunning = true;
+            }
+
+        }
+
+        void CompareWeightModuleResponse(RecData _recData)
+        {
 
             if (_recData.MbTgm.Length > 0 && _recData.MbTgm.Length > readIndex)
             {
@@ -449,63 +521,76 @@ namespace JupiterSoft
                 var outP = lastitem.ToLower().ToString();
 
 
-
-
-                if (outP.Contains("kg"))
+                if(!string.IsNullOrEmpty(outP))
                 {
-                    if (outP.Contains("kgg"))
+                    Regex re = new Regex(@"\d+");
+                    Match m = re.Match(outP);
+                    decimal balance = Convert.ToDecimal(m.Value);
+                    if(weight.calibrations!=null && weight.calibrations.Count()>0)
                     {
-                        string builder = outP.Replace("kgg", "");
-                        weight = Convert.ToInt32(builder) - 3067;
-                        weight = Convert.ToDouble(weight / 260.4);
-                        weight = weight * 0.453592;
-                        weight = Math.Round(weight, 2);
-                    }
-                    else if (outP.Contains("kgn"))
-                    {
-                        string builder = outP.Replace("kgn", "");
-                        weight = Convert.ToInt32(builder) - 3067;
-                        weight = Convert.ToDouble(weight / 260.4);
-                        weight = weight * 0.453592;
-                        weight = Math.Round(weight, 2);
-                    }
-                    else
-                    {
-                        string builder = outP.Replace("kg", "");
-                        weight = Convert.ToInt32(builder) - 3067;
-                        weight = Convert.ToDouble(weight / 260.4);
-                        weight = weight * 0.453592;
-                        weight = Math.Round(weight, 2);
+                        foreach(var item in weight.calibrations.OrderBy(x=>x.id).ToList())
+                        {
+                            switch(item.command)
+                            {
+                                case (int)functionConstant.Add:
+                                    balance = balance + item.mVal;
+                                    break;
+                                case (int)functionConstant.Subtract:
+                                    balance = balance - item.mVal;
+                                    break;
+                                case (int)functionConstant.Multiply:
+                                    balance = balance * item.mVal;
+                                    break;
+                                case (int)functionConstant.Divide:
+                                    balance = balance / item.mVal;
+                                    break;
+                            }
+                        }
                     }
 
-                }
-                else if (outP.Contains("lbs"))
-                {
-
-                    Regex regex = new Regex(@"([a-zA-Z]+)(\d+)");
-                    Match result = regex.Match(outP);
-
-                    string alphaPart1 = result.Groups[1].Value;
-                    string numberPart1 = result.Groups[2].Value;
-                    weight = Convert.ToInt32(numberPart1) - 3067;
-                    weight = Convert.ToDouble(weight / 260.4);
-                    weight = Math.Round(weight, 2);
-                    //weight = weight * 0.453592;
-                }
-                else
-                {
-                    Regex regex = new Regex(@"([a-zA-Z]+)(\d+)");
-                    Match result = regex.Match(outP);
-
-                    string alphaPart1 = result.Groups[1].Value;
-                    string numberPart1 = result.Groups[2].Value;
-                    weight = Convert.ToInt32(numberPart1) - 3067;
-                    weight = Convert.ToDouble(weight / 260.4);
-                    weight = Math.Round(weight, 2);
+                    balance = Math.Round(balance);
+                    if(!(balance>=weight.minRange && balance<=weight.maxRange))
+                    {
+                        PushingTimer.Elapsed += PushingTimer_Elapsed;
+                        PushingTimer.Interval = 36;
+                        PushingTimer.Enabled = true;
+                    }
                 }
 
             }
-            return weight; //TimerCheckReceiveData.Enabled = true;
+        }
+
+        private void PushingTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            TurnOnPushingArm();
+            PushingTimer.Interval = 0;
+            PushingTimer.Elapsed -= PushingTimer_Elapsed;
+            PushingTimer.Enabled = false;
+            TurnOffPushing();
+        }
+
+        private void TurnOnPushingArm()
+        {
+            modbus.PushingArm.Count = modbus.PushingArm.Count + 1;
+            _dispathcer.Invoke(new Action(() => {
+                PushingOn.Fill = new SolidColorBrush(Colors.DodgerBlue);
+                PushingOn.Stroke = Brushes.LightBlue;
+                PushingOff.Fill = new SolidColorBrush(Colors.DarkGray);
+                PushingOff.Stroke = Brushes.LightGray;
+                PushCount.Content = modbus.PushingArm.Count.ToString();
+            }));
+            WriteControCardState(modbus.PushingArm.RegisterNo, 1);
+        }
+
+        private void TurnOffPushing()
+        {
+            _dispathcer.Invoke(new Action(() => {
+                PushingOn.Fill = new SolidColorBrush(Colors.DarkGray);
+                PushingOn.Stroke = Brushes.LightGray;
+                PushingOff.Fill = new SolidColorBrush(Colors.Red);
+                PushingOff.Stroke = Brushes.LightCoral;
+            }));
+            WriteControCardState(modbus.PushingArm.RegisterNo, 0);
         }
 
         private void ConnectWeight(string Port, int Baudrate, int databit, int stopbit, int parity)
@@ -640,7 +725,7 @@ namespace JupiterSoft
 
                                 modbus.CurrentRequest.MbTgm = mbTgmBytes;
                                 modbus.CurrentRequest.Status = PortDataStatus.Received;
-
+                                ReadControlCardResponse(modbus.CurrentRequest);
                                 return;
 
                             }
@@ -656,14 +741,12 @@ namespace JupiterSoft
                             {
 
                                 modbus.CurrentRequest = _recData;
+                                ReadControlCardResponse(modbus.CurrentRequest);
                             }
 
                         }
                     }
 
-
-
-                    //}
 
                 }
 
@@ -694,17 +777,8 @@ namespace JupiterSoft
 
                         weight.CurrentRequest.MbTgm = recBufParse;
                         weight.CurrentRequest.Status = PortDataStatus.Received;
-
+                        CompareWeightModuleResponse(weight.CurrentRequest);
                         return;
-                    }
-                    else
-                    {
-                        if (_recData != null)
-                        {
-                            _recData.Status = PortDataStatus.Normal;
-
-                            weight.CurrentRequest = _recData;
-                        }
                     }
 
                 }
@@ -762,6 +836,244 @@ namespace JupiterSoft
                 }
             }
             return _IsTgmErr;
+        }
+
+        private void ReadAllControCardInputOutput()
+        {
+
+            modbus.RecState = 1;
+            RecData _recData = new RecData();
+            _recData.SessionId = Common.GetSessionNewId;
+            _recData.Ch = 0;
+            _recData.Indx = 0;
+            _recData.Reg = 0;
+            _recData.NoOfVal = 0;
+            _recData.Status = PortDataStatus.Requested;
+            modbus.CurrentRequest = _recData;
+            modbus.IsComplete = false;
+
+            MODBUSComnn obj = new MODBUSComnn();
+            obj.GetMultiSendorValueFM3(1, 0, modbus.SerialDevice, 0, 30, "ControlCard", 1, 0, Models.DeviceType.ControlCard);
+
+
+        }
+
+        private void ReadControCardState(int reg)
+        {
+
+            modbus.RecState = 1;
+            RecData _recData = new RecData();
+            _recData.SessionId = Common.GetSessionNewId;
+            _recData.Ch = 0;
+            _recData.Indx = 0;
+            _recData.Reg = 0;
+            _recData.NoOfVal = 0;
+            _recData.Status = PortDataStatus.Requested;
+            modbus.CurrentRequest = _recData;
+            modbus.IsComplete = false;
+            MODBUSComnn obj = new MODBUSComnn();
+            obj.GetMultiSendorValueFM3(1, 0, modbus.SerialDevice, reg, 1, "ControlCard", 1, 0, Models.DeviceType.ControlCard);
+
+        }
+
+        private void WriteControCardState(int reg, int val)
+        {
+
+            modbus.RecState = 1;
+            RecData _recData = new RecData();
+            _recData.SessionId = Common.GetSessionNewId;
+            _recData.Ch = 0;
+            _recData.Indx = 0;
+            _recData.Reg = 0;
+            _recData.NoOfVal = 0;
+            _recData.Status = PortDataStatus.Requested;
+            modbus.CurrentRequest = _recData;
+            modbus.IsComplete = false;
+
+            MODBUSComnn obj = new MODBUSComnn();
+            int[] _val = new int[2] { 0, val };
+            obj.SetMultiSendorValueFM16(1, 0, modbus.SerialDevice, reg + 1, 1, "ControlCard", 1, 0, Models.DeviceType.ControlCard, _val, false);   // GetSoftwareVersion(Common.Address, Common.Parity, sp, _ValueType);
+
+
+        }
+
+        void ReadControlCardResponse(RecData _recData)
+        {
+            if (_recData.MbTgm != null)
+            {
+                if (_recData.MbTgm.Length > 0 && _recData.MbTgm.Length > readIndex)
+                {
+                    //To Read Function Code response.
+                    if (_recData.MbTgm[1] == (int)COM_Code.three)
+                    {
+
+                        int _i0 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 3);
+                        if(_i0==0)
+                        {
+                            if(modbus.Sensor.ObjectIntervals!=null && modbus.Sensor.ObjectIntervals.Count()>0)
+                            {
+                                modbus.Sensor.ObjectIntervals.Add(DateTime.Now);
+                            }
+                            else
+                            {
+                                modbus.Sensor.ObjectIntervals = new List<DateTime>();
+                                modbus.Sensor.ObjectIntervals.Add(DateTime.Now);
+                            }
+                            modbus.Sensor.Count = modbus.Sensor.Count + 1;
+                            modbus.MotorDrive.Count = modbus.MotorDrive.Count + 1;
+                            weight.count = weight.count + 1;
+                            _dispathcer.Invoke(new Action(() => {
+                                SensorOn.Fill = new SolidColorBrush(Colors.DodgerBlue);
+                                SensorOn.Stroke = Brushes.LightBlue;
+                                SensorOff.Fill = new SolidColorBrush(Colors.DarkGray);
+                                SensorOff.Stroke = Brushes.LightGray;
+                                MotorCount.Content = modbus.MotorDrive.Count.ToString();
+                                frequency.Text = "2.414";
+                            }));
+                        }
+                        else
+                        {
+                            _dispathcer.Invoke(new Action(() => {
+                                SensorOn.Fill = new SolidColorBrush(Colors.DarkGray);
+                                SensorOn.Stroke = Brushes.LightGray;
+                                SensorOff.Fill = new SolidColorBrush(Colors.Red);
+                                SensorOff.Stroke = Brushes.LightCoral;
+                            }));
+                        }
+
+                        int _i1 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 5);
+                        int _i2 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 7);
+                        int _i3 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 9);
+                        int _i4 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 11);
+                        int _i5 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 13);
+                        int _i6 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 15);
+                        int _i7 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 17);
+                        int _i8 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 19);
+                        int _i9 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 21);
+                        int _i10 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 23);
+                        int _i11 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 25);
+                        int _i12 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 27);
+                        int _i13 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 29);
+                        int _i14 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 31);
+                        int _i15 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 33);
+                        int _i16 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 35);
+                        if (_i16 == 0)
+                        {
+                            _dispathcer.Invoke(new Action(() => {
+                                MotorOn.Fill = new SolidColorBrush(Colors.DodgerBlue);
+                                MotorOn.Stroke = Brushes.LightBlue;
+                                MotorOff.Fill = new SolidColorBrush(Colors.DarkGray);
+                                MotorOff.Stroke = Brushes.LightGray;
+                            }));
+                        }
+                        else
+                        {
+                            _dispathcer.Invoke(new Action(() => {
+                                MotorOn.Fill = new SolidColorBrush(Colors.DarkGray);
+                                MotorOn.Stroke = Brushes.LightGray;
+                                MotorOff.Fill = new SolidColorBrush(Colors.Red);
+                                MotorOff.Stroke = Brushes.LightCoral;
+                            }));
+                        }
+                        int _i17 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 37);
+                        int _i18 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 39);
+                        int _i19 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 41);
+                        int _i20 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 43);
+                        int _i21 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 45);
+                        int _i22 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 47);
+                        int _i23 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 49);
+                        int _i24 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 51);
+                        int _i25 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 53);
+                        int _i26 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 55);
+                        int _i27 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 57);
+                        int _i28 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 59);
+                        int _i29 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 61);
+
+                    }
+                }
+            }
+        }
+
+        
+
+        void GetControlCardInputOutputState(RecData _recData)
+        {
+            if (_recData.MbTgm.Length > 0 && _recData.MbTgm.Length > readIndex)
+            {
+                //To Read Function Code response.
+                if (_recData.MbTgm[1] == (int)COM_Code.three)
+                {
+
+                    int _i0 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 3);
+                    int _i1 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 5);
+                    int _i2 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 7);
+                    int _i3 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 9);
+                    int _i4 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 11);
+                    int _i5 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 13);
+                    int _i6 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 15);
+                    int _i7 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 17);
+                    int _i8 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 19);
+                    int _i9 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 21);
+                    int _i10 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 23);
+                    int _i11 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 25);
+                    int _i12 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 27);
+                    int _i13 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 29);
+                    int _i14 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 31);
+                    int _i15 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 33);
+                    int _i16 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 35);
+                    int _i17 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 37);
+                    int _i18 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 39);
+                    int _i19 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 41);
+                    int _i20 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 43);
+                    int _i21 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 45);
+                    int _i22 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 47);
+                    int _i23 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 49);
+                    int _i24 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 51);
+                    int _i25 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 53);
+                    int _i26 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 55);
+                    int _i27 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 57);
+                    int _i28 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 59);
+                    int _i29 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 61);
+
+
+
+
+                    //set register state.
+                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 1, RegisterStatus = _i0 });
+                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 2, RegisterStatus = _i1 });
+                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 3, RegisterStatus = _i2 });
+                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 4, RegisterStatus = _i3 });
+                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 5, RegisterStatus = _i4 });
+                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 6, RegisterStatus = _i5 });
+                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 7, RegisterStatus = _i6 });
+                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 8, RegisterStatus = _i7 });
+                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 9, RegisterStatus = _i8 });
+                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 10, RegisterStatus = _i9 });
+                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 11, RegisterStatus = _i10 });
+                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 12, RegisterStatus = _i11 });
+                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 13, RegisterStatus = _i12 });
+                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 14, RegisterStatus = _i13 });
+                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 15, RegisterStatus = _i14 });
+                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 16, RegisterStatus = _i15 });
+                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 17, RegisterStatus = _i16 });
+                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 18, RegisterStatus = _i17 });
+                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 19, RegisterStatus = _i18 });
+                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 20, RegisterStatus = _i19 });
+                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 21, RegisterStatus = _i20 });
+                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 22, RegisterStatus = _i21 });
+                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 23, RegisterStatus = _i22 });
+                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 24, RegisterStatus = _i23 });
+                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 25, RegisterStatus = _i24 });
+                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 26, RegisterStatus = _i25 });
+                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 27, RegisterStatus = _i26 });
+                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 28, RegisterStatus = _i27 });
+                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 29, RegisterStatus = _i28 });
+                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 30, RegisterStatus = _i29 });
+                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 31, RegisterStatus = 0 });
+                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 32, RegisterStatus = 0 });
+                }
+
+            }
         }
         #endregion
 
@@ -922,5 +1234,44 @@ namespace JupiterSoft
             ControlDataReader();
         }
         #endregion
+
+        private void Wedit_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.DataContext is CheckWeigherViewModel model)
+            {
+                model.IsWeightEditEnabled = false;
+                model.IsWeightSaveEnabled = true;
+            }
+        }
+
+        private void Wsave_Click(object sender, RoutedEventArgs e)
+        {
+            if (string.IsNullOrEmpty(minrange.Text) || minrange.Text.Contains(" ") || _regex.IsMatch(minrange.Text))
+            {
+                MessageBox.Show("Please enter valid minimum range.");
+                minrange.Text = weight.minRange.ToString();
+                return;
+            }
+
+            if (string.IsNullOrEmpty(maxrange.Text) || maxrange.Text.Contains(" ") || _regex.IsMatch(maxrange.Text))
+            {
+                MessageBox.Show("Please enter valid maximum range.");
+                maxrange.Text = weight.maxRange.ToString();
+                return;
+            }
+
+            if (string.IsNullOrEmpty(unit.SelectedValue.ToString()))
+            {
+                MessageBox.Show("Please select a valid unit.");
+                unit.SelectedValue = weight.selectedUnit;
+                return;
+            }
+
+            if (this.DataContext is CheckWeigherViewModel model)
+            {
+                model.IsWeightEditEnabled = true;
+                model.IsWeightSaveEnabled = false;
+            }
+        }
     }
 }

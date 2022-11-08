@@ -48,7 +48,7 @@ namespace JupiterSoft.CustomDailog
                 return;
             }
 
-            if (unit.SelectionBoxItem.ToString() == "select unit")
+            if (unit.SelectionBoxItem.ToString().ToLower() == "select unit")
             {
                 MessageBox.Show("Please select a unit.");
                 return;
