@@ -414,7 +414,6 @@ namespace JupiterSoft
                     return;
                 }
 
-                //Execute Commands.
                 ExecuteLogic();
             }
         }

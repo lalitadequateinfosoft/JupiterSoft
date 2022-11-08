@@ -37,7 +37,7 @@ namespace JupiterSoft
             try
             {
                 StartNew.IsEnabled = false;
-                var dashForm = new CheckWeigher();
+                var dashForm = new Dashboard();
                 dashForm.Show();
                 this.Close();
             }
@@ -65,8 +65,10 @@ namespace JupiterSoft
                 if (result == true)
                 {
                     // Open document
-                    var dashForm = new Dashboard(dialog.FileName);
+                    //var dashForm = new Dashboard(dialog.FileName);
+                    var dashForm = new CheckWeigher();
                     dashForm.Show();
+                    //dashForm.Show();
                     this.Close();
                 }
 
