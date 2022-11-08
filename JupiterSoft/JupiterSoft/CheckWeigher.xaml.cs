@@ -318,6 +318,7 @@ namespace JupiterSoft
 
         private void DisconnectUSBCamera()
         {
+            if (_webCamera == null) return;
             if (_webCamera.Capturing)
             {
                 StopVideoCapture();
