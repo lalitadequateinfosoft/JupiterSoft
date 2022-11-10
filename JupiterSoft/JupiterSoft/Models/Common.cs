@@ -231,8 +231,7 @@ namespace JupiterSoft.Models
     public enum Module_Device_Type
     {
         MotorDrive,
-        Sensor,
-        PushingArm,
+       ControlCard,
         Weight
     }
 

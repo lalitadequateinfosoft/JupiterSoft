@@ -180,6 +180,61 @@ namespace JupiterSoft.ViewModel
             }
         }
 
+        private decimal _minRange;
+        public decimal minRange {
+            get
+            {
+                return _minRange;
+            }
+            set
+            {
+                _minRange = value;
+                OnPropertyChanged(nameof(minRange));
+            }
+        }
+
+        private decimal _maxRange;
+        public decimal maxRange
+        {
+            get
+            {
+                return _maxRange;
+            }
+            set
+            {
+                _maxRange = value;
+                OnPropertyChanged(nameof(_maxRange));
+            }
+        }
+
+        private string _selectedUnit;
+        public string selectedUnit
+        {
+            get
+            {
+                return _selectedUnit;
+            }
+            set
+            {
+                _selectedUnit = value;
+                OnPropertyChanged(nameof(selectedUnit));
+            }
+        }
+
+        private int _motorFrequency;
+        public int MotorFrequency
+        {
+            get
+            {
+                return _motorFrequency;
+            }
+            set
+            {
+                _motorFrequency = value;
+                OnPropertyChanged(nameof(MotorFrequency));
+            }
+        }
+
         public CheckWeigherViewModel()
         {
             IsWeightEditEnabled = true;

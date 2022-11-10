@@ -152,6 +152,10 @@ namespace JupiterSoft
                             weight.selectedUnit = range.unit.SelectionBoxItem.ToString();
                             unit.SelectedValue = weight.selectedUnit;
 
+                            model.minRange = Convert.ToDecimal(range.MinimumRange.Text);
+                            model.maxRange = Convert.ToDecimal(range.MaxRange.Text);
+                            model.selectedUnit = range.unit.SelectionBoxItem.ToString();
+
                             GetCalibration calibration = new GetCalibration();
                             calibration.ShowDialog();
                             if (!calibration.Canceled)
@@ -179,18 +183,11 @@ namespace JupiterSoft
                         modbus.StopBit = dailog.Stopbit;
                         modbus.Parity = dailog.ParityValue;
 
-                        modbus.MotorDrive = new RegisterConfiguration
-                        {
-                            RType = 0,
-                            DeviceType = (int)Module_Device_Type.MotorDrive,
-                            RegisterNo = 1,
-                            Frequency = 0,
-                            Count = 0
-                        };
+
                         modbus.PushingArm = new RegisterConfiguration
                         {
                             RType = 0,
-                            DeviceType = (int)Module_Device_Type.PushingArm,
+                            DeviceType = (int)Module_Device_Type.ControlCard,
                             RegisterNo = 2,
                             Frequency = 0,
                             Count = 0,
@@ -198,17 +195,56 @@ namespace JupiterSoft
                         modbus.Sensor = new RegisterConfiguration
                         {
                             RType = 1,
-                            DeviceType = (int)Module_Device_Type.Sensor,
+                            DeviceType = (int)Module_Device_Type.ControlCard,
                             RegisterNo = 1,
                             Frequency = 0,
                             Count = 0,
                         };
 
                         modbus.IsConfigured = true;
-                        model.IsMotorConfigured = true;
                         model.IsPhotoConfigured = true;
                         model.IsPushingConfigured = true;
                     }
+                }
+
+                if (!MotorDrive.IsConfigured)
+                {
+                    ConfigurationDailog dailog = new ConfigurationDailog("Set Motor Drive Configuration", deviceInfo.CustomDeviceInfos);
+                    dailog.ShowDialog();
+                    if(!dailog.Canceled)
+                    {
+                        FrequencyDialog frequency = new FrequencyDialog();
+                        frequency.ShowDialog();
+                        if (!frequency.Canceled)
+                        {
+                            MotorDrive.MotorDrive = new RegisterConfiguration
+                            {
+                                RType = 0,
+                                DeviceType = (int)Module_Device_Type.MotorDrive,
+                                RegisterNo = Convert.ToInt32(frequency.registerInput),
+                                Frequency = Convert.ToDecimal(frequency.VariableName),
+                                Count = 0
+                            };
+                            MotorDrive.IsConfigured = true;
+                            model.IsMotorConfigured = true;
+                        }
+                        else
+                        {
+                            MotorDrive.MotorDrive = new RegisterConfiguration
+                            {
+                                RType = 0,
+                                DeviceType = (int)Module_Device_Type.MotorDrive,
+                                RegisterNo = 8193,
+                                Frequency = Convert.ToDecimal(2.414),
+                                Count = 0
+                            };
+                            MotorDrive.IsConfigured = true;
+                            model.IsMotorConfigured = true;
+                        }
+
+                        model.MotorFrequency = Convert.ToInt32(MotorDrive.MotorDrive.Frequency);
+                    }
+                    
                 }
             }
 
@@ -427,6 +463,7 @@ namespace JupiterSoft
         {
             StopPortCommunication((int)Models.Module_Device_Type.Weight);
             StopPortCommunication((int)Models.Module_Device_Type.MotorDrive);
+            StopPortCommunication((int)Models.Module_Device_Type.ControlCard);
             DisconnectCamera();
             StopTimer();
             EnableWindowControl();
@@ -460,8 +497,9 @@ namespace JupiterSoft
             DisableWindowControl();
             ConnectionUSB();
             StartVideoCapture(_VideoDirectory);
-            Connect_control_card(modbus.PortName, modbus.BaudRate, modbus.DataBit, modbus.StopBit, modbus.Parity);
+            ConnectMotor(MotorDrive.PortName, MotorDrive.BaudRate, MotorDrive.DataBit, MotorDrive.StopBit, MotorDrive.Parity);
             ConnectWeight(weight.PortName, weight.BaudRate, weight.DataBit, weight.StopBit, weight.Parity);
+            Connect_control_card(modbus.PortName, modbus.BaudRate, modbus.DataBit, modbus.StopBit, modbus.Parity);
             StartTimer();
         }
 
@@ -521,16 +559,16 @@ namespace JupiterSoft
                 var outP = lastitem.ToLower().ToString();
 
 
-                if(!string.IsNullOrEmpty(outP))
+                if (!string.IsNullOrEmpty(outP))
                 {
                     Regex re = new Regex(@"\d+");
                     Match m = re.Match(outP);
                     decimal balance = Convert.ToDecimal(m.Value);
-                    if(weight.calibrations!=null && weight.calibrations.Count()>0)
+                    if (weight.calibrations != null && weight.calibrations.Count() > 0)
                     {
-                        foreach(var item in weight.calibrations.OrderBy(x=>x.id).ToList())
+                        foreach (var item in weight.calibrations.OrderBy(x => x.id).ToList())
                         {
-                            switch(item.command)
+                            switch (item.command)
                             {
                                 case (int)functionConstant.Add:
                                     balance = balance + item.mVal;
@@ -549,10 +587,10 @@ namespace JupiterSoft
                     }
 
                     balance = Math.Round(balance);
-                    if(!(balance>=weight.minRange && balance<=weight.maxRange))
+                    if (!(balance >= weight.minRange && balance <= weight.maxRange))
                     {
                         PushingTimer.Elapsed += PushingTimer_Elapsed;
-                        PushingTimer.Interval = 36;
+                        PushingTimer.Interval = 34+Convert.ToInt32(modbus.PushingArm.Frequency);
                         PushingTimer.Enabled = true;
                     }
                 }
@@ -572,7 +610,8 @@ namespace JupiterSoft
         private void TurnOnPushingArm()
         {
             modbus.PushingArm.Count = modbus.PushingArm.Count + 1;
-            _dispathcer.Invoke(new Action(() => {
+            _dispathcer.Invoke(new Action(() =>
+            {
                 PushingOn.Fill = new SolidColorBrush(Colors.DodgerBlue);
                 PushingOn.Stroke = Brushes.LightBlue;
                 PushingOff.Fill = new SolidColorBrush(Colors.DarkGray);
@@ -584,7 +623,8 @@ namespace JupiterSoft
 
         private void TurnOffPushing()
         {
-            _dispathcer.Invoke(new Action(() => {
+            _dispathcer.Invoke(new Action(() =>
+            {
                 PushingOn.Fill = new SolidColorBrush(Colors.DarkGray);
                 PushingOn.Stroke = Brushes.LightGray;
                 PushingOff.Fill = new SolidColorBrush(Colors.Red);
@@ -613,6 +653,36 @@ namespace JupiterSoft
                     SerialPortCommunications(ref WeightDevice, (int)Models.Module_Device_Type.Weight, Port, Baudrate, databit, stopbit, parity);
                     weight.SerialDevice = WeightDevice;
                     weight.IsTurnedOn = true;
+                }
+            }
+            catch
+            {
+
+            }
+        }
+
+        private void ConnectMotor(string Port, int Baudrate, int databit, int stopbit, int parity)
+        {
+            try
+            {
+                if (MotorDrive == null || MotorDrive.IsTurnedOn == false)
+                {
+
+                    MotorDrive.RecState = 1;
+                    RecData _recData = new RecData();
+                    _recData.SessionId = Common.GetSessionNewId;
+                    _recData.Ch = 0;
+                    _recData.Indx = 0;
+                    _recData.Reg = 0;
+                    _recData.NoOfVal = 0;
+                    _recData.Status = PortDataStatus.Requested;
+                    MotorDrive.CurrentRequest = _recData;
+                    SerialPort WeightDevice = new SerialPort();
+                    SerialPortCommunications(ref WeightDevice, (int)Models.Module_Device_Type.MotorDrive, Port, Baudrate, databit, stopbit, parity);
+                    MotorDrive.SerialDevice = WeightDevice;
+                    MotorDrive.IsTurnedOn = true;
+
+                    WriteMotorDriveState(MotorDrive.MotorDrive.RegisterNo, Convert.ToInt32(MotorDrive.MotorDrive.Frequency) * 100);
                 }
             }
             catch
@@ -897,6 +967,28 @@ namespace JupiterSoft
 
         }
 
+        private void WriteMotorDriveState(int reg, int val)
+        {
+
+            MotorDrive.RecState = 1;
+            RecData _recData = new RecData();
+            _recData.SessionId = Common.GetSessionNewId;
+            _recData.Ch = 0;
+            _recData.Indx = 0;
+            _recData.Reg = 0;
+            _recData.NoOfVal = 0;
+            _recData.Status = PortDataStatus.Requested;
+            MotorDrive.CurrentRequest = _recData;
+            MotorDrive.IsComplete = false;
+
+            MODBUSComnn obj = new MODBUSComnn();
+            byte[] _val1 = BitConverter.GetBytes(val);
+            int[] _val = new int[2] { _val1[1], _val1[0] };
+            obj.SetMultiSendorValueFM16(1, 0, MotorDrive.SerialDevice, reg + 1, 1, "ControlCard", 1, 0, Models.DeviceType.ControlCard, _val, false);   // GetSoftwareVersion(Common.Address, Common.Parity, sp, _ValueType);
+
+
+        }
+
         void ReadControlCardResponse(RecData _recData)
         {
             if (_recData.MbTgm != null)
@@ -908,9 +1000,9 @@ namespace JupiterSoft
                     {
 
                         int _i0 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 3);
-                        if(_i0==0)
+                        if (_i0 == 0)
                         {
-                            if(modbus.Sensor.ObjectIntervals!=null && modbus.Sensor.ObjectIntervals.Count()>0)
+                            if (modbus.Sensor.ObjectIntervals != null && modbus.Sensor.ObjectIntervals.Count() > 0)
                             {
                                 modbus.Sensor.ObjectIntervals.Add(DateTime.Now);
                             }
@@ -922,18 +1014,19 @@ namespace JupiterSoft
                             modbus.Sensor.Count = modbus.Sensor.Count + 1;
                             modbus.MotorDrive.Count = modbus.MotorDrive.Count + 1;
                             weight.count = weight.count + 1;
-                            _dispathcer.Invoke(new Action(() => {
+                            _dispathcer.Invoke(new Action(() =>
+                            {
                                 SensorOn.Fill = new SolidColorBrush(Colors.DodgerBlue);
                                 SensorOn.Stroke = Brushes.LightBlue;
                                 SensorOff.Fill = new SolidColorBrush(Colors.DarkGray);
                                 SensorOff.Stroke = Brushes.LightGray;
                                 MotorCount.Content = modbus.MotorDrive.Count.ToString();
-                                frequency.Text = "2.414";
                             }));
                         }
                         else
                         {
-                            _dispathcer.Invoke(new Action(() => {
+                            _dispathcer.Invoke(new Action(() =>
+                            {
                                 SensorOn.Fill = new SolidColorBrush(Colors.DarkGray);
                                 SensorOn.Stroke = Brushes.LightGray;
                                 SensorOff.Fill = new SolidColorBrush(Colors.Red);
@@ -957,24 +1050,7 @@ namespace JupiterSoft
                         int _i14 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 31);
                         int _i15 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 33);
                         int _i16 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 35);
-                        if (_i16 == 0)
-                        {
-                            _dispathcer.Invoke(new Action(() => {
-                                MotorOn.Fill = new SolidColorBrush(Colors.DodgerBlue);
-                                MotorOn.Stroke = Brushes.LightBlue;
-                                MotorOff.Fill = new SolidColorBrush(Colors.DarkGray);
-                                MotorOff.Stroke = Brushes.LightGray;
-                            }));
-                        }
-                        else
-                        {
-                            _dispathcer.Invoke(new Action(() => {
-                                MotorOn.Fill = new SolidColorBrush(Colors.DarkGray);
-                                MotorOn.Stroke = Brushes.LightGray;
-                                MotorOff.Fill = new SolidColorBrush(Colors.Red);
-                                MotorOff.Stroke = Brushes.LightCoral;
-                            }));
-                        }
+                        
                         int _i17 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 37);
                         int _i18 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 39);
                         int _i19 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 41);
@@ -994,7 +1070,7 @@ namespace JupiterSoft
             }
         }
 
-        
+
 
         void GetControlCardInputOutputState(RecData _recData)
         {
@@ -1034,43 +1110,6 @@ namespace JupiterSoft
                     int _i27 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 57);
                     int _i28 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 59);
                     int _i29 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 61);
-
-
-
-
-                    //set register state.
-                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 1, RegisterStatus = _i0 });
-                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 2, RegisterStatus = _i1 });
-                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 3, RegisterStatus = _i2 });
-                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 4, RegisterStatus = _i3 });
-                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 5, RegisterStatus = _i4 });
-                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 6, RegisterStatus = _i5 });
-                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 7, RegisterStatus = _i6 });
-                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 8, RegisterStatus = _i7 });
-                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 9, RegisterStatus = _i8 });
-                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 10, RegisterStatus = _i9 });
-                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 11, RegisterStatus = _i10 });
-                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 12, RegisterStatus = _i11 });
-                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 13, RegisterStatus = _i12 });
-                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 14, RegisterStatus = _i13 });
-                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 15, RegisterStatus = _i14 });
-                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 16, RegisterStatus = _i15 });
-                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 17, RegisterStatus = _i16 });
-                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 18, RegisterStatus = _i17 });
-                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 19, RegisterStatus = _i18 });
-                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 20, RegisterStatus = _i19 });
-                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 21, RegisterStatus = _i20 });
-                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 22, RegisterStatus = _i21 });
-                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 23, RegisterStatus = _i22 });
-                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 24, RegisterStatus = _i23 });
-                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 25, RegisterStatus = _i24 });
-                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 26, RegisterStatus = _i25 });
-                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 27, RegisterStatus = _i26 });
-                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 28, RegisterStatus = _i27 });
-                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 29, RegisterStatus = _i28 });
-                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 30, RegisterStatus = _i29 });
-                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 31, RegisterStatus = 0 });
-                    registerOutputStatuses.Add(new RegisterOutputStatus { Register = 32, RegisterStatus = 0 });
                 }
 
             }
@@ -1113,8 +1152,11 @@ namespace JupiterSoft
                     case (int)Models.Module_Device_Type.Weight:
                         serialPort.DataReceived += WeightDevice_DataReceived;
                         break;
-                    default:
+                    case (int)Models.Module_Device_Type.ControlCard:
                         serialPort.DataReceived += ControlDevice_DataReceived;
+                        break;
+                    case (int)Models.Module_Device_Type.MotorDrive:
+                        serialPort.DataReceived += MotorDrive_DataReceived;
                         break;
                 }
 
@@ -1141,7 +1183,7 @@ namespace JupiterSoft
                 weight.SerialDevice.DiscardOutBuffer();
                 weight.SerialDevice.Close();
             }
-            else
+            else if (modbus.SerialDevice.IsOpen && device == (int)Models.Module_Device_Type.ControlCard)
             {
                 modbus.SerialDevice.DtrEnable = false;
                 modbus.SerialDevice.RtsEnable = false;
@@ -1150,6 +1192,62 @@ namespace JupiterSoft
                 modbus.SerialDevice.DiscardInBuffer();
                 modbus.SerialDevice.DiscardOutBuffer();
                 modbus.SerialDevice.Close();
+            }
+            else if (MotorDrive.SerialDevice.IsOpen && device == (int)Models.Module_Device_Type.MotorDrive)
+            {
+                MotorDrive.SerialDevice.DtrEnable = false;
+                MotorDrive.SerialDevice.RtsEnable = false;
+
+                MotorDrive.SerialDevice.DataReceived -= MotorDrive_DataReceived;
+                MotorDrive.SerialDevice.DiscardInBuffer();
+                MotorDrive.SerialDevice.DiscardOutBuffer();
+                MotorDrive.SerialDevice.Close();
+            }
+        }
+
+        private void MotorDrive_DataReceived(object sender, SerialDataReceivedEventArgs e)
+        {
+
+
+            if (MotorDrive == null)
+            {
+                return;
+            }
+
+            switch (MotorDrive.RecState)
+            {
+                case 0:
+                    break;
+                case 1:
+                    int i = 0;
+                    MotorDrive.RecIdx = 0;
+                    MotorDrive.RecState = 2;
+                    while (MotorDrive.SerialDevice.BytesToRead > 0)
+                    {
+                        byte[] rec = new byte[1];
+                        MotorDrive.RecIdx += MotorDrive.SerialDevice.Read(rec, 0, 1);
+                        recBuf[i] = rec[0];
+                        i++;
+                    }
+
+                    if (MotorDrive.RecIdx > 3)
+                    {
+
+                        TotalReceiveSize = (uint)recBuf[2] + 5;
+                    }
+                    if (TotalReceiveSize > MotorDrive.RecIdx)
+                    {
+                        MotorDrive.IsComplete = false;
+                    }
+                    else
+                    {
+                        MotorDrive.IsComplete = true;
+                        MotorDrive.ReceiveBufferQueue.Enqueue(recBuf);
+                    }
+                   
+                    MotorDrive.LastResponseReceived = DateTime.Now;
+                    recBuf = new byte[REC_BUF_SIZE];
+                    break;
             }
         }
 
@@ -1269,6 +1367,7 @@ namespace JupiterSoft
 
             if (this.DataContext is CheckWeigherViewModel model)
             {
+               
                 model.IsWeightEditEnabled = true;
                 model.IsWeightSaveEnabled = false;
             }

@@ -3176,8 +3176,6 @@ namespace JupiterSoft.Pages
             MODBUSComnn obj = new MODBUSComnn();
             Common.COMSelected = COMType.MODBUS;
             byte[] _val1 = BitConverter.GetBytes(val);
-            //byte[] _val = ConvertMisc.ConvertUInt32BcdToByteArray((UInt32)val);
-            //int[] _val = val.ToString().Select(o => Convert.ToInt32(o) - 48).ToArray();
             int[] _val = new int[2] { _val1[1], _val1[0] };
             obj.SetMultiSendorValueFM16(2, 0, SerialDevice, reg + 1, 1, "MotorDrive", 1, 0, Models.DeviceType.MotorDerive, _val, false);   // GetSoftwareVersion(Common.Address, Common.Parity, sp, _ValueType);
 
