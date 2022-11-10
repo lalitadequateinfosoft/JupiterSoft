@@ -20,7 +20,7 @@ namespace JupiterSoft.CustomDailog
     /// </summary>
     public partial class FrequencyDialog : Window
     {
-        private static readonly Regex _regex = new Regex("[^0-9-]+");
+        private static readonly Regex _regex = new Regex("[^0-9-.]+");
         public FrequencyDialog()
         {
             InitializeComponent();

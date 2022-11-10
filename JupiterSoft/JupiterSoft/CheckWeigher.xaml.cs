@@ -221,8 +221,8 @@ namespace JupiterSoft
                             {
                                 RType = 0,
                                 DeviceType = (int)Module_Device_Type.MotorDrive,
-                                RegisterNo = Convert.ToInt32(frequency.registerInput),
-                                Frequency = Convert.ToDecimal(frequency.VariableName),
+                                RegisterNo = Convert.ToInt32(frequency.registerInput.Text),
+                                Frequency = Convert.ToDecimal(frequency.VariableName.Text),
                                 Count = 0
                             };
                             MotorDrive.IsConfigured = true;
@@ -425,29 +425,10 @@ namespace JupiterSoft
         {
             if (this.DataContext is CheckWeigherViewModel model)
             {
-                if (!model.IsWeightConfigured)
-                {
-                    MessageBox.Show("Please configure weight device.");
+                if(!model.IsWeightConfigured || !model.IsPushingConfigured || !model.IsMotorConfigured || !model.IsPhotoConfigured)
+                { 
+                    MessageBox.Show("Please configure Devices.");
                     LoadSytem();
-                    return;
-                }
-                if (!model.IsPushingConfigured)
-                {
-                    MessageBox.Show("Please configure pushing Arm.");
-                    LoadSytem();
-                    return;
-                }
-                if (!model.IsMotorConfigured)
-                {
-                    MessageBox.Show("Please configure motor drive.");
-                    LoadSytem();
-                    return;
-                }
-                if (!model.IsPhotoConfigured)
-                {
-                    MessageBox.Show("Please configure photo eye.");
-                    LoadSytem();
-                    return;
                 }
 
                 ExecuteLogic();
@@ -476,7 +457,7 @@ namespace JupiterSoft
         private void StartTimer()
         {
             ExecutionTimer.Elapsed += ExecutionTimer_Elapsed;
-            ExecutionTimer.Interval = 2000;
+            ExecutionTimer.Interval = 30;
             ExecutionTimer.Enabled = true;
         }
         private void StopTimer()
@@ -497,8 +478,8 @@ namespace JupiterSoft
             DisableWindowControl();
             ConnectionUSB();
             StartVideoCapture(_VideoDirectory);
-            ConnectMotor(MotorDrive.PortName, MotorDrive.BaudRate, MotorDrive.DataBit, MotorDrive.StopBit, MotorDrive.Parity);
             ConnectWeight(weight.PortName, weight.BaudRate, weight.DataBit, weight.StopBit, weight.Parity);
+            ConnectMotor(MotorDrive.PortName, MotorDrive.BaudRate, MotorDrive.DataBit, MotorDrive.StopBit, MotorDrive.Parity);
             Connect_control_card(modbus.PortName, modbus.BaudRate, modbus.DataBit, modbus.StopBit, modbus.Parity);
             StartTimer();
         }
@@ -518,7 +499,7 @@ namespace JupiterSoft
                 model.IsPushingEditEnabled = false;
                 model.IsPushingSaveEnabled = false;
 
-                model.IsPaused = false;
+                model.IsPaused = true;
                 model.IsRunning = false;
             }
 
@@ -682,7 +663,7 @@ namespace JupiterSoft
                     MotorDrive.SerialDevice = WeightDevice;
                     MotorDrive.IsTurnedOn = true;
 
-                    WriteMotorDriveState(MotorDrive.MotorDrive.RegisterNo, Convert.ToInt32(MotorDrive.MotorDrive.Frequency) * 100);
+                    //WriteMotorDriveState(MotorDrive.MotorDrive.RegisterNo, Convert.ToInt32(MotorDrive.MotorDrive.Frequency) * 100);
                 }
             }
             catch
