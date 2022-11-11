@@ -15,6 +15,7 @@ namespace JupiterSoft.Models
         public int DataBit { get; set; }
         public int StopBit { get; set; }
         public int Parity { get; set; }
+        public int slaveAddress { get; set; }
         public SerialPort SerialDevice { get; set; }
 
         public RecData CurrentRequest { get; set; }

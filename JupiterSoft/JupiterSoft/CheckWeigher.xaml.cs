@@ -182,6 +182,7 @@ namespace JupiterSoft
                         modbus.DataBit = dailog.Databit;
                         modbus.StopBit = dailog.Stopbit;
                         modbus.Parity = dailog.ParityValue;
+                        modbus.slaveAddress = 255;
 
 
                         modbus.PushingArm = new RegisterConfiguration
@@ -189,7 +190,7 @@ namespace JupiterSoft
                             RType = 0,
                             DeviceType = (int)Module_Device_Type.ControlCard,
                             RegisterNo = 2,
-                            Frequency = 0,
+                            Frequency = 30,
                             Count = 0,
                         };
                         modbus.Sensor = new RegisterConfiguration
@@ -241,7 +242,7 @@ namespace JupiterSoft
                             MotorDrive.IsConfigured = true;
                             model.IsMotorConfigured = true;
                         }
-
+                        MotorDrive.slaveAddress = 4;
                         model.MotorFrequency = Convert.ToInt32(MotorDrive.MotorDrive.Frequency);
                     }
                     
@@ -599,7 +600,7 @@ namespace JupiterSoft
                 PushingOff.Stroke = Brushes.LightGray;
                 PushCount.Content = modbus.PushingArm.Count.ToString();
             }));
-            WriteControCardState(modbus.PushingArm.RegisterNo, 1);
+            WriteControCardState(modbus.PushingArm.RegisterNo, 1,modbus.slaveAddress);
         }
 
         private void TurnOffPushing()
@@ -611,7 +612,7 @@ namespace JupiterSoft
                 PushingOff.Fill = new SolidColorBrush(Colors.Red);
                 PushingOff.Stroke = Brushes.LightCoral;
             }));
-            WriteControCardState(modbus.PushingArm.RegisterNo, 0);
+            WriteControCardState(modbus.PushingArm.RegisterNo, 0, modbus.slaveAddress);
         }
 
         private void ConnectWeight(string Port, int Baudrate, int databit, int stopbit, int parity)
@@ -904,7 +905,7 @@ namespace JupiterSoft
             modbus.IsComplete = false;
 
             MODBUSComnn obj = new MODBUSComnn();
-            obj.GetMultiSendorValueFM3(1, 0, modbus.SerialDevice, 0, 30, "ControlCard", 1, 0, Models.DeviceType.ControlCard);
+            obj.GetMultiSendorValueFM3(modbus.slaveAddress, 0, modbus.SerialDevice, 0, 30, "ControlCard", 1, 0, Models.DeviceType.ControlCard);
 
 
         }
@@ -927,7 +928,7 @@ namespace JupiterSoft
 
         }
 
-        private void WriteControCardState(int reg, int val)
+        private void WriteControCardState(int reg, int val,int slave)
         {
 
             modbus.RecState = 1;
@@ -943,7 +944,7 @@ namespace JupiterSoft
 
             MODBUSComnn obj = new MODBUSComnn();
             int[] _val = new int[2] { 0, val };
-            obj.SetMultiSendorValueFM16(1, 0, modbus.SerialDevice, reg + 1, 1, "ControlCard", 1, 0, Models.DeviceType.ControlCard, _val, false);   // GetSoftwareVersion(Common.Address, Common.Parity, sp, _ValueType);
+            obj.SetMultiSendorValueFM16(slave, 0, modbus.SerialDevice, reg + 1, 1, "ControlCard", 1, 0, Models.DeviceType.ControlCard, _val, false);   // GetSoftwareVersion(Common.Address, Common.Parity, sp, _ValueType);
 
 
         }
@@ -1003,6 +1004,7 @@ namespace JupiterSoft
                                 SensorOff.Stroke = Brushes.LightGray;
                                 MotorCount.Content = modbus.MotorDrive.Count.ToString();
                             }));
+                            UartDataReader();
                         }
                         else
                         {
@@ -1259,7 +1261,7 @@ namespace JupiterSoft
                     break;
             }
 
-            UartDataReader();
+            
         }
 
         private void ControlDevice_DataReceived(object sender, SerialDataReceivedEventArgs e)
