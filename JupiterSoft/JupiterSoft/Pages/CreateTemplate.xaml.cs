@@ -3166,7 +3166,7 @@ namespace JupiterSoft.Pages
             Common.COMSelected = COMType.MODBUS;
             _CurrentActiveMenu = AppTools.Modbus;
             //SerialPortCommunications(Comport, 38400, 8, 1, 0);
-            obj.GetMultiSendorValueFM3(2, (int)Parity.Even, SerialDevice, 8193, 10, "MotorDrive", 1, 0, Models.DeviceType.MotorDerive);   // GetSoftwareVersion(Common.Address, Common.Parity, sp, _ValueType);
+            obj.GetMultiSendorValueFM3(4, (int)Parity.Even, SerialDevice, 4, 10, "MotorDrive", 1, 0, Models.DeviceType.MotorDerive);   // GetSoftwareVersion(Common.Address, Common.Parity, sp, _ValueType);
 
         }
         private void WriteMotorState(int reg, int val)
@@ -3177,7 +3177,7 @@ namespace JupiterSoft.Pages
             Common.COMSelected = COMType.MODBUS;
             byte[] _val1 = BitConverter.GetBytes(val);
             int[] _val = new int[2] { _val1[1], _val1[0] };
-            obj.SetMultiSendorValueFM16(2, 0, SerialDevice, reg + 1, 1, "MotorDrive", 1, 0, Models.DeviceType.MotorDerive, _val, false);   // GetSoftwareVersion(Common.Address, Common.Parity, sp, _ValueType);
+            obj.SetMultiSendorValueFM16(4, 0, SerialDevice, reg + 1, 1, "MotorDrive", 1, 0, Models.DeviceType.MotorDerive, _val, false);   // GetSoftwareVersion(Common.Address, Common.Parity, sp, _ValueType);
 
         }
 
@@ -3531,7 +3531,7 @@ namespace JupiterSoft.Pages
             Common.COMSelected = COMType.MODBUS;
             _CurrentActiveMenu = AppTools.Modbus;
             //SerialPortCommunications(Comport, 38400, 8, 1, 0);
-            obj.GetMultiSendorValueFM3(1, 0, SerialDevice, 0, 30, "ControlCard", 1, 0, Models.DeviceType.ControlCard);   // GetSoftwareVersion(Common.Address, Common.Parity, sp, _ValueType);
+            obj.GetMultiSendorValueFM3(255, 0, SerialDevice, 0, 30, "ControlCard", 1, 0, Models.DeviceType.ControlCard);   // GetSoftwareVersion(Common.Address, Common.Parity, sp, _ValueType);
 
         }
 
@@ -3824,7 +3824,7 @@ namespace JupiterSoft.Pages
             MODBUSComnn obj = new MODBUSComnn();
             Common.COMSelected = COMType.MODBUS;
             int[] _val = new int[2] { 0, val };
-            obj.SetMultiSendorValueFM16(1, 0, SerialDevice, reg + 1, 1, "ControlCard", 1, 0, Models.DeviceType.ControlCard, _val, false);
+            obj.SetMultiSendorValueFM16(255, 0, SerialDevice, reg + 1, 1, "ControlCard", 1, 0, Models.DeviceType.ControlCard, _val, false);
 
         }
 
