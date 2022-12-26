@@ -263,7 +263,7 @@
                                                     Background="#dbdbdb"
                                                     Margin="0,10,0,10">
                                                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                                                    <Label x:Name="OutPutweight" Content="0" FontSize="22" FontWeight="Bold" Foreground="#4a4a4a" HorizontalContentAlignment="Center"/>
+                                                    <Label x:Name="OutPutweight" Content="{Binding Weight}" FontSize="22" FontWeight="Bold" Foreground="#4a4a4a" HorizontalContentAlignment="Center"/>
                                                 </StackPanel>
                                             </Border>
                                         </Grid>
@@ -479,11 +479,11 @@
                                                     Grid.Row="1"
     Width="38"
     Height="38"
-    Stroke="LightBlue"
+    Stroke="LightGray"
     StrokeThickness="4"
     Canvas.Left="135"
     Canvas.Top="100"
-      Fill="DodgerBlue"                                              />
+      Fill="DarkGray"                                              />
                                             </Grid>
                                             <Grid Grid.Row="1">
                                                 <Grid.RowDefinitions>
@@ -496,11 +496,11 @@
                                                     Grid.Row="1"
     Width="38"
     Height="38"
-    Stroke="LightCoral"
+    Stroke="LightGray"
     StrokeThickness="4"
     Canvas.Left="135"
     Canvas.Top="100"
-      Fill="Red"                                              />
+      Fill="DarkGray"                                              />
                                             </Grid>
                                         </Grid>
                                     </Grid>
@@ -614,11 +614,11 @@
                                                     Grid.Row="1"
     Width="38"
     Height="38"
-    Stroke="#bae8fe"
+    Stroke="LightGray"
     StrokeThickness="4"
     Canvas.Left="135"
     Canvas.Top="100"
-      Fill="#0082ca"                                              />
+      Fill="DarkGray"                                              />
                                             </Grid>
                                             <Grid Grid.Row="1">
                                                 <Grid.RowDefinitions>
@@ -631,11 +631,11 @@
                                                     Grid.Row="1"
     Width="38"
     Height="38"
-    Stroke="#ffb3b4"
+    Stroke="LightGray"
     StrokeThickness="4"
     Canvas.Left="135"
     Canvas.Top="100"
-      Fill="#ff2524"                                              />
+      Fill="DarkGray"                                              />
                                             </Grid>
                                         </Grid>
                                     </Grid>
@@ -683,11 +683,11 @@
                                                     Grid.Row="1"
                                                     Width="50"
                                                     Height="50"
-                                                    Stroke="#bae8fe"
+                                                    Stroke="LightGray"
                                                     StrokeThickness="4"
                                                     Canvas.Left="135"
                                                     Canvas.Top="100"
-                                                    Fill="#0082ca" />
+                                                    Fill="DarkGray" />
                                     </Border>
                                 </StackPanel>
                                 <StackPanel Margin="10,0,0,0">
@@ -701,11 +701,11 @@
                                                     Grid.Row="1"
                                                     Width="50"
                                                     Height="50"
-                                                    Stroke="#bae8fe"
+                                                    Stroke="LightGray"
                                                     StrokeThickness="4"
                                                     Canvas.Left="135"
                                                     Canvas.Top="100"
-                                                    Fill="#0082ca" />
+                                                    Fill="DarkGray" />
                                     </Border>
                                 </StackPanel>
                             </StackPanel>

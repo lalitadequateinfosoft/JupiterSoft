@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace JupiterSoft.Models
 {
-   public class UartDeviceConfiguration
+   public class CommunicationDevices
     {
         public string DeviceId { get; set; }
         public string PortName { get; set; }
@@ -15,6 +15,8 @@ namespace JupiterSoft.Models
         public int DataBit { get; set; }
         public int StopBit { get; set; }
         public int Parity { get; set; }
+        public int SlaveAddress { get; set; }
+        public int DeviceType { get; set; }
         public SerialPort SerialDevice { get; set; }
         public RecData CurrentRequest { get; set; }
         public int RecIdx { get; set; }
@@ -32,16 +34,8 @@ namespace JupiterSoft.Models
             get;
             set;
         }
-
-        public decimal Weight { get; set; }
-        public int count { get; set; }
-        public decimal minRange { get; set; }
-        public decimal maxRange { get; set; }
-        public string selectedUnit { get; set; }
-        public bool IsConfigured { get; set; }
-        public decimal Zero { get; set; }
-        public decimal Factor { get; set; }
-        public bool IsCalibrated { get; set; }
         public bool IsTurnedOn { get; set; }
+        public decimal Zero { get; set; }
+        public decimal Span { get; set; }
     }
 }

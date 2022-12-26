@@ -1,0 +1,270 @@
+﻿<Window x:Class="JupiterSoft.CustomDailog.CalibrationHMI"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:fa="http://schemas.fontawesome.io/icons/"
+        xmlns:local="clr-namespace:JupiterSoft.CustomDailog"
+        mc:Ignorable="d"
+        Title="Calibration Configuration" 
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Height="450"
+        Width="650"
+        HorizontalAlignment="Center"
+        VerticalAlignment="Center"
+        Background="Transparent"
+        WindowStartupLocation="CenterScreen">
+    <Grid Background="Transparent">
+        <Border 
+                CornerRadius="5"
+                BorderThickness="1"
+                BorderBrush="#0d447a"
+                Background="White"
+                Margin="10"
+                >
+            <Border.Effect>
+                <DropShadowEffect Color="Black"
+                          Direction="270"
+                          BlurRadius="12"
+                          ShadowDepth="3" />
+
+            </Border.Effect>
+            <Grid HorizontalAlignment="Stretch">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="0">
+                    <Border HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="50" Background="White" Padding="10">
+                        <Grid>
+                            <Label Content="Calibrate weighing machine" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                            <Button 
+                                                x:Name="STARTCalibration"
+                                                Click="STARTCalibration_Click"
+                                                IsEnabled="{Binding IsNotRunning}"
+                                                Content="START CALIBRATION"
+                                                BorderBrush="#0082ca"
+                                                BorderThickness="1"
+                                                Foreground="White"
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"
+                                                Background="#0082ca"
+                                                FontSize="16"
+                                                FontWeight="Bold">
+                                <Button.Resources>
+                                    <Style TargetType="{x:Type Border}">
+                                        <Setter Property="CornerRadius" Value="2"/>
+                                    </Style>
+                                </Button.Resources>
+                            </Button>
+                            <Button 
+                                                x:Name="STOPCalibration"
+                                               Click="STOPCalibration_Click"
+                                                IsEnabled="{Binding IsRunning}"
+                                                Content="STOP CALIBRATION"
+                                                BorderBrush="Red"
+                                                BorderThickness="1"
+                                                Foreground="White"
+                                                HorizontalAlignment="Right"
+                                                VerticalAlignment="Center"
+                                                Background="Red"
+                                                FontSize="16"
+                                                FontWeight="Bold">
+                                <Button.Resources>
+                                    <Style TargetType="{x:Type Border}">
+                                        <Setter Property="CornerRadius" Value="2"/>
+                                    </Style>
+                                </Button.Resources>
+                            </Button>
+                        </Grid>
+                    </Border>
+                </Grid>
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Border 
+                            BorderBrush="#4a4a4a"
+                            Background="White"
+                            BorderThickness="1"
+                            Padding="15"
+                            Grid.Column="0"
+                            Margin="5">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Grid Grid.Row="0">
+                                <Label Content="WEIGHT" FontSize="12" FontWeight="Medium" HorizontalAlignment="Left"/>
+                                <Label Content="{Binding Path=WeightPercentage,StringFormat={}{0}%}" FontSize="12" FontWeight="Medium" HorizontalAlignment="Right"/>
+                            </Grid>
+                            <Border Grid.Row="1"
+                                        BorderBrush="#4a4a4a"
+                                        BorderThickness="1"
+                                        Background="#d9d9d9"
+                                        Margin="0,5,0,5">
+                                <TextBox Text="{Binding Weight,Mode=TwoWay, StringFormat={}{0} LBS}"
+                                             IsEnabled="{Binding IsNotRunning}"
+                                           FontSize="28"
+                                           FontWeight="Bold"
+                                           Foreground="#4a4a4a"
+                                             Background="#d9d9d9"
+                                           HorizontalAlignment="Stretch"
+                                           VerticalAlignment="Stretch"
+                                           HorizontalContentAlignment="Center"
+                                           VerticalContentAlignment="Center"/>
+                            </Border>
+
+                        </Grid>
+                    </Border>
+                    <Border Grid.Column="1" BorderBrush="#dbdbdb" BorderThickness="1" Margin="5" CornerRadius="8" Opacity="1.2">
+                        <Grid HorizontalAlignment="Stretch"
+                                          VerticalAlignment="Stretch">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+
+                            <Label Content="CALIBRATION"
+                                               Grid.Row="0"
+                                               HorizontalContentAlignment="Center"
+                                               Foreground="#000000"
+                                               FontSize="14"
+                                               FontWeight="Medium"/>
+                            <Grid Grid.Row="1"
+                                              Background="White"
+                                              >
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Label Content="ZERO"
+                                                   Foreground="White"
+                                                   Background="#656364"
+                                                   FontSize="14"
+                                                   FontWeight="Bold"
+                                                   Grid.Row="0"
+                                                   Grid.Column="0"
+                                                   Margin="10,10,10,5"
+                                                   HorizontalContentAlignment="Center"
+                                                   VerticalContentAlignment="Center"
+                                                   Height="40"/>
+                                <TextBox 
+                                                    x:Name="Zero"
+                                                    Text="{Binding Zero, Mode=TwoWay}"
+                                                    IsEnabled="{Binding IsNotRunning}"
+                                                    BorderBrush="#656364"
+                                                    BorderThickness="1"
+                                                    Foreground="#656364"
+                                                   Background="#dcdcdc"
+                                                   FontSize="14"
+                                                   FontWeight="Bold"
+                                                   Grid.Row="0"
+                                                   Grid.Column="1"
+                                                   Margin="10,10,10,5"
+                                                   HorizontalContentAlignment="Center"
+                                                   VerticalContentAlignment="Center"
+                                                Height="40"
+                                                />
+
+                                <Label Content="SPAN"
+                                                   Foreground="White"
+                                                   Background="#656364"
+                                                   FontSize="14"
+                                                   FontWeight="Bold"
+                                                   Grid.Row="1"
+                                                   Grid.Column="0"
+                                                   Margin="10,10,10,5"
+                                                   HorizontalContentAlignment="Center"
+                                                   VerticalContentAlignment="Center"
+                                                   Height="40"/>
+                                <TextBox 
+                                                    x:Name="Span"
+                                                    Text="{Binding Span, Mode=TwoWay}"
+                                                    IsEnabled="{Binding IsNotRunning}"
+                                                TextChanged="Span_TextChanged"
+                                                    BorderBrush="#656364"
+                                                    BorderThickness="1"
+                                                    Foreground="#656364"
+                                                   Background="#dcdcdc"
+                                                   FontSize="14"
+                                                   FontWeight="Bold"
+                                                   Grid.Row="1"
+                                                   Grid.Column="1"
+                                                   Margin="10,10,10,5"
+                                                HorizontalContentAlignment="Center"
+                                                   VerticalContentAlignment="Center"
+                                                Height="40"
+                                                />
+
+
+
+                                <Button 
+                                                x:Name="SaveCalibration"
+                                                Click="SaveCalibration_Click"
+                                                Content="SAVE"
+                                                IsEnabled="{Binding IsRunning}"
+                                                BorderBrush="#0082ca"
+                                                BorderThickness="1"
+                                                Foreground="White"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                                                Background="#0082ca"
+                                                FontSize="16"
+                                                FontWeight="Bold"
+                                                Grid.Row="2"
+                                                Grid.Column="0"
+                                                Margin="10,10,10,5"
+                                                Height="40" >
+                                    <Button.Resources>
+                                        <Style TargetType="{x:Type Border}">
+                                            <Setter Property="CornerRadius" Value="2"/>
+                                        </Style>
+                                    </Button.Resources>
+                                </Button>
+                                <Button 
+                                                x:Name="ResetCalibration"
+                                                Click="ResetCalibration_Click"
+                                                IsEnabled="{Binding IsRunning}"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                                                Content="RESET"
+                                                BorderBrush="#a8a8a8"
+                                                BorderThickness="1"
+                                                Foreground="White"
+                                                Background="#a8a8a8"
+                                                FontSize="16"
+                                                FontWeight="Bold"
+                                                Grid.Row="2"
+                                                Grid.Column="1"
+                                                Margin="10,10,10,5"
+                                                Height="40" >
+                                    <Button.Resources>
+                                        <Style TargetType="{x:Type Border}">
+                                            <Setter Property="CornerRadius" Value="2"/>
+                                        </Style>
+                                    </Button.Resources>
+                                </Button>
+
+
+                            </Grid>
+                        </Grid>
+                    </Border>
+                </Grid>
+                <Grid Grid.Row="2">
+                    <TextBlock Text="You can see processing logs here.." TextWrapping="WrapWithOverflow" HorizontalAlignment="Center" x:Name="MessageLog" FontSize="20" FontWeight="Bold" Width="Auto" Height="Auto" Foreground="Red"/>
+                </Grid>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

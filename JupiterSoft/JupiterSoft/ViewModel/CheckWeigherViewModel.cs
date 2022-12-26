@@ -193,6 +193,20 @@ namespace JupiterSoft.ViewModel
             }
         }
 
+        private decimal _weight;
+        public decimal Weight
+        {
+            get
+            {
+                return _weight;
+            }
+            set
+            {
+                _weight = value;
+                OnPropertyChanged(nameof(Weight));
+            }
+        }
+
         private decimal _maxRange;
         public decimal maxRange
         {
@@ -253,6 +267,7 @@ namespace JupiterSoft.ViewModel
 
             IsPaused = false;
             IsRunning = true;
+            Weight = 0;
         }
 
         #region property changed event

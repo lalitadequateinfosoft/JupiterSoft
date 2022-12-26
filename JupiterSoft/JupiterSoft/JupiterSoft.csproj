@@ -90,6 +90,9 @@
     <Compile Include="CustomDailog\CalibrationDailog.xaml.cs">
       <DependentUpon>CalibrationDailog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="CustomDailog\CalibrationHMI.xaml.cs">
+      <DependentUpon>CalibrationHMI.xaml</DependentUpon>
+    </Compile>
     <Compile Include="CustomDailog\ConditionsDialog.xaml.cs">
       <DependentUpon>ConditionsDialog.xaml</DependentUpon>
     </Compile>
@@ -115,6 +118,7 @@
       <DependentUpon>RegisterCommand.xaml</DependentUpon>
     </Compile>
     <Compile Include="Models\CalibrationModel.cs" />
+    <Compile Include="Models\CommunicationDevices.cs" />
     <Compile Include="Models\ConnectedDevices.cs" />
     <Compile Include="Models\FunctionModel.cs" />
     <Compile Include="Models\LogViewer.cs" />
@@ -127,6 +131,7 @@
       <DependentUpon>HMIPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\Annotations.cs" />
+    <Compile Include="ViewModel\CalibrationHMIViewModel.cs" />
     <Compile Include="ViewModel\CalibrationViewModel.cs" />
     <Compile Include="ViewModel\CheckWeigherViewModel.cs" />
     <Page Include="CameraTest.xaml">
@@ -138,6 +143,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="CustomDailog\CalibrationDailog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CustomDailog\CalibrationHMI.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

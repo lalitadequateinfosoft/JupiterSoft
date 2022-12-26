@@ -156,17 +156,20 @@ namespace JupiterSoft
                             model.maxRange = Convert.ToDecimal(range.MaxRange.Text);
                             model.selectedUnit = range.unit.SelectionBoxItem.ToString();
 
-                            GetCalibration calibration = new GetCalibration();
-                            calibration.ShowDialog();
-                            if (!calibration.Canceled)
-                            {
-                                weight.calibrations = calibration.calibrations;
-                            }
+                            
                         }
 
                         weight.IsConfigured = true;
                         model.IsWeightConfigured = true;
                     }
+                }
+
+                if(!weight.IsCalibrated)
+                {
+                    CalibrationHMI calibrationHMI = new CalibrationHMI(weight);
+                    calibrationHMI.ShowDialog();
+                    weight.Zero = calibrationHMI.hMIViewModel.Zero;
+                    weight.Factor = calibrationHMI.hMIViewModel.Factor;
                 }
 
                 if (!modbus.IsConfigured)
@@ -430,6 +433,8 @@ namespace JupiterSoft
                 { 
                     MessageBox.Show("Please configure Devices.");
                     LoadSytem();
+                    MessageBox.Show("Please run again to start process..");
+                    return;
                 }
 
                 ExecuteLogic();
@@ -546,30 +551,16 @@ namespace JupiterSoft
                     Regex re = new Regex(@"\d+");
                     Match m = re.Match(outP);
                     decimal balance = Convert.ToDecimal(m.Value);
-                    if (weight.calibrations != null && weight.calibrations.Count() > 0)
+                    if (weight.Zero <=0 || weight.Factor<=0)
                     {
-                        foreach (var item in weight.calibrations.OrderBy(x => x.id).ToList())
-                        {
-                            switch (item.command)
-                            {
-                                case (int)functionConstant.Add:
-                                    balance = balance + item.mVal;
-                                    break;
-                                case (int)functionConstant.Subtract:
-                                    balance = balance - item.mVal;
-                                    break;
-                                case (int)functionConstant.Multiply:
-                                    balance = balance * item.mVal;
-                                    break;
-                                case (int)functionConstant.Divide:
-                                    balance = balance / item.mVal;
-                                    break;
-                            }
-                        }
+                        return;
                     }
 
-                    balance = Math.Round(balance);
-                    if (!(balance >= weight.minRange && balance <= weight.maxRange))
+                    balance = Math.Round(balance,2);
+                    decimal Cweight = balance - weight.Zero;
+                    Cweight = Cweight / weight.Factor;
+                    weigherViewModel.Weight= Math.Round(Cweight,2);
+                    if (!(weigherViewModel.Weight >= weight.minRange && weigherViewModel.Weight <= weight.maxRange))
                     {
                         PushingTimer.Elapsed += PushingTimer_Elapsed;
                         PushingTimer.Interval = 34+Convert.ToInt32(modbus.PushingArm.Frequency);
@@ -591,6 +582,7 @@ namespace JupiterSoft
 
         private void TurnOnPushingArm()
         {
+            WriteControCardState(modbus.PushingArm.RegisterNo, 1, modbus.slaveAddress);
             modbus.PushingArm.Count = modbus.PushingArm.Count + 1;
             _dispathcer.Invoke(new Action(() =>
             {
@@ -600,7 +592,6 @@ namespace JupiterSoft
                 PushingOff.Stroke = Brushes.LightGray;
                 PushCount.Content = modbus.PushingArm.Count.ToString();
             }));
-            WriteControCardState(modbus.PushingArm.RegisterNo, 1,modbus.slaveAddress);
         }
 
         private void TurnOffPushing()
@@ -694,7 +685,7 @@ namespace JupiterSoft
                     modbus.CurrentRequest = _recData;
                     modbus.RecState = 0;
                     SerialPort WeightDevice = new SerialPort();
-                    SerialPortCommunications(ref WeightDevice, (int)Models.Module_Device_Type.MotorDrive, Port, Baudrate, databit, stopbit, parity);
+                    SerialPortCommunications(ref WeightDevice, (int)Models.Module_Device_Type.ControlCard, Port, Baudrate, databit, stopbit, parity);
                     modbus.SerialDevice = WeightDevice;
 
                 }
@@ -1261,7 +1252,7 @@ namespace JupiterSoft
                     break;
             }
 
-            
+            UartDataReader();
         }
 
         private void ControlDevice_DataReceived(object sender, SerialDataReceivedEventArgs e)
