@@ -37,11 +37,19 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="0,330,0,0" HorizontalAlignment="Center" Grid.RowSpan="2" Width="500">
-                <Button x:Name="StartNew" Foreground="#FFF" Background="Transparent" Content="START CREATING" Cursor="Hand" VerticalAlignment="Center" HorizontalAlignment="Center"  Margin="0,30,0,0" Style="{StaticResource StartButton}" ToolTip="Start Creating New Template" Click="StartNew_Click" />
-
-
-                <Button x:Name="StartSaved" Foreground="#0082ca" Background="Transparent"    Content="RUN THE SAVED PROJECTS" Cursor="Hand" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="15,30,0,0" Style="{StaticResource SavedButton}" ToolTip="Run Saved Template" Click="StartSaved_Click"/>
+            <StackPanel Grid.Column="0" VerticalAlignment="Bottom" Orientation="Horizontal" Margin="20,0,0,100" HorizontalAlignment="Stretch" Grid.RowSpan="2" Width="500">
+                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="500">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="2*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid Grid.Column="0">
+                        <Button x:Name="StartNew" Foreground="#FFF" Background="Transparent" Content="START CREATING" Cursor="Hand" VerticalAlignment="Center" HorizontalAlignment="Left"  Style="{StaticResource StartButton}" ToolTip="Start Creating New Template" Click="StartNew_Click" />
+                    </Grid>
+                    <Grid Grid.Column="1">
+                        <Button x:Name="StartSaved" Foreground="#0082ca" Background="Transparent"    Content="RUN THE SAVED PROJECTS" Cursor="Hand" VerticalAlignment="Center" HorizontalAlignment="Left" Style="{StaticResource SavedButton}" ToolTip="Run Saved Template" Click="StartSaved_Click"/>
+                    </Grid>
+                </Grid>
             </StackPanel>
         </Grid>
 

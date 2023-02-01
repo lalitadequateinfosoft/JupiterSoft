@@ -155,12 +155,10 @@ namespace JupiterSoft
                             model.minRange = Convert.ToDecimal(range.MinimumRange.Text);
                             model.maxRange = Convert.ToDecimal(range.MaxRange.Text);
                             model.selectedUnit = range.unit.SelectionBoxItem.ToString();
-
-                            
+                            weight.IsConfigured = true;
+                            model.IsWeightConfigured = true;
                         }
 
-                        weight.IsConfigured = true;
-                        model.IsWeightConfigured = true;
                     }
                 }
 
@@ -185,29 +183,37 @@ namespace JupiterSoft
                         modbus.DataBit = dailog.Databit;
                         modbus.StopBit = dailog.Stopbit;
                         modbus.Parity = dailog.ParityValue;
-                        modbus.slaveAddress = 255;
 
+                        ConnectivityInfo connectivityInfo = new ConnectivityInfo();
+                        connectivityInfo.ShowDialog();
 
-                        modbus.PushingArm = new RegisterConfiguration
+                        if(!connectivityInfo.Canceled)
                         {
-                            RType = 0,
-                            DeviceType = (int)Module_Device_Type.ControlCard,
-                            RegisterNo = 2,
-                            Frequency = 30,
-                            Count = 0,
-                        };
-                        modbus.Sensor = new RegisterConfiguration
-                        {
-                            RType = 1,
-                            DeviceType = (int)Module_Device_Type.ControlCard,
-                            RegisterNo = 1,
-                            Frequency = 0,
-                            Count = 0,
-                        };
+                            modbus.slaveAddress = Convert.ToInt32(connectivityInfo.AddressBox.Text.ToString());
 
-                        modbus.IsConfigured = true;
-                        model.IsPhotoConfigured = true;
-                        model.IsPushingConfigured = true;
+
+                            modbus.PushingArm = new RegisterConfiguration
+                            {
+                                RType = 0,
+                                DeviceType = (int)Module_Device_Type.ControlCard,
+                                RegisterNo = Convert.ToInt32(connectivityInfo.PushingArm.Text.ToString()),
+                                Frequency = 30,
+                                Count = 0,
+                            };
+                            modbus.Sensor = new RegisterConfiguration
+                            {
+                                RType = 1,
+                                DeviceType = (int)Module_Device_Type.ControlCard,
+                                RegisterNo = Convert.ToInt32(connectivityInfo.Sensors.Text.ToString()),
+                                Frequency = 0,
+                                Count = 0,
+                            };
+
+                            modbus.IsConfigured = true;
+                            model.IsPhotoConfigured = true;
+                            model.IsPushingConfigured = true;
+                        }
+                        
                     }
                 }
 
@@ -217,7 +223,7 @@ namespace JupiterSoft
                     dailog.ShowDialog();
                     if(!dailog.Canceled)
                     {
-                        FrequencyDialog frequency = new FrequencyDialog();
+                        MotorDriveConnectivityInfo frequency = new MotorDriveConnectivityInfo();
                         frequency.ShowDialog();
                         if (!frequency.Canceled)
                         {
@@ -225,28 +231,15 @@ namespace JupiterSoft
                             {
                                 RType = 0,
                                 DeviceType = (int)Module_Device_Type.MotorDrive,
-                                RegisterNo = Convert.ToInt32(frequency.registerInput.Text),
-                                Frequency = Convert.ToDecimal(frequency.VariableName.Text),
+                                RegisterNo = Convert.ToInt32(frequency.MotorRegister.Text),
+                                Frequency = Convert.ToDecimal(frequency.MotorFrequency.Text),
                                 Count = 0
                             };
+                            MotorDrive.slaveAddress = Convert.ToInt32(frequency.Addressbox.Text);
                             MotorDrive.IsConfigured = true;
                             model.IsMotorConfigured = true;
                         }
-                        else
-                        {
-                            MotorDrive.MotorDrive = new RegisterConfiguration
-                            {
-                                RType = 0,
-                                DeviceType = (int)Module_Device_Type.MotorDrive,
-                                RegisterNo = 8193,
-                                Frequency = Convert.ToDecimal(2.414),
-                                Count = 0
-                            };
-                            MotorDrive.IsConfigured = true;
-                            model.IsMotorConfigured = true;
-                        }
-                        MotorDrive.slaveAddress = 4;
-                        model.MotorFrequency = Convert.ToInt32(MotorDrive.MotorDrive.Frequency);
+                        
                     }
                     
                 }
@@ -973,41 +966,6 @@ namespace JupiterSoft
                     {
 
                         int _i0 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 3);
-                        if (_i0 == 0)
-                        {
-                            if (modbus.Sensor.ObjectIntervals != null && modbus.Sensor.ObjectIntervals.Count() > 0)
-                            {
-                                modbus.Sensor.ObjectIntervals.Add(DateTime.Now);
-                            }
-                            else
-                            {
-                                modbus.Sensor.ObjectIntervals = new List<DateTime>();
-                                modbus.Sensor.ObjectIntervals.Add(DateTime.Now);
-                            }
-                            modbus.Sensor.Count = modbus.Sensor.Count + 1;
-                            modbus.MotorDrive.Count = modbus.MotorDrive.Count + 1;
-                            weight.count = weight.count + 1;
-                            _dispathcer.Invoke(new Action(() =>
-                            {
-                                SensorOn.Fill = new SolidColorBrush(Colors.DodgerBlue);
-                                SensorOn.Stroke = Brushes.LightBlue;
-                                SensorOff.Fill = new SolidColorBrush(Colors.DarkGray);
-                                SensorOff.Stroke = Brushes.LightGray;
-                                MotorCount.Content = modbus.MotorDrive.Count.ToString();
-                            }));
-                            UartDataReader();
-                        }
-                        else
-                        {
-                            _dispathcer.Invoke(new Action(() =>
-                            {
-                                SensorOn.Fill = new SolidColorBrush(Colors.DarkGray);
-                                SensorOn.Stroke = Brushes.LightGray;
-                                SensorOff.Fill = new SolidColorBrush(Colors.Red);
-                                SensorOff.Stroke = Brushes.LightCoral;
-                            }));
-                        }
-
                         int _i1 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 5);
                         int _i2 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 7);
                         int _i3 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 9);
@@ -1024,7 +982,6 @@ namespace JupiterSoft
                         int _i14 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 31);
                         int _i15 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 33);
                         int _i16 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 35);
-                        
                         int _i17 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 37);
                         int _i18 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 39);
                         int _i19 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 41);
@@ -1038,6 +995,602 @@ namespace JupiterSoft
                         int _i27 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 57);
                         int _i28 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 59);
                         int _i29 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 61);
+
+
+                        if(modbus.Sensor.RegisterNo==1)
+                        {
+                            if (_i0 == 0)
+                            {
+                                if (modbus.Sensor.ObjectIntervals != null && modbus.Sensor.ObjectIntervals.Count() > 0)
+                                {
+                                    modbus.Sensor.ObjectIntervals.Add(DateTime.Now);
+                                }
+                                else
+                                {
+                                    modbus.Sensor.ObjectIntervals = new List<DateTime>();
+                                    modbus.Sensor.ObjectIntervals.Add(DateTime.Now);
+                                }
+                                modbus.Sensor.Count = modbus.Sensor.Count + 1;
+                                modbus.MotorDrive.Count = modbus.MotorDrive.Count + 1;
+                                weight.count = weight.count + 1;
+                                _dispathcer.Invoke(new Action(() =>
+                                {
+                                    SensorOn.Fill = new SolidColorBrush(Colors.DodgerBlue);
+                                    SensorOn.Stroke = Brushes.LightBlue;
+                                    SensorOff.Fill = new SolidColorBrush(Colors.DarkGray);
+                                    SensorOff.Stroke = Brushes.LightGray;
+                                    MotorCount.Content = modbus.MotorDrive.Count.ToString();
+                                }));
+                                UartDataReader();
+                            }
+                            else
+                            {
+                                _dispathcer.Invoke(new Action(() =>
+                                {
+                                    SensorOn.Fill = new SolidColorBrush(Colors.DarkGray);
+                                    SensorOn.Stroke = Brushes.LightGray;
+                                    SensorOff.Fill = new SolidColorBrush(Colors.Red);
+                                    SensorOff.Stroke = Brushes.LightCoral;
+                                }));
+                            }
+                        }
+                        else if (modbus.Sensor.RegisterNo == 2)
+                        {
+                            if (_i1 == 0)
+                            {
+                                if (modbus.Sensor.ObjectIntervals != null && modbus.Sensor.ObjectIntervals.Count() > 0)
+                                {
+                                    modbus.Sensor.ObjectIntervals.Add(DateTime.Now);
+                                }
+                                else
+                                {
+                                    modbus.Sensor.ObjectIntervals = new List<DateTime>();
+                                    modbus.Sensor.ObjectIntervals.Add(DateTime.Now);
+                                }
+                                modbus.Sensor.Count = modbus.Sensor.Count + 1;
+                                modbus.MotorDrive.Count = modbus.MotorDrive.Count + 1;
+                                weight.count = weight.count + 1;
+                                _dispathcer.Invoke(new Action(() =>
+                                {
+                                    SensorOn.Fill = new SolidColorBrush(Colors.DodgerBlue);
+                                    SensorOn.Stroke = Brushes.LightBlue;
+                                    SensorOff.Fill = new SolidColorBrush(Colors.DarkGray);
+                                    SensorOff.Stroke = Brushes.LightGray;
+                                    MotorCount.Content = modbus.MotorDrive.Count.ToString();
+                                }));
+                                UartDataReader();
+                            }
+                            else
+                            {
+                                _dispathcer.Invoke(new Action(() =>
+                                {
+                                    SensorOn.Fill = new SolidColorBrush(Colors.DarkGray);
+                                    SensorOn.Stroke = Brushes.LightGray;
+                                    SensorOff.Fill = new SolidColorBrush(Colors.Red);
+                                    SensorOff.Stroke = Brushes.LightCoral;
+                                }));
+                            }
+                        }
+                        else if (modbus.Sensor.RegisterNo == 3)
+                        {
+                            if (_i2 == 0)
+                            {
+                                if (modbus.Sensor.ObjectIntervals != null && modbus.Sensor.ObjectIntervals.Count() > 0)
+                                {
+                                    modbus.Sensor.ObjectIntervals.Add(DateTime.Now);
+                                }
+                                else
+                                {
+                                    modbus.Sensor.ObjectIntervals = new List<DateTime>();
+                                    modbus.Sensor.ObjectIntervals.Add(DateTime.Now);
+                                }
+                                modbus.Sensor.Count = modbus.Sensor.Count + 1;
+                                modbus.MotorDrive.Count = modbus.MotorDrive.Count + 1;
+                                weight.count = weight.count + 1;
+                                _dispathcer.Invoke(new Action(() =>
+                                {
+                                    SensorOn.Fill = new SolidColorBrush(Colors.DodgerBlue);
+                                    SensorOn.Stroke = Brushes.LightBlue;
+                                    SensorOff.Fill = new SolidColorBrush(Colors.DarkGray);
+                                    SensorOff.Stroke = Brushes.LightGray;
+                                    MotorCount.Content = modbus.MotorDrive.Count.ToString();
+                                }));
+                                UartDataReader();
+                            }
+                            else
+                            {
+                                _dispathcer.Invoke(new Action(() =>
+                                {
+                                    SensorOn.Fill = new SolidColorBrush(Colors.DarkGray);
+                                    SensorOn.Stroke = Brushes.LightGray;
+                                    SensorOff.Fill = new SolidColorBrush(Colors.Red);
+                                    SensorOff.Stroke = Brushes.LightCoral;
+                                }));
+                            }
+                        }
+                        else if (modbus.Sensor.RegisterNo == 4)
+                        {
+                            if (_i3 == 0)
+                            {
+                                if (modbus.Sensor.ObjectIntervals != null && modbus.Sensor.ObjectIntervals.Count() > 0)
+                                {
+                                    modbus.Sensor.ObjectIntervals.Add(DateTime.Now);
+                                }
+                                else
+                                {
+                                    modbus.Sensor.ObjectIntervals = new List<DateTime>();
+                                    modbus.Sensor.ObjectIntervals.Add(DateTime.Now);
+                                }
+                                modbus.Sensor.Count = modbus.Sensor.Count + 1;
+                                modbus.MotorDrive.Count = modbus.MotorDrive.Count + 1;
+                                weight.count = weight.count + 1;
+                                _dispathcer.Invoke(new Action(() =>
+                                {
+                                    SensorOn.Fill = new SolidColorBrush(Colors.DodgerBlue);
+                                    SensorOn.Stroke = Brushes.LightBlue;
+                                    SensorOff.Fill = new SolidColorBrush(Colors.DarkGray);
+                                    SensorOff.Stroke = Brushes.LightGray;
+                                    MotorCount.Content = modbus.MotorDrive.Count.ToString();
+                                }));
+                                UartDataReader();
+                            }
+                            else
+                            {
+                                _dispathcer.Invoke(new Action(() =>
+                                {
+                                    SensorOn.Fill = new SolidColorBrush(Colors.DarkGray);
+                                    SensorOn.Stroke = Brushes.LightGray;
+                                    SensorOff.Fill = new SolidColorBrush(Colors.Red);
+                                    SensorOff.Stroke = Brushes.LightCoral;
+                                }));
+                            }
+                        }
+                        else if (modbus.Sensor.RegisterNo == 5)
+                        {
+                            if (_i4 == 0)
+                            {
+                                if (modbus.Sensor.ObjectIntervals != null && modbus.Sensor.ObjectIntervals.Count() > 0)
+                                {
+                                    modbus.Sensor.ObjectIntervals.Add(DateTime.Now);
+                                }
+                                else
+                                {
+                                    modbus.Sensor.ObjectIntervals = new List<DateTime>();
+                                    modbus.Sensor.ObjectIntervals.Add(DateTime.Now);
+                                }
+                                modbus.Sensor.Count = modbus.Sensor.Count + 1;
+                                modbus.MotorDrive.Count = modbus.MotorDrive.Count + 1;
+                                weight.count = weight.count + 1;
+                                _dispathcer.Invoke(new Action(() =>
+                                {
+                                    SensorOn.Fill = new SolidColorBrush(Colors.DodgerBlue);
+                                    SensorOn.Stroke = Brushes.LightBlue;
+                                    SensorOff.Fill = new SolidColorBrush(Colors.DarkGray);
+                                    SensorOff.Stroke = Brushes.LightGray;
+                                    MotorCount.Content = modbus.MotorDrive.Count.ToString();
+                                }));
+                                UartDataReader();
+                            }
+                            else
+                            {
+                                _dispathcer.Invoke(new Action(() =>
+                                {
+                                    SensorOn.Fill = new SolidColorBrush(Colors.DarkGray);
+                                    SensorOn.Stroke = Brushes.LightGray;
+                                    SensorOff.Fill = new SolidColorBrush(Colors.Red);
+                                    SensorOff.Stroke = Brushes.LightCoral;
+                                }));
+                            }
+                        }
+                        else if (modbus.Sensor.RegisterNo == 6)
+                        {
+                            if (_i5 == 0)
+                            {
+                                if (modbus.Sensor.ObjectIntervals != null && modbus.Sensor.ObjectIntervals.Count() > 0)
+                                {
+                                    modbus.Sensor.ObjectIntervals.Add(DateTime.Now);
+                                }
+                                else
+                                {
+                                    modbus.Sensor.ObjectIntervals = new List<DateTime>();
+                                    modbus.Sensor.ObjectIntervals.Add(DateTime.Now);
+                                }
+                                modbus.Sensor.Count = modbus.Sensor.Count + 1;
+                                modbus.MotorDrive.Count = modbus.MotorDrive.Count + 1;
+                                weight.count = weight.count + 1;
+                                _dispathcer.Invoke(new Action(() =>
+                                {
+                                    SensorOn.Fill = new SolidColorBrush(Colors.DodgerBlue);
+                                    SensorOn.Stroke = Brushes.LightBlue;
+                                    SensorOff.Fill = new SolidColorBrush(Colors.DarkGray);
+                                    SensorOff.Stroke = Brushes.LightGray;
+                                    MotorCount.Content = modbus.MotorDrive.Count.ToString();
+                                }));
+                                UartDataReader();
+                            }
+                            else
+                            {
+                                _dispathcer.Invoke(new Action(() =>
+                                {
+                                    SensorOn.Fill = new SolidColorBrush(Colors.DarkGray);
+                                    SensorOn.Stroke = Brushes.LightGray;
+                                    SensorOff.Fill = new SolidColorBrush(Colors.Red);
+                                    SensorOff.Stroke = Brushes.LightCoral;
+                                }));
+                            }
+                        }
+                        else if (modbus.Sensor.RegisterNo == 7)
+                        {
+                            if (_i6 == 0)
+                            {
+                                if (modbus.Sensor.ObjectIntervals != null && modbus.Sensor.ObjectIntervals.Count() > 0)
+                                {
+                                    modbus.Sensor.ObjectIntervals.Add(DateTime.Now);
+                                }
+                                else
+                                {
+                                    modbus.Sensor.ObjectIntervals = new List<DateTime>();
+                                    modbus.Sensor.ObjectIntervals.Add(DateTime.Now);
+                                }
+                                modbus.Sensor.Count = modbus.Sensor.Count + 1;
+                                modbus.MotorDrive.Count = modbus.MotorDrive.Count + 1;
+                                weight.count = weight.count + 1;
+                                _dispathcer.Invoke(new Action(() =>
+                                {
+                                    SensorOn.Fill = new SolidColorBrush(Colors.DodgerBlue);
+                                    SensorOn.Stroke = Brushes.LightBlue;
+                                    SensorOff.Fill = new SolidColorBrush(Colors.DarkGray);
+                                    SensorOff.Stroke = Brushes.LightGray;
+                                    MotorCount.Content = modbus.MotorDrive.Count.ToString();
+                                }));
+                                UartDataReader();
+                            }
+                            else
+                            {
+                                _dispathcer.Invoke(new Action(() =>
+                                {
+                                    SensorOn.Fill = new SolidColorBrush(Colors.DarkGray);
+                                    SensorOn.Stroke = Brushes.LightGray;
+                                    SensorOff.Fill = new SolidColorBrush(Colors.Red);
+                                    SensorOff.Stroke = Brushes.LightCoral;
+                                }));
+                            }
+                        }
+                        else if (modbus.Sensor.RegisterNo == 8)
+                        {
+                            if (_i7 == 0)
+                            {
+                                if (modbus.Sensor.ObjectIntervals != null && modbus.Sensor.ObjectIntervals.Count() > 0)
+                                {
+                                    modbus.Sensor.ObjectIntervals.Add(DateTime.Now);
+                                }
+                                else
+                                {
+                                    modbus.Sensor.ObjectIntervals = new List<DateTime>();
+                                    modbus.Sensor.ObjectIntervals.Add(DateTime.Now);
+                                }
+                                modbus.Sensor.Count = modbus.Sensor.Count + 1;
+                                modbus.MotorDrive.Count = modbus.MotorDrive.Count + 1;
+                                weight.count = weight.count + 1;
+                                _dispathcer.Invoke(new Action(() =>
+                                {
+                                    SensorOn.Fill = new SolidColorBrush(Colors.DodgerBlue);
+                                    SensorOn.Stroke = Brushes.LightBlue;
+                                    SensorOff.Fill = new SolidColorBrush(Colors.DarkGray);
+                                    SensorOff.Stroke = Brushes.LightGray;
+                                    MotorCount.Content = modbus.MotorDrive.Count.ToString();
+                                }));
+                                UartDataReader();
+                            }
+                            else
+                            {
+                                _dispathcer.Invoke(new Action(() =>
+                                {
+                                    SensorOn.Fill = new SolidColorBrush(Colors.DarkGray);
+                                    SensorOn.Stroke = Brushes.LightGray;
+                                    SensorOff.Fill = new SolidColorBrush(Colors.Red);
+                                    SensorOff.Stroke = Brushes.LightCoral;
+                                }));
+                            }
+                        }
+                        else if (modbus.Sensor.RegisterNo == 9)
+                        {
+                            if (_i8 == 0)
+                            {
+                                if (modbus.Sensor.ObjectIntervals != null && modbus.Sensor.ObjectIntervals.Count() > 0)
+                                {
+                                    modbus.Sensor.ObjectIntervals.Add(DateTime.Now);
+                                }
+                                else
+                                {
+                                    modbus.Sensor.ObjectIntervals = new List<DateTime>();
+                                    modbus.Sensor.ObjectIntervals.Add(DateTime.Now);
+                                }
+                                modbus.Sensor.Count = modbus.Sensor.Count + 1;
+                                modbus.MotorDrive.Count = modbus.MotorDrive.Count + 1;
+                                weight.count = weight.count + 1;
+                                _dispathcer.Invoke(new Action(() =>
+                                {
+                                    SensorOn.Fill = new SolidColorBrush(Colors.DodgerBlue);
+                                    SensorOn.Stroke = Brushes.LightBlue;
+                                    SensorOff.Fill = new SolidColorBrush(Colors.DarkGray);
+                                    SensorOff.Stroke = Brushes.LightGray;
+                                    MotorCount.Content = modbus.MotorDrive.Count.ToString();
+                                }));
+                                UartDataReader();
+                            }
+                            else
+                            {
+                                _dispathcer.Invoke(new Action(() =>
+                                {
+                                    SensorOn.Fill = new SolidColorBrush(Colors.DarkGray);
+                                    SensorOn.Stroke = Brushes.LightGray;
+                                    SensorOff.Fill = new SolidColorBrush(Colors.Red);
+                                    SensorOff.Stroke = Brushes.LightCoral;
+                                }));
+                            }
+                        }
+                        else if (modbus.Sensor.RegisterNo == 10)
+                        {
+                            if (_i9 == 0)
+                            {
+                                if (modbus.Sensor.ObjectIntervals != null && modbus.Sensor.ObjectIntervals.Count() > 0)
+                                {
+                                    modbus.Sensor.ObjectIntervals.Add(DateTime.Now);
+                                }
+                                else
+                                {
+                                    modbus.Sensor.ObjectIntervals = new List<DateTime>();
+                                    modbus.Sensor.ObjectIntervals.Add(DateTime.Now);
+                                }
+                                modbus.Sensor.Count = modbus.Sensor.Count + 1;
+                                modbus.MotorDrive.Count = modbus.MotorDrive.Count + 1;
+                                weight.count = weight.count + 1;
+                                _dispathcer.Invoke(new Action(() =>
+                                {
+                                    SensorOn.Fill = new SolidColorBrush(Colors.DodgerBlue);
+                                    SensorOn.Stroke = Brushes.LightBlue;
+                                    SensorOff.Fill = new SolidColorBrush(Colors.DarkGray);
+                                    SensorOff.Stroke = Brushes.LightGray;
+                                    MotorCount.Content = modbus.MotorDrive.Count.ToString();
+                                }));
+                                UartDataReader();
+                            }
+                            else
+                            {
+                                _dispathcer.Invoke(new Action(() =>
+                                {
+                                    SensorOn.Fill = new SolidColorBrush(Colors.DarkGray);
+                                    SensorOn.Stroke = Brushes.LightGray;
+                                    SensorOff.Fill = new SolidColorBrush(Colors.Red);
+                                    SensorOff.Stroke = Brushes.LightCoral;
+                                }));
+                            }
+                        }
+                        else if (modbus.Sensor.RegisterNo == 11)
+                        {
+                            if (_i10 == 0)
+                            {
+                                if (modbus.Sensor.ObjectIntervals != null && modbus.Sensor.ObjectIntervals.Count() > 0)
+                                {
+                                    modbus.Sensor.ObjectIntervals.Add(DateTime.Now);
+                                }
+                                else
+                                {
+                                    modbus.Sensor.ObjectIntervals = new List<DateTime>();
+                                    modbus.Sensor.ObjectIntervals.Add(DateTime.Now);
+                                }
+                                modbus.Sensor.Count = modbus.Sensor.Count + 1;
+                                modbus.MotorDrive.Count = modbus.MotorDrive.Count + 1;
+                                weight.count = weight.count + 1;
+                                _dispathcer.Invoke(new Action(() =>
+                                {
+                                    SensorOn.Fill = new SolidColorBrush(Colors.DodgerBlue);
+                                    SensorOn.Stroke = Brushes.LightBlue;
+                                    SensorOff.Fill = new SolidColorBrush(Colors.DarkGray);
+                                    SensorOff.Stroke = Brushes.LightGray;
+                                    MotorCount.Content = modbus.MotorDrive.Count.ToString();
+                                }));
+                                UartDataReader();
+                            }
+                            else
+                            {
+                                _dispathcer.Invoke(new Action(() =>
+                                {
+                                    SensorOn.Fill = new SolidColorBrush(Colors.DarkGray);
+                                    SensorOn.Stroke = Brushes.LightGray;
+                                    SensorOff.Fill = new SolidColorBrush(Colors.Red);
+                                    SensorOff.Stroke = Brushes.LightCoral;
+                                }));
+                            }
+                        }
+                        else if (modbus.Sensor.RegisterNo == 12)
+                        {
+                            if (_i11 == 0)
+                            {
+                                if (modbus.Sensor.ObjectIntervals != null && modbus.Sensor.ObjectIntervals.Count() > 0)
+                                {
+                                    modbus.Sensor.ObjectIntervals.Add(DateTime.Now);
+                                }
+                                else
+                                {
+                                    modbus.Sensor.ObjectIntervals = new List<DateTime>();
+                                    modbus.Sensor.ObjectIntervals.Add(DateTime.Now);
+                                }
+                                modbus.Sensor.Count = modbus.Sensor.Count + 1;
+                                modbus.MotorDrive.Count = modbus.MotorDrive.Count + 1;
+                                weight.count = weight.count + 1;
+                                _dispathcer.Invoke(new Action(() =>
+                                {
+                                    SensorOn.Fill = new SolidColorBrush(Colors.DodgerBlue);
+                                    SensorOn.Stroke = Brushes.LightBlue;
+                                    SensorOff.Fill = new SolidColorBrush(Colors.DarkGray);
+                                    SensorOff.Stroke = Brushes.LightGray;
+                                    MotorCount.Content = modbus.MotorDrive.Count.ToString();
+                                }));
+                                UartDataReader();
+                            }
+                            else
+                            {
+                                _dispathcer.Invoke(new Action(() =>
+                                {
+                                    SensorOn.Fill = new SolidColorBrush(Colors.DarkGray);
+                                    SensorOn.Stroke = Brushes.LightGray;
+                                    SensorOff.Fill = new SolidColorBrush(Colors.Red);
+                                    SensorOff.Stroke = Brushes.LightCoral;
+                                }));
+                            }
+                        }
+                        else if (modbus.Sensor.RegisterNo == 13)
+                        {
+                            if (_i12 == 0)
+                            {
+                                if (modbus.Sensor.ObjectIntervals != null && modbus.Sensor.ObjectIntervals.Count() > 0)
+                                {
+                                    modbus.Sensor.ObjectIntervals.Add(DateTime.Now);
+                                }
+                                else
+                                {
+                                    modbus.Sensor.ObjectIntervals = new List<DateTime>();
+                                    modbus.Sensor.ObjectIntervals.Add(DateTime.Now);
+                                }
+                                modbus.Sensor.Count = modbus.Sensor.Count + 1;
+                                modbus.MotorDrive.Count = modbus.MotorDrive.Count + 1;
+                                weight.count = weight.count + 1;
+                                _dispathcer.Invoke(new Action(() =>
+                                {
+                                    SensorOn.Fill = new SolidColorBrush(Colors.DodgerBlue);
+                                    SensorOn.Stroke = Brushes.LightBlue;
+                                    SensorOff.Fill = new SolidColorBrush(Colors.DarkGray);
+                                    SensorOff.Stroke = Brushes.LightGray;
+                                    MotorCount.Content = modbus.MotorDrive.Count.ToString();
+                                }));
+                                UartDataReader();
+                            }
+                            else
+                            {
+                                _dispathcer.Invoke(new Action(() =>
+                                {
+                                    SensorOn.Fill = new SolidColorBrush(Colors.DarkGray);
+                                    SensorOn.Stroke = Brushes.LightGray;
+                                    SensorOff.Fill = new SolidColorBrush(Colors.Red);
+                                    SensorOff.Stroke = Brushes.LightCoral;
+                                }));
+                            }
+                        }
+                        else if (modbus.Sensor.RegisterNo == 14)
+                        {
+                            if (_i13 == 0)
+                            {
+                                if (modbus.Sensor.ObjectIntervals != null && modbus.Sensor.ObjectIntervals.Count() > 0)
+                                {
+                                    modbus.Sensor.ObjectIntervals.Add(DateTime.Now);
+                                }
+                                else
+                                {
+                                    modbus.Sensor.ObjectIntervals = new List<DateTime>();
+                                    modbus.Sensor.ObjectIntervals.Add(DateTime.Now);
+                                }
+                                modbus.Sensor.Count = modbus.Sensor.Count + 1;
+                                modbus.MotorDrive.Count = modbus.MotorDrive.Count + 1;
+                                weight.count = weight.count + 1;
+                                _dispathcer.Invoke(new Action(() =>
+                                {
+                                    SensorOn.Fill = new SolidColorBrush(Colors.DodgerBlue);
+                                    SensorOn.Stroke = Brushes.LightBlue;
+                                    SensorOff.Fill = new SolidColorBrush(Colors.DarkGray);
+                                    SensorOff.Stroke = Brushes.LightGray;
+                                    MotorCount.Content = modbus.MotorDrive.Count.ToString();
+                                }));
+                                UartDataReader();
+                            }
+                            else
+                            {
+                                _dispathcer.Invoke(new Action(() =>
+                                {
+                                    SensorOn.Fill = new SolidColorBrush(Colors.DarkGray);
+                                    SensorOn.Stroke = Brushes.LightGray;
+                                    SensorOff.Fill = new SolidColorBrush(Colors.Red);
+                                    SensorOff.Stroke = Brushes.LightCoral;
+                                }));
+                            }
+                        }
+                        else if (modbus.Sensor.RegisterNo == 15)
+                        {
+                            if (_i14 == 0)
+                            {
+                                if (modbus.Sensor.ObjectIntervals != null && modbus.Sensor.ObjectIntervals.Count() > 0)
+                                {
+                                    modbus.Sensor.ObjectIntervals.Add(DateTime.Now);
+                                }
+                                else
+                                {
+                                    modbus.Sensor.ObjectIntervals = new List<DateTime>();
+                                    modbus.Sensor.ObjectIntervals.Add(DateTime.Now);
+                                }
+                                modbus.Sensor.Count = modbus.Sensor.Count + 1;
+                                modbus.MotorDrive.Count = modbus.MotorDrive.Count + 1;
+                                weight.count = weight.count + 1;
+                                _dispathcer.Invoke(new Action(() =>
+                                {
+                                    SensorOn.Fill = new SolidColorBrush(Colors.DodgerBlue);
+                                    SensorOn.Stroke = Brushes.LightBlue;
+                                    SensorOff.Fill = new SolidColorBrush(Colors.DarkGray);
+                                    SensorOff.Stroke = Brushes.LightGray;
+                                    MotorCount.Content = modbus.MotorDrive.Count.ToString();
+                                }));
+                                UartDataReader();
+                            }
+                            else
+                            {
+                                _dispathcer.Invoke(new Action(() =>
+                                {
+                                    SensorOn.Fill = new SolidColorBrush(Colors.DarkGray);
+                                    SensorOn.Stroke = Brushes.LightGray;
+                                    SensorOff.Fill = new SolidColorBrush(Colors.Red);
+                                    SensorOff.Stroke = Brushes.LightCoral;
+                                }));
+                            }
+                        }
+                        else if (modbus.Sensor.RegisterNo == 16)
+                        {
+                            if (_i15 == 0)
+                            {
+                                if (modbus.Sensor.ObjectIntervals != null && modbus.Sensor.ObjectIntervals.Count() > 0)
+                                {
+                                    modbus.Sensor.ObjectIntervals.Add(DateTime.Now);
+                                }
+                                else
+                                {
+                                    modbus.Sensor.ObjectIntervals = new List<DateTime>();
+                                    modbus.Sensor.ObjectIntervals.Add(DateTime.Now);
+                                }
+                                modbus.Sensor.Count = modbus.Sensor.Count + 1;
+                                modbus.MotorDrive.Count = modbus.MotorDrive.Count + 1;
+                                weight.count = weight.count + 1;
+                                _dispathcer.Invoke(new Action(() =>
+                                {
+                                    SensorOn.Fill = new SolidColorBrush(Colors.DodgerBlue);
+                                    SensorOn.Stroke = Brushes.LightBlue;
+                                    SensorOff.Fill = new SolidColorBrush(Colors.DarkGray);
+                                    SensorOff.Stroke = Brushes.LightGray;
+                                    MotorCount.Content = modbus.MotorDrive.Count.ToString();
+                                }));
+                                UartDataReader();
+                            }
+                            else
+                            {
+                                _dispathcer.Invoke(new Action(() =>
+                                {
+                                    SensorOn.Fill = new SolidColorBrush(Colors.DarkGray);
+                                    SensorOn.Stroke = Brushes.LightGray;
+                                    SensorOff.Fill = new SolidColorBrush(Colors.Red);
+                                    SensorOff.Stroke = Brushes.LightCoral;
+                                }));
+                            }
+                        }
+
+
 
                     }
                 }
@@ -1345,6 +1898,14 @@ namespace JupiterSoft
                 model.IsWeightEditEnabled = true;
                 model.IsWeightSaveEnabled = false;
             }
+        }
+
+        private void GoBack_Click(object sender, RoutedEventArgs e)
+        {
+            var dashForm = new MainWindow();
+            dashForm.Show();
+            //dashForm.Show();
+            this.Close();
         }
     }
 }

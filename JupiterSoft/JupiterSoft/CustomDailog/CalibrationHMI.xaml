@@ -17,11 +17,12 @@
         WindowStartupLocation="CenterScreen">
     <Grid Background="Transparent">
         <Border 
-                CornerRadius="5"
+                CornerRadius="0"
                 BorderThickness="1"
                 BorderBrush="#0d447a"
                 Background="White"
                 Margin="10"
+            Padding="15,15,15,10"
                 >
             <Border.Effect>
                 <DropShadowEffect Color="Black"
@@ -129,7 +130,7 @@
                                 <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
 
-                            <Label Content="CALIBRATION"
+                            <Label Content="CALIBRATION AREA"
                                                Grid.Row="0"
                                                HorizontalContentAlignment="Center"
                                                Foreground="#000000"
@@ -191,7 +192,6 @@
                                 <TextBox 
                                                     x:Name="Span"
                                                     Text="{Binding Span, Mode=TwoWay}"
-                                                    IsEnabled="{Binding IsNotRunning}"
                                                 TextChanged="Span_TextChanged"
                                                     BorderBrush="#656364"
                                                     BorderThickness="1"
@@ -213,7 +213,6 @@
                                                 x:Name="SaveCalibration"
                                                 Click="SaveCalibration_Click"
                                                 Content="SAVE"
-                                                IsEnabled="{Binding IsRunning}"
                                                 BorderBrush="#0082ca"
                                                 BorderThickness="1"
                                                 Foreground="White"
@@ -235,9 +234,8 @@
                                 <Button 
                                                 x:Name="ResetCalibration"
                                                 Click="ResetCalibration_Click"
-                                                IsEnabled="{Binding IsRunning}"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"
                                                 Content="RESET"
                                                 BorderBrush="#a8a8a8"
                                                 BorderThickness="1"
@@ -262,7 +260,44 @@
                     </Border>
                 </Grid>
                 <Grid Grid.Row="2">
-                    <TextBlock Text="You can see processing logs here.." TextWrapping="WrapWithOverflow" HorizontalAlignment="Center" x:Name="MessageLog" FontSize="20" FontWeight="Bold" Width="Auto" Height="Auto" Foreground="Red"/>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock 
+                        Grid.Column="0"
+                        Text="PROGRESS LOG"
+                        TextWrapping="WrapWithOverflow"
+                        HorizontalAlignment="Left"
+                        x:Name="MessageLog"
+                        FontSize="12"
+                        FontWeight="Bold"
+                        Width="Auto"
+                        Height="Auto"
+                        Foreground="Red"/>
+                    <TextBlock 
+                       Grid.Column="1"
+                        Text="LAST READING :"
+                        TextWrapping="WrapWithOverflow"
+                        HorizontalAlignment="Center"
+                        FontSize="12"
+                        FontWeight="Bold"
+                        Width="Auto"
+                        Height="Auto"
+                        Foreground="ForestGreen" />
+                    <TextBlock 
+                       Grid.Column="2"
+                        Text=""
+                        TextWrapping="WrapWithOverflow"
+                        HorizontalAlignment="Center"
+                        x:Name="ReadingsLog"
+                        FontSize="12"
+                        FontWeight="Bold"
+                        Width="Auto"
+                        Height="Auto"
+                        Foreground="Red" />
+                    
                 </Grid>
             </Grid>
         </Border>

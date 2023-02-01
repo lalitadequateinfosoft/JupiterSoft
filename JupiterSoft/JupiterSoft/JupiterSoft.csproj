@@ -96,6 +96,9 @@
     <Compile Include="CustomDailog\ConditionsDialog.xaml.cs">
       <DependentUpon>ConditionsDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="CustomDailog\ConnectivityInfo.xaml.cs">
+      <DependentUpon>ConnectivityInfo.xaml</DependentUpon>
+    </Compile>
     <Compile Include="CustomDailog\FrequencyDialog.xaml.cs">
       <DependentUpon>FrequencyDialog.xaml</DependentUpon>
     </Compile>
@@ -104,6 +107,9 @@
     </Compile>
     <Compile Include="CustomDailog\HMIDialoge.xaml.cs">
       <DependentUpon>HMIDialoge.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="CustomDailog\MotorDriveConnectivityInfo.xaml.cs">
+      <DependentUpon>MotorDriveConnectivityInfo.xaml</DependentUpon>
     </Compile>
     <Compile Include="CustomDailog\NameVariableDialog.xaml.cs">
       <DependentUpon>NameVariableDialog.xaml</DependentUpon>
@@ -158,6 +164,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="CustomDailog\ConnectivityInfo.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="CustomDailog\FrequencyDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -167,6 +177,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="CustomDailog\HMIDialoge.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CustomDailog\MotorDriveConnectivityInfo.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -28,8 +28,9 @@ namespace JupiterSoft.CustomDailog
 
         BrushConverter bc;
         CommunicationDevices weighing;
+        private decimal LastReceivedVal = 0;
         private Dispatcher _dispathcer;
-       public CalibrationHMIViewModel hMIViewModel;
+        public CalibrationHMIViewModel hMIViewModel;
         private DeviceInfo deviceInfo;
         System.Timers.Timer ExecutionTimer = new System.Timers.Timer();
 
@@ -86,11 +87,10 @@ namespace JupiterSoft.CustomDailog
                 model.Zero = 0;
                 model.Span = 0;
                 model.Factor = 0;
-                model.CalculateSpan = false;
+                model.CalculateSpan = true;
                 model.Weight = 0;
+                LastReceivedVal = 0;
                 MessageBox.Show("Calibration has been reset");
-
-
             }
         }
 
@@ -159,9 +159,9 @@ namespace JupiterSoft.CustomDailog
 
                 serialPort.Handshake = Handshake.None;
                 serialPort.Encoding = ASCIIEncoding.ASCII;
-                
-                        serialPort.DataReceived += WeightDevice_DataReceived;
 
+                serialPort.DataReceived += WeightDevice_DataReceived;
+                serialPort.ReadTimeout= 1000;
 
                 serialPort.Open();
             }
@@ -186,7 +186,7 @@ namespace JupiterSoft.CustomDailog
                     weighing.SerialDevice.Close();
                 }
             }
-            
+
 
         }
 
@@ -206,16 +206,23 @@ namespace JupiterSoft.CustomDailog
                 case 1:
                     try
                     {
-                        int i = 0;
+                        // int i = 0;
                         weighing.RecIdx = 0;
                         weighing.RecState = 1;
                         recBuf = new byte[weighing.SerialDevice.BytesToRead];
+                        if (recBuf.Length <= 30)
+                        {
+                            recBuf = new byte[REC_BUF_SIZE];
+                            return;
+                        }
                         weighing.SerialDevice.Read(recBuf, 0, recBuf.Length);
                         weighing.ReceiveBufferQueue = new Queue<byte[]>();
                         weighing.ReceiveBufferQueue.Enqueue(recBuf);
                         weighing.LastResponseReceived = System.DateTime.Now;
                         weighing.IsComplete = true;
                         recBuf = new byte[REC_BUF_SIZE];
+
+                        UartDataReader();
                     }
                     catch (Exception ex)
                     {
@@ -227,7 +234,7 @@ namespace JupiterSoft.CustomDailog
                     break;
             }
 
-            UartDataReader();
+            
 
         }
 
@@ -252,7 +259,6 @@ namespace JupiterSoft.CustomDailog
                         {
 
                             Common.GoodTmgm++;
-
                             weighing.CurrentRequest.MbTgm = recBufParse;
                             weighing.CurrentRequest.Status = PortDataStatus.Received;
                             CompareWeightModuleResponse(weighing.CurrentRequest);
@@ -281,9 +287,22 @@ namespace JupiterSoft.CustomDailog
                     string str = Encoding.Default.GetString(bytestToRead).Replace(System.Environment.NewLine, string.Empty);
 
                     string actualdata = Regex.Replace(str, @"[^\t\r\n -~]", "_").RemoveWhitespace().Trim();
+                    if (string.IsNullOrWhiteSpace(actualdata)) return;
+
+                    //if (actualdata.StartsWith("_") || actualdata.EndsWith("_"))
+                    //{
+                    //    actualdata = filterString(actualdata);
+                    //}
+
+                    //if (!actualdata.EndsWith("m"))
+                    //{
+                    //    actualdata = actualdata.EndsWith("m") == false ? actualdata.Remove(actualdata.Length - 1, 1) : actualdata;
+                    //    actualdata = filterString(actualdata);
+                    //}
+
                     string[] data = actualdata.Split('_');
 
-                    var lastitem = data[data.Length - 1];
+                    var lastitem = data[data.Length - 2];
                     var outP = lastitem.ToLower().ToString();
 
                     if (!string.IsNullOrEmpty(outP))
@@ -291,14 +310,18 @@ namespace JupiterSoft.CustomDailog
                         Regex re = new Regex(@"\d+");
                         Match m = re.Match(outP);
                         decimal balance = Convert.ToDecimal(m.Value);
-
                         _dispathcer.Invoke(new Action(() =>
                         {
-                            MessageLog.Text = "Reading weight..";
-
+                            ReadingsLog.Text = balance.ToString();
                         }));
+
                         if (hMIViewModel.Zero <= 0)
                         {
+                            _dispathcer.Invoke(new Action(() =>
+                            {
+                                MessageLog.Text = "Reading weight..";
+
+                            }));
                             hMIViewModel.Zero = balance;
                             _dispathcer.Invoke(new Action(() =>
                             {
@@ -316,15 +339,34 @@ namespace JupiterSoft.CustomDailog
                             return;
                         }
 
-                        if (hMIViewModel.CalculateSpan == true &&  hMIViewModel.Span > 0)
+                        if (hMIViewModel.CalculateSpan == true && hMIViewModel.Span > 0)
                         {
+                            if(LastReceivedVal<=0)
+                            {
+                                LastReceivedVal = balance;
+                                _dispathcer.Invoke(new Action(() =>
+                                {
+                                    MessageLog.Text = "Waiting for the peak value..";
+
+                                }));
+                                return;
+                            }
+
+                            if(LastReceivedVal!=balance)
+                            {
+                                LastReceivedVal = balance;
+                                return;
+                            }
+
+
                             decimal diff = balance - hMIViewModel.Zero;
                             decimal divident = diff / hMIViewModel.Span;
-                            hMIViewModel.Factor = divident;
+                            hMIViewModel.Factor = Math.Round(divident,2);
                             hMIViewModel.CalculateSpan = false;
+                            LastReceivedVal = 0;
                             _dispathcer.Invoke(new Action(() =>
                             {
-                                MessageLog.Text = "Calibration completed...";
+                                MessageLog.Text = "Calibration completed. Now Put some known weight to check the calibration accuracy.";
                             }));
                             //hMIViewModel.Weight = 0;
                             return;
@@ -338,13 +380,54 @@ namespace JupiterSoft.CustomDailog
                             return;
                         }
 
-                        decimal weight = balance - hMIViewModel.Zero;
-                        weight = weight / hMIViewModel.Factor;
-                        hMIViewModel.Weight = Math.Round(weight, 2);
-                        _dispathcer.Invoke(new Action(() =>
+                        if (hMIViewModel.Weight <= 0)
                         {
-                            MessageLog.Text = "Calibration completed, Please close the window...";
-                        }));
+                            _dispathcer.Invoke(new Action(() =>
+                            {
+                                MessageLog.Text = "Calibration completed, Please close the window...";
+                            }));
+                        }
+
+                        decimal weight = 0;
+
+                        foreach (string arr in data)
+                        {
+                            if (string.IsNullOrWhiteSpace(arr)) continue;
+
+                            Match mm = re.Match(arr.Trim());
+                            decimal b= Convert.ToDecimal(mm.Value);
+                            weight = b - hMIViewModel.Zero;
+                            weight = weight / hMIViewModel.Factor;
+
+                            if (weight < 0) continue;
+
+                            hMIViewModel.Weight = Math.Round(weight, 2);
+                        }
+
+                        
+                        
+                       
+
+                        //if (LastReceivedVal <= 0)
+                        //{
+                        //    LastReceivedVal = balance;
+                        //    _dispathcer.Invoke(new Action(() =>
+                        //    {
+                        //        MessageLog.Text = "Waiting for the peak value..";
+
+                        //    }));
+                        //    return;
+                        //}
+
+                        //if (LastReceivedVal != balance)
+                        //{
+                        //    LastReceivedVal = balance;
+                        //    return;
+                        //}
+
+                        //hMIViewModel.Weight = Math.Round(weight, 2);
+                        //LastReceivedVal = 0;
+
                     }
 
                 }
@@ -358,11 +441,23 @@ namespace JupiterSoft.CustomDailog
 
 
         }
+
+        public string filterString(string filter)
+        {
+            if (string.IsNullOrWhiteSpace(filter)) return filter;
+            while (filter.StartsWith("_") || filter.EndsWith("_"))
+            {
+                filter = filter.StartsWith("_") == true ? filter.Substring(1) : filter;
+                filter = filter.EndsWith("_") == true ? filter.Remove(filter.Length - 1, 1) : filter;
+            }
+            return filter;
+        }
         #endregion
 
         private void STARTCalibration_Click(object sender, RoutedEventArgs e)
         {
             hMIViewModel.IsNotRunning = false;
+            hMIViewModel.IsRunning = true;
             _dispathcer.Invoke(new Action(() =>
             {
                 MessageLog.Text = "Starting Calibration..";

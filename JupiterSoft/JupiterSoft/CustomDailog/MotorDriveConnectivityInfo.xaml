@@ -1,0 +1,151 @@
+﻿<Window x:Class="JupiterSoft.CustomDailog.MotorDriveConnectivityInfo"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:JupiterSoft.CustomDailog"
+        mc:Ignorable="d"
+        Title="Motor Drive Address|Registers|Frequency Information" WindowStyle="None"
+        AllowsTransparency="True"
+        Height="300"
+        Width="450"
+        HorizontalAlignment="Center"
+        VerticalAlignment="Center"
+        Background="Transparent"
+        WindowStartupLocation="CenterScreen">
+    <Grid Background="Transparent">
+        <Border 
+                CornerRadius="5"
+                BorderThickness="1"
+                BorderBrush="#0d447a"
+                Background="White"
+                Margin="10"
+                >
+            <Border.Effect>
+                <DropShadowEffect Color="Black"
+                          Direction="270"
+                          BlurRadius="12"
+                          ShadowDepth="3" />
+            </Border.Effect>
+            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="50"/>
+                </Grid.RowDefinitions>
+                <Border 
+                            Grid.Row="0"
+                            Margin="0.8"
+                            Background="#0d447a"
+                            BorderBrush="#0d447a"
+                            BorderThickness="1"
+                            CornerRadius="0"
+                            Padding="15">
+                    <Label x:Name="HeaderTitle" Content="PROVIDE MOTOR DRIVE ADDRESS | REGISTERS | FREQUENCY INFO" Foreground="White" FontSize="12"/>
+                </Border>
+                <Grid 
+                        Grid.Row="1"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        Margin="5"
+                    >
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Label 
+                        Grid.Row="0"
+                        Grid.Column="0"
+                        Content="ADDRESS"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"/>
+                    <StackPanel 
+                        Grid.Row="0"
+                        Grid.Column="1"
+                        VerticalAlignment="Center">
+                        <TextBox 
+                            x:Name="Addressbox"
+                            HorizontalContentAlignment="Center"
+                            VerticalContentAlignment="Center"
+                            Margin="10,0"
+                            FontSize="16" 
+                            Foreground="Red"/>
+                    </StackPanel>
+                    <Label 
+                        Grid.Row="1"
+                        Grid.Column="0"
+                        Content="MOTOR FREQUENCY"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"/>
+                    <StackPanel 
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        VerticalAlignment="Center">
+                        <TextBox 
+                            x:Name="MotorFrequency"
+                            HorizontalContentAlignment="Center"
+                            VerticalContentAlignment="Center"
+                            Margin="10,0"
+                            FontSize="16" 
+                            Foreground="Red"/>
+                    </StackPanel>
+                    <Label 
+                        Grid.Row="2"
+                        Grid.Column="0"
+                        Content="COMMUNICATION REGISTER"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"/>
+                    <StackPanel
+                        Grid.Row="2"
+                        Grid.Column="1"
+                        VerticalAlignment="Center">
+                        <TextBox 
+                            x:Name="MotorRegister"
+                            FontSize="16"
+                            Foreground="Red"
+                            HorizontalContentAlignment="Center"
+                            VerticalContentAlignment="Center"
+                            Margin="10,0"/>
+                    </StackPanel>
+
+                </Grid>
+                <Grid 
+                    Grid.Row="2"
+                    Margin="5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0">
+                        <Button 
+                            Background="#0d447a"
+                            BorderBrush="#0d447a"
+                            Foreground="White"
+                            Content="Submit"
+                        HorizontalAlignment="Right"
+                        Margin="0,5,5,0"
+                        Click="BtnOk_Click"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="1">
+                        <Button 
+                            Background="Red"
+                            BorderBrush="Red"
+                            Foreground="White"
+                            Content="Cancel"
+                            HorizontalAlignment="Left"
+                            Margin="5,5,0,0"
+                            Click="BtnCancel_Click"/>
+                    </StackPanel>
+
+
+
+                </Grid>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>
