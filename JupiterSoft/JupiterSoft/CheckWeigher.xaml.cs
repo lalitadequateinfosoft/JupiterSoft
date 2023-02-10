@@ -526,6 +526,10 @@ namespace JupiterSoft
 
         void CompareWeightModuleResponse(RecData _recData)
         {
+            if (weight.Zero <= 0 || weight.Factor <= 0)
+            {
+                return;
+            }
 
             if (_recData.MbTgm.Length > 0 && _recData.MbTgm.Length > readIndex)
             {
@@ -539,26 +543,33 @@ namespace JupiterSoft
                 var outP = lastitem.ToLower().ToString();
 
 
+                decimal Cweight = 0;
+
                 if (!string.IsNullOrEmpty(outP))
                 {
                     Regex re = new Regex(@"\d+");
-                    Match m = re.Match(outP);
-                    decimal balance = Convert.ToDecimal(m.Value);
-                    if (weight.Zero <=0 || weight.Factor<=0)
-                    {
-                        return;
-                    }
 
-                    balance = Math.Round(balance,2);
-                    decimal Cweight = balance - weight.Zero;
-                    Cweight = Cweight / weight.Factor;
-                    weigherViewModel.Weight= Math.Round(Cweight,2);
-                    if (!(weigherViewModel.Weight >= weight.minRange && weigherViewModel.Weight <= weight.maxRange))
+                    foreach (string arr in data)
                     {
-                        PushingTimer.Elapsed += PushingTimer_Elapsed;
-                        PushingTimer.Interval = 34+Convert.ToInt32(modbus.PushingArm.Frequency);
-                        PushingTimer.Enabled = true;
+                        if (string.IsNullOrWhiteSpace(arr)) continue;
+
+                        Match m = re.Match(outP);
+                        decimal balance = Convert.ToDecimal(m.Value);
+                        Cweight = balance - weight.Zero;
+                        Cweight = Cweight / weight.Factor;
+
+                        if (Cweight < 0) continue;
+
+                        weigherViewModel.Weight = Math.Round(Cweight, 2);
+                        if (!(weigherViewModel.Weight >= weight.minRange && weigherViewModel.Weight <= weight.maxRange))
+                        {
+                            PushingTimer.Elapsed += PushingTimer_Elapsed;
+                            PushingTimer.Interval = 34 + Convert.ToInt32(modbus.PushingArm.Frequency);
+                            PushingTimer.Enabled = true;
+                        }
                     }
+                   
+                   
                 }
 
             }
