@@ -560,7 +560,11 @@ namespace JupiterSoft
                         Cweight = balance - weight.Zero;
                         Cweight = Cweight / weight.Factor;
                         Cweight = Math.Round(Cweight, 2);
-                        if (Cweight < 0) LastRecievedWeight = 0; continue;
+                        if (Cweight < 0)
+                        {
+                            LastRecievedWeight = 0;
+                            continue;
+                        }
                         if (LastRecievedWeight == 0)
                         {
                             LastRecievedWeight = Cweight;
