@@ -74,6 +74,7 @@ namespace JupiterSoft
         internal UInt32 TotalReceiveSize = 0;
         bool IsComplete = false;
         private int readIndex = 0;
+        public decimal LastRecievedWeight = 0;
         #endregion
 
         System.Timers.Timer ExecutionTimer = new System.Timers.Timer();
@@ -162,7 +163,7 @@ namespace JupiterSoft
                     }
                 }
 
-                if(!weight.IsCalibrated)
+                if (!weight.IsCalibrated)
                 {
                     CalibrationHMI calibrationHMI = new CalibrationHMI(weight);
                     calibrationHMI.ShowDialog();
@@ -187,7 +188,7 @@ namespace JupiterSoft
                         ConnectivityInfo connectivityInfo = new ConnectivityInfo();
                         connectivityInfo.ShowDialog();
 
-                        if(!connectivityInfo.Canceled)
+                        if (!connectivityInfo.Canceled)
                         {
                             modbus.slaveAddress = Convert.ToInt32(connectivityInfo.AddressBox.Text.ToString());
 
@@ -213,7 +214,7 @@ namespace JupiterSoft
                             model.IsPhotoConfigured = true;
                             model.IsPushingConfigured = true;
                         }
-                        
+
                     }
                 }
 
@@ -221,7 +222,7 @@ namespace JupiterSoft
                 {
                     ConfigurationDailog dailog = new ConfigurationDailog("Set Motor Drive Configuration", deviceInfo.CustomDeviceInfos);
                     dailog.ShowDialog();
-                    if(!dailog.Canceled)
+                    if (!dailog.Canceled)
                     {
                         MotorDriveConnectivityInfo frequency = new MotorDriveConnectivityInfo();
                         frequency.ShowDialog();
@@ -239,9 +240,9 @@ namespace JupiterSoft
                             MotorDrive.IsConfigured = true;
                             model.IsMotorConfigured = true;
                         }
-                        
+
                     }
-                    
+
                 }
             }
 
@@ -422,8 +423,8 @@ namespace JupiterSoft
         {
             if (this.DataContext is CheckWeigherViewModel model)
             {
-                if(!model.IsWeightConfigured || !model.IsPushingConfigured || !model.IsMotorConfigured || !model.IsPhotoConfigured)
-                { 
+                if (!model.IsWeightConfigured || !model.IsPushingConfigured || !model.IsMotorConfigured || !model.IsPhotoConfigured)
+                {
                     MessageBox.Show("Please configure Devices.");
                     LoadSytem();
                     MessageBox.Show("Please run again to start process..");
@@ -474,6 +475,7 @@ namespace JupiterSoft
         private void ExecuteLogic()
         {
             //Camera
+            LastRecievedWeight = 0;
             DisableWindowControl();
             ConnectionUSB();
             StartVideoCapture(_VideoDirectory);
@@ -557,10 +559,18 @@ namespace JupiterSoft
                         decimal balance = Convert.ToDecimal(m.Value);
                         Cweight = balance - weight.Zero;
                         Cweight = Cweight / weight.Factor;
-
-                        if (Cweight < 0) continue;
-
-                        weigherViewModel.Weight = Math.Round(Cweight, 2);
+                        Cweight = Math.Round(Cweight, 2);
+                        if (Cweight < 0) LastRecievedWeight = 0; continue;
+                        if (LastRecievedWeight == 0)
+                        {
+                            LastRecievedWeight = Cweight;
+                        }
+                        else if (LastRecievedWeight == Cweight)
+                        {
+                            var NewWeight = Math.Round(Convert.ToDouble(Cweight), MidpointRounding.AwayFromZero);
+                            Cweight = Convert.ToDecimal(NewWeight);
+                        }
+                        weigherViewModel.Weight = Cweight;
                         if (!(weigherViewModel.Weight >= weight.minRange && weigherViewModel.Weight <= weight.maxRange))
                         {
                             PushingTimer.Elapsed += PushingTimer_Elapsed;
@@ -568,8 +578,8 @@ namespace JupiterSoft
                             PushingTimer.Enabled = true;
                         }
                     }
-                   
-                   
+
+
                 }
 
             }
@@ -923,7 +933,7 @@ namespace JupiterSoft
 
         }
 
-        private void WriteControCardState(int reg, int val,int slave)
+        private void WriteControCardState(int reg, int val, int slave)
         {
 
             modbus.RecState = 1;
@@ -1008,7 +1018,7 @@ namespace JupiterSoft
                         int _i29 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 61);
 
 
-                        if(modbus.Sensor.RegisterNo==1)
+                        if (modbus.Sensor.RegisterNo == 1)
                         {
                             if (_i0 == 0)
                             {
@@ -1782,7 +1792,7 @@ namespace JupiterSoft
                         MotorDrive.IsComplete = true;
                         MotorDrive.ReceiveBufferQueue.Enqueue(recBuf);
                     }
-                   
+
                     MotorDrive.LastResponseReceived = DateTime.Now;
                     recBuf = new byte[REC_BUF_SIZE];
                     break;
@@ -1905,7 +1915,7 @@ namespace JupiterSoft
 
             if (this.DataContext is CheckWeigherViewModel model)
             {
-               
+
                 model.IsWeightEditEnabled = true;
                 model.IsWeightSaveEnabled = false;
             }
