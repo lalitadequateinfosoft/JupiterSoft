@@ -98,6 +98,7 @@ namespace JupiterSoft
         private List<DeviceModel> DeviceModels;
         private DeviceInfo deviceInfo;
         private static readonly Regex _regex = new Regex("[^0-9.-]+");
+        public string SessionId = string.Empty;
         public CheckWeigher()
         {
             weigherViewModel = new CheckWeigherViewModel();
@@ -476,6 +477,10 @@ namespace JupiterSoft
         {
             //Camera
             LastRecievedWeight = 0;
+            var date = DateTime.Now;
+            Random rnd = new Random();
+            var rnNum = rnd.Next(1, 1000);
+            SessionId = "Session_" + date.Year.ToString() + date.Month.ToString() + date.Day.ToString()+ "_"+ rnNum;
             DisableWindowControl();
             ConnectionUSB();
             StartVideoCapture(_VideoDirectory);
@@ -544,6 +549,8 @@ namespace JupiterSoft
                 var lastitem = data[data.Length - 1];
                 var outP = lastitem.ToLower().ToString();
 
+                string log = "Received Raw output:\r\n" + actualdata.Replace("_",",").ToString() + ".";
+                LogWriter.LogWrite(log, SessionId);
 
                 decimal Cweight = 0;
 
@@ -560,21 +567,37 @@ namespace JupiterSoft
                         Cweight = balance - weight.Zero;
                         Cweight = Cweight / weight.Factor;
                         Cweight = Math.Round(Cweight, 2);
+                        log = string.Format("Raw Input: {0} \r\n", balance);
+                        log += string.Format("Zero: {0} \r\n", weight.Zero);
+                        log += string.Format("Factor: {0} \r\n", weight.Factor);
+                        log += string.Format("Last Received Weight: {0} \r\n", LastRecievedWeight);
+                        log += string.Format("Current Weight without compensation: {0} \r\n", Cweight);
+                        LogWriter.LogWrite(log, SessionId);
                         if (Cweight < 0)
                         {
                             LastRecievedWeight = 0;
+                            log += string.Format("Current Weight without compensation: {0} \r\n", Cweight);
+                            log += string.Format("Current Weight with compensation: {0} \r\n", Cweight);
+                            LogWriter.LogWrite(log, SessionId);
                             continue;
                         }
                         if (LastRecievedWeight == 0)
                         {
                             LastRecievedWeight = Cweight;
+                            log += string.Format("Current Weight without compensation: {0} \r\n", Cweight);
+                            log += string.Format("Current Weight with compensation: {0} \r\n", Cweight);
+                            LogWriter.LogWrite(log, SessionId);
                         }
                         else if (LastRecievedWeight == Cweight)
                         {
                             var NewWeight = Math.Round(Convert.ToDouble(Cweight), MidpointRounding.AwayFromZero);
+                            log += string.Format("Current Weight without compensation: {0} \r\n", Cweight);
                             Cweight = Convert.ToDecimal(NewWeight);
+                            log += string.Format("Current Weight with compensation: {0} \r\n", Cweight);
+                            LogWriter.LogWrite(log, SessionId);
                         }
                         weigherViewModel.Weight = Cweight;
+                       
                         if (!(weigherViewModel.Weight >= weight.minRange && weigherViewModel.Weight <= weight.maxRange))
                         {
                             PushingTimer.Elapsed += PushingTimer_Elapsed;

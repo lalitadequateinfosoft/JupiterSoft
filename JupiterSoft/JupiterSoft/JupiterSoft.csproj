@@ -128,6 +128,7 @@
     <Compile Include="Models\ConnectedDevices.cs" />
     <Compile Include="Models\FunctionModel.cs" />
     <Compile Include="Models\LogViewer.cs" />
+    <Compile Include="Models\LogWriter.cs" />
     <Compile Include="Models\ModbusConfiguration.cs" />
     <Compile Include="Models\ModBusInput.cs" />
     <Compile Include="Models\RegisterConfiguration.cs" />
