@@ -570,11 +570,10 @@ namespace JupiterSoft
                         log = string.Format("Raw Input: {0} \r\n", balance);
                         log += string.Format("Zero: {0} \r\n", weight.Zero);
                         log += string.Format("Factor: {0} \r\n", weight.Factor);
-                        log += string.Format("Last Received Weight: {0} \r\n", LastRecievedWeight);
-                        log += string.Format("Current Weight without compensation: {0} \r\n", Cweight);
                         LogWriter.LogWrite(log, SessionId);
                         if (Cweight < 0)
                         {
+                            log += string.Format("Last Received Weight: {0} \r\n", LastRecievedWeight);
                             LastRecievedWeight = 0;
                             log += string.Format("Current Weight without compensation: {0} \r\n", Cweight);
                             log += string.Format("Current Weight with compensation: {0} \r\n", Cweight);
@@ -583,6 +582,7 @@ namespace JupiterSoft
                         }
                         if (LastRecievedWeight == 0)
                         {
+                            log += string.Format("Last Received Weight: {0} \r\n", LastRecievedWeight);
                             LastRecievedWeight = Cweight;
                             log += string.Format("Current Weight without compensation: {0} \r\n", Cweight);
                             log += string.Format("Current Weight with compensation: {0} \r\n", Cweight);
@@ -590,9 +590,18 @@ namespace JupiterSoft
                         }
                         else if (LastRecievedWeight == Cweight)
                         {
+                            log += string.Format("Last Received Weight: {0} \r\n", LastRecievedWeight);
                             var NewWeight = Math.Round(Convert.ToDouble(Cweight), MidpointRounding.AwayFromZero);
                             log += string.Format("Current Weight without compensation: {0} \r\n", Cweight);
                             Cweight = Convert.ToDecimal(NewWeight);
+                            log += string.Format("Current Weight with compensation: {0} \r\n", Cweight);
+                            LogWriter.LogWrite(log, SessionId);
+                        }
+                        else
+                        {
+                            log += string.Format("Last Received Weight: {0} \r\n", LastRecievedWeight);
+                            LastRecievedWeight = Cweight;
+                            log += string.Format("Current Weight without compensation: {0} \r\n", Cweight);
                             log += string.Format("Current Weight with compensation: {0} \r\n", Cweight);
                             LogWriter.LogWrite(log, SessionId);
                         }
@@ -615,7 +624,7 @@ namespace JupiterSoft
         private void PushingTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
             TurnOnPushingArm();
-            PushingTimer.Interval = 0;
+            //PushingTimer.Interval = 0;
             PushingTimer.Elapsed -= PushingTimer_Elapsed;
             PushingTimer.Enabled = false;
             TurnOffPushing();

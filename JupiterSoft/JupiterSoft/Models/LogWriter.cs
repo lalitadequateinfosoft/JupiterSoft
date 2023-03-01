@@ -9,7 +9,7 @@ namespace JupiterSoft.Models
 {
     public static class LogWriter
     {
-        public static readonly string _logDirectory = @"C:\CheckWeigher\logs";
+        public static readonly string _logDirectory = @"D:\CheckWeigher\logs";
 
         public static void LogWrite(string logMessage, string sessionId)
         {
