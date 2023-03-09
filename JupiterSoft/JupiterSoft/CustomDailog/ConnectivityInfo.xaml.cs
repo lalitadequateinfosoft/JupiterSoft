@@ -40,7 +40,7 @@ namespace JupiterSoft.CustomDailog
             {
                 if (Regex.IsMatch(AddressBox.Text, @"^\d+$")
                                 && Regex.IsMatch(PushingArm.Text, @"^\d+$")
-                                && Regex.IsMatch(Sensors.Text, @"^\d+$"))
+                                && Regex.IsMatch(Sensors.Text, @"^\d+$") && Regex.IsMatch(MotorRelay.Text, @"^\d+$"))
                 {
                     Canceled = false;
                     Close();

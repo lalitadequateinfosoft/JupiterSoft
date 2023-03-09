@@ -54,6 +54,7 @@
                             <RowDefinition Height="*"/>
                             <RowDefinition Height="*"/>
                             <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
@@ -80,7 +81,7 @@
                                      BorderThickness="1"
                                  />
                         </StackPanel>
-
+                        
                         <Label Grid.Row="1"
                                Grid.Column="0"
                                Content="PUSHING ARM CONNECTED TO REGISTER"
@@ -102,6 +103,7 @@
                                      BorderThickness="1"
                                  />
                         </StackPanel>
+                        
                         <Label Grid.Row="2"
                                Grid.Column="0"
                                Content="SENSOR CONNECTED TO REGISTER"
@@ -123,7 +125,29 @@
                                      BorderThickness="1"
                                  />
                         </StackPanel>
-                        
+
+                        <Label Grid.Row="3"
+                               Grid.Column="0"
+                               Content="MOTOR ON/OFF RELAY"
+                               HorizontalContentAlignment="Center"
+                               VerticalContentAlignment="Center"/>
+                        <StackPanel 
+                            Grid.Row="3"
+                            Grid.Column="1"
+                            VerticalAlignment="Center">
+                            <TextBox x:Name="MotorRelay"
+                                     Margin="5"
+                                      Width="150"
+                                     Height="30"
+                                 HorizontalContentAlignment="Center"
+                                 VerticalContentAlignment="Center"
+                                     HorizontalAlignment="Center"
+                                     VerticalAlignment="Center"
+                                     BorderBrush="Black"
+                                     BorderThickness="1"
+                                 />
+                        </StackPanel>
+
                     </Grid>
                 </ScrollViewer>
                 <Grid 

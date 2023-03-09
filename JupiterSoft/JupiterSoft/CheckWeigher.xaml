@@ -131,9 +131,9 @@
 		Text="CHECK WEIGHER"
         Foreground="White"/>
                 <Grid>
-                    
+
                 </Grid>
-                
+
             </Grid>
 
             <Button
@@ -185,7 +185,7 @@
                 <Grid Grid.Column="0">
                     <Label x:Name="ProjectName" FontSize="18" FontWeight="Bold" Content="Check Weigher" HorizontalAlignment="Left"/>
                 </Grid>
-               
+
                 <Grid Grid.Column="1">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                         <StackPanel Margin="5,0,5,0">
@@ -203,8 +203,8 @@
                         </StackPanel>
                         <StackPanel Margin="5,0,5,0">
                             <Button x:Name="Pause"
-                                    Background="#a8a8a8"
-                                    Foreground="White"
+                                    Background="YellowGreen"
+                                    Foreground="Black"
                                     Width="100"
                                     Content="PAUSE"
                                     IsEnabled="{Binding IsPaused}"
@@ -326,7 +326,7 @@
                                                     </StackPanel>
                                                 </Border>
                                             </Grid>
-                                            
+
                                         </Grid>
                                         <Grid Grid.Column="3" Margin="5,0,5,0">
                                             <Grid.RowDefinitions>
@@ -355,7 +355,7 @@
                                                         <ComboBoxItem Content="PCS"/>
                                                     </ComboBox>
                                                 </StackPanel>
-                                            </Border> 
+                                            </Border>
                                         </Grid>
                                         <Grid Grid.Column="4" Margin="8,18,5,10">
                                             <Grid.RowDefinitions>
@@ -465,7 +465,8 @@
                                                     Background="#636363"
                                                     Foreground="White"
                                                     Width="80"
-                                                    IsEnabled="{Binding IsMotorEditEnabled}"/>
+                                                    IsEnabled="{Binding IsMotorEditEnabled}"
+                                                    Click="Medit_Click"/>
                                             <Button Grid.Row="1"
                                                     x:Name="Msave"
                                                     FontSize="12"
@@ -474,7 +475,8 @@
                                                     Background="#0082ca"
                                                     Foreground="White"
                                                     Width="80"
-                                                    IsEnabled="{Binding IsMotorSaveEnabled}"/>
+                                                    IsEnabled="{Binding IsMotorSaveEnabled}"
+                                                    Click="Msave_Click"/>
                                         </Grid>
                                         <Grid Grid.Column="4">
                                             <Grid.RowDefinitions>
@@ -678,19 +680,32 @@
                         </Border>
                     </Grid>
                     <Grid Grid.Row="1" Margin="0,10,0,0">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="*"/>
-                        </Grid.RowDefinitions>
-                        <Label Grid.Row="0" x:Name="SensorLabel" Content="SENSOR(PHOTO EYE)" FontSize="10" FontWeight="Bold"/>
-                        <Grid Grid.Row="1">
-                            <StackPanel Orientation="Horizontal" Margin="0,10,0,10">
-                                <StackPanel>
-                                    <Label Content="ON" FontSize="12" FontWeight="Bold" Foreground="#444444"/>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="2*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid Grid.Column="0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Label Grid.Row="0" x:Name="SensorLabel" HorizontalContentAlignment="Center" Content="SENSOR(PHOTO EYE)" FontSize="12" FontWeight="Bold"/>
+                            <Grid Grid.Row="1">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.Resources>
+                                    <Style TargetType="Border" >
+                                        <Setter Property="Margin" Value="5,5,5,5" />
+                                    </Style>
+                                </Grid.Resources>
+
+                                <StackPanel Grid.Column="0">
+                                    <Label HorizontalContentAlignment="Center" Content="ON" FontSize="14" FontWeight="Bold" Foreground="#444444"/>
                                     <Border BorderBrush="#b3b3b3"
                                             BorderThickness="2"
-                                            Background="#f6f6f6"
-                                            Width="100" Height="100">
+                                            Background="#f6f6f6" Height="100">
                                         <Ellipse x:Name="SensorOn" 
                                                     HorizontalAlignment="Center"
                                                     Grid.Row="1"
@@ -703,12 +718,11 @@
                                                     Fill="DarkGray" />
                                     </Border>
                                 </StackPanel>
-                                <StackPanel Margin="10,0,0,0">
-                                    <Label Content="OFF" FontSize="12" FontWeight="Bold" Foreground="#444444"/>
+                                <StackPanel Grid.Column="1">
+                                    <Label HorizontalContentAlignment="Center" Content="OFF" FontSize="14" FontWeight="Bold" Foreground="#444444"/>
                                     <Border BorderBrush="#b3b3b3"
                                             BorderThickness="2"
-                                            Background="#f6f6f6"
-                                            Width="100" Height="100">
+                                            Background="#f6f6f6" Height="100">
                                         <Ellipse x:Name="SensorOff" 
                                                     HorizontalAlignment="Center"
                                                     Grid.Row="1"
@@ -721,12 +735,87 @@
                                                     Fill="DarkGray" />
                                     </Border>
                                 </StackPanel>
-                            </StackPanel>
+
+                            </Grid>
                         </Grid>
+                        <Grid Grid.Column="1">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Label Grid.Row="0" x:Name="OutPutLabel" HorizontalContentAlignment="Center" Content="OUTPUT" FontSize="12" FontWeight="Bold"/>
+                            <Grid Grid.Row="1">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.Resources>
+                                    <Style TargetType="Border" >
+                                        <Setter Property="Margin" Value="5,5,5,5" />
+                                    </Style>
+                                </Grid.Resources>
+                                <StackPanel Grid.Column="0">
+                                    <Label HorizontalContentAlignment="Center" Content="TOTAL OBJECTS" FontSize="14" FontWeight="Bold" Foreground="#444444"/>
+                                    <Border BorderBrush="#b3b3b3"
+                                            BorderThickness="2"
+                                            Background="#f6f6f6" Height="100">
+                                        <TextBox x:Name="TotalObjects"
+                                                             Text="0"
+                                                             HorizontalAlignment="Center"
+                                                             HorizontalContentAlignment="Center"
+                                                             VerticalContentAlignment="Center"
+                                                             FontSize="22"
+                                                             FontWeight="Bold"
+                                                             Foreground="#4a4a4a"
+                                                             BorderBrush="Transparent"
+                                                             Background="Transparent"
+                                                             />
+                                    </Border>
+                                </StackPanel>
+                                <StackPanel Grid.Column="1">
+                                    <Label HorizontalContentAlignment="Center" Content="OBJECTS PASSED" FontSize="14" FontWeight="Bold" Foreground="#444444"/>
+                                    <Border BorderBrush="#b3b3b3"
+                                            BorderThickness="2"
+                                            Background="#f6f6f6" Height="100">
+                                        <TextBox x:Name="ObjectsPassed"
+                                                             Text="0"
+                                                             HorizontalAlignment="Center"
+                                                             HorizontalContentAlignment="Center"
+                                                             VerticalContentAlignment="Center"
+                                                             FontSize="22"
+                                                             FontWeight="Bold"
+                                                             Foreground="#4a4a4a"
+                                                             BorderBrush="Transparent"
+                                                             Background="Transparent"
+                                                             />
+                                    </Border>
+                                </StackPanel>
+                                <StackPanel Grid.Column="2">
+                                    <Label HorizontalContentAlignment="Center" Content="OBJECTS FAILED" FontSize="14" FontWeight="Bold" Foreground="#444444"/>
+                                    <Border BorderBrush="#b3b3b3"
+                                            BorderThickness="2"
+                                            Background="#f6f6f6" Height="100">
+                                        <TextBox x:Name="ObjectsFailed"
+                                                             Text="0"
+                                                             HorizontalAlignment="Center"
+                                                             HorizontalContentAlignment="Center"
+                                                             VerticalContentAlignment="Center"
+                                                             FontSize="22"
+                                                             FontWeight="Bold"
+                                                             Foreground="#4a4a4a"
+                                                             BorderBrush="Transparent"
+                                                             Background="Transparent"
+                                                             />
+                                    </Border>
+                                </StackPanel>
+                            </Grid>
+                        </Grid>
+                        
                     </Grid>
                 </Grid>
             </Grid>
-            
+
         </Grid>
     </Grid>
 

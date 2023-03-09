@@ -75,6 +75,7 @@ namespace JupiterSoft
         bool IsComplete = false;
         private int readIndex = 0;
         public decimal LastRecievedWeight = 0;
+        public decimal LastMaxWeight = 0;
         #endregion
 
         System.Timers.Timer ExecutionTimer = new System.Timers.Timer();
@@ -196,7 +197,7 @@ namespace JupiterSoft
 
                             modbus.PushingArm = new RegisterConfiguration
                             {
-                                RType = 0,
+                                RType = 1,
                                 DeviceType = (int)Module_Device_Type.ControlCard,
                                 RegisterNo = Convert.ToInt32(connectivityInfo.PushingArm.Text.ToString()),
                                 Frequency = 30,
@@ -207,6 +208,15 @@ namespace JupiterSoft
                                 RType = 1,
                                 DeviceType = (int)Module_Device_Type.ControlCard,
                                 RegisterNo = Convert.ToInt32(connectivityInfo.Sensors.Text.ToString()),
+                                Frequency = 0,
+                                Count = 0,
+                            };
+
+                            modbus.MotorDrive = new RegisterConfiguration
+                            {
+                                RType = 1,
+                                DeviceType = (int)Module_Device_Type.ControlCard,
+                                RegisterNo = Convert.ToInt32(connectivityInfo.MotorRelay.Text.ToString()),
                                 Frequency = 0,
                                 Count = 0,
                             };
@@ -225,21 +235,29 @@ namespace JupiterSoft
                     dailog.ShowDialog();
                     if (!dailog.Canceled)
                     {
-                        MotorDriveConnectivityInfo frequency = new MotorDriveConnectivityInfo();
-                        frequency.ShowDialog();
-                        if (!frequency.Canceled)
+                        MotorDrive.PortName = deviceInfo.CustomDeviceInfos.Where(x => x.DeviceID == dailog.DeviceId).FirstOrDefault().PortName;
+                        MotorDrive.DeviceId = dailog.DeviceId;
+                        MotorDrive.BaudRate = dailog.BaudRate;
+                        MotorDrive.DataBit = dailog.Databit;
+                        MotorDrive.StopBit = dailog.Stopbit;
+                        MotorDrive.Parity = dailog.ParityValue;
+
+                        MotorDriveConnectivityInfo MotorInfo = new MotorDriveConnectivityInfo();
+                        MotorInfo.ShowDialog();
+                        if (!MotorInfo.Canceled)
                         {
                             MotorDrive.MotorDrive = new RegisterConfiguration
                             {
                                 RType = 0,
                                 DeviceType = (int)Module_Device_Type.MotorDrive,
-                                RegisterNo = Convert.ToInt32(frequency.MotorRegister.Text),
-                                Frequency = Convert.ToDecimal(frequency.MotorFrequency.Text),
+                                RegisterNo = Convert.ToInt32(MotorInfo.MotorRegister.Text),
+                                Frequency = Convert.ToDecimal(MotorInfo.MotorFrequency.Text),
                                 Count = 0
                             };
-                            MotorDrive.slaveAddress = Convert.ToInt32(frequency.Addressbox.Text);
+                            MotorDrive.slaveAddress = Convert.ToInt32(MotorInfo.Addressbox.Text);
                             MotorDrive.IsConfigured = true;
                             model.IsMotorConfigured = true;
+                            frequency.Text = MotorInfo.MotorFrequency.Text;
                         }
 
                     }
@@ -314,6 +332,9 @@ namespace JupiterSoft
 
 
                 //_webCamera = new WebCamera();
+                _webCamera = new WebCamera();
+                _drawingImageProvider = new DrawingImageProvider();
+                _connector = new MediaConnector();
                 _webCamera = WebCameraFactory.GetDefaultDevice();
 
                 if (_webCamera != null)
@@ -443,6 +464,10 @@ namespace JupiterSoft
 
         private void Pause_Click(object sender, RoutedEventArgs e)
         {
+            if (modbus.SerialDevice.IsOpen)
+            {
+                WriteControCardState(modbus.MotorDrive.RegisterNo, 0, modbus.slaveAddress);
+            }
             StopPortCommunication((int)Models.Module_Device_Type.Weight);
             StopPortCommunication((int)Models.Module_Device_Type.MotorDrive);
             StopPortCommunication((int)Models.Module_Device_Type.ControlCard);
@@ -480,13 +505,18 @@ namespace JupiterSoft
             var date = DateTime.Now;
             Random rnd = new Random();
             var rnNum = rnd.Next(1, 1000);
-            SessionId = "Session_" + date.Year.ToString() + date.Month.ToString() + date.Day.ToString()+ "_"+ rnNum;
+            SessionId = "Session_" + date.Year.ToString() + date.Month.ToString() + date.Day.ToString() + "_" + rnNum;
             DisableWindowControl();
             ConnectionUSB();
             StartVideoCapture(_VideoDirectory);
-            ConnectWeight(weight.PortName, weight.BaudRate, weight.DataBit, weight.StopBit, weight.Parity);
+
             ConnectMotor(MotorDrive.PortName, MotorDrive.BaudRate, MotorDrive.DataBit, MotorDrive.StopBit, MotorDrive.Parity);
             Connect_control_card(modbus.PortName, modbus.BaudRate, modbus.DataBit, modbus.StopBit, modbus.Parity);
+            if (modbus.SerialDevice.IsOpen)
+            {
+                WriteControCardState(modbus.MotorDrive.RegisterNo, 1, modbus.slaveAddress);
+            }
+            ConnectWeight(weight.PortName, weight.BaudRate, weight.DataBit, weight.StopBit, weight.Parity);
             StartTimer();
         }
 
@@ -497,8 +527,8 @@ namespace JupiterSoft
                 model.IsWeightEditEnabled = false;
                 model.IsWeightSaveEnabled = false;
 
-
-                model.IsMotorEditEnabled = false;
+                frequency.IsEnabled = false;
+                model.IsMotorEditEnabled = true;
                 model.IsMotorSaveEnabled = false;
 
 
@@ -549,7 +579,7 @@ namespace JupiterSoft
                 var lastitem = data[data.Length - 1];
                 var outP = lastitem.ToLower().ToString();
 
-                string log = "Received Raw output:\r\n" + actualdata.Replace("_",",").ToString() + ".";
+                string log = "Received Raw output:\r\n" + actualdata.Replace("_", ",").ToString() + ".";
                 LogWriter.LogWrite(log, SessionId);
 
                 decimal Cweight = 0;
@@ -606,12 +636,14 @@ namespace JupiterSoft
                             LogWriter.LogWrite(log, SessionId);
                         }
                         weigherViewModel.Weight = Cweight;
-                       
-                        if (!(weigherViewModel.Weight >= weight.minRange && weigherViewModel.Weight <= weight.maxRange))
+
+                        if(LastMaxWeight == 0 && Cweight>0)
                         {
-                            PushingTimer.Elapsed += PushingTimer_Elapsed;
-                            PushingTimer.Interval = 34 + Convert.ToInt32(modbus.PushingArm.Frequency);
-                            PushingTimer.Enabled = true;
+                            LastMaxWeight = Cweight;
+                        }
+                        else if(Cweight>LastMaxWeight)
+                        {
+                            LastMaxWeight=Cweight;
                         }
                     }
 
@@ -634,8 +666,10 @@ namespace JupiterSoft
         {
             WriteControCardState(modbus.PushingArm.RegisterNo, 1, modbus.slaveAddress);
             modbus.PushingArm.Count = modbus.PushingArm.Count + 1;
+            int failed = modbus.PushingArm.Count;
             _dispathcer.Invoke(new Action(() =>
             {
+                ObjectsFailed.Text = failed.ToString();
                 PushingOn.Fill = new SolidColorBrush(Colors.DodgerBlue);
                 PushingOn.Stroke = Brushes.LightBlue;
                 PushingOff.Fill = new SolidColorBrush(Colors.DarkGray);
@@ -835,6 +869,108 @@ namespace JupiterSoft
 
                                 modbus.CurrentRequest = _recData;
                                 ReadControlCardResponse(modbus.CurrentRequest);
+                            }
+
+                        }
+                    }
+
+
+                }
+
+            }
+
+        }
+
+        private void MotorDataReader()
+        {
+
+            if (MotorDrive.RecState > 0 && MotorDrive.IsComplete)
+            {
+                MotorDrive.IsComplete = false;
+
+
+                //recState = 1;
+                while (MotorDrive.ReceiveBufferQueue.Count > 0)
+                {
+                    recBufParse = MotorDrive.ReceiveBufferQueue.Dequeue();
+
+                    MotorDrive.RecState = 1;
+                    SB1Reply _reply = new SB1Reply(Common.GetSessionId);
+                    SB1Handler _hndl = new SB1Handler(MotorDrive.SerialDevice);
+                    UInt32 length = 32;
+                    UInt32 payLoadSize = 0;
+                    Byte[] payload;
+                    Byte[] RxSB1 = recBufParse;
+                    Byte MbAck;
+                    UInt16 MbLength;
+                    UInt16 Reserved;
+                    Byte[] mbTgmBytes;
+
+
+                    length = (uint)recBufParse[2] + 5;
+                    payLoadSize = 0;
+                    RxSB1 = recBufParse;
+                    RecData _recData = MotorDrive.CurrentRequest;
+
+                    //if (_reply.CheckCrc(recBufParse, Convert.ToInt32(_reply.length)))  // SB1 Check CRC
+                    //{
+
+                    if (_recData != null)
+                    {
+                        //ExtractPayload
+                        Byte[] _payload = new Byte[1000];
+                        Array.Copy(RxSB1, 30, _payload, 0, payLoadSize);
+                        payload = _payload;
+
+                        //Set payloadrs
+                        MbAck = (Byte)payload[0];
+                        MbLength = Util.ByteArrayConvert.ToUInt16(payload, 1);
+                        Reserved = Util.ByteArrayConvert.ToUInt16(payload, 3);
+
+
+                        //extract modbus tgm
+                        Byte[] _MbTgm = new Byte[1000];
+                        Array.Copy(_payload, 5, _MbTgm, 0, MbLength);
+                        mbTgmBytes = _MbTgm;
+
+
+                        _MbTgmBytes = RxSB1;
+                        MbLength = (ushort)_reply.length;
+                        if (_MbTgmBytes != null && MbLength > 0)
+                        {
+                            bool _IsTgmErr = false;
+                            _IsTgmErr = CheckTgmError(_recData, _payload, _MbTgmBytes, MbLength);
+                            if (_IsTgmErr)
+                            {
+                                if (_recData.RqType == RQType.WireLess)
+                                {
+                                    mbTgmBytes = payload;
+                                }
+                                else
+                                {
+                                    mbTgmBytes = _MbTgmBytes;
+                                }
+
+                                MotorDrive.CurrentRequest.MbTgm = mbTgmBytes;
+                                MotorDrive.CurrentRequest.Status = PortDataStatus.Received;
+                                
+                                ReadMotorResponse(MotorDrive.CurrentRequest);
+                                return;
+
+                            }
+                        }
+
+                    }
+                    else
+                    {
+                        if (_recData != null)
+                        {
+                            _recData.Status = PortDataStatus.Normal;
+                            if (_recData.SessionId > 0)
+                            {
+
+                                MotorDrive.CurrentRequest = _recData;
+                                ReadMotorResponse(MotorDrive.CurrentRequest);
                             }
 
                         }
@@ -1054,9 +1190,9 @@ namespace JupiterSoft
                         int _i29 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 61);
 
 
-                        if (modbus.Sensor.RegisterNo == 1)
+                        if (modbus.Sensor.RegisterNo == 1 && modbus.Sensor.RType == 1)
                         {
-                            if (_i0 == 0)
+                            if (_i16 == 0)
                             {
                                 if (modbus.Sensor.ObjectIntervals != null && modbus.Sensor.ObjectIntervals.Count() > 0)
                                 {
@@ -1064,12 +1200,9 @@ namespace JupiterSoft
                                 }
                                 else
                                 {
-                                    modbus.Sensor.ObjectIntervals = new List<DateTime>();
-                                    modbus.Sensor.ObjectIntervals.Add(DateTime.Now);
+                                    modbus.Sensor.ObjectIntervals = new List<DateTime> { DateTime.Now };
                                 }
-                                modbus.Sensor.Count = modbus.Sensor.Count + 1;
-                                modbus.MotorDrive.Count = modbus.MotorDrive.Count + 1;
-                                weight.count = weight.count + 1;
+                                IncreaseObjectCounter();
                                 _dispathcer.Invoke(new Action(() =>
                                 {
                                     SensorOn.Fill = new SolidColorBrush(Colors.DodgerBlue);
@@ -1078,7 +1211,7 @@ namespace JupiterSoft
                                     SensorOff.Stroke = Brushes.LightGray;
                                     MotorCount.Content = modbus.MotorDrive.Count.ToString();
                                 }));
-                                UartDataReader();
+                                CheckWeightRange();
                             }
                             else
                             {
@@ -1091,9 +1224,9 @@ namespace JupiterSoft
                                 }));
                             }
                         }
-                        else if (modbus.Sensor.RegisterNo == 2)
+                        else if (modbus.Sensor.RegisterNo == 2 && modbus.Sensor.RType == 1)
                         {
-                            if (_i1 == 0)
+                            if (_i17 == 0)
                             {
                                 if (modbus.Sensor.ObjectIntervals != null && modbus.Sensor.ObjectIntervals.Count() > 0)
                                 {
@@ -1101,12 +1234,9 @@ namespace JupiterSoft
                                 }
                                 else
                                 {
-                                    modbus.Sensor.ObjectIntervals = new List<DateTime>();
-                                    modbus.Sensor.ObjectIntervals.Add(DateTime.Now);
+                                    modbus.Sensor.ObjectIntervals = new List<DateTime> { DateTime.Now };
                                 }
-                                modbus.Sensor.Count = modbus.Sensor.Count + 1;
-                                modbus.MotorDrive.Count = modbus.MotorDrive.Count + 1;
-                                weight.count = weight.count + 1;
+                                IncreaseObjectCounter();
                                 _dispathcer.Invoke(new Action(() =>
                                 {
                                     SensorOn.Fill = new SolidColorBrush(Colors.DodgerBlue);
@@ -1115,7 +1245,7 @@ namespace JupiterSoft
                                     SensorOff.Stroke = Brushes.LightGray;
                                     MotorCount.Content = modbus.MotorDrive.Count.ToString();
                                 }));
-                                UartDataReader();
+                                CheckWeightRange();
                             }
                             else
                             {
@@ -1128,9 +1258,9 @@ namespace JupiterSoft
                                 }));
                             }
                         }
-                        else if (modbus.Sensor.RegisterNo == 3)
+                        else if (modbus.Sensor.RegisterNo == 3 && modbus.Sensor.RType == 1)
                         {
-                            if (_i2 == 0)
+                            if (_i18 == 0)
                             {
                                 if (modbus.Sensor.ObjectIntervals != null && modbus.Sensor.ObjectIntervals.Count() > 0)
                                 {
@@ -1138,12 +1268,9 @@ namespace JupiterSoft
                                 }
                                 else
                                 {
-                                    modbus.Sensor.ObjectIntervals = new List<DateTime>();
-                                    modbus.Sensor.ObjectIntervals.Add(DateTime.Now);
+                                    modbus.Sensor.ObjectIntervals = new List<DateTime> { DateTime.Now };
                                 }
-                                modbus.Sensor.Count = modbus.Sensor.Count + 1;
-                                modbus.MotorDrive.Count = modbus.MotorDrive.Count + 1;
-                                weight.count = weight.count + 1;
+                                IncreaseObjectCounter();
                                 _dispathcer.Invoke(new Action(() =>
                                 {
                                     SensorOn.Fill = new SolidColorBrush(Colors.DodgerBlue);
@@ -1152,7 +1279,7 @@ namespace JupiterSoft
                                     SensorOff.Stroke = Brushes.LightGray;
                                     MotorCount.Content = modbus.MotorDrive.Count.ToString();
                                 }));
-                                UartDataReader();
+                                CheckWeightRange();
                             }
                             else
                             {
@@ -1165,9 +1292,9 @@ namespace JupiterSoft
                                 }));
                             }
                         }
-                        else if (modbus.Sensor.RegisterNo == 4)
+                        else if (modbus.Sensor.RegisterNo == 4 && modbus.Sensor.RType == 1)
                         {
-                            if (_i3 == 0)
+                            if (_i19 == 0)
                             {
                                 if (modbus.Sensor.ObjectIntervals != null && modbus.Sensor.ObjectIntervals.Count() > 0)
                                 {
@@ -1175,12 +1302,9 @@ namespace JupiterSoft
                                 }
                                 else
                                 {
-                                    modbus.Sensor.ObjectIntervals = new List<DateTime>();
-                                    modbus.Sensor.ObjectIntervals.Add(DateTime.Now);
+                                    modbus.Sensor.ObjectIntervals = new List<DateTime> { DateTime.Now };
                                 }
-                                modbus.Sensor.Count = modbus.Sensor.Count + 1;
-                                modbus.MotorDrive.Count = modbus.MotorDrive.Count + 1;
-                                weight.count = weight.count + 1;
+                                IncreaseObjectCounter();
                                 _dispathcer.Invoke(new Action(() =>
                                 {
                                     SensorOn.Fill = new SolidColorBrush(Colors.DodgerBlue);
@@ -1189,7 +1313,7 @@ namespace JupiterSoft
                                     SensorOff.Stroke = Brushes.LightGray;
                                     MotorCount.Content = modbus.MotorDrive.Count.ToString();
                                 }));
-                                UartDataReader();
+                                CheckWeightRange();
                             }
                             else
                             {
@@ -1202,9 +1326,9 @@ namespace JupiterSoft
                                 }));
                             }
                         }
-                        else if (modbus.Sensor.RegisterNo == 5)
+                        else if (modbus.Sensor.RegisterNo == 5 && modbus.Sensor.RType == 1)
                         {
-                            if (_i4 == 0)
+                            if (_i20 == 0)
                             {
                                 if (modbus.Sensor.ObjectIntervals != null && modbus.Sensor.ObjectIntervals.Count() > 0)
                                 {
@@ -1212,12 +1336,9 @@ namespace JupiterSoft
                                 }
                                 else
                                 {
-                                    modbus.Sensor.ObjectIntervals = new List<DateTime>();
-                                    modbus.Sensor.ObjectIntervals.Add(DateTime.Now);
+                                    modbus.Sensor.ObjectIntervals = new List<DateTime> { DateTime.Now };
                                 }
-                                modbus.Sensor.Count = modbus.Sensor.Count + 1;
-                                modbus.MotorDrive.Count = modbus.MotorDrive.Count + 1;
-                                weight.count = weight.count + 1;
+                                IncreaseObjectCounter();
                                 _dispathcer.Invoke(new Action(() =>
                                 {
                                     SensorOn.Fill = new SolidColorBrush(Colors.DodgerBlue);
@@ -1226,7 +1347,7 @@ namespace JupiterSoft
                                     SensorOff.Stroke = Brushes.LightGray;
                                     MotorCount.Content = modbus.MotorDrive.Count.ToString();
                                 }));
-                                UartDataReader();
+                                CheckWeightRange();
                             }
                             else
                             {
@@ -1239,9 +1360,9 @@ namespace JupiterSoft
                                 }));
                             }
                         }
-                        else if (modbus.Sensor.RegisterNo == 6)
+                        else if (modbus.Sensor.RegisterNo == 6 && modbus.Sensor.RType == 1)
                         {
-                            if (_i5 == 0)
+                            if (_i21 == 0)
                             {
                                 if (modbus.Sensor.ObjectIntervals != null && modbus.Sensor.ObjectIntervals.Count() > 0)
                                 {
@@ -1249,12 +1370,9 @@ namespace JupiterSoft
                                 }
                                 else
                                 {
-                                    modbus.Sensor.ObjectIntervals = new List<DateTime>();
-                                    modbus.Sensor.ObjectIntervals.Add(DateTime.Now);
+                                    modbus.Sensor.ObjectIntervals = new List<DateTime> { DateTime.Now };
                                 }
-                                modbus.Sensor.Count = modbus.Sensor.Count + 1;
-                                modbus.MotorDrive.Count = modbus.MotorDrive.Count + 1;
-                                weight.count = weight.count + 1;
+                                IncreaseObjectCounter();
                                 _dispathcer.Invoke(new Action(() =>
                                 {
                                     SensorOn.Fill = new SolidColorBrush(Colors.DodgerBlue);
@@ -1263,7 +1381,7 @@ namespace JupiterSoft
                                     SensorOff.Stroke = Brushes.LightGray;
                                     MotorCount.Content = modbus.MotorDrive.Count.ToString();
                                 }));
-                                UartDataReader();
+                                CheckWeightRange();
                             }
                             else
                             {
@@ -1276,9 +1394,9 @@ namespace JupiterSoft
                                 }));
                             }
                         }
-                        else if (modbus.Sensor.RegisterNo == 7)
+                        else if (modbus.Sensor.RegisterNo == 7 && modbus.Sensor.RType == 1)
                         {
-                            if (_i6 == 0)
+                            if (_i22 == 0)
                             {
                                 if (modbus.Sensor.ObjectIntervals != null && modbus.Sensor.ObjectIntervals.Count() > 0)
                                 {
@@ -1286,12 +1404,9 @@ namespace JupiterSoft
                                 }
                                 else
                                 {
-                                    modbus.Sensor.ObjectIntervals = new List<DateTime>();
-                                    modbus.Sensor.ObjectIntervals.Add(DateTime.Now);
+                                    modbus.Sensor.ObjectIntervals = new List<DateTime> { DateTime.Now };
                                 }
-                                modbus.Sensor.Count = modbus.Sensor.Count + 1;
-                                modbus.MotorDrive.Count = modbus.MotorDrive.Count + 1;
-                                weight.count = weight.count + 1;
+                                IncreaseObjectCounter();
                                 _dispathcer.Invoke(new Action(() =>
                                 {
                                     SensorOn.Fill = new SolidColorBrush(Colors.DodgerBlue);
@@ -1300,7 +1415,7 @@ namespace JupiterSoft
                                     SensorOff.Stroke = Brushes.LightGray;
                                     MotorCount.Content = modbus.MotorDrive.Count.ToString();
                                 }));
-                                UartDataReader();
+                                CheckWeightRange();
                             }
                             else
                             {
@@ -1313,9 +1428,9 @@ namespace JupiterSoft
                                 }));
                             }
                         }
-                        else if (modbus.Sensor.RegisterNo == 8)
+                        else if (modbus.Sensor.RegisterNo == 8 && modbus.Sensor.RType == 1)
                         {
-                            if (_i7 == 0)
+                            if (_i23 == 0)
                             {
                                 if (modbus.Sensor.ObjectIntervals != null && modbus.Sensor.ObjectIntervals.Count() > 0)
                                 {
@@ -1323,12 +1438,9 @@ namespace JupiterSoft
                                 }
                                 else
                                 {
-                                    modbus.Sensor.ObjectIntervals = new List<DateTime>();
-                                    modbus.Sensor.ObjectIntervals.Add(DateTime.Now);
+                                    modbus.Sensor.ObjectIntervals = new List<DateTime> { DateTime.Now };
                                 }
-                                modbus.Sensor.Count = modbus.Sensor.Count + 1;
-                                modbus.MotorDrive.Count = modbus.MotorDrive.Count + 1;
-                                weight.count = weight.count + 1;
+                                IncreaseObjectCounter();
                                 _dispathcer.Invoke(new Action(() =>
                                 {
                                     SensorOn.Fill = new SolidColorBrush(Colors.DodgerBlue);
@@ -1337,7 +1449,7 @@ namespace JupiterSoft
                                     SensorOff.Stroke = Brushes.LightGray;
                                     MotorCount.Content = modbus.MotorDrive.Count.ToString();
                                 }));
-                                UartDataReader();
+                                CheckWeightRange();
                             }
                             else
                             {
@@ -1350,9 +1462,9 @@ namespace JupiterSoft
                                 }));
                             }
                         }
-                        else if (modbus.Sensor.RegisterNo == 9)
+                        else if (modbus.Sensor.RegisterNo == 9 && modbus.Sensor.RType == 1)
                         {
-                            if (_i8 == 0)
+                            if (_i23 == 0)
                             {
                                 if (modbus.Sensor.ObjectIntervals != null && modbus.Sensor.ObjectIntervals.Count() > 0)
                                 {
@@ -1360,12 +1472,9 @@ namespace JupiterSoft
                                 }
                                 else
                                 {
-                                    modbus.Sensor.ObjectIntervals = new List<DateTime>();
-                                    modbus.Sensor.ObjectIntervals.Add(DateTime.Now);
+                                    modbus.Sensor.ObjectIntervals = new List<DateTime> { DateTime.Now };
                                 }
-                                modbus.Sensor.Count = modbus.Sensor.Count + 1;
-                                modbus.MotorDrive.Count = modbus.MotorDrive.Count + 1;
-                                weight.count = weight.count + 1;
+                                IncreaseObjectCounter();
                                 _dispathcer.Invoke(new Action(() =>
                                 {
                                     SensorOn.Fill = new SolidColorBrush(Colors.DodgerBlue);
@@ -1374,7 +1483,7 @@ namespace JupiterSoft
                                     SensorOff.Stroke = Brushes.LightGray;
                                     MotorCount.Content = modbus.MotorDrive.Count.ToString();
                                 }));
-                                UartDataReader();
+                                CheckWeightRange();
                             }
                             else
                             {
@@ -1387,9 +1496,9 @@ namespace JupiterSoft
                                 }));
                             }
                         }
-                        else if (modbus.Sensor.RegisterNo == 10)
+                        else if (modbus.Sensor.RegisterNo == 10 && modbus.Sensor.RType == 1)
                         {
-                            if (_i9 == 0)
+                            if (_i24 == 0)
                             {
                                 if (modbus.Sensor.ObjectIntervals != null && modbus.Sensor.ObjectIntervals.Count() > 0)
                                 {
@@ -1397,12 +1506,9 @@ namespace JupiterSoft
                                 }
                                 else
                                 {
-                                    modbus.Sensor.ObjectIntervals = new List<DateTime>();
-                                    modbus.Sensor.ObjectIntervals.Add(DateTime.Now);
+                                    modbus.Sensor.ObjectIntervals = new List<DateTime> { DateTime.Now };
                                 }
-                                modbus.Sensor.Count = modbus.Sensor.Count + 1;
-                                modbus.MotorDrive.Count = modbus.MotorDrive.Count + 1;
-                                weight.count = weight.count + 1;
+                                IncreaseObjectCounter();
                                 _dispathcer.Invoke(new Action(() =>
                                 {
                                     SensorOn.Fill = new SolidColorBrush(Colors.DodgerBlue);
@@ -1411,7 +1517,7 @@ namespace JupiterSoft
                                     SensorOff.Stroke = Brushes.LightGray;
                                     MotorCount.Content = modbus.MotorDrive.Count.ToString();
                                 }));
-                                UartDataReader();
+                                CheckWeightRange();
                             }
                             else
                             {
@@ -1424,9 +1530,9 @@ namespace JupiterSoft
                                 }));
                             }
                         }
-                        else if (modbus.Sensor.RegisterNo == 11)
+                        else if (modbus.Sensor.RegisterNo == 11 && modbus.Sensor.RType == 1)
                         {
-                            if (_i10 == 0)
+                            if (_i25 == 0)
                             {
                                 if (modbus.Sensor.ObjectIntervals != null && modbus.Sensor.ObjectIntervals.Count() > 0)
                                 {
@@ -1434,12 +1540,9 @@ namespace JupiterSoft
                                 }
                                 else
                                 {
-                                    modbus.Sensor.ObjectIntervals = new List<DateTime>();
-                                    modbus.Sensor.ObjectIntervals.Add(DateTime.Now);
+                                    modbus.Sensor.ObjectIntervals = new List<DateTime> { DateTime.Now };
                                 }
-                                modbus.Sensor.Count = modbus.Sensor.Count + 1;
-                                modbus.MotorDrive.Count = modbus.MotorDrive.Count + 1;
-                                weight.count = weight.count + 1;
+                                IncreaseObjectCounter();
                                 _dispathcer.Invoke(new Action(() =>
                                 {
                                     SensorOn.Fill = new SolidColorBrush(Colors.DodgerBlue);
@@ -1448,7 +1551,7 @@ namespace JupiterSoft
                                     SensorOff.Stroke = Brushes.LightGray;
                                     MotorCount.Content = modbus.MotorDrive.Count.ToString();
                                 }));
-                                UartDataReader();
+                                CheckWeightRange();
                             }
                             else
                             {
@@ -1461,9 +1564,9 @@ namespace JupiterSoft
                                 }));
                             }
                         }
-                        else if (modbus.Sensor.RegisterNo == 12)
+                        else if (modbus.Sensor.RegisterNo == 12 && modbus.Sensor.RType == 1)
                         {
-                            if (_i11 == 0)
+                            if (_i26 == 0)
                             {
                                 if (modbus.Sensor.ObjectIntervals != null && modbus.Sensor.ObjectIntervals.Count() > 0)
                                 {
@@ -1471,12 +1574,9 @@ namespace JupiterSoft
                                 }
                                 else
                                 {
-                                    modbus.Sensor.ObjectIntervals = new List<DateTime>();
-                                    modbus.Sensor.ObjectIntervals.Add(DateTime.Now);
+                                    modbus.Sensor.ObjectIntervals = new List<DateTime> { DateTime.Now };
                                 }
-                                modbus.Sensor.Count = modbus.Sensor.Count + 1;
-                                modbus.MotorDrive.Count = modbus.MotorDrive.Count + 1;
-                                weight.count = weight.count + 1;
+                                IncreaseObjectCounter();
                                 _dispathcer.Invoke(new Action(() =>
                                 {
                                     SensorOn.Fill = new SolidColorBrush(Colors.DodgerBlue);
@@ -1485,7 +1585,7 @@ namespace JupiterSoft
                                     SensorOff.Stroke = Brushes.LightGray;
                                     MotorCount.Content = modbus.MotorDrive.Count.ToString();
                                 }));
-                                UartDataReader();
+                                CheckWeightRange();
                             }
                             else
                             {
@@ -1498,9 +1598,9 @@ namespace JupiterSoft
                                 }));
                             }
                         }
-                        else if (modbus.Sensor.RegisterNo == 13)
+                        else if (modbus.Sensor.RegisterNo == 13 && modbus.Sensor.RType == 1)
                         {
-                            if (_i12 == 0)
+                            if (_i27 == 0)
                             {
                                 if (modbus.Sensor.ObjectIntervals != null && modbus.Sensor.ObjectIntervals.Count() > 0)
                                 {
@@ -1508,12 +1608,9 @@ namespace JupiterSoft
                                 }
                                 else
                                 {
-                                    modbus.Sensor.ObjectIntervals = new List<DateTime>();
-                                    modbus.Sensor.ObjectIntervals.Add(DateTime.Now);
+                                    modbus.Sensor.ObjectIntervals = new List<DateTime> {DateTime.Now };
                                 }
-                                modbus.Sensor.Count = modbus.Sensor.Count + 1;
-                                modbus.MotorDrive.Count = modbus.MotorDrive.Count + 1;
-                                weight.count = weight.count + 1;
+                                IncreaseObjectCounter();
                                 _dispathcer.Invoke(new Action(() =>
                                 {
                                     SensorOn.Fill = new SolidColorBrush(Colors.DodgerBlue);
@@ -1522,7 +1619,7 @@ namespace JupiterSoft
                                     SensorOff.Stroke = Brushes.LightGray;
                                     MotorCount.Content = modbus.MotorDrive.Count.ToString();
                                 }));
-                                UartDataReader();
+                                CheckWeightRange();
                             }
                             else
                             {
@@ -1535,122 +1632,38 @@ namespace JupiterSoft
                                 }));
                             }
                         }
-                        else if (modbus.Sensor.RegisterNo == 14)
-                        {
-                            if (_i13 == 0)
-                            {
-                                if (modbus.Sensor.ObjectIntervals != null && modbus.Sensor.ObjectIntervals.Count() > 0)
-                                {
-                                    modbus.Sensor.ObjectIntervals.Add(DateTime.Now);
-                                }
-                                else
-                                {
-                                    modbus.Sensor.ObjectIntervals = new List<DateTime>();
-                                    modbus.Sensor.ObjectIntervals.Add(DateTime.Now);
-                                }
-                                modbus.Sensor.Count = modbus.Sensor.Count + 1;
-                                modbus.MotorDrive.Count = modbus.MotorDrive.Count + 1;
-                                weight.count = weight.count + 1;
-                                _dispathcer.Invoke(new Action(() =>
-                                {
-                                    SensorOn.Fill = new SolidColorBrush(Colors.DodgerBlue);
-                                    SensorOn.Stroke = Brushes.LightBlue;
-                                    SensorOff.Fill = new SolidColorBrush(Colors.DarkGray);
-                                    SensorOff.Stroke = Brushes.LightGray;
-                                    MotorCount.Content = modbus.MotorDrive.Count.ToString();
-                                }));
-                                UartDataReader();
-                            }
-                            else
-                            {
-                                _dispathcer.Invoke(new Action(() =>
-                                {
-                                    SensorOn.Fill = new SolidColorBrush(Colors.DarkGray);
-                                    SensorOn.Stroke = Brushes.LightGray;
-                                    SensorOff.Fill = new SolidColorBrush(Colors.Red);
-                                    SensorOff.Stroke = Brushes.LightCoral;
-                                }));
-                            }
-                        }
-                        else if (modbus.Sensor.RegisterNo == 15)
-                        {
-                            if (_i14 == 0)
-                            {
-                                if (modbus.Sensor.ObjectIntervals != null && modbus.Sensor.ObjectIntervals.Count() > 0)
-                                {
-                                    modbus.Sensor.ObjectIntervals.Add(DateTime.Now);
-                                }
-                                else
-                                {
-                                    modbus.Sensor.ObjectIntervals = new List<DateTime>();
-                                    modbus.Sensor.ObjectIntervals.Add(DateTime.Now);
-                                }
-                                modbus.Sensor.Count = modbus.Sensor.Count + 1;
-                                modbus.MotorDrive.Count = modbus.MotorDrive.Count + 1;
-                                weight.count = weight.count + 1;
-                                _dispathcer.Invoke(new Action(() =>
-                                {
-                                    SensorOn.Fill = new SolidColorBrush(Colors.DodgerBlue);
-                                    SensorOn.Stroke = Brushes.LightBlue;
-                                    SensorOff.Fill = new SolidColorBrush(Colors.DarkGray);
-                                    SensorOff.Stroke = Brushes.LightGray;
-                                    MotorCount.Content = modbus.MotorDrive.Count.ToString();
-                                }));
-                                UartDataReader();
-                            }
-                            else
-                            {
-                                _dispathcer.Invoke(new Action(() =>
-                                {
-                                    SensorOn.Fill = new SolidColorBrush(Colors.DarkGray);
-                                    SensorOn.Stroke = Brushes.LightGray;
-                                    SensorOff.Fill = new SolidColorBrush(Colors.Red);
-                                    SensorOff.Stroke = Brushes.LightCoral;
-                                }));
-                            }
-                        }
-                        else if (modbus.Sensor.RegisterNo == 16)
-                        {
-                            if (_i15 == 0)
-                            {
-                                if (modbus.Sensor.ObjectIntervals != null && modbus.Sensor.ObjectIntervals.Count() > 0)
-                                {
-                                    modbus.Sensor.ObjectIntervals.Add(DateTime.Now);
-                                }
-                                else
-                                {
-                                    modbus.Sensor.ObjectIntervals = new List<DateTime>();
-                                    modbus.Sensor.ObjectIntervals.Add(DateTime.Now);
-                                }
-                                modbus.Sensor.Count = modbus.Sensor.Count + 1;
-                                modbus.MotorDrive.Count = modbus.MotorDrive.Count + 1;
-                                weight.count = weight.count + 1;
-                                _dispathcer.Invoke(new Action(() =>
-                                {
-                                    SensorOn.Fill = new SolidColorBrush(Colors.DodgerBlue);
-                                    SensorOn.Stroke = Brushes.LightBlue;
-                                    SensorOff.Fill = new SolidColorBrush(Colors.DarkGray);
-                                    SensorOff.Stroke = Brushes.LightGray;
-                                    MotorCount.Content = modbus.MotorDrive.Count.ToString();
-                                }));
-                                UartDataReader();
-                            }
-                            else
-                            {
-                                _dispathcer.Invoke(new Action(() =>
-                                {
-                                    SensorOn.Fill = new SolidColorBrush(Colors.DarkGray);
-                                    SensorOn.Stroke = Brushes.LightGray;
-                                    SensorOff.Fill = new SolidColorBrush(Colors.Red);
-                                    SensorOff.Stroke = Brushes.LightCoral;
-                                }));
-                            }
-                        }
-
-
-
                     }
                 }
+            }
+        }
+
+        void IncreaseObjectCounter()
+        {
+            modbus.Sensor.Count = modbus.Sensor.Count + 1;
+            modbus.MotorDrive.Count = modbus.MotorDrive.Count + 1;
+            weight.count = weight.count + 1;
+            _dispathcer.Invoke(new Action(() =>
+            {
+                TotalObjects.Text = weight.count.ToString();
+            }));
+        }
+
+        void CheckWeightRange()
+        {
+            if (!(LastMaxWeight >= weight.minRange && LastMaxWeight <= weight.maxRange))
+            {
+                PushingTimer.Elapsed += PushingTimer_Elapsed;
+                PushingTimer.Interval = 34 + Convert.ToInt32(modbus.PushingArm.Frequency);
+                PushingTimer.Enabled = true;
+            }
+            else
+            {
+                int passedObject = 0;
+                passedObject = Convert.ToInt32(ObjectsPassed.Text.ToString())+1;
+                _dispathcer.Invoke(new Action(() =>
+                {
+                    ObjectsPassed.Text = passedObject.ToString();
+                }));
             }
         }
 
@@ -1792,7 +1805,6 @@ namespace JupiterSoft
         private void MotorDrive_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
 
-
             if (MotorDrive == null)
             {
                 return;
@@ -1831,7 +1843,30 @@ namespace JupiterSoft
 
                     MotorDrive.LastResponseReceived = DateTime.Now;
                     recBuf = new byte[REC_BUF_SIZE];
+                    MotorDataReader();
                     break;
+            }
+        }
+
+        void ReadMotorResponse(RecData _recData)
+        {
+            if (_recData.MbTgm.Length > 0 && _recData.MbTgm.Length > readIndex)
+            {
+                //To Read Function Code response.
+                if (_recData.MbTgm[1] == (int)COM_Code.three)
+                {
+                    UInt32 ii = ByteArrayConvert.ToUInt16(_recData.MbTgm, 3);
+                    float i10 = ii / 100f;
+                    MotorDrive.MotorDrive.Frequency = Convert.ToDecimal(i10);
+                   
+                    _dispathcer.Invoke(new Action(() =>
+                    {
+                        frequency.Text = MotorDrive.MotorDrive.Frequency.ToString();
+                    }));
+
+
+                }
+
             }
         }
 
@@ -1849,7 +1884,6 @@ namespace JupiterSoft
                 case 0:
                     break;
                 case 1:
-                    int i = 0;
                     weight.RecIdx = 0;
                     weight.RecState = 1;
                     recBuf = new byte[weight.SerialDevice.BytesToRead];
@@ -1859,10 +1893,11 @@ namespace JupiterSoft
                     weight.LastResponseReceived = DateTime.Now;
                     weight.IsComplete = true;
                     recBuf = new byte[REC_BUF_SIZE];
+                    UartDataReader();
                     break;
             }
 
-            UartDataReader();
+           
         }
 
         private void ControlDevice_DataReceived(object sender, SerialDataReceivedEventArgs e)
@@ -1909,11 +1944,12 @@ namespace JupiterSoft
                         recBuf = new byte[REC_BUF_SIZE];
                     }
                     modbus.LastResponseReceived = DateTime.Now;
+                    ControlDataReader();
 
                     break;
             }
 
-            ControlDataReader();
+            
         }
         #endregion
 
@@ -1963,6 +1999,37 @@ namespace JupiterSoft
             dashForm.Show();
             //dashForm.Show();
             this.Close();
+        }
+
+        private void Medit_Click(object sender, RoutedEventArgs e)
+        {
+            frequency.IsEnabled = true;
+            if (this.DataContext is CheckWeigherViewModel model)
+            {
+                model.IsMotorSaveEnabled = true;
+            }
+        }
+
+        private void Msave_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (MotorDrive.SerialDevice.IsOpen)
+                {
+                    WriteControCardState(MotorDrive.MotorDrive.RegisterNo, Convert.ToInt32(frequency.Text), modbus.slaveAddress);
+                }
+            }
+            catch { }
+            finally
+            {
+                if (this.DataContext is CheckWeigherViewModel model)
+                {
+                    model.IsMotorSaveEnabled = false;
+                    model.IsMotorEditEnabled = true;
+                    frequency.IsEnabled = false;
+                }
+            }
+
         }
     }
 }
