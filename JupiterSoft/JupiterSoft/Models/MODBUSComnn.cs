@@ -13,22 +13,22 @@ namespace JupiterSoft.Models
         public void SetMultiSendorValueFM16(int Adr, int Parity, SerialPort port, int register, int val, string PName, int Ch, int Indx, DeviceType deviceType, int[] byteArr, bool IsReading)
         {
             if (!IsReading)
-            {                
-                PrepareHC5MRRequestFM16(Adr, 16, register-1 >> 8, register-1, port, val, PName, Ch, Indx, deviceType, byteArr);
+            {
+                PrepareHC5MRRequestFM16(Adr, 16, register - 1 >> 8, register - 1, port, val, PName, Ch, Indx, deviceType, byteArr);
             }
         }
 
         public void SetMultiSendorValueFM6(int Adr, int Parity, SerialPort port, int register, int val, string PName, bool IsReading)
         {
             if (!IsReading)
-            {                
+            {
                 PrepareHC5MRRequest(Adr, 6, register - 1 >> 8, register - 1, port, val, PName);
             }
         }
 
         public void GetMultiSendorValueFM3(int Adr, int Parity, SerialPort port, int register, int val, string PName, int Ch, int Indx, DeviceType deviceType)
         {
-            PrepareHC5MRRequestMulti(Adr, 3, register  >> 8, register, port, val, PName, Ch, Indx, deviceType);
+            PrepareHC5MRRequestMulti(Adr, 3, register >> 8, register, port, val, PName, Ch, Indx, deviceType);
         }
 
         public void GetMultiSendorValueFM4(int Adr, int Parity, SerialPort port, int register, int val, string PName, int Ch, int Indx, DeviceType deviceType)
@@ -59,9 +59,9 @@ namespace JupiterSoft.Models
             _PayloadRQ.mbTgmBytes = _Mbtg.MbTgmData;
             _PayloadRQ.MbTgmLength = (ushort)_Mbtg.MbTgmData.Length;
             //_PayloadRQ.Channel = 1;
-            _PayloadRQ.Baud = Common.BaudRate;
-            _PayloadRQ.Parity = (Byte)Common.Parity;
-            _PayloadRQ.StopBit = (Byte)Common.StopBit;
+            _PayloadRQ.Baud = port.BaudRate;
+            _PayloadRQ.Parity = (Byte)((int)port.Parity);
+            _PayloadRQ.StopBit = (Byte)((int)port.StopBits);
             _PayloadRQ.ModBusPayload();
 
             SB1Request _RqSB1 = new SB1Request();
@@ -99,9 +99,9 @@ namespace JupiterSoft.Models
             _PayloadRQ.mbTgmBytes = _Mbtg.MbTgmData;
             _PayloadRQ.MbTgmLength = (ushort)_Mbtg.MbTgmData.Length;
             //_PayloadRQ.Channel = 1;
-            _PayloadRQ.Baud = Common.BaudRate;
-            _PayloadRQ.Parity = (Byte)Common.Parity;
-            _PayloadRQ.StopBit = (Byte)Common.StopBit;
+            _PayloadRQ.Baud = port.BaudRate;
+            _PayloadRQ.Parity = (Byte)((int)port.Parity);
+            _PayloadRQ.StopBit = (Byte)((int)port.StopBits);
             _PayloadRQ.ModBusPayload();
 
             SB1Request _RqSB1 = new SB1Request();
@@ -143,9 +143,9 @@ namespace JupiterSoft.Models
             _PayloadRQ.mbTgmBytes = _Mbtg.MbTgmData;
             _PayloadRQ.MbTgmLength = (ushort)_Mbtg.MbTgmData.Length;
             //_PayloadRQ.Channel = 1;
-            _PayloadRQ.Baud = Common.BaudRate;
-            _PayloadRQ.Parity = (Byte)Common.Parity;
-            _PayloadRQ.StopBit = (Byte)Common.StopBit;
+            _PayloadRQ.Baud = port.BaudRate;
+            _PayloadRQ.Parity = (Byte)((int)port.Parity);
+            _PayloadRQ.StopBit = (Byte)((int)port.StopBits);
             _PayloadRQ.ModBusPayload();
 
             SB1Request _RqSB1 = new SB1Request();
@@ -279,7 +279,7 @@ namespace JupiterSoft.Models
         public Byte[] GetReply()
         {
             return rx;
-        }       
+        }
     }
 
     public class PayloadRQ
@@ -433,7 +433,7 @@ namespace JupiterSoft.Models
             //Common.GetSessionId = 0; // End Session
             Common.RecIdx = 0;
             //Common.RetryAttempt++;          
-            
+
 
         }
 
@@ -488,7 +488,7 @@ namespace JupiterSoft.Models
             }
         }
 
-        public void SetTgm(Byte[] tgm, string CurrentActiveMenu, int device=0)
+        public void SetTgm(Byte[] tgm, string CurrentActiveMenu, int device = 0)
         {
             if (Common.COMSelected == COMType.XYZ)
             {
@@ -499,7 +499,7 @@ namespace JupiterSoft.Models
                 crc = Util.ByteArrayConvert.ToUInt16(tgm, 30 + (int)payLoadSize);
                 RxSB1 = tgm;
             }
-            else if (Common.COMSelected == COMType.MODBUS || device==(int)Models.DeviceType.ControlCard || device == (int)Models.DeviceType.MotorDerive)
+            else if (Common.COMSelected == COMType.MODBUS || device == (int)Models.DeviceType.ControlCard || device == (int)Models.DeviceType.MotorDerive)
             {
                 if (CurrentActiveMenu == AppTools.Modbus || device == (int)Models.DeviceType.ControlCard || device == (int)Models.DeviceType.MotorDerive)
                 {

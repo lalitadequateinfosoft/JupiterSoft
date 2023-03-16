@@ -725,36 +725,36 @@ namespace JupiterSoft.Pages
                     case (int)ElementConstant.Read_Motor_Frequency:
                         getNewPosition(Read_Motor_Frequency.Width, Read_Motor_Frequency.Height, ref NewLeft, ref NewTop);
 
-                            if (Commands.Count() == 0)
+                        if (Commands.Count() == 0)
+                        {
+                            ele = Get_FunctionStyle(contentId, Convert.ToInt32(data), Read_Motor_Frequency.Content.ToString());
+                            var command = new LogicalCommand
                             {
-                                ele = Get_FunctionStyle(contentId, Convert.ToInt32(data), Read_Motor_Frequency.Content.ToString());
-                                var command = new LogicalCommand
-                                {
-                                    CommandId = contentId,
-                                    CommandType = Convert.ToInt32(data),
-                                    Order = 1,
-                                    ExecutionStatus = (int)ExecutionStage.Not_Executed,
-                                    Configuration = new DeviceConfiguration(),
-                                    CommandText = Read_Motor_Frequency.Content.ToString()
-                                };
-                                Commands.Add(command);
-                            }
-                            else
+                                CommandId = contentId,
+                                CommandType = Convert.ToInt32(data),
+                                Order = 1,
+                                ExecutionStatus = (int)ExecutionStage.Not_Executed,
+                                Configuration = new DeviceConfiguration(),
+                                CommandText = Read_Motor_Frequency.Content.ToString()
+                            };
+                            Commands.Add(command);
+                        }
+                        else
+                        {
+                            ele = Get_FunctionStyle(contentId, Convert.ToInt32(data), Read_Motor_Frequency.Content.ToString());
+                            var command = new LogicalCommand
                             {
-                                ele = Get_FunctionStyle(contentId, Convert.ToInt32(data), Read_Motor_Frequency.Content.ToString());
-                                var command = new LogicalCommand
-                                {
-                                    CommandId = contentId,
-                                    CommandType = Convert.ToInt32(data),
-                                    Order = Commands.OrderByDescending(x => x.Order).FirstOrDefault().Order + 1,
-                                    ExecutionStatus = (int)ExecutionStage.Not_Executed,
-                                    Configuration = new DeviceConfiguration(),
-                                    CommandText = Read_Motor_Frequency.Content.ToString()
-                                };
-                                Commands.Add(command);
-                            }
-                            ShouldAdd = true;
-                        
+                                CommandId = contentId,
+                                CommandType = Convert.ToInt32(data),
+                                Order = Commands.OrderByDescending(x => x.Order).FirstOrDefault().Order + 1,
+                                ExecutionStatus = (int)ExecutionStage.Not_Executed,
+                                Configuration = new DeviceConfiguration(),
+                                CommandText = Read_Motor_Frequency.Content.ToString()
+                            };
+                            Commands.Add(command);
+                        }
+                        ShouldAdd = true;
+
                         break;
 
                     case (int)ElementConstant.Change_Motor_Frequency:
@@ -766,7 +766,7 @@ namespace JupiterSoft.Pages
                         {
                             if (Commands.Count() == 0)
                             {
-                                ele = Get_FunctionStyle(contentId, Convert.ToInt32(data), Change_Motor_Frequency.Content.ToString()+" To "+ variableDialog1.VariableName.Text.ToString());
+                                ele = Get_FunctionStyle(contentId, Convert.ToInt32(data), Change_Motor_Frequency.Content.ToString() + " To " + variableDialog1.VariableName.Text.ToString());
                                 var command = new LogicalCommand
                                 {
                                     CommandId = contentId,
@@ -2347,7 +2347,7 @@ namespace JupiterSoft.Pages
 
                     case (int)ElementConstant.Write_Card_Out:
 
-                        var registerWriteCommand = JsonConvert.DeserializeObject<RegisterWriteCommand>(item.CommandData.ToString()); 
+                        var registerWriteCommand = JsonConvert.DeserializeObject<RegisterWriteCommand>(item.CommandData.ToString());
                         var functionName = (registerWriteCommand.RegisterOutput == 1 ? "ON" : "OFF") + " Register " + registerWriteCommand.RegisterNumber;
                         ele = Get_FunctionStyle(contentId, item.CommandType, functionName);
                         ShouldAdd = true;
@@ -3166,7 +3166,7 @@ namespace JupiterSoft.Pages
             Common.COMSelected = COMType.MODBUS;
             _CurrentActiveMenu = AppTools.Modbus;
             //SerialPortCommunications(Comport, 38400, 8, 1, 0);
-            obj.GetMultiSendorValueFM3(4, (int)Parity.Even, SerialDevice, 4, 10, "MotorDrive", 1, 0, Models.DeviceType.MotorDerive);   // GetSoftwareVersion(Common.Address, Common.Parity, sp, _ValueType);
+            obj.GetMultiSendorValueFM3(3, (int)Parity.Even, SerialDevice, 8193, 10, "MotorDrive", 1, 0, Models.DeviceType.MotorDerive);   // GetSoftwareVersion(Common.Address, Common.Parity, sp, _ValueType);
 
         }
         private void WriteMotorState(int reg, int val)
@@ -3177,7 +3177,7 @@ namespace JupiterSoft.Pages
             Common.COMSelected = COMType.MODBUS;
             byte[] _val1 = BitConverter.GetBytes(val);
             int[] _val = new int[2] { _val1[1], _val1[0] };
-            obj.SetMultiSendorValueFM16(4, 0, SerialDevice, reg + 1, 1, "MotorDrive", 1, 0, Models.DeviceType.MotorDerive, _val, false);   // GetSoftwareVersion(Common.Address, Common.Parity, sp, _ValueType);
+            obj.SetMultiSendorValueFM16(3, 0, SerialDevice, reg + 1, 1, "MotorDrive", 1, 0, Models.DeviceType.MotorDerive, _val, false);   // GetSoftwareVersion(Common.Address, Common.Parity, sp, _ValueType);
 
         }
 
@@ -3396,7 +3396,7 @@ namespace JupiterSoft.Pages
                     int stopbit = Convert.ToInt32(StopBitControlCard.SelectionBoxItem.ToString());
                     int parity = 0;
 
-                    switch(ParityControlCard.SelectionBoxItem.ToString().ToLower())
+                    switch (ParityControlCard.SelectionBoxItem.ToString().ToLower())
                     {
                         case "none":
                             parity = (int)Parity.None;
@@ -3548,36 +3548,36 @@ namespace JupiterSoft.Pages
                     // byte[] arr = _recData.MbTgm.Where((item, index) => index > 2 && index < 63).ToArray();
                     //for (int i = 0; i < arr.Length; i+=2)
                     //{
-                    int _i0 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 3);
-                    int _i1 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 5);
-                    int _i2 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 7);
-                    int _i3 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 9);
-                    int _i4 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 11);
-                    int _i5 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 13);
-                    int _i6 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 15);
-                    int _i7 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 17);
-                    int _i8 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 19);
-                    int _i9 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 21);
-                    int _i10 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 23);
-                    int _i11 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 25);
-                    int _i12 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 27);
-                    int _i13 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 29);
-                    int _i14 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 31);
-                    int _i15 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 33);
-                    int _i16 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 35);
-                    int _i17 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 37);
-                    int _i18 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 39);
-                    int _i19 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 41);
-                    int _i20 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 43);
-                    int _i21 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 45);
-                    int _i22 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 47);
-                    int _i23 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 49);
-                    int _i24 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 51);
-                    int _i25 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 53);
-                    int _i26 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 55);
-                    int _i27 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 57);
-                    int _i28 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 59);
-                    int _i29 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 61);
+                    int _i0 = ByteArrayConvert.ToUInt16(_recData.MbTgm, 3);
+                    int _i1 = ByteArrayConvert.ToUInt16(_recData.MbTgm, 5);
+                    int _i2 = ByteArrayConvert.ToUInt16(_recData.MbTgm, 7);
+                    int _i3 = ByteArrayConvert.ToUInt16(_recData.MbTgm, 9);
+                    int _i4 = ByteArrayConvert.ToUInt16(_recData.MbTgm, 11);
+                    int _i5 = ByteArrayConvert.ToUInt16(_recData.MbTgm, 13);
+                    int _i6 = ByteArrayConvert.ToUInt16(_recData.MbTgm, 15);
+                    int _i7 = ByteArrayConvert.ToUInt16(_recData.MbTgm, 17);
+                    int _i8 = ByteArrayConvert.ToUInt16(_recData.MbTgm, 19);
+                    int _i9 = ByteArrayConvert.ToUInt16(_recData.MbTgm, 21);
+                    int _i10 = ByteArrayConvert.ToUInt16(_recData.MbTgm, 23);
+                    int _i11 = ByteArrayConvert.ToUInt16(_recData.MbTgm, 25);
+                    int _i12 = ByteArrayConvert.ToUInt16(_recData.MbTgm, 27);
+                    int _i13 = ByteArrayConvert.ToUInt16(_recData.MbTgm, 29);
+                    int _i14 = ByteArrayConvert.ToUInt16(_recData.MbTgm, 31);
+                    int _i15 = ByteArrayConvert.ToUInt16(_recData.MbTgm, 33);
+                    int _i16 = ByteArrayConvert.ToUInt16(_recData.MbTgm, 35);
+                    int _i17 = ByteArrayConvert.ToUInt16(_recData.MbTgm, 37);
+                    int _i18 = ByteArrayConvert.ToUInt16(_recData.MbTgm, 39);
+                    int _i19 = ByteArrayConvert.ToUInt16(_recData.MbTgm, 41);
+                    int _i20 = ByteArrayConvert.ToUInt16(_recData.MbTgm, 43);
+                    int _i21 = ByteArrayConvert.ToUInt16(_recData.MbTgm, 45);
+                    int _i22 = ByteArrayConvert.ToUInt16(_recData.MbTgm, 47);
+                    int _i23 = ByteArrayConvert.ToUInt16(_recData.MbTgm, 49);
+                    int _i24 = ByteArrayConvert.ToUInt16(_recData.MbTgm, 51);
+                    int _i25 = ByteArrayConvert.ToUInt16(_recData.MbTgm, 53);
+                    int _i26 = ByteArrayConvert.ToUInt16(_recData.MbTgm, 55);
+                    int _i27 = ByteArrayConvert.ToUInt16(_recData.MbTgm, 57);
+                    int _i28 = ByteArrayConvert.ToUInt16(_recData.MbTgm, 59);
+                    int _i29 = ByteArrayConvert.ToUInt16(_recData.MbTgm, 61);
                     //int _i30 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 63);
                     //int _i31 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 65);
 
@@ -4852,7 +4852,7 @@ namespace JupiterSoft.Pages
                 //dialoge.Show();
                 //this.parentWindow.Close();
 
-               HMIPage ChildPage = new HMIPage(Commands, deviceInfo, this.parentWindow);
+                HMIPage ChildPage = new HMIPage(Commands, deviceInfo, this.parentWindow);
                 this.parentWindow.frame.Content = null;
                 ChildPage.ParentWindow = this.parentWindow;
                 this.parentWindow.frame.Content = ChildPage;

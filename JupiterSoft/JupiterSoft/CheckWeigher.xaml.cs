@@ -132,103 +132,6 @@ namespace JupiterSoft
 
             if (this.DataContext is CheckWeigherViewModel model)
             {
-                if (!weight.IsConfigured)
-                {
-                    ConfigurationDailog dailog = new ConfigurationDailog("Set Weight Device Configuration", deviceInfo.CustomDeviceInfos);
-                    dailog.ShowDialog();
-                    if (!dailog.Canceled)
-                    {
-
-                        weight.PortName = deviceInfo.CustomDeviceInfos.Where(x => x.DeviceID == dailog.DeviceId).FirstOrDefault().PortName;
-                        weight.DeviceId = dailog.DeviceId;
-                        weight.BaudRate = dailog.BaudRate;
-                        weight.DataBit = dailog.Databit;
-                        weight.StopBit = dailog.Stopbit;
-                        weight.Parity = dailog.ParityValue;
-
-                        RangeAndUnit range = new RangeAndUnit();
-                        range.ShowDialog();
-                        if (!range.Canceled)
-                        {
-                            weight.minRange = Convert.ToDecimal(range.MinimumRange.Text);
-                            weight.maxRange = Convert.ToDecimal(range.MaxRange.Text);
-                            weight.selectedUnit = range.unit.SelectionBoxItem.ToString();
-                            unit.SelectedValue = weight.selectedUnit;
-
-                            model.minRange = Convert.ToDecimal(range.MinimumRange.Text);
-                            model.maxRange = Convert.ToDecimal(range.MaxRange.Text);
-                            model.selectedUnit = range.unit.SelectionBoxItem.ToString();
-                            weight.IsConfigured = true;
-                            model.IsWeightConfigured = true;
-                        }
-
-                    }
-                }
-
-                if (!weight.IsCalibrated)
-                {
-                    CalibrationHMI calibrationHMI = new CalibrationHMI(weight);
-                    calibrationHMI.ShowDialog();
-                    weight.Zero = calibrationHMI.hMIViewModel.Zero;
-                    weight.Factor = calibrationHMI.hMIViewModel.Factor;
-                }
-
-                if (!modbus.IsConfigured)
-                {
-                    ConfigurationDailog dailog = new ConfigurationDailog("Set Control Card Configuration", deviceInfo.CustomDeviceInfos);
-                    dailog.ShowDialog();
-                    if (!dailog.Canceled)
-                    {
-
-                        modbus.PortName = deviceInfo.CustomDeviceInfos.Where(x => x.DeviceID == dailog.DeviceId).FirstOrDefault().PortName;
-                        modbus.DeviceId = dailog.DeviceId;
-                        modbus.BaudRate = dailog.BaudRate;
-                        modbus.DataBit = dailog.Databit;
-                        modbus.StopBit = dailog.Stopbit;
-                        modbus.Parity = dailog.ParityValue;
-
-                        ConnectivityInfo connectivityInfo = new ConnectivityInfo();
-                        connectivityInfo.ShowDialog();
-
-                        if (!connectivityInfo.Canceled)
-                        {
-                            modbus.slaveAddress = Convert.ToInt32(connectivityInfo.AddressBox.Text.ToString());
-
-
-                            modbus.PushingArm = new RegisterConfiguration
-                            {
-                                RType = 1,
-                                DeviceType = (int)Module_Device_Type.ControlCard,
-                                RegisterNo = Convert.ToInt32(connectivityInfo.PushingArm.Text.ToString()),
-                                Frequency = 30,
-                                Count = 0,
-                            };
-                            modbus.Sensor = new RegisterConfiguration
-                            {
-                                RType = 1,
-                                DeviceType = (int)Module_Device_Type.ControlCard,
-                                RegisterNo = Convert.ToInt32(connectivityInfo.Sensors.Text.ToString()),
-                                Frequency = 0,
-                                Count = 0,
-                            };
-
-                            modbus.MotorDrive = new RegisterConfiguration
-                            {
-                                RType = 1,
-                                DeviceType = (int)Module_Device_Type.ControlCard,
-                                RegisterNo = Convert.ToInt32(connectivityInfo.MotorRelay.Text.ToString()),
-                                Frequency = 0,
-                                Count = 0,
-                            };
-
-                            modbus.IsConfigured = true;
-                            model.IsPhotoConfigured = true;
-                            model.IsPushingConfigured = true;
-                        }
-
-                    }
-                }
-
                 if (!MotorDrive.IsConfigured)
                 {
                     ConfigurationDailog dailog = new ConfigurationDailog("Set Motor Drive Configuration", deviceInfo.CustomDeviceInfos);
@@ -263,6 +166,122 @@ namespace JupiterSoft
                     }
 
                 }
+                if (!modbus.IsConfigured)
+                {
+                    ConfigurationDailog dailog = new ConfigurationDailog("Set Control Card Configuration", deviceInfo.CustomDeviceInfos);
+                    dailog.ShowDialog();
+                    if (!dailog.Canceled)
+                    {
+
+                        modbus.PortName = deviceInfo.CustomDeviceInfos.Where(x => x.DeviceID == dailog.DeviceId).FirstOrDefault().PortName;
+                        modbus.DeviceId = dailog.DeviceId;
+                        modbus.BaudRate = dailog.BaudRate;
+                        modbus.DataBit = dailog.Databit;
+                        modbus.StopBit = dailog.Stopbit;
+                        modbus.Parity = dailog.ParityValue;
+
+                        ConnectivityInfo connectivityInfo = new ConnectivityInfo();
+                        connectivityInfo.ShowDialog();
+
+                        if (!connectivityInfo.Canceled)
+                        {
+                            modbus.slaveAddress = Convert.ToInt32(connectivityInfo.AddressBox.Text.ToString());
+
+
+                            modbus.PushingArm = new RegisterConfiguration
+                            {
+                                RType = 1,
+                                DeviceType = (int)Module_Device_Type.ControlCard,
+                                RegisterNo = Convert.ToInt32(connectivityInfo.PushingArm.Text.ToString()),
+                                Frequency = 30,
+                                Count = 0,
+                            };
+                            modbus.Sensor = new RegisterConfiguration
+                            {
+                                RType = 0,
+                                DeviceType = (int)Module_Device_Type.ControlCard,
+                                RegisterNo = Convert.ToInt32(connectivityInfo.Sensors.Text.ToString()),
+                                Frequency = 0,
+                                Count = 0,
+                            };
+
+                            modbus.MotorDrive = new RegisterConfiguration
+                            {
+                                RType = 1,
+                                DeviceType = (int)Module_Device_Type.ControlCard,
+                                RegisterNo = Convert.ToInt32(connectivityInfo.MotorRelay.Text.ToString()),
+                                Frequency = 0,
+                                Count = 0,
+                            };
+
+                            modbus.IsConfigured = true;
+                            model.IsPhotoConfigured = true;
+                            model.IsPushingConfigured = true;
+                        }
+
+                    }
+                }
+                //Test Control Card.
+
+                ConnectMotor(MotorDrive.PortName, MotorDrive.BaudRate, MotorDrive.DataBit, MotorDrive.StopBit, MotorDrive.Parity);
+                Connect_control_card(modbus.PortName, modbus.BaudRate, modbus.DataBit, modbus.StopBit, modbus.Parity);
+                if (modbus.SerialDevice.IsOpen)
+                {
+                    WriteControCardState(modbus.MotorDrive.RegisterNo, 1, modbus.slaveAddress);
+                }
+
+                if (modbus.SerialDevice.IsOpen)
+                {
+                    WriteControCardState(modbus.MotorDrive.RegisterNo, 0, modbus.slaveAddress);
+                }
+
+                //StopPortCommunication((int)Models.Module_Device_Type.Weight);
+                StopPortCommunication((int)Models.Module_Device_Type.MotorDrive);
+                StopPortCommunication((int)Models.Module_Device_Type.ControlCard);
+
+                if (!weight.IsConfigured)
+                {
+                    ConfigurationDailog dailog = new ConfigurationDailog("Set Weight Device Configuration", deviceInfo.CustomDeviceInfos);
+                    dailog.ShowDialog();
+                    if (!dailog.Canceled)
+                    {
+
+                        weight.PortName = deviceInfo.CustomDeviceInfos.Where(x => x.DeviceID == dailog.DeviceId).FirstOrDefault().PortName;
+                        weight.DeviceId = dailog.DeviceId;
+                        weight.BaudRate = dailog.BaudRate;
+                        weight.DataBit = dailog.Databit;
+                        weight.StopBit = dailog.Stopbit;
+                        weight.Parity = dailog.ParityValue;
+
+                        RangeAndUnit range = new RangeAndUnit();
+                        range.ShowDialog();
+                        if (!range.Canceled)
+                        {
+                            weight.minRange = Convert.ToDecimal(range.MinimumRange.Text);
+                            weight.maxRange = Convert.ToDecimal(range.MaxRange.Text);
+                            weight.selectedUnit = range.unit.SelectionBoxItem.ToString();
+                            unit.SelectedValue = weight.selectedUnit;
+
+                            model.minRange = Convert.ToDecimal(range.MinimumRange.Text);
+                            model.maxRange = Convert.ToDecimal(range.MaxRange.Text);
+                            model.selectedUnit = range.unit.SelectionBoxItem.ToString();
+                            weight.IsConfigured = true;
+                            model.IsWeightConfigured = true;
+                        }
+
+                    }
+                }
+                if (!weight.IsCalibrated)
+                {
+                    CalibrationHMI calibrationHMI = new CalibrationHMI(weight);
+                    calibrationHMI.ShowDialog();
+                    weight.Zero = calibrationHMI.hMIViewModel.Zero;
+                    weight.Factor = calibrationHMI.hMIViewModel.Factor;
+                }
+
+
+
+
             }
 
         }
@@ -464,16 +483,23 @@ namespace JupiterSoft
 
         private void Pause_Click(object sender, RoutedEventArgs e)
         {
-            if (modbus.SerialDevice.IsOpen)
+            try
             {
-                WriteControCardState(modbus.MotorDrive.RegisterNo, 0, modbus.slaveAddress);
+                if (modbus.SerialDevice.IsOpen)
+                {
+                    WriteControCardState(modbus.MotorDrive.RegisterNo, 0, modbus.slaveAddress);
+                }
+                StopPortCommunication((int)Models.Module_Device_Type.Weight);
+                StopPortCommunication((int)Models.Module_Device_Type.MotorDrive);
+                StopPortCommunication((int)Models.Module_Device_Type.ControlCard);
+                DisconnectCamera();
+                StopTimer();
+                EnableWindowControl();
             }
-            StopPortCommunication((int)Models.Module_Device_Type.Weight);
-            StopPortCommunication((int)Models.Module_Device_Type.MotorDrive);
-            StopPortCommunication((int)Models.Module_Device_Type.ControlCard);
-            DisconnectCamera();
-            StopTimer();
-            EnableWindowControl();
+            catch
+            {
+                MessageBox.Show("An error occured");
+            }
         }
 
         #endregion
@@ -483,12 +509,12 @@ namespace JupiterSoft
         private void StartTimer()
         {
             ExecutionTimer.Elapsed += ExecutionTimer_Elapsed;
-            ExecutionTimer.Interval = 30;
+            ExecutionTimer.Interval = 100;
             ExecutionTimer.Enabled = true;
         }
         private void StopTimer()
         {
-            ExecutionTimer.Interval = 0;
+            //ExecutionTimer.Interval = 0;
             ExecutionTimer.Elapsed -= ExecutionTimer_Elapsed;
             ExecutionTimer.Enabled = false;
         }
@@ -501,23 +527,32 @@ namespace JupiterSoft
         private void ExecuteLogic()
         {
             //Camera
-            LastRecievedWeight = 0;
-            var date = DateTime.Now;
-            Random rnd = new Random();
-            var rnNum = rnd.Next(1, 1000);
-            SessionId = "Session_" + date.Year.ToString() + date.Month.ToString() + date.Day.ToString() + "_" + rnNum;
-            DisableWindowControl();
-            ConnectionUSB();
-            StartVideoCapture(_VideoDirectory);
-
-            ConnectMotor(MotorDrive.PortName, MotorDrive.BaudRate, MotorDrive.DataBit, MotorDrive.StopBit, MotorDrive.Parity);
-            Connect_control_card(modbus.PortName, modbus.BaudRate, modbus.DataBit, modbus.StopBit, modbus.Parity);
-            if (modbus.SerialDevice.IsOpen)
+            try
             {
-                WriteControCardState(modbus.MotorDrive.RegisterNo, 1, modbus.slaveAddress);
+                LastRecievedWeight = 0;
+                var date = DateTime.Now;
+                Random rnd = new Random();
+                var rnNum = rnd.Next(1, 1000);
+                SessionId = "Session_" + date.Year.ToString() + date.Month.ToString() + date.Day.ToString() + "_" + rnNum;
+
+                ConnectionUSB();
+                StartVideoCapture(_VideoDirectory);
+                ConnectWeight(weight.PortName, weight.BaudRate, weight.DataBit, weight.StopBit, weight.Parity);
+                ConnectMotor(MotorDrive.PortName, MotorDrive.BaudRate, MotorDrive.DataBit, MotorDrive.StopBit, MotorDrive.Parity);
+                Connect_control_card(modbus.PortName, modbus.BaudRate, modbus.DataBit, modbus.StopBit, modbus.Parity);
+                if (modbus.SerialDevice.IsOpen)
+                {
+                    WriteControCardState(modbus.MotorDrive.RegisterNo, 1, modbus.slaveAddress);
+                }
+
+                StartTimer();
+                DisableWindowControl();
             }
-            ConnectWeight(weight.PortName, weight.BaudRate, weight.DataBit, weight.StopBit, weight.Parity);
-            StartTimer();
+            catch
+            {
+                MessageBox.Show("An error occured");
+            }
+
         }
 
         public void DisableWindowControl()
@@ -593,6 +628,7 @@ namespace JupiterSoft
                         if (string.IsNullOrWhiteSpace(arr)) continue;
 
                         Match m = re.Match(outP);
+                        if (string.IsNullOrWhiteSpace(m.Value.ToString())) continue;
                         decimal balance = Convert.ToDecimal(m.Value);
                         Cweight = balance - weight.Zero;
                         Cweight = Cweight / weight.Factor;
@@ -637,13 +673,13 @@ namespace JupiterSoft
                         }
                         weigherViewModel.Weight = Cweight;
 
-                        if(LastMaxWeight == 0 && Cweight>0)
+                        if (LastMaxWeight == 0 && Cweight > 0)
                         {
                             LastMaxWeight = Cweight;
                         }
-                        else if(Cweight>LastMaxWeight)
+                        else if (Cweight > LastMaxWeight)
                         {
-                            LastMaxWeight=Cweight;
+                            LastMaxWeight = Cweight;
                         }
                     }
 
@@ -694,7 +730,7 @@ namespace JupiterSoft
         {
             try
             {
-                if (weight == null || weight.IsTurnedOn == false)
+                if (weight != null || weight.IsTurnedOn == false)
                 {
 
                     weight.RecState = 1;
@@ -722,7 +758,7 @@ namespace JupiterSoft
         {
             try
             {
-                if (MotorDrive == null || MotorDrive.IsTurnedOn == false)
+                if (MotorDrive != null || MotorDrive.IsTurnedOn == false)
                 {
 
                     MotorDrive.RecState = 1;
@@ -754,7 +790,7 @@ namespace JupiterSoft
             try
             {
 
-                if (modbus == null)
+                if (modbus != null && modbus.IsTurnedOn == false)
                 {
 
                     modbus.RecState = 1;
@@ -794,7 +830,7 @@ namespace JupiterSoft
                     recBufParse = modbus.ReceiveBufferQueue.Dequeue();
 
                     modbus.RecState = 1;
-                    SB1Reply _reply = new SB1Reply(Common.GetSessionId);
+                    SB1Reply _reply = new SB1Reply(modbus.CurrentRequest.SessionId);
                     SB1Handler _hndl = new SB1Handler(modbus.SerialDevice);
                     UInt32 length = 32;
                     UInt32 payLoadSize = 0;
@@ -953,7 +989,7 @@ namespace JupiterSoft
 
                                 MotorDrive.CurrentRequest.MbTgm = mbTgmBytes;
                                 MotorDrive.CurrentRequest.Status = PortDataStatus.Received;
-                                
+
                                 ReadMotorResponse(MotorDrive.CurrentRequest);
                                 return;
 
@@ -1082,6 +1118,8 @@ namespace JupiterSoft
             modbus.IsComplete = false;
 
             MODBUSComnn obj = new MODBUSComnn();
+            Common.COMSelected = COMType.MODBUS;
+            // _CurrentActiveMenu = AppTools.Modbus;
             obj.GetMultiSendorValueFM3(modbus.slaveAddress, 0, modbus.SerialDevice, 0, 30, "ControlCard", 1, 0, Models.DeviceType.ControlCard);
 
 
@@ -1101,7 +1139,20 @@ namespace JupiterSoft
             modbus.CurrentRequest = _recData;
             modbus.IsComplete = false;
             MODBUSComnn obj = new MODBUSComnn();
+            Common.COMSelected = COMType.MODBUS;
             obj.GetMultiSendorValueFM3(1, 0, modbus.SerialDevice, reg, 1, "ControlCard", 1, 0, Models.DeviceType.ControlCard);
+
+        }
+
+        private void WriteMotorState(int reg, int val, int slave)
+        {
+
+
+            MODBUSComnn obj = new MODBUSComnn();
+            Common.COMSelected = COMType.MODBUS;
+            byte[] _val1 = BitConverter.GetBytes(val);
+            int[] _val = new int[2] { _val1[1], _val1[0] };
+            obj.SetMultiSendorValueFM16(slave, 0, MotorDrive.SerialDevice, reg + 1, 1, "MotorDrive", 1, 0, Models.DeviceType.MotorDerive, _val, false);   // GetSoftwareVersion(Common.Address, Common.Parity, sp, _ValueType);
 
         }
 
@@ -1120,6 +1171,7 @@ namespace JupiterSoft
             modbus.IsComplete = false;
 
             MODBUSComnn obj = new MODBUSComnn();
+            Common.COMSelected = COMType.MODBUS;
             int[] _val = new int[2] { 0, val };
             obj.SetMultiSendorValueFM16(slave, 0, modbus.SerialDevice, reg + 1, 1, "ControlCard", 1, 0, Models.DeviceType.ControlCard, _val, false);   // GetSoftwareVersion(Common.Address, Common.Parity, sp, _ValueType);
 
@@ -1158,41 +1210,41 @@ namespace JupiterSoft
                     if (_recData.MbTgm[1] == (int)COM_Code.three)
                     {
 
-                        int _i0 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 3);
-                        int _i1 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 5);
-                        int _i2 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 7);
-                        int _i3 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 9);
-                        int _i4 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 11);
-                        int _i5 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 13);
-                        int _i6 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 15);
-                        int _i7 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 17);
-                        int _i8 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 19);
-                        int _i9 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 21);
-                        int _i10 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 23);
-                        int _i11 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 25);
-                        int _i12 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 27);
-                        int _i13 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 29);
-                        int _i14 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 31);
-                        int _i15 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 33);
-                        int _i16 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 35);
-                        int _i17 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 37);
-                        int _i18 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 39);
-                        int _i19 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 41);
-                        int _i20 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 43);
-                        int _i21 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 45);
-                        int _i22 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 47);
-                        int _i23 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 49);
-                        int _i24 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 51);
-                        int _i25 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 53);
-                        int _i26 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 55);
-                        int _i27 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 57);
-                        int _i28 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 59);
-                        int _i29 = ByteArrayConvert.ToUInt16(Common.MbTgmBytes, 61);
+                        int _i0 = ByteArrayConvert.ToUInt16(_recData.MbTgm, 3);
+                        int _i1 = ByteArrayConvert.ToUInt16(_recData.MbTgm, 5);
+                        int _i2 = ByteArrayConvert.ToUInt16(_recData.MbTgm, 7);
+                        int _i3 = ByteArrayConvert.ToUInt16(_recData.MbTgm, 9);
+                        int _i4 = ByteArrayConvert.ToUInt16(_recData.MbTgm, 11);
+                        int _i5 = ByteArrayConvert.ToUInt16(_recData.MbTgm, 13);
+                        int _i6 = ByteArrayConvert.ToUInt16(_recData.MbTgm, 15);
+                        int _i7 = ByteArrayConvert.ToUInt16(_recData.MbTgm, 17);
+                        int _i8 = ByteArrayConvert.ToUInt16(_recData.MbTgm, 19);
+                        int _i9 = ByteArrayConvert.ToUInt16(_recData.MbTgm, 21);
+                        int _i10 = ByteArrayConvert.ToUInt16(_recData.MbTgm, 23);
+                        int _i11 = ByteArrayConvert.ToUInt16(_recData.MbTgm, 25);
+                        int _i12 = ByteArrayConvert.ToUInt16(_recData.MbTgm, 27);
+                        int _i13 = ByteArrayConvert.ToUInt16(_recData.MbTgm, 29);
+                        int _i14 = ByteArrayConvert.ToUInt16(_recData.MbTgm, 31);
+                        int _i15 = ByteArrayConvert.ToUInt16(_recData.MbTgm, 33);
+                        int _i16 = ByteArrayConvert.ToUInt16(_recData.MbTgm, 35);
+                        int _i17 = ByteArrayConvert.ToUInt16(_recData.MbTgm, 37);
+                        int _i18 = ByteArrayConvert.ToUInt16(_recData.MbTgm, 39);
+                        int _i19 = ByteArrayConvert.ToUInt16(_recData.MbTgm, 41);
+                        int _i20 = ByteArrayConvert.ToUInt16(_recData.MbTgm, 43);
+                        int _i21 = ByteArrayConvert.ToUInt16(_recData.MbTgm, 45);
+                        int _i22 = ByteArrayConvert.ToUInt16(_recData.MbTgm, 47);
+                        int _i23 = ByteArrayConvert.ToUInt16(_recData.MbTgm, 49);
+                        int _i24 = ByteArrayConvert.ToUInt16(_recData.MbTgm, 51);
+                        int _i25 = ByteArrayConvert.ToUInt16(_recData.MbTgm, 53);
+                        int _i26 = ByteArrayConvert.ToUInt16(_recData.MbTgm, 55);
+                        int _i27 = ByteArrayConvert.ToUInt16(_recData.MbTgm, 57);
+                        int _i28 = ByteArrayConvert.ToUInt16(_recData.MbTgm, 59);
+                        int _i29 = ByteArrayConvert.ToUInt16(_recData.MbTgm, 61);
 
 
-                        if (modbus.Sensor.RegisterNo == 1 && modbus.Sensor.RType == 1)
+                        if (modbus.Sensor.RegisterNo == 1 && modbus.Sensor.RType == 0)
                         {
-                            if (_i16 == 0)
+                            if (_i0 == 0)
                             {
                                 if (modbus.Sensor.ObjectIntervals != null && modbus.Sensor.ObjectIntervals.Count() > 0)
                                 {
@@ -1224,9 +1276,9 @@ namespace JupiterSoft
                                 }));
                             }
                         }
-                        else if (modbus.Sensor.RegisterNo == 2 && modbus.Sensor.RType == 1)
+                        else if (modbus.Sensor.RegisterNo == 2 && modbus.Sensor.RType == 0)
                         {
-                            if (_i17 == 0)
+                            if (_i2 == 0)
                             {
                                 if (modbus.Sensor.ObjectIntervals != null && modbus.Sensor.ObjectIntervals.Count() > 0)
                                 {
@@ -1608,7 +1660,7 @@ namespace JupiterSoft
                                 }
                                 else
                                 {
-                                    modbus.Sensor.ObjectIntervals = new List<DateTime> {DateTime.Now };
+                                    modbus.Sensor.ObjectIntervals = new List<DateTime> { DateTime.Now };
                                 }
                                 IncreaseObjectCounter();
                                 _dispathcer.Invoke(new Action(() =>
@@ -1659,7 +1711,7 @@ namespace JupiterSoft
             else
             {
                 int passedObject = 0;
-                passedObject = Convert.ToInt32(ObjectsPassed.Text.ToString())+1;
+                passedObject = Convert.ToInt32(ObjectsPassed.Text.ToString()) + 1;
                 _dispathcer.Invoke(new Action(() =>
                 {
                     ObjectsPassed.Text = passedObject.ToString();
@@ -1769,7 +1821,7 @@ namespace JupiterSoft
 
         private void StopPortCommunication(int device)
         {
-            if (weight.SerialDevice.IsOpen && device == (int)Models.Module_Device_Type.Weight)
+            if (weight != null && weight.SerialDevice != null && weight.SerialDevice.IsOpen && device == (int)Models.Module_Device_Type.Weight)
             {
 
                 weight.SerialDevice.DtrEnable = false;
@@ -1780,7 +1832,7 @@ namespace JupiterSoft
                 weight.SerialDevice.DiscardOutBuffer();
                 weight.SerialDevice.Close();
             }
-            else if (modbus.SerialDevice.IsOpen && device == (int)Models.Module_Device_Type.ControlCard)
+            else if (modbus != null && modbus.SerialDevice != null && modbus.SerialDevice.IsOpen && device == (int)Models.Module_Device_Type.ControlCard)
             {
                 modbus.SerialDevice.DtrEnable = false;
                 modbus.SerialDevice.RtsEnable = false;
@@ -1790,7 +1842,7 @@ namespace JupiterSoft
                 modbus.SerialDevice.DiscardOutBuffer();
                 modbus.SerialDevice.Close();
             }
-            else if (MotorDrive.SerialDevice.IsOpen && device == (int)Models.Module_Device_Type.MotorDrive)
+            else if (MotorDrive != null && MotorDrive.SerialDevice != null && MotorDrive.SerialDevice.IsOpen && device == (int)Models.Module_Device_Type.MotorDrive)
             {
                 MotorDrive.SerialDevice.DtrEnable = false;
                 MotorDrive.SerialDevice.RtsEnable = false;
@@ -1858,7 +1910,7 @@ namespace JupiterSoft
                     UInt32 ii = ByteArrayConvert.ToUInt16(_recData.MbTgm, 3);
                     float i10 = ii / 100f;
                     MotorDrive.MotorDrive.Frequency = Convert.ToDecimal(i10);
-                   
+
                     _dispathcer.Invoke(new Action(() =>
                     {
                         frequency.Text = MotorDrive.MotorDrive.Frequency.ToString();
@@ -1897,7 +1949,7 @@ namespace JupiterSoft
                     break;
             }
 
-           
+
         }
 
         private void ControlDevice_DataReceived(object sender, SerialDataReceivedEventArgs e)
@@ -1915,41 +1967,48 @@ namespace JupiterSoft
                 case 1:
 
 
-                    int i = 0;
-                    modbus.RecIdx = 0;
-                    modbus.RecState = 2;
+                    try
+                    {
+                        int i = 0;
+                        modbus.RecIdx = 0;
+                        modbus.RecState = 2;
 
 
-                    while (modbus.SerialDevice.BytesToRead > 0)
-                    {
-                        byte[] rec = new byte[1];
-                        modbus.RecIdx += modbus.SerialDevice.Read(rec, 0, 1);
-                        recBuf[i] = rec[0];
-                        i++;
-                    }
+                        while (modbus.SerialDevice.BytesToRead > 0)
+                        {
+                            byte[] rec = new byte[1];
+                            modbus.RecIdx += modbus.SerialDevice.Read(rec, 0, 1);
+                            recBuf[i] = rec[0];
+                            i++;
+                        }
 
-                    if (modbus.RecIdx > 3)
-                    {
-                        TotalReceiveSize = (uint)recBuf[2] + 5;
+                        if (modbus.RecIdx > 3)
+                        {
+                            TotalReceiveSize = (uint)recBuf[2] + 5;
+                        }
+                        if (TotalReceiveSize > modbus.RecIdx)
+                        {
+                            modbus.IsComplete = false;
+                        }
+                        else
+                        {
+                            modbus.IsComplete = true;
+                            modbus.ReceiveBufferQueue = new Queue<byte[]>();
+                            modbus.ReceiveBufferQueue.Enqueue(recBuf);
+                            recBuf = new byte[REC_BUF_SIZE];
+                        }
+                        modbus.LastResponseReceived = DateTime.Now;
+                        ControlDataReader();
                     }
-                    if (TotalReceiveSize > modbus.RecIdx)
+                    catch
                     {
-                        modbus.IsComplete = false;
+
                     }
-                    else
-                    {
-                        modbus.IsComplete = true;
-                        modbus.ReceiveBufferQueue = new Queue<byte[]>();
-                        modbus.ReceiveBufferQueue.Enqueue(recBuf);
-                        recBuf = new byte[REC_BUF_SIZE];
-                    }
-                    modbus.LastResponseReceived = DateTime.Now;
-                    ControlDataReader();
 
                     break;
             }
 
-            
+
         }
         #endregion
 
@@ -2016,7 +2075,7 @@ namespace JupiterSoft
             {
                 if (MotorDrive.SerialDevice.IsOpen)
                 {
-                    WriteControCardState(MotorDrive.MotorDrive.RegisterNo, Convert.ToInt32(frequency.Text), modbus.slaveAddress);
+                    WriteMotorState(MotorDrive.MotorDrive.RegisterNo, Convert.ToInt32(frequency.Text) * 100, MotorDrive.slaveAddress);
                 }
             }
             catch { }

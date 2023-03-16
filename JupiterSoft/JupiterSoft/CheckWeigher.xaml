@@ -300,7 +300,7 @@
                                                         <TextBox x:Name="minrange"
                                                              BorderBrush="Transparent"
                                                              Background="Transparent"
-                                                             Text="0"
+                                                             Text="{Binding minRange}"
                                                              FontSize="22"
                                                              FontWeight="Bold"
                                                              Foreground="#4a4a4a"
@@ -317,7 +317,7 @@
                                                         <TextBox x:Name="maxrange"
                                                              BorderBrush="Transparent"
                                                              Background="Transparent"
-                                                             Text="0"
+                                                             Text="{Binding maxRange}"
                                                              FontSize="22"
                                                              FontWeight="Bold"
                                                              Foreground="#4a4a4a"
@@ -811,7 +811,7 @@
                                 </StackPanel>
                             </Grid>
                         </Grid>
-                        
+
                     </Grid>
                 </Grid>
             </Grid>
