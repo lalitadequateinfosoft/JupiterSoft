@@ -225,19 +225,19 @@ namespace JupiterSoft
 
                 ConnectMotor(MotorDrive.PortName, MotorDrive.BaudRate, MotorDrive.DataBit, MotorDrive.StopBit, MotorDrive.Parity);
                 Connect_control_card(modbus.PortName, modbus.BaudRate, modbus.DataBit, modbus.StopBit, modbus.Parity);
-                if (modbus.SerialDevice.IsOpen)
-                {
-                    WriteControCardState(modbus.MotorDrive.RegisterNo, 1, modbus.slaveAddress);
-                }
+                //if (modbus.SerialDevice.IsOpen)
+                //{
+                //    WriteControCardState(modbus.MotorDrive.RegisterNo, 1, modbus.slaveAddress);
+                //}
 
-                if (modbus.SerialDevice.IsOpen)
-                {
-                    WriteControCardState(modbus.MotorDrive.RegisterNo, 0, modbus.slaveAddress);
-                }
+                //if (modbus.SerialDevice.IsOpen)
+                //{
+                //    WriteControCardState(modbus.MotorDrive.RegisterNo, 0, modbus.slaveAddress);
+                //}
 
                 //StopPortCommunication((int)Models.Module_Device_Type.Weight);
-                StopPortCommunication((int)Models.Module_Device_Type.MotorDrive);
-                StopPortCommunication((int)Models.Module_Device_Type.ControlCard);
+                //StopPortCommunication((int)Models.Module_Device_Type.MotorDrive);
+                //StopPortCommunication((int)Models.Module_Device_Type.ControlCard);
 
                 if (!weight.IsConfigured)
                 {
@@ -471,6 +471,7 @@ namespace JupiterSoft
                     MessageBox.Show("Please run again to start process..");
                     return;
                 }
+
 
                 ExecuteLogic();
             }
@@ -1105,98 +1106,56 @@ namespace JupiterSoft
 
         private void ReadAllControCardInputOutput()
         {
-
             modbus.RecState = 1;
-            RecData _recData = new RecData();
-            _recData.SessionId = Common.GetSessionNewId;
-            _recData.Ch = 0;
-            _recData.Indx = 0;
-            _recData.Reg = 0;
-            _recData.NoOfVal = 0;
-            _recData.Status = PortDataStatus.Requested;
-            modbus.CurrentRequest = _recData;
             modbus.IsComplete = false;
-
             MODBUSComnn obj = new MODBUSComnn();
             Common.COMSelected = COMType.MODBUS;
-            // _CurrentActiveMenu = AppTools.Modbus;
-            obj.GetMultiSendorValueFM3(modbus.slaveAddress, 0, modbus.SerialDevice, 0, 30, "ControlCard", 1, 0, Models.DeviceType.ControlCard);
-
+            modbus.CurrentRequest=obj.GetMultiSendorValueFM3_data(modbus.slaveAddress, 0, modbus.SerialDevice, 0, 30, "ControlCard", 1, 0, Models.DeviceType.ControlCard);
 
         }
 
         private void ReadControCardState(int reg)
         {
-
             modbus.RecState = 1;
-            RecData _recData = new RecData();
-            _recData.SessionId = Common.GetSessionNewId;
-            _recData.Ch = 0;
-            _recData.Indx = 0;
-            _recData.Reg = 0;
-            _recData.NoOfVal = 0;
-            _recData.Status = PortDataStatus.Requested;
-            modbus.CurrentRequest = _recData;
             modbus.IsComplete = false;
             MODBUSComnn obj = new MODBUSComnn();
             Common.COMSelected = COMType.MODBUS;
-            obj.GetMultiSendorValueFM3(1, 0, modbus.SerialDevice, reg, 1, "ControlCard", 1, 0, Models.DeviceType.ControlCard);
+            modbus.CurrentRequest = obj.GetMultiSendorValueFM3_data(1, 0, modbus.SerialDevice, reg, 1, "ControlCard", 1, 0, Models.DeviceType.ControlCard);
 
         }
 
         private void WriteMotorState(int reg, int val, int slave)
         {
-
-
+            MotorDrive.RecState = 1;
+            MotorDrive.IsComplete = false;
             MODBUSComnn obj = new MODBUSComnn();
             Common.COMSelected = COMType.MODBUS;
             byte[] _val1 = BitConverter.GetBytes(val);
             int[] _val = new int[2] { _val1[1], _val1[0] };
-            obj.SetMultiSendorValueFM16(slave, 0, MotorDrive.SerialDevice, reg + 1, 1, "MotorDrive", 1, 0, Models.DeviceType.MotorDerive, _val, false);   // GetSoftwareVersion(Common.Address, Common.Parity, sp, _ValueType);
+            MotorDrive.CurrentRequest = obj.SetMultiSendorValueFM16_data(slave, 0, MotorDrive.SerialDevice, reg + 1, 1, "MotorDrive", 1, 0, Models.DeviceType.MotorDerive, _val, false);   // GetSoftwareVersion(Common.Address, Common.Parity, sp, _ValueType);
 
         }
 
         private void WriteControCardState(int reg, int val, int slave)
         {
-
             modbus.RecState = 1;
-            RecData _recData = new RecData();
-            _recData.SessionId = Common.GetSessionNewId;
-            _recData.Ch = 0;
-            _recData.Indx = 0;
-            _recData.Reg = 0;
-            _recData.NoOfVal = 0;
-            _recData.Status = PortDataStatus.Requested;
-            modbus.CurrentRequest = _recData;
-            modbus.IsComplete = false;
-
             MODBUSComnn obj = new MODBUSComnn();
             Common.COMSelected = COMType.MODBUS;
             int[] _val = new int[2] { 0, val };
-            obj.SetMultiSendorValueFM16(slave, 0, modbus.SerialDevice, reg + 1, 1, "ControlCard", 1, 0, Models.DeviceType.ControlCard, _val, false);   // GetSoftwareVersion(Common.Address, Common.Parity, sp, _ValueType);
-
+            modbus.IsComplete = false;
+            modbus.CurrentRequest = obj.SetMultiSendorValueFM16_data(slave, 0, modbus.SerialDevice, reg + 1, 1, "ControlCard", 1, 0, Models.DeviceType.ControlCard, _val, false);   // GetSoftwareVersion(Common.Address, Common.Parity, sp, _ValueType);
 
         }
 
         private void WriteMotorDriveState(int reg, int val)
         {
-
             MotorDrive.RecState = 1;
-            RecData _recData = new RecData();
-            _recData.SessionId = Common.GetSessionNewId;
-            _recData.Ch = 0;
-            _recData.Indx = 0;
-            _recData.Reg = 0;
-            _recData.NoOfVal = 0;
-            _recData.Status = PortDataStatus.Requested;
-            MotorDrive.CurrentRequest = _recData;
             MotorDrive.IsComplete = false;
-
             MODBUSComnn obj = new MODBUSComnn();
+            Common.COMSelected = COMType.MODBUS;
             byte[] _val1 = BitConverter.GetBytes(val);
             int[] _val = new int[2] { _val1[1], _val1[0] };
-            obj.SetMultiSendorValueFM16(1, 0, MotorDrive.SerialDevice, reg + 1, 1, "ControlCard", 1, 0, Models.DeviceType.ControlCard, _val, false);   // GetSoftwareVersion(Common.Address, Common.Parity, sp, _ValueType);
-
+            MotorDrive.CurrentRequest = obj.SetMultiSendorValueFM16_data(1, 0, MotorDrive.SerialDevice, reg + 1, 1, "ControlCard", 1, 0, Models.DeviceType.ControlCard, _val, false);   // GetSoftwareVersion(Common.Address, Common.Parity, sp, _ValueType);
 
         }
 

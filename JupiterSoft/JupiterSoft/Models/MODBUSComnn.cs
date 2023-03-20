@@ -18,6 +18,16 @@ namespace JupiterSoft.Models
             }
         }
 
+        public RecData SetMultiSendorValueFM16_data(int Adr, int Parity, SerialPort port, int register, int val, string PName, int Ch, int Indx, DeviceType deviceType, int[] byteArr, bool IsReading)
+        {
+            if (!IsReading)
+            {
+              return PrepareHC5MRRequestFM16_data(Adr, 16, register - 1 >> 8, register - 1, port, val, PName, Ch, Indx, deviceType, byteArr);
+            }
+
+            return new RecData();
+        }
+
         public void SetMultiSendorValueFM6(int Adr, int Parity, SerialPort port, int register, int val, string PName, bool IsReading)
         {
             if (!IsReading)
@@ -29,6 +39,11 @@ namespace JupiterSoft.Models
         public void GetMultiSendorValueFM3(int Adr, int Parity, SerialPort port, int register, int val, string PName, int Ch, int Indx, DeviceType deviceType)
         {
             PrepareHC5MRRequestMulti(Adr, 3, register >> 8, register, port, val, PName, Ch, Indx, deviceType);
+        }
+
+        public RecData GetMultiSendorValueFM3_data(int Adr, int Parity, SerialPort port, int register, int val, string PName, int Ch, int Indx, DeviceType deviceType)
+        {
+          return PrepareHC5MRRequestMulti_data(Adr, 3, register >> 8, register, port, val, PName, Ch, Indx, deviceType);
         }
 
         public void GetMultiSendorValueFM4(int Adr, int Parity, SerialPort port, int register, int val, string PName, int Ch, int Indx, DeviceType deviceType)
@@ -78,6 +93,51 @@ namespace JupiterSoft.Models
             Common.RecState = 1;
             _RqSB1.Tx(port);
             Thread.Sleep(Common.DeviceWaitTimeOut);
+        }
+
+        private RecData PrepareHC5MRRequestFM16_data(int Adr, int FCode, int Hi, int Lo, SerialPort port, int val, string PName, int Ch, int Indx, DeviceType deviceType, int[] byteArr)
+        {
+            RecData _recData = new RecData();
+            _recData.deviceType = deviceType;
+            _recData.PropertyName = PName;
+            _recData.SessionId = Common.GetSessionNewId;
+            _recData.Ch = Ch;
+            _recData.Indx = Indx;
+            _recData.Reg = Lo;
+            _recData.NoOfVal = val;
+            Common.GetSessionId = _recData.SessionId;
+            _recData.Status = PortDataStatus.Requested;
+            _recData.RqType = RQType.ModBus;
+            Common.RequestDataList.Add(_recData);
+
+            Common.DeviceWaitTimeOut = 50;
+            MbTgm _Mbtg = new MbTgm();
+            _Mbtg.GenerateMbTgmFC16(Adr, FCode, Hi, Lo, val, byteArr);
+
+            PayloadRQ _PayloadRQ = new PayloadRQ();
+            _PayloadRQ.mbTgmBytes = _Mbtg.MbTgmData;
+            _PayloadRQ.MbTgmLength = (ushort)_Mbtg.MbTgmData.Length;
+            //_PayloadRQ.Channel = 1;
+            _PayloadRQ.Baud = port.BaudRate;
+            _PayloadRQ.Parity = (Byte)((int)port.Parity);
+            _PayloadRQ.StopBit = (Byte)((int)port.StopBits);
+            _PayloadRQ.ModBusPayload();
+
+            SB1Request _RqSB1 = new SB1Request();
+            _RqSB1.cmd = (int)SB1Handler.SB1_CMD.MODBUS_REQ;
+            _RqSB1.crc = 2; // Common.GetSessionId;
+            _RqSB1.length = (UInt32)_PayloadRQ.MbTgmLength + 44;
+            _RqSB1.payloadByte = _PayloadRQ.ModBusPayloadRq;
+            _RqSB1.payLoadSize = Convert.ToUInt32(_PayloadRQ.MbTgmLength) + 12;
+            _RqSB1.sesId = Common.GetSessionId;
+            _RqSB1.payload = _PayloadRQ;
+            //Common.WriteLog("Request :- " + _RqSB1.sesId.ToString());
+            //Common.GetSessionId = _RqSB1.sesId;
+            Common.LastRequestSent = DateTime.Now;
+            Common.RecState = 1;
+            _RqSB1.Tx(port);
+            Thread.Sleep(Common.DeviceWaitTimeOut);
+            return _recData;
         }
 
         private void PrepareHC5MRRequest(int Adr, int FCode, int Hi, int Lo, SerialPort port, int val, string PName)
@@ -162,6 +222,50 @@ namespace JupiterSoft.Models
             Common.RecState = 1;
             _RqSB1.Tx(port);
             Thread.Sleep(Common.DeviceWaitTimeOut);
+        }
+        private RecData PrepareHC5MRRequestMulti_data(int Adr, int FCode, int Hi, int Lo, SerialPort port, int val, string PName, int Ch, int Indx, DeviceType deviceType)
+        {
+            RecData _recData = new RecData();
+            _recData.deviceType = deviceType;
+            _recData.PropertyName = PName;
+            _recData.SessionId = Common.GetSessionNewId;
+            _recData.Ch = Ch;
+            _recData.Indx = Indx;
+            _recData.Reg = Lo;
+            _recData.NoOfVal = val;
+            Common.GetSessionId = _recData.SessionId;
+            _recData.Status = PortDataStatus.Requested;
+            _recData.RqType = RQType.ModBus;
+            Common.RequestDataList.Add(_recData);
+
+            Common.DeviceWaitTimeOut = 50;
+            MbTgm _Mbtg = new MbTgm();
+            _Mbtg.GenerateMbTgm(Adr, FCode, Hi, Lo, val);
+
+            PayloadRQ _PayloadRQ = new PayloadRQ();
+            _PayloadRQ.mbTgmBytes = _Mbtg.MbTgmData;
+            _PayloadRQ.MbTgmLength = (ushort)_Mbtg.MbTgmData.Length;
+            //_PayloadRQ.Channel = 1;
+            _PayloadRQ.Baud = port.BaudRate;
+            _PayloadRQ.Parity = (Byte)((int)port.Parity);
+            _PayloadRQ.StopBit = (Byte)((int)port.StopBits);
+            _PayloadRQ.ModBusPayload();
+
+            SB1Request _RqSB1 = new SB1Request();
+            _RqSB1.cmd = (int)SB1Handler.SB1_CMD.MODBUS_REQ;
+            _RqSB1.crc = 2; // Common.GetSessionId;
+            _RqSB1.length = (UInt32)_PayloadRQ.MbTgmLength + 44;
+            _RqSB1.payloadByte = _PayloadRQ.ModBusPayloadRq;
+            _RqSB1.payLoadSize = Convert.ToUInt32(_PayloadRQ.MbTgmLength) + 12;
+            _RqSB1.sesId = Common.GetSessionId;
+            _RqSB1.payload = _PayloadRQ;
+            //Common.WriteLog("Request :- " + _RqSB1.sesId.ToString());
+            //Common.GetSessionId = _RqSB1.sesId;
+            Common.LastRequestSent = DateTime.Now;
+            Common.RecState = 1;
+            _RqSB1.Tx(port);
+            Thread.Sleep(Common.DeviceWaitTimeOut);
+            return _recData;
         }
     }
 
