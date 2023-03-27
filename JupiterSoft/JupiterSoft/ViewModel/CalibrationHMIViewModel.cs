@@ -106,21 +106,32 @@ namespace JupiterSoft.ViewModel
                 OnPropertyChanged(nameof(Weight));
             }
         }
-        
 
-        
+        private string _Unit;
+        public string Unit
+        {
+            get => _Unit;
+            set
+            {
+                _Unit = value;
+                OnPropertyChanged(nameof(Unit));
+            }
+        }
 
 
-       
 
 
-       
 
-        
 
-       
 
-       
+
+
+
+
+
+
+
+
 
 
         #region property changed event

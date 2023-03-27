@@ -44,10 +44,11 @@ namespace JupiterSoft.CustomDailog
         bool IsComplete = false;
         private int readIndex = 0;
         #endregion
-        public CalibrationHMI(UartDeviceConfiguration uartDevice)
+        public CalibrationHMI(UartDeviceConfiguration uartDevice,string unit)
         {
             bc = new BrushConverter();
             hMIViewModel = new CalibrationHMIViewModel();
+            hMIViewModel.Unit = unit.ToUpper();
             InitializeComponent();
             this.DataContext = hMIViewModel;
             _dispathcer = Dispatcher.CurrentDispatcher;

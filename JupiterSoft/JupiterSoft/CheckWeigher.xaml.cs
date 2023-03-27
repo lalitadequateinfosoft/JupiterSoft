@@ -223,8 +223,8 @@ namespace JupiterSoft
                 }
                 //Test Control Card.
 
-                ConnectMotor(MotorDrive.PortName, MotorDrive.BaudRate, MotorDrive.DataBit, MotorDrive.StopBit, MotorDrive.Parity);
-                Connect_control_card(modbus.PortName, modbus.BaudRate, modbus.DataBit, modbus.StopBit, modbus.Parity);
+                //ConnectMotor(MotorDrive.PortName, MotorDrive.BaudRate, MotorDrive.DataBit, MotorDrive.StopBit, MotorDrive.Parity);
+                //Connect_control_card(modbus.PortName, modbus.BaudRate, modbus.DataBit, modbus.StopBit, modbus.Parity);
                 //if (modbus.SerialDevice.IsOpen)
                 //{
                 //    WriteControCardState(modbus.MotorDrive.RegisterNo, 1, modbus.slaveAddress);
@@ -273,7 +273,7 @@ namespace JupiterSoft
                 }
                 if (!weight.IsCalibrated)
                 {
-                    CalibrationHMI calibrationHMI = new CalibrationHMI(weight);
+                    CalibrationHMI calibrationHMI = new CalibrationHMI(weight, model.selectedUnit);
                     calibrationHMI.ShowDialog();
                     weight.Zero = calibrationHMI.hMIViewModel.Zero;
                     weight.Factor = calibrationHMI.hMIViewModel.Factor;
@@ -546,7 +546,7 @@ namespace JupiterSoft
                     WriteControCardState(modbus.MotorDrive.RegisterNo, 1, modbus.slaveAddress);
                 }
 
-                StartTimer();
+                //StartTimer();
                 DisableWindowControl();
             }
             catch
@@ -678,13 +678,27 @@ namespace JupiterSoft
                         {
                             LastMaxWeight = Cweight;
                         }
+                        else if (Cweight > 0 && Cweight < LastMaxWeight)
+                        {
+                            LastMaxWeight = Cweight;
+                        }
                         else if (Cweight > LastMaxWeight)
                         {
                             LastMaxWeight = Cweight;
+                            // ReadAllControCardInputOutput();
                         }
                     }
 
 
+                }
+
+                if (Cweight > LastMaxWeight)
+                {
+                    ReadAllControCardInputOutput();
+                }
+                else if (Cweight >= LastMaxWeight)
+                {
+                    ReadAllControCardInputOutput();
                 }
 
             }
@@ -872,27 +886,27 @@ namespace JupiterSoft
 
                         _MbTgmBytes = RxSB1;
                         MbLength = (ushort)_reply.length;
-                        if (_MbTgmBytes != null && MbLength > 0)
+                        if (_MbTgmBytes != null)
                         {
-                            bool _IsTgmErr = false;
-                            _IsTgmErr = CheckTgmError(_recData, _payload, _MbTgmBytes, MbLength);
-                            if (_IsTgmErr)
+                            //bool _IsTgmErr = false;
+                            //_IsTgmErr = CheckTgmError(_recData, _payload, _MbTgmBytes, MbLength);
+                            //if (_IsTgmErr)
+                            //{
+                            if (_recData.RqType == RQType.WireLess)
                             {
-                                if (_recData.RqType == RQType.WireLess)
-                                {
-                                    mbTgmBytes = payload;
-                                }
-                                else
-                                {
-                                    mbTgmBytes = _MbTgmBytes;
-                                }
-
-                                modbus.CurrentRequest.MbTgm = mbTgmBytes;
-                                modbus.CurrentRequest.Status = PortDataStatus.Received;
-                                ReadControlCardResponse(modbus.CurrentRequest);
-                                return;
-
+                                mbTgmBytes = payload;
                             }
+                            else
+                            {
+                                mbTgmBytes = _MbTgmBytes;
+                            }
+
+                            modbus.CurrentRequest.MbTgm = mbTgmBytes;
+                            modbus.CurrentRequest.Status = PortDataStatus.Received;
+                            ReadControlCardResponse(modbus.CurrentRequest);
+                            return;
+
+                            //}
                         }
 
                     }
@@ -1110,7 +1124,7 @@ namespace JupiterSoft
             modbus.IsComplete = false;
             MODBUSComnn obj = new MODBUSComnn();
             Common.COMSelected = COMType.MODBUS;
-            modbus.CurrentRequest=obj.GetMultiSendorValueFM3_data(modbus.slaveAddress, 0, modbus.SerialDevice, 0, 30, "ControlCard", 1, 0, Models.DeviceType.ControlCard);
+            modbus.CurrentRequest = obj.GetMultiSendorValueFM3_data(modbus.slaveAddress, 0, modbus.SerialDevice, 0, 30, "ControlCard", 1, 0, Models.DeviceType.ControlCard);
 
         }
 
@@ -1203,7 +1217,7 @@ namespace JupiterSoft
 
                         if (modbus.Sensor.RegisterNo == 1 && modbus.Sensor.RType == 0)
                         {
-                            if (_i0 == 0)
+                            if (_i0 == 1)
                             {
                                 if (modbus.Sensor.ObjectIntervals != null && modbus.Sensor.ObjectIntervals.Count() > 0)
                                 {
@@ -1237,7 +1251,7 @@ namespace JupiterSoft
                         }
                         else if (modbus.Sensor.RegisterNo == 2 && modbus.Sensor.RType == 0)
                         {
-                            if (_i2 == 0)
+                            if (_i1 == 1)
                             {
                                 if (modbus.Sensor.ObjectIntervals != null && modbus.Sensor.ObjectIntervals.Count() > 0)
                                 {
@@ -1269,9 +1283,9 @@ namespace JupiterSoft
                                 }));
                             }
                         }
-                        else if (modbus.Sensor.RegisterNo == 3 && modbus.Sensor.RType == 1)
+                        else if (modbus.Sensor.RegisterNo == 3 && modbus.Sensor.RType == 0)
                         {
-                            if (_i18 == 0)
+                            if (_i3 == 1)
                             {
                                 if (modbus.Sensor.ObjectIntervals != null && modbus.Sensor.ObjectIntervals.Count() > 0)
                                 {
@@ -1303,9 +1317,9 @@ namespace JupiterSoft
                                 }));
                             }
                         }
-                        else if (modbus.Sensor.RegisterNo == 4 && modbus.Sensor.RType == 1)
+                        else if (modbus.Sensor.RegisterNo == 4 && modbus.Sensor.RType == 0)
                         {
-                            if (_i19 == 0)
+                            if (_i4 == 1)
                             {
                                 if (modbus.Sensor.ObjectIntervals != null && modbus.Sensor.ObjectIntervals.Count() > 0)
                                 {
@@ -1337,9 +1351,9 @@ namespace JupiterSoft
                                 }));
                             }
                         }
-                        else if (modbus.Sensor.RegisterNo == 5 && modbus.Sensor.RType == 1)
+                        else if (modbus.Sensor.RegisterNo == 5 && modbus.Sensor.RType == 0)
                         {
-                            if (_i20 == 0)
+                            if (_i5 == 1)
                             {
                                 if (modbus.Sensor.ObjectIntervals != null && modbus.Sensor.ObjectIntervals.Count() > 0)
                                 {
@@ -1371,9 +1385,9 @@ namespace JupiterSoft
                                 }));
                             }
                         }
-                        else if (modbus.Sensor.RegisterNo == 6 && modbus.Sensor.RType == 1)
+                        else if (modbus.Sensor.RegisterNo == 6 && modbus.Sensor.RType == 0)
                         {
-                            if (_i21 == 0)
+                            if (_i6 == 1)
                             {
                                 if (modbus.Sensor.ObjectIntervals != null && modbus.Sensor.ObjectIntervals.Count() > 0)
                                 {
@@ -1405,9 +1419,9 @@ namespace JupiterSoft
                                 }));
                             }
                         }
-                        else if (modbus.Sensor.RegisterNo == 7 && modbus.Sensor.RType == 1)
+                        else if (modbus.Sensor.RegisterNo == 7 && modbus.Sensor.RType == 0)
                         {
-                            if (_i22 == 0)
+                            if (_i7 == 1)
                             {
                                 if (modbus.Sensor.ObjectIntervals != null && modbus.Sensor.ObjectIntervals.Count() > 0)
                                 {
@@ -1439,9 +1453,9 @@ namespace JupiterSoft
                                 }));
                             }
                         }
-                        else if (modbus.Sensor.RegisterNo == 8 && modbus.Sensor.RType == 1)
+                        else if (modbus.Sensor.RegisterNo == 8 && modbus.Sensor.RType == 0)
                         {
-                            if (_i23 == 0)
+                            if (_i8 == 0)
                             {
                                 if (modbus.Sensor.ObjectIntervals != null && modbus.Sensor.ObjectIntervals.Count() > 0)
                                 {
@@ -1473,9 +1487,9 @@ namespace JupiterSoft
                                 }));
                             }
                         }
-                        else if (modbus.Sensor.RegisterNo == 9 && modbus.Sensor.RType == 1)
+                        else if (modbus.Sensor.RegisterNo == 9 && modbus.Sensor.RType == 0)
                         {
-                            if (_i23 == 0)
+                            if (_i9 == 0)
                             {
                                 if (modbus.Sensor.ObjectIntervals != null && modbus.Sensor.ObjectIntervals.Count() > 0)
                                 {
@@ -1507,9 +1521,9 @@ namespace JupiterSoft
                                 }));
                             }
                         }
-                        else if (modbus.Sensor.RegisterNo == 10 && modbus.Sensor.RType == 1)
+                        else if (modbus.Sensor.RegisterNo == 10 && modbus.Sensor.RType == 0)
                         {
-                            if (_i24 == 0)
+                            if (_i10 == 0)
                             {
                                 if (modbus.Sensor.ObjectIntervals != null && modbus.Sensor.ObjectIntervals.Count() > 0)
                                 {
@@ -1541,108 +1555,7 @@ namespace JupiterSoft
                                 }));
                             }
                         }
-                        else if (modbus.Sensor.RegisterNo == 11 && modbus.Sensor.RType == 1)
-                        {
-                            if (_i25 == 0)
-                            {
-                                if (modbus.Sensor.ObjectIntervals != null && modbus.Sensor.ObjectIntervals.Count() > 0)
-                                {
-                                    modbus.Sensor.ObjectIntervals.Add(DateTime.Now);
-                                }
-                                else
-                                {
-                                    modbus.Sensor.ObjectIntervals = new List<DateTime> { DateTime.Now };
-                                }
-                                IncreaseObjectCounter();
-                                _dispathcer.Invoke(new Action(() =>
-                                {
-                                    SensorOn.Fill = new SolidColorBrush(Colors.DodgerBlue);
-                                    SensorOn.Stroke = Brushes.LightBlue;
-                                    SensorOff.Fill = new SolidColorBrush(Colors.DarkGray);
-                                    SensorOff.Stroke = Brushes.LightGray;
-                                    MotorCount.Content = modbus.MotorDrive.Count.ToString();
-                                }));
-                                CheckWeightRange();
-                            }
-                            else
-                            {
-                                _dispathcer.Invoke(new Action(() =>
-                                {
-                                    SensorOn.Fill = new SolidColorBrush(Colors.DarkGray);
-                                    SensorOn.Stroke = Brushes.LightGray;
-                                    SensorOff.Fill = new SolidColorBrush(Colors.Red);
-                                    SensorOff.Stroke = Brushes.LightCoral;
-                                }));
-                            }
-                        }
-                        else if (modbus.Sensor.RegisterNo == 12 && modbus.Sensor.RType == 1)
-                        {
-                            if (_i26 == 0)
-                            {
-                                if (modbus.Sensor.ObjectIntervals != null && modbus.Sensor.ObjectIntervals.Count() > 0)
-                                {
-                                    modbus.Sensor.ObjectIntervals.Add(DateTime.Now);
-                                }
-                                else
-                                {
-                                    modbus.Sensor.ObjectIntervals = new List<DateTime> { DateTime.Now };
-                                }
-                                IncreaseObjectCounter();
-                                _dispathcer.Invoke(new Action(() =>
-                                {
-                                    SensorOn.Fill = new SolidColorBrush(Colors.DodgerBlue);
-                                    SensorOn.Stroke = Brushes.LightBlue;
-                                    SensorOff.Fill = new SolidColorBrush(Colors.DarkGray);
-                                    SensorOff.Stroke = Brushes.LightGray;
-                                    MotorCount.Content = modbus.MotorDrive.Count.ToString();
-                                }));
-                                CheckWeightRange();
-                            }
-                            else
-                            {
-                                _dispathcer.Invoke(new Action(() =>
-                                {
-                                    SensorOn.Fill = new SolidColorBrush(Colors.DarkGray);
-                                    SensorOn.Stroke = Brushes.LightGray;
-                                    SensorOff.Fill = new SolidColorBrush(Colors.Red);
-                                    SensorOff.Stroke = Brushes.LightCoral;
-                                }));
-                            }
-                        }
-                        else if (modbus.Sensor.RegisterNo == 13 && modbus.Sensor.RType == 1)
-                        {
-                            if (_i27 == 0)
-                            {
-                                if (modbus.Sensor.ObjectIntervals != null && modbus.Sensor.ObjectIntervals.Count() > 0)
-                                {
-                                    modbus.Sensor.ObjectIntervals.Add(DateTime.Now);
-                                }
-                                else
-                                {
-                                    modbus.Sensor.ObjectIntervals = new List<DateTime> { DateTime.Now };
-                                }
-                                IncreaseObjectCounter();
-                                _dispathcer.Invoke(new Action(() =>
-                                {
-                                    SensorOn.Fill = new SolidColorBrush(Colors.DodgerBlue);
-                                    SensorOn.Stroke = Brushes.LightBlue;
-                                    SensorOff.Fill = new SolidColorBrush(Colors.DarkGray);
-                                    SensorOff.Stroke = Brushes.LightGray;
-                                    MotorCount.Content = modbus.MotorDrive.Count.ToString();
-                                }));
-                                CheckWeightRange();
-                            }
-                            else
-                            {
-                                _dispathcer.Invoke(new Action(() =>
-                                {
-                                    SensorOn.Fill = new SolidColorBrush(Colors.DarkGray);
-                                    SensorOn.Stroke = Brushes.LightGray;
-                                    SensorOff.Fill = new SolidColorBrush(Colors.Red);
-                                    SensorOff.Stroke = Brushes.LightCoral;
-                                }));
-                            }
-                        }
+                       
                     }
                 }
             }
@@ -1670,9 +1583,15 @@ namespace JupiterSoft
             else
             {
                 int passedObject = 0;
-                passedObject = Convert.ToInt32(ObjectsPassed.Text.ToString()) + 1;
+
                 _dispathcer.Invoke(new Action(() =>
                 {
+                    var text = ObjectsPassed.Text.ToString();
+                    if (string.IsNullOrWhiteSpace(text))
+                    {
+                        text = "0";
+                    }
+                    passedObject = Convert.ToInt32(text.ToString()) + 1;
                     ObjectsPassed.Text = passedObject.ToString();
                 }));
             }

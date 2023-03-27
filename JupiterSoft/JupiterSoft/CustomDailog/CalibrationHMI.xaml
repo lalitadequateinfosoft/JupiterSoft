@@ -108,7 +108,12 @@
                                         BorderThickness="1"
                                         Background="#d9d9d9"
                                         Margin="0,5,0,5">
-                                <TextBox Text="{Binding Weight,Mode=TwoWay, StringFormat={}{0} LBS}"
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox Grid.Column="0" Text="{Binding Weight}"
                                              IsEnabled="{Binding IsNotRunning}"
                                            FontSize="28"
                                            FontWeight="Bold"
@@ -118,6 +123,20 @@
                                            VerticalAlignment="Stretch"
                                            HorizontalContentAlignment="Center"
                                            VerticalContentAlignment="Center"/>
+
+                                    <TextBox
+                                        Grid.Column="1"
+                                        Text="{Binding Unit}"
+                                           FontSize="28"
+                                           FontWeight="Bold"
+                                           Foreground="#4a4a4a"
+                                             Background="#d9d9d9"
+                                           HorizontalAlignment="Stretch"
+                                           VerticalAlignment="Stretch"
+                                           HorizontalContentAlignment="Center"
+                                           VerticalContentAlignment="Center"/>
+                                </Grid>
+                                
                             </Border>
 
                         </Grid>
